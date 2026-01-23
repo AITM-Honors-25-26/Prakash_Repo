@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Table Number</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    function GetTableNumber() {
+      const params = new URLSearchParams(window.location.search);
+      const table_number = params.get("table_no");
+      console.log("Table number:", table_number);
+
+      return (
+        <div>
+          {table_number ? `Table Number: ${table_number}` : "No table number found"}
+        </div>
+      );
+    }
+
+    ReactDOM.render(<GetTableNumber />, document.getElementById('root'));
+  </script>
+</body>
+</html>
