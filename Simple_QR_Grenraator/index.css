@@ -1,11 +1,11 @@
-*{
+* {
     margin: 0;
     padding: 0;
-    font-family: 'Poppins', sans-serif;
     box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 }
 
-body{
+body {
     background-color: aquamarine;
     display: flex;
     justify-content: center;
@@ -13,30 +13,32 @@ body{
     min-height: 100vh;
 }
 
-.container{
+.container {
     width: 90%;
     max-width: 400px;
     padding: 1.5rem;
-    background: #fff;   
+    background: #fff;
     border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
-.container p{
+.container p {
     font-weight: 600;
     font-size: 1.2rem;
     margin-bottom: 1rem;
 }
 
-.container input{
+.container input {
     width: 100%;
     padding: 0.6rem;
-    border-radius: 10px; 
+    border-radius: 10px;
     border: 1px solid #ccc;
     margin-bottom: 1rem;
     font-size: 1rem;
 }
 
-.container button{
+.container button {
     width: 100%;
     padding: 0.7rem;
     border-radius: 10px;
@@ -45,18 +47,41 @@ body{
     color: white;
     font-size: 1rem;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.container button:hover{
+.container button:hover {
     background-color: darkgreen;
 }
 
-@media (max-width: 480px){
-    .container{
+@media (max-width: 480px) {
+    .container {
         padding: 1.2rem;
     }
-
-    .container p{
+    .container p {
         font-size: 1.1rem;
     }
+}
+
+/* QR Image Styling */
+#imgbox {
+    width: 200px;
+    margin: 15px auto;
+    overflow: hidden;
+    border-radius: 10px;
+    border: 2px solid #424242;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    opacity: 0;
+    transform: scale(0.9);
+}
+
+/* Show QR with fade-in effect */
+#imgbox[style*="display: block"] {
+    opacity: 1;
+    transform: scale(1);
+}
+
+#imgbox img {
+    width: 100%;
+    display: block;
 }

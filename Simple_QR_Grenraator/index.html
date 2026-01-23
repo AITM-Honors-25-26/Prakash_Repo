@@ -4,15 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="index.css">
-    <title>Document</title>
+    <title>QR Generator</title>
 </head>
 <body>
     <div class="container">
         <p>Input your text or URL</p>
-        <input type="" placeholder="Text your URL">
-        <button>Generate QR</button>
 
+        <input 
+            type="text" 
+            placeholder="Enter text or URL" 
+            id="qrText"
+        >
+
+        <!-- QR container hidden initially -->
+        <div id="imgbox" style="display: none;">
+            <img id="qrImage" src="" alt="QR Code">
+        </div>
+
+        <button id="generateBtn">Generate QR</button>
+        <button id="resetBtn" style="display:none; margin-top:10px;">Generate Again</button>
     </div>
-    
+
+    <script>
+        const imgbox = document.getElementById("imgbox");
+        const qrImage = document.getElementById("qrImage");
+        const qrText = document.getElementById("qrText");
+        const generateBtn = document.getElementById("generateBtn");
+        const resetBtn = document.getElementById("resetBtn");
+
+        function qrgeneration(){
+            if(qrText.value.trim() === ""){
+                alert("Please enter text or URL");
+                return;
+            }
+
+            // Set QR image
+            qrImage.src =
+                "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" +
+                encodeURIComponent(qrText.value);
+
+            // Show QR image
+            imgbox.style.display = "block";
+
+            // Hide generate button, show "Generate Again" button
+            generateBtn.style.display = "none";
+            resetBtn.style.display = "block";
+        }
+
+        // Reset QR to generate new
+        resetBtn.addEventListener("click", () => {
+            qrText.value = "";
+            qrImage.src = "";
+            imgbox.style.display = "none";
+
+            // Show generate button, hide reset button
+            generateBtn.style.display = "block";
+            resetBtn.style.display = "none";
+
+            // Focus input
+            qrText.focus();
+        });
+
+        // Attach generate function
+        generateBtn.addEventListener("click", qrgeneration);
+    </script>
 </body>
 </html>
