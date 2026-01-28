@@ -1,7 +1,6 @@
+import app from "./src/config/express.config.js";
 import http from "http";
-const httpServer = http.createServer((request, response)=>{
-    response.end("hello world");
-});
+const httpServer = http.createServer(app);
 
 httpServer.listen(9005, "192.168.1.67",(err)=>{
     if(!err){
