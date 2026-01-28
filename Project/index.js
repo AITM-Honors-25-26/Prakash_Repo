@@ -1,6 +1,7 @@
 import http from "http";
-
-const httpServer = http.createServer();
+const httpServer = http.createServer((request, response)=>{
+    response.end("hello world");
+});
 
 httpServer.listen(9005, "192.168.1.67",(err)=>{
     if(!err){
