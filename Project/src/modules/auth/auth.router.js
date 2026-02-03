@@ -1,19 +1,36 @@
+import getMenuData from "../../middleware/textmiddleware.js";
 import { Router } from "express";
 const authRouter = Router();
 
-authRouter.post('/auth/register',(req,res)=>{
-   res.status(400).json({
-     error: { title: "Title is required" },
-     message: "Validation Failed",
-     status: "BAD_REQUEST",
-     option: null
-   });
-});
+const myMiddelware = (req , res, next)=>{
+    console.log("i am here")
+    req.user= "my name is prakash"
+    next();
+}
 
-authRouter.get('/auth/activater/:token',(req,res)=>{});
-authRouter.post('/auth/login',(req,res)=>{});
-authRouter.get('/auth/me',(req,res)=>{});
-authRouter.post('/auth/forgot_password',(req,res)=>{});
-authRouter.patch('/auth/re',(req,res)=>{});
+const registerUser = (req, res, next)=>{
+    res.json({
+        data:req.user,
+        message:"sucess", 
+        status:"ok",
+        Option:null
+    })
+}
+
+
+authRouter.post('/auth/register',myMiddelware, registerUser)
+
+// authRouter.get('/auth/activater/:token',getMenuData,(req,res, next)=>{});
+
+authRouter.get('/auth/activater/:token', getMenuData, (req, res) => {
+    res.status(200).json({
+        message: "Middleware executed and route reached!",
+        tokenReceived: req.params.token
+    });
+});
+authRouter.post('/auth/login',(req,res, next)=>{});
+authRouter.get('/auth/me',(req,res, next)=>{});
+authRouter.post('/auth/forgot_password',(req,res, next)=>{});
+authRouter.patch('/auth/reset-password/:token',(req,res, next)=>{});
 
 export default authRouter;
