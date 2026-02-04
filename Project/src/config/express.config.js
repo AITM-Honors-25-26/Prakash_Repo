@@ -1,9 +1,22 @@
 import express from "express";
 import router from "./router.config.js";
-import { error } from "console";
-
+import cookieParser from "cookie-parser";
 const app = express();
 
+//parces 
+//for json data
+app.use(express.json())
+//for X-www-form-urlencoded data
+app.use(express.urlencoded({
+  extended:false
+}))
+// for cookie data(npm install cookoe-parser)
+app.use(cookieParser ())
+
+
+
+
+//check health
 app.use("/health", (req, res) => {
   res.json({
     data: "health",
@@ -15,11 +28,12 @@ app.use("/health", (req, res) => {
 
 app.use("/api", router);
 
+//routing error catching
 app.use((req, res, next)=>{
   next({
     code:404,
-    message:"page not found",
-    status:"PAGE_NOT_FOUND"
+    message:"Route not found",
+    status:"Route_error"
   })
 })
 
