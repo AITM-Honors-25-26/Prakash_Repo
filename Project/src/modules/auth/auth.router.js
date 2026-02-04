@@ -5,7 +5,20 @@ const authRouter = Router();
 const myMiddelware = (req , res, next)=>{
     console.log("i am here")
     req.user= "my name is prakash"
-    next();
+    // res.json({
+    //     data:"null",
+    //     message:"message from midddelware"
+
+    // })
+
+    
+    next({
+        code:422,
+        error: null,
+        message:"Validation code error",
+        status:"Validation_error",
+        option:null
+    });
 }
 
 const registerUser = (req, res, next)=>{
