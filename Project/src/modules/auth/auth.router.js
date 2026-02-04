@@ -8,16 +8,14 @@ const myMiddelware = (req , res, next)=>{
     // res.json({
     //     data:"null",
     //     message:"message from midddelware"
-
     // })
-
-    
     next({
-        code:422,
+        code:401,
         error: null,
-        message:"Validation code error",
-        status:"Validation_error",
+        message:"Unauthorized",
+        status:"Authorization_error",
         option:null
+        
     });
 }
 
