@@ -14,8 +14,6 @@ app.use(express.urlencoded({
 app.use(cookieParser ())
 
 
-
-
 //check health
 app.use("/health", (req, res) => {
   res.json({
@@ -42,7 +40,7 @@ app.use((error, req, res, next)=>{
   let statusCode = error.code || 500;
   let msg = error.message || "Internal server errpr....";
   let status = error.status || "SERVER_ERROR";
-  let errorDetail = error.detail || null;
+  let errorDetail = error.error || null;
 
   res.status(statusCode).json({
     error:errorDetail,
