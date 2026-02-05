@@ -2,7 +2,6 @@ class AuthController {
     registerUser = (req, res, next)=>{
         let data = req.body;
         res.json({
-                        
             data:data,
             message:"Sucess call",
             status:"SUCESS",
