@@ -2,9 +2,10 @@ import { Router } from "express";
 import authCtr from "./auth.controller.js";
 import { bodyValidator } from "../../middleware/request.validator.js";
 import { RegisterUserDTO } from "./auth.validator.js";
+import { uploader } from "../../middleware/file-handeling.middleware.js";
 const authRouter = Router();
 
-authRouter.post('/auth/register',bodyValidator(RegisterUserDTO), authCtr.registerUser)
+authRouter.post('/auth/register',uploader().single('image'),bodyValidator(RegisterUserDTO), authCtr.registerUser)
 
 // authRouter.get('/auth/activater/:token',getMenuData,(req,res, next)=>{});
 

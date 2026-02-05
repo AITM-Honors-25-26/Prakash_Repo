@@ -1,4 +1,5 @@
 import express from "express";
+import multer from "multer";
 import router from "./router.config.js";
 import cookieParser from "cookie-parser";
 const app = express();
@@ -36,20 +37,57 @@ app.use((req, res, next)=>{
 })
 
 //error handeling middelware
-app.use((error, req, res, next)=>{
-  let statusCode = error.code || 500;
-  let msg = error.message || "Internal server errpr....";
+// app.use((error, req, res, next)=>{
+//   let statusCode = error.code || 500;
+//   let msg = error.message || "Internal server errpr....";
+//   let status = error.status || "SERVER_ERROR";
+//   let errorDetail = error.error || null;
+
+//   res.status(statusCode).json({
+//     error:errorDetail,
+//     message:msg,
+//     status:status,
+//     option:null
+
+//   })
+//   console.log(error)
+// })
+
+
+app.use((error, req, res, next) => {
+
+  let statusCode = 500;
+  let message = error.message || "Internal Server Error";
   let status = error.status || "SERVER_ERROR";
   let errorDetail = error.error || null;
 
-  res.status(statusCode).json({
-    error:errorDetail,
-    message:msg,
-    status:status,
-    option:null
+  // Multer errors
+  if (error instanceof multer.MulterError) {
+    statusCode = 400;
 
-  })
-  console.log(error)
-})
+    if (error.code === "LIMIT_FILE_SIZE") {
+      message = "File size is too large";
+      status = "FILE_TOO_LARGE";
+    }
+
+    if (error.code === "LIMIT_UNEXPECTED_FILE") {
+      message = "Unexpected file field";
+      status = "UNEXPECTED_FILE";
+    }
+  }
+
+  // Custom numeric status
+  if (typeof error.code === "number") {
+    statusCode = error.code;
+  }
+
+  res.status(statusCode).json({
+    error: errorDetail,
+    message,
+    status,
+    option: null
+  });
+});
+
 
 export default app;
