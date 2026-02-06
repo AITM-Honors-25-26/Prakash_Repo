@@ -3,11 +3,11 @@ import fs from "node:fs"
 
 const myStorage = multer.diskStorage({
     destination:(req, file, callback)=>{
-        const path = './public'
-        if(!fs.existsSync(path)){
-            fs.mkdirSync(path, {recursive:true})
+        const uploadPath = './public/uploads'
+        if(!fs.existsSync(uploadPath)){
+            fs.mkdirSync(uploadPath, {recursive:true})
         }
-        callback(null, path);
+        callback(null, uploadPath);
     },
     filename:(req, file, callback)=>{
         const fileName = Date.now()+file.originalname;
@@ -17,7 +17,7 @@ const myStorage = multer.diskStorage({
 })
 
 export const uploader = (type = 'image')=>{
-    let allowerdExtension = ['jpg', 'jepg', 'png','bmp','webp', 'svg']
+    let allowerdExtension = ['jpg', 'jpeg', 'png','bmp','webp', 'svg']
     let maxUploadSize = 3 * 1024 * 1024;
     if (type==='doc'){
         allowerdExtension=['pdf','csv','txt','docx','doc','xlsx']

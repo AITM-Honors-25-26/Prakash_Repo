@@ -1,6 +1,11 @@
-require("dotenv").config()
-export const CloudinaryConfig={
-    cloudName:process.env.CLOUDINARY_CLOUD_NAME,
-    apiKey:process.env.CLOUDINARY_API_KEY,
-    apiSecret:process.env.CLOUDINARY_API_SECRET,
-}
+// constants.js
+import { config } from 'dotenv';
+config(); 
+
+const CloudinaryConfig = {
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,    // underscore
+    api_key: process.env.CLOUDINARY_API_KEY,          // underscore
+    api_secret: process.env.CLOUDINARY_API_SECRET     // underscore
+};
+
+export default CloudinaryConfig;
