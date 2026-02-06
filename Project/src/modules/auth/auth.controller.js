@@ -4,13 +4,18 @@ class AuthController {
     registerUser =async (req, res, next)=>{
         try{
             let data = req.body;
-            data.image= await cloudianarySvc.fileUpload(req.file.path, 'user/')
-                res.json({
-                    data:data,
-                    message:"Sucess call",
-                    status:"SUCESS",
-                    option:null
-                })
+            if(data.image){
+                data.image= await cloudianarySvc.fileUpload(req.file.path, 'user/')
+            }else{
+                data.password = data.password
+                console.log(data.password)
+                    res.json({
+                        data:data,
+                        message:"Sucess call",
+                        status:"SUCESS",
+                        option:null
+                    })
+                }
             }catch(exception){
                 next(exception)
             }
