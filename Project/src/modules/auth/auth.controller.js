@@ -1,13 +1,15 @@
+import { constants } from "node:buffer";
 import cloudianarySvc from "./../../services/cloudinary.service.js"
+import bcrypt from "bcryptjs"
 
 class AuthController {
     registerUser =async (req, res, next)=>{
         try{
             let data = req.body;
-            if(data.image){
+            if(req.file){
                 data.image= await cloudianarySvc.fileUpload(req.file.path, 'user/')
-            }else{
-                data.password = data.password
+            }
+                data.password = bcrypt.hashSync(data.password, 12);
                 console.log(data.password)
                     res.json({
                         data:data,
@@ -15,7 +17,6 @@ class AuthController {
                         status:"SUCESS",
                         option:null
                     })
-                }
             }catch(exception){
                 next(exception)
             }
