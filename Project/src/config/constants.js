@@ -8,4 +8,10 @@ const CloudinaryConfig = {
     api_secret: process.env.CLOUDINARY_API_SECRET     // underscore
 };
 
+export const UserStatus = {
+    ACTIVE:"Active",
+    INACTIVE:"Inactive"
+}
+
+
 export default CloudinaryConfig;
