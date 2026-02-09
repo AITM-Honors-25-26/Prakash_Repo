@@ -21,3 +21,16 @@ export const DBConfig ={
 };
 
 export default CloudinaryConfig;
+
+export const UserRole={
+    ADMIN:"Admin",
+    CHEF:"Chef",
+    WAITER:"Waiter",
+    RECEPTION:"Reception",
+    WORKER:"Worker"
+}
+export const Gender={
+    MALE:"Male",
+    FEMALE:"Female",
+    OTHER:"Other"
+}
