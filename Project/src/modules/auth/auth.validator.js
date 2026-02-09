@@ -14,6 +14,11 @@ export const RegisterUserDTO = Joi.object({
       "string.email": "Please enter a valid email address",
       "any.required": "Email is required"
     }),
+  dob: Joi.date().less('now').required().messages({
+      "date.base": "Date of birth must be a valid date",
+      "date.less": "Date of birth cannot be in the future",
+      "any.required": "Date of birth is required"
+    }),
   password: Joi.string().pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*_.-])[A-Za-z\d!@#$%^&*_.-]{8,25}$/).required().messages({
       "string.base": "Password must be a text value",
       "string.empty": "Password is required",

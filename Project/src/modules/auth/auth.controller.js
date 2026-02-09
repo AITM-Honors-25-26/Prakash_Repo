@@ -13,13 +13,10 @@ class AuthController {
                 data.image= await cloudianarySvc.fileUpload(req.file.path, 'user/')
             }
             // }else{throw { status: 400, message: "Profile image is required!" };
-                
             // }
-
                 data.password = bcrypt.hashSync(data.password, 12);
                 data.status=UserStatus.INACTIVE
-                data.activationToken = randomStringGenerator(),
-                console.log(data.activationToken)
+                data.activationToken = randomStringGenerator(100,'special'),
                     res.json({
                         data:data,
                         message:"Sucess call",

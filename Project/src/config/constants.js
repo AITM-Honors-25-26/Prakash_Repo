@@ -14,4 +14,10 @@ export const UserStatus = {
 }
 
 
+
+export const DBConfig ={
+    mongodbUrl:process.env.MONGODB_URL,
+    dbName:process.env.MANGO_DB_NAME
+};
+
 export default CloudinaryConfig;

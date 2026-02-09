@@ -2,7 +2,9 @@ import express from "express";
 import multer from "multer";
 import router from "./router.config.js";
 import cookieParser from "cookie-parser";
+import "./db.config.js"
 const app = express();
+
 
 //parces 
 //for json data
