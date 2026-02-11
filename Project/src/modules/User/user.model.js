@@ -40,16 +40,23 @@ const UserSchema = new mongoose.Schema({
     },
     address: {
         type: String,
+        required: [true, "address number is required"],
         trim: true
     },
     image: {
         type: String, 
         default: null
     },
-    isActivated: {
+    status: {
         type: Boolean,
         default: false 
     },
+    activationToken:String
+    ,
+    forgotPasswordToken:String
+    ,
+    expireToken:String
+    ,
     lastLogin: {
         type: Date
     }
@@ -59,7 +66,6 @@ const UserSchema = new mongoose.Schema({
     autoIndex: true
 });
 
-// Create the model
 const UserModel = mongoose.model("User", UserSchema);
 
 export default UserModel;
