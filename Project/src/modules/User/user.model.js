@@ -65,7 +65,5 @@ const UserSchema = new mongoose.Schema({
     autoCreate: true,
     autoIndex: true
 });
-
 const UserModel = mongoose.model("User", UserSchema);
-
 export default UserModel;

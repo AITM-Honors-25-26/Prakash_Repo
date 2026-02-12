@@ -7,23 +7,14 @@ class AuthService{
     userRegisterDataTrans= async (req, res) => {
         try{
             let data = req.body;
-            if(req.file){
-                //uploading to cloudinary
                 data.image= await cloudianarySvc.fileUpload(req.file.path, 'user/')
-            }
                 data.password = bcrypt.hashSync(data.password, 12);
                 data.status=UserStatus.INACTIVE
-                data.activationToken = randomStringGenerator(100,'special'),
-                    res.json({
-                        data:data,
-                        message:"Sucess call",
-                        status:"SUCESS",
-                        option:null
-                    })
-
-            }catch(exception)
-            {
-                next(exception)
+                data.activationToken = randomStringGenerator(100,'special')
+                console.log("in usererehistertras")
+                return data;
+            }catch(exception){
+                throw(exception);
         }
     }
     userStore = async()=>{
@@ -32,7 +23,7 @@ class AuthService{
         }catch(exception){
             throw(exception)
         }
-    }
+    }  
 
 }
 const autSvc = new AuthService

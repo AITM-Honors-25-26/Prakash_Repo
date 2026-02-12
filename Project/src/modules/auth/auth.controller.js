@@ -3,13 +3,12 @@ import autSvc from "./auth.service.js";
 class AuthController {
     registerUser =async (req, res, next)=>{
         try{
-            const userData = await autSvc.userRegisterDataTrans(req)
+            const data = await autSvc.userRegisterDataTrans(req)
             res.json({
                 data:data,
-                message:"Sucess Call",
-                status:"ok",
+                message:"User register sucessifully",
+                status:"Register_Sucess",
                 option:null
-            
         });
         }catch(exception){
             next(exception)
