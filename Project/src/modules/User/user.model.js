@@ -44,12 +44,12 @@ const UserSchema = new mongoose.Schema({
         trim: true
     },
     image: {
-        type: String, 
-        default: null
+        url: String,
+        optimizeUrl:String
     },
     status: {
         type: Boolean,
-        default: false 
+        default: false
     },
     activationToken:String
     ,

@@ -4,12 +4,14 @@ class AuthController {
     registerUser =async (req, res, next)=>{
         try{
             const data = await autSvc.userRegisterDataTrans(req)
+            const userObj = await autSvc.userStore(data)
             res.json({
-                data:data,
+                data:userObj,
                 message:"User register sucessifully",
                 status:"Register_Sucess",
                 option:null
         });
+
         }catch(exception){
             next(exception)
         }

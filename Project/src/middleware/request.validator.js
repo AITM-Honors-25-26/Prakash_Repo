@@ -3,7 +3,6 @@ export const bodyValidator = (schema)=>{
         try{
             let data = req.body;
             await schema.validateAsync(data, {abortEarly:false})
-            console.log(data)
             next()
         }catch(exception){
             // console.log(exception)
@@ -12,7 +11,6 @@ export const bodyValidator = (schema)=>{
                 exception.details.map((error)=>{
                     console.log(error)
                     errBag[error.context.label] = error.message})
-                    
             }
             next({
                 code:400,
