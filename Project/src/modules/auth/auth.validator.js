@@ -1,4 +1,5 @@
 import Joi from "joi";
+import JoiDate from "@joi/date"
 
 export const RegisterUserDTO = Joi.object({
   fullName: Joi.string().min(2).max(50).required().messages({
@@ -15,6 +16,7 @@ export const RegisterUserDTO = Joi.object({
       "any.required": "Email is required"
     }),
   dob: Joi.date().less('now').required().messages({
+      "date.format":"Date must be in DD-MM-YYYY format",
       "date.base": "Date of birth must be a valid date",
       "date.less": "Date of birth cannot be in the future",
       "any.required": "Date of birth is required"
@@ -38,13 +40,21 @@ export const RegisterUserDTO = Joi.object({
       "string.base": "Role must be a text value",
       "any.only": "Role must be either admin, chef, or waiter"
     }),
-  phone: Joi.string().min(10).max(20).messages({
+  phone: Joi.string().min(10).max(20).pattern(/^[0-9]+$/).messages({
+      "string.pattern.base": "Phone number must contain only digits",
       "string.base": "Phone number must be a text value",
       "string.min": "Phone number must be at least 10 digits",
-      "string.max": "Phone number must be at most 20 digits"
+      "string.max": "Phone number must be at most 10 digits"
     }),
   gender: Joi.string().valid("Male", "Female", "Other").messages({
       "string.base": "Gender must be a text value",
       "any.only": "Gender must be male, female, or other"
     })
 });
+
+
+
+
+
+
+
