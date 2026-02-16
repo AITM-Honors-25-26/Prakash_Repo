@@ -38,30 +38,18 @@ app.use((req, res, next)=>{
   })
 })
 
-//error handeling middelware
-// app.use((error, req, res, next)=>{
-//   let statusCode = error.code || 500;
-//   let msg = error.message || "Internal server errpr....";
-//   let status = error.status || "SERVER_ERROR";
-//   let errorDetail = error.error || null;
-
-//   res.status(statusCode).json({
-//     error:errorDetail,
-//     message:msg,
-//     status:status,
-//     option:null
-
-//   })
-//   console.log(error)
-// })
-
-
 app.use((error, req, res, next) => {
+  console.log(error)
 
   let statusCode = 500;
   let message = error.message || "Internal Server Error";
   let status = error.status || "SERVER_ERROR";
   let errorDetail = error.error || null;
+
+  if (error.name ==="MongoServerError"){
+    statusCode = 422;
+    status= "DATABASE_ERROR"
+  }
 
   // Multer errors
   if (error instanceof multer.MulterError) {
@@ -78,11 +66,10 @@ app.use((error, req, res, next) => {
     }
   }
 
-  // Custom numeric status
-  if (typeof error.code === "number") {
-    statusCode = error.code;
-  }
-
+  // // Custom numeric status
+  if (typeof error.code === "number" && error.code >= 100 && error.code < 600) {
+  statusCode = error.code;
+}
   res.status(statusCode).json({
     error: errorDetail,
     message,
