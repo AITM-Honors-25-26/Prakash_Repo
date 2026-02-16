@@ -4,8 +4,6 @@ import router from "./router.config.js";
 import cookieParser from "cookie-parser";
 import "./db.config.js"
 const app = express();
-
-
 //parces 
 //for json data
 app.use(express.json())
@@ -15,7 +13,6 @@ app.use(express.urlencoded({
 }))
 // for cookie data(npm install cookoe-parser)
 app.use(cookieParser ())
-
 
 //check health
 app.use("/health", (req, res) => {
@@ -51,14 +48,12 @@ app.use((error, req, res, next) => {
   status = "DATABASE_ERROR";
 
   if (error.code === 11000) {
-    // Correctly extract the field name that is duplicated
     const key = Object.keys(error.keyPattern)[0]; 
-    
     statusCode = 422; 
     errorDetail = {
       [key]: `${key} has already been used`
     };
-    message = "Validation failed"; // Set the message for the user
+    message = "Unique Validation failed";
     status = "VALIDATION_ERROR";
   }
 }
@@ -71,7 +66,6 @@ app.use((error, req, res, next) => {
       message = "File size is too large";
       status = "FILE_TOO_LARGE";
     }
-
     if (error.code === "LIMIT_UNEXPECTED_FILE") {
       message = "Unexpected file field";
       status = "UNEXPECTED_FILE";
@@ -89,6 +83,4 @@ app.use((error, req, res, next) => {
     option: null
   });
 });
-
-
 export default app;

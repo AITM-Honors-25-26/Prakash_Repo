@@ -31,6 +31,20 @@ class AuthService{
             throw(exception)
         }
     }  
+    publicUserProfile = (userObj)=>{
+        return{
+            name:userObj.fullName,
+            email:userObj.email,
+            role:userObj.role,
+            address:userObj.address,
+            phone:userObj.phone,
+            status:userObj.status,
+            image:userObj.image,
+            _id:userObj._id,
+            createdAt:userObj.createdAt,
+            dob:userObj.dob,
+        };
+    }
 
 }
 const autSvc = new AuthService

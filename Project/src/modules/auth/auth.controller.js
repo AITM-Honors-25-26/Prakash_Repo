@@ -8,7 +8,7 @@ class AuthController {
             data = await autSvc.userRegisterDataTrans(req)
             const userObj = await autSvc.userStore(data)
             res.json({
-                data:userObj,
+                data:autSvc.publicUserProfile(userObj),
                 message:"User register sucessifully",
                 status:"Register_Sucess",
                 option:null
