@@ -1,9 +1,11 @@
 import autSvc from "./auth.service.js";
+import cloudianarySvc from "../../services/cloudinary.service.js";
 
 class AuthController {
     registerUser =async (req, res, next)=>{
+        let data;
         try{
-            const data = await autSvc.userRegisterDataTrans(req)
+            data = await autSvc.userRegisterDataTrans(req)
             const userObj = await autSvc.userStore(data)
             res.json({
                 data:userObj,
@@ -13,6 +15,9 @@ class AuthController {
         });
 
         }catch(exception){
+            if (data && data.image_id) {
+                await cloudianarySvc.deleteFile(data.image_id);
+            } 
             next(exception)
         }
         }

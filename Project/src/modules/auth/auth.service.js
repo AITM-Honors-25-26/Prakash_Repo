@@ -13,6 +13,7 @@ class AuthService{
                     url: upload.url,
                     optmizedUrl: upload.secure_url || upload.url
                 };
+                data.image_id=upload.public_id;
             }
             data.password = bcrypt.hashSync(data.password, 12);
             data.status= false
@@ -25,7 +26,7 @@ class AuthService{
     userStore = async(data)=>{
         try{
             const userObj = new UserModel(data)
-            await userObj.save()
+            return await userObj.save()
         }catch(exception){
             throw(exception)
         }

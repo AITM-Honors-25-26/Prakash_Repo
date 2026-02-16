@@ -46,10 +46,22 @@ app.use((error, req, res, next) => {
   let status = error.status || "SERVER_ERROR";
   let errorDetail = error.error || null;
 
-  if (error.name ==="MongoServerError"){
-    statusCode = 422;
-    status= "DATABASE_ERROR"
+  if (error.name === "MongoServerError") {
+  statusCode = 422; 
+  status = "DATABASE_ERROR";
+
+  if (error.code === 11000) {
+    // Correctly extract the field name that is duplicated
+    const key = Object.keys(error.keyPattern)[0]; 
+    
+    statusCode = 422; 
+    errorDetail = {
+      [key]: `${key} has already been used`
+    };
+    message = "Validation failed"; // Set the message for the user
+    status = "VALIDATION_ERROR";
   }
+}
 
   // Multer errors
   if (error instanceof multer.MulterError) {

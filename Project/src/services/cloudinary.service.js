@@ -20,6 +20,20 @@ class CloudianaryService {
             };
         }
     }
+    deleteFile= async(public_id)=>{
+        try{
+            const result = await cloudinary.uploader.destroy(public_id);
+            return result;
+        } catch(exception){
+            throw{
+                code:500,
+                code:500,
+                status:"CLOUDINARY_DELETE_ERROR",
+                message:"Failed to delete file from cloudoanry",
+                detail:exception
+            }
+        }
+    }
     removeLocalFile = (filepath) => {
         try {
             if (fs.existsSync(filepath)) {
@@ -49,12 +63,10 @@ class CloudianaryService {
             this.removeLocalFile(filepath);
 
             return {
-                url: uploadResponse.secure_url
+                url: uploadResponse.secure_url,
+                public_id: uploadResponse.public_id
             };
         } catch (exception) {
-            // 3. Failure: Attempt to delete local file anyway
-            // We wrap this in a try-catch so we can report the upload error 
-            // even if the file deletion also fails.
             try {
                 this.removeLocalFile(filepath);
             } catch (deleteError) {
@@ -66,7 +78,6 @@ class CloudianaryService {
                     detail: { uploadError: exception, deleteError: deleteError }
                 };
             }
-            // If only upload failed but delete worked
             throw {
                 code: exception.http_code || 500,
                 status: "ERROR_UPLOADING_FILE_TO_CLOUDINARY",
