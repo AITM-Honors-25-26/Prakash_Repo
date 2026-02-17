@@ -34,3 +34,10 @@ export const Gender={
     FEMALE:"Female",
     OTHER:"Other"
 }
+
+export const AppConfig={
+    frontend_Url:process.env.FRONTEND_URL
+}
+export const SMTPConfig={
+    fromAddress:process.env.SMTP_FROM
+}
