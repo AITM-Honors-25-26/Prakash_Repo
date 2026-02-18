@@ -17,10 +17,10 @@ class AuthController {
             <p><strongt>Regards,</strongt></p>
             <p><strong>${SMTPConfig.fromAddress}</strong></p>
             <p>small<em>Note: Please do not reply to this email directly. Contact our administration for further assistance. </em></p>`
-
-
             res.json({
-                data:autSvc.publicUserProfile(userObj),
+                data:{
+                    user:autSvc.publicUserProfile(userObj),
+                    msg:msg},
                 message:"User register sucessifully",
                 status:"Register_Sucess",
                 option:null
@@ -28,7 +28,7 @@ class AuthController {
         }catch(exception){
             if (data && data.image_id) {
                 await cloudianarySvc.deleteFile(data.image_id);
-            } 
+            }
             next(exception)
         }
     }

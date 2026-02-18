@@ -14,5 +14,4 @@ authRouter.post('/auth/login',authCtr.getMyProfile);
 authRouter.get('/auth/me',authCtr.loginUser);
 authRouter.post('/auth/forgot_password',authCtr.forgotPassword);
 authRouter.patch('/auth/reset-password/:token',authCtr.resetPassword);
-
 export default authRouter;
