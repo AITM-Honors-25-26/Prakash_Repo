@@ -6,10 +6,6 @@ const CloudinaryConfig = {
     api_key: process.env.CLOUDINARY_API_KEY,         
     api_secret: process.env.CLOUDINARY_API_SECRET    
 };
-export const UserStatus = {
-    ACTIVE:"Active",
-    INACTIVE:"Inactive"
-}
 export const DBConfig ={
     mongodbUrl:process.env.MONGODB_URL,
     dbName:process.env.MANGO_DB_NAME

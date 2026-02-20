@@ -1,6 +1,5 @@
 import bcrypt from "bcryptjs";
 import cloudianarySvc from "../../services/cloudinary.service.js";
-import { UserStatus } from "../../config/constants.js";
 import { randomStringGenerator } from "../../utils/helpers.js";
 import UserModel from "../User/user.model.js";
 class AuthService{
@@ -17,7 +16,7 @@ class AuthService{
             }
             data.password = bcrypt.hashSync(data.password, 12);
             data.status= false
-            data.activationToken = randomStringGenerator(100,'special')
+            data.activationToken = randomStringGenerator(100,'string')
             return data;
             }catch(exception){
                 throw(exception);
@@ -44,6 +43,22 @@ class AuthService{
             createdAt:userObj.createdAt,
             dob:userObj.dob,
         };
+    }
+    getSingleUserByFilter= async (filter)=>{
+        try{
+            const user = await UserModel.findOne(filter);
+            return user
+        }catch(exception){
+            throw exception
+        }
+    }
+    updateSingleUserByFilter=async (filter, updateData) =>{
+        try{
+             let update = await UserModel.findOneAndUpdate(filter, {$set: updateData}, {new:true})
+             return update
+        }catch (exception){
+            throw exception
+        }
     }
 
 }
