@@ -1,5 +1,4 @@
 import Joi from "joi";
-import JoiDate from "@joi/date"
 
 export const RegisterUserDTO = Joi.object({
   fullName: Joi.string().min(2).max(50).required().messages({
