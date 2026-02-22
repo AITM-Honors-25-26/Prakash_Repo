@@ -29,5 +29,11 @@ export const AppConfig={
     frontend_Url:process.env.FRONTEND_URL
 }
 export const SMTPConfig={
-    fromAddress:process.env.SMTP_FROM
+    fromAddress:process.env.SMTP_FROM,
+    provider: process.env.SMTP_PROVIDER,
+    host:process.env.SMTP_HOST,
+    user:process.env.SMTP_USER,
+    password:process.env.SMTP_PASSWORD,
+    port:process.env.SMTP_PORT
 }
+
