@@ -22,7 +22,19 @@ class EmailService{
             throw exception
         }
     }
+    
+    sendEmail = ()=>{
+        try{
+            this.#trasnport.sendMail()
 
+        }catch(exception){
+            console.log("!!!!!!!!!!!error while sending email!!!!!!!!!!!!!!");
+            throw{
+                message:"sending email failed",
+                status:"EMAIL_SEND_FAILED"
+            }
+        }
+    }
 
 }
 const emailSvc = new EmailService();
