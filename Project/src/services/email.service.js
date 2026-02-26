@@ -23,9 +23,16 @@ class EmailService{
         }
     }
     
-    sendEmail = ()=>{
+    sendEmail = async({
+        to,sub, message
+    })=>{
         try{
-            this.#trasnport.sendMail()
+            return await this.#trasnport.sendMail({
+                to:to,
+                from:SMTPConfig.fromAddress,
+                subject:sub,
+                html:message
+            })
 
         }catch(exception){
             console.log("!!!!!!!!!!!error while sending email!!!!!!!!!!!!!!");

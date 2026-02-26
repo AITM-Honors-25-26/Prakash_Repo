@@ -1,13 +1,15 @@
 import autSvc from "./auth.service.js";
 import cloudianarySvc from "../../services/cloudinary.service.js";
 import { AppConfig, SMTPConfig} from "../../config/constants.js";
+import emailSvc from "../../services/email.service.js";
 
 class AuthController {
     registerUser =async (req, res, next)=>{
-        let data;
         try{
-            data = await autSvc.userRegisterDataTrans(req)
-            const userObj = await autSvc.userStore(data)
+            let userData = await autSvc.userRegisterDataTrans(req)
+            const userObj = await autSvc.userStore(userData)
+            console.log(userObj.activationToken)
+
             let msg= `<strong>Dear ${userObj.fullName}</strong> <br/>
             <p>Thank you for registering with us.</p>
             <p>Your username will be : <em>${userObj.email}</em>. To activate your account, please click the link below or copy paist url in the browser.</p>
@@ -16,7 +18,14 @@ class AuthController {
             <br/>
             <p><strongt>Regards,</strongt></p>
             <p><strong>${SMTPConfig.fromAddress}</strong></p>
-            <p>small<em>Note: Please do not reply to this email directly. Contact our administration for further assistance. </em></p>`
+            <p><em><b>Note</b>: Please do not reply to this email directly. Contact our administration for further assistance. </em></p>`
+
+            await emailSvc.sendEmail({
+                to:userObj.email,
+                sub:"Activate your account!1!!",
+                message:msg
+            })
+            
             res.json({
                 data:{
                     user:autSvc.publicUserProfile(userObj),
