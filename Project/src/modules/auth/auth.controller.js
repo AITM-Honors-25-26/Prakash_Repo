@@ -10,16 +10,6 @@ class AuthController {
             const userObj = await autSvc.userStore(userData)
             console.log(userObj.activationToken)
 
-            // let msg= `<strong>Dear ${userObj.fullName}</strong> <br/>
-            // <p>Thank you for registering with us.</p>
-            // <p>Your username will be : <em>${userObj.email}</em>. To activate your account, please click the link below or copy paist url in the browser.</p>
-            // <a href="${AppConfig.frontend_Url}/auth/activater/${userObj.activationToken}" style="color:rgb(4,70,4); text-decoration:underline;">
-            // </a>
-            // <br/>
-            // <p><strongt>Regards,</strongt></p>
-            // <p><strong>${SMTPConfig.fromAddress}</strong></p>
-            // <p><em><b>Note</b>: Please do not reply to this email directly. Contact our administration for further assistance. </em></p>`
-
             let msg = `<strong>Dear ${userObj.fullName}</strong><br/>
             <p>Thank you for registering with us.</p>
             <p>Your username will be: <em>${userObj.email}</em>.</p>
