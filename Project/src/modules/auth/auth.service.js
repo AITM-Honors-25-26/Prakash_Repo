@@ -7,14 +7,14 @@ import emailSvc from "../../services/email.service.js";
 class AuthService{
     userRegisterDataTrans= async (req, res) => {
         try{
-            let data = req.body;
+            let data = {...req.body};
             if (req.file) {
                 const upload = await cloudianarySvc.fileUpload(req.file.path, 'user/');
                 data.image = {
                     url: upload.url,
                     optmizedUrl: upload.secure_url || upload.url
                 };
-                data.image_id=upload.public_id;
+                data.image_id = upload.public_id;
             }
             data.password = bcrypt.hashSync(data.password, 12);
             data.status= false
@@ -98,7 +98,7 @@ class AuthService{
                 </div>
             </div>`;
              return await emailSvc.sendEmail({
-                to:userObj.email,
+                to:email,
                 sub:"Activate your account!1!!",
                 message:msg
             })

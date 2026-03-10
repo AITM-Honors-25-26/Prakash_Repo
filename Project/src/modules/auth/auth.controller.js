@@ -5,6 +5,7 @@ import emailSvc from "../../services/email.service.js";
 
 class AuthController {
     registerUser =async (req, res, next)=>{
+        let userData;
         try{
             let userData = await autSvc.userRegisterDataTrans(req)
             const userObj = await autSvc.userStore(userData)
@@ -16,13 +17,13 @@ class AuthController {
             res.json({
                 data:{
                     user:autSvc.publicUserProfile(userObj),
-                    msg:msg},
+                },
                 message:"User register sucessifully",
                 status:"Register_Sucess",
                 option:null
         });
         }catch(exception){
-            if (data && data.image_id) {
+            if (userData && userData.image_id) {
                 await cloudianarySvc.deleteFile(data.image_id);
             }
             next(exception)
