@@ -50,3 +50,8 @@ export const RegisterUserDTO = Joi.object({
       "any.only": "Gender must be male, female, or other"
     })
 });
+
+export const LoginDTO = Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().required()
+});
