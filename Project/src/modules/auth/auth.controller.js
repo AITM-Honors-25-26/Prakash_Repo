@@ -1,7 +1,6 @@
 import autSvc from "./auth.service.js";
 import cloudianarySvc from "../../services/cloudinary.service.js";
-import { AppConfig, SMTPConfig} from "../../config/constants.js";
-import emailSvc from "../../services/email.service.js";
+import bcrypt from "bcryptjs";
 
 class AuthController {
     registerUser =async (req, res, next)=>{
@@ -65,10 +64,37 @@ class AuthController {
             next(exception)
         }
     }
-    loginUser = ()=>(req, res, next)=>{}
-    getMyProfile = (req, res, next)=>{}
-    forgotPassword= (rea, res, next)=>{}
-    resetPassword=(res, req, next)=>{}
+    loginUser =async(req, res, next)=>{
+        try{
+            const{email, password} = req.body;
+            const user = await autSvc.getSingleUserByFilter({
+                email:email
+            })
+            if(!user){
+                throw{
+                    code:422,
+                    message:"User Does not exist",
+                    status:"User_Not_Found"
+                }
+            } else if(!bcrypt.compareSync(password, user.password)){
+                throw{
+                    code:403,
+                    message:"Credential does not match",
+                    staus:"CREDENTIAL_NOT_MATCHED"
+                }
+            } else{
+                console.log("hello")
+                res.status(200).json({
+                    message:"Login Sucessful"
+                })
+            }       
+        } catch (exception){
+            next(exception)
+        }
+    }
+    getMyProfile = async(req, res, next)=>{}
+    forgotPassword=async (rea, res, next)=>{}
+    resetPassword=async(res, req, next)=>{}
 }
 const authCtr = new AuthController()
 export default authCtr

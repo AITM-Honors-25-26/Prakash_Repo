@@ -106,6 +106,7 @@ class AuthService{
             throw exception
         }
     }
+    
 
 }
 const autSvc = new AuthService
