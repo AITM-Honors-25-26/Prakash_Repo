@@ -46,9 +46,9 @@ class AuthService{
             dob:userObj.dob,
         };
     }
-    getSingleUserByFilter= async (filter)=>{
+    getSingleUserByFilter= async (filter, selectFields)=>{
         try{
-            const user = await UserModel.findOne(filter);
+            const user = await UserModel.findOne(filter).select(selectFields);
             return user
         }catch(exception){
             throw exception

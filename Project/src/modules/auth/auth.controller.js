@@ -69,13 +69,15 @@ class AuthController {
             const{email, password} = req.body;
             const user = await autSvc.getSingleUserByFilter({
                 email:email
-            })
+            },"+password")
+            console.log("Database user:",user)
             if(!user){
                 throw{
                     code:422,
                     message:"User Does not exist",
                     status:"User_Not_Found"
                 }
+                
             } else if(!bcrypt.compareSync(password, user.password)){
                 throw{
                     code:403,
