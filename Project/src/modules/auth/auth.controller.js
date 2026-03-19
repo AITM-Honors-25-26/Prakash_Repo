@@ -1,6 +1,8 @@
 import autSvc from "./auth.service.js";
 import cloudianarySvc from "../../services/cloudinary.service.js";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken"
+import { AppConfig } from "../../config/constants.js";
 
 class AuthController {
     registerUser =async (req, res, next)=>{
@@ -85,11 +87,29 @@ class AuthController {
                     staus:"CREDENTIAL_NOT_MATCHED"
                 }
             } else{
-                console.log("hello")
-                res.status(200).json({
-                    message:"Login Sucessful"
+                let  accessToken = jwt.sign({
+                    sub: user._id,
+                    trpe:"access"
+                }, AppConfig.jwtSecret, {
+                    expiresIn: '3 hour'
                 })
-            }       
+                let refreshToken = jwt.sign({
+                    sub:user._id,
+                    type:"refresh"
+                }, AppConfig.jwtSecret,{
+                    expiresIn:"1 day"
+                });
+                res.json({
+                    data:{
+                        accessToken: accessToken,
+                        refreshToken: refreshToken
+                    },
+                    message:"Login Successfully",
+                    status: "LOGIN_SUCCESS",
+                    option:null
+                })
+
+            }
         } catch (exception){
             next(exception)
         }
