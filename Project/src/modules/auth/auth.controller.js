@@ -114,7 +114,14 @@ class AuthController {
             next(exception)
         }
     }
-    getMyProfile = async(req, res, next)=>{}
+    getMyProfile = async(req, res, next)=>{
+        res.json({
+            data:req.authUser,
+            status:"LOGGEDIN_USER",
+            message:"Your Profile",
+            option:null
+        })
+    }
     forgotPassword=async (rea, res, next)=>{}
     resetPassword=async(res, req, next)=>{}
 }
