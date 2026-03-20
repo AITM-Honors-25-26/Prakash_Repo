@@ -89,7 +89,7 @@ class AuthController {
             } else{
                 let  accessToken = jwt.sign({
                     sub: user._id,
-                    trpe:"access"
+                    type:"access"
                 }, AppConfig.jwtSecret, {
                     expiresIn: '3 hour'
                 })
@@ -122,7 +122,13 @@ class AuthController {
             option:null
         })
     }
-    forgotPassword=async (rea, res, next)=>{}
+    forgotPassword=async (rea, res, next)=>{
+        try{
+
+        }throw(exception){
+            next exception
+        }
+    }
     resetPassword=async(res, req, next)=>{}
 }
 const authCtr = new AuthController()
