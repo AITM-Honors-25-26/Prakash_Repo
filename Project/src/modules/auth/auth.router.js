@@ -9,7 +9,7 @@ const authRouter = Router();
 authRouter.post('/auth/register',uploader().single('image'),bodyValidator(RegisterUserDTO), authCtr.registerUser)
 
 authRouter.get('/auth/activater/:token', authCtr.activateUser);
-authRouter.post('/auth/me',allowUser(["admin"]),authCtr.getMyProfile);
+authRouter.post('/auth/me',allowUser(),authCtr.getMyProfile);
 authRouter.get('/auth/login',bodyValidator(LoginDTO),authCtr.loginUser);
 authRouter.post('/auth/forgot_password',authCtr.forgotPassword);
 authRouter.patch('/auth/reset-password/:token',authCtr.resetPassword);

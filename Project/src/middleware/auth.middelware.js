@@ -16,11 +16,10 @@ const allowUser = (roles = null) => {
             token = token.split(" ").pop();
 
             let payload = jwt.verify(token, AppConfig.jwtSecret)
-
-            const user = await autSvc.getSingleUserByFilter({
+            if(payload.type === "access"){
+                const user = await autSvc.getSingleUserByFilter({
                 _id:payload.sub
             })
-
             if(!user){
                 next ({
                 code:401,
@@ -43,6 +42,14 @@ const allowUser = (roles = null) => {
                     }
                 }
             }
+            }else{
+                next({
+                    code:401,
+                    message:"Invaalid Token type",
+                    status:"UNAUTHENTACATED"
+                })
+            }
+            
         }
         } catch(exception){
             next ({

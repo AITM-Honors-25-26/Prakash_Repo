@@ -123,11 +123,11 @@ class AuthController {
         })
     }
     forgotPassword=async (rea, res, next)=>{
-        try{
+        // try{
 
-        }throw(exception){
-            next exception
-        }
+        // }throw(exception){
+        //     next exception
+        // }
     }
     resetPassword=async(res, req, next)=>{}
 }
