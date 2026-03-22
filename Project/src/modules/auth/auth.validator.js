@@ -52,6 +52,24 @@ export const RegisterUserDTO = Joi.object({
 });
 
 export const LoginDTO = Joi.object({
-    email: Joi.string().email().required(),
-    password: Joi.string().required()
+  email: Joi.string().email().required().messages({
+    "string.base": "Email must be a text value",
+    "string.empty": "Email is required",
+    "string.email": "Please enter a valid email address",
+    "any.required": "Email is required"
+  }),
+  password: Joi.string().required().messages({
+    "string.base": "Password must be a text value",
+    "string.empty": "Password is required",
+    "any.required": "Password is required"
+  })
+});
+
+export const ForgetPasswordRequestDTO = Joi.object({
+  email: Joi.string().email().required().messages({
+    "string.base": "Email must be a text value",
+    "string.empty": "Email is required",
+    "string.email": "Please enter a valid email address",
+    "any.required": "Email is required"
+  })
 });

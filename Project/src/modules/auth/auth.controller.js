@@ -122,12 +122,26 @@ class AuthController {
             option:null
         })
     }
-    forgotPassword=async (rea, res, next)=>{
-        // try{
+    forgotPassword=async (req, res, next)=>{
+        try{
+            const{email}= req.body
+            const user = await autSvc.getSingleUserByFilter({
+                email: email
+            });
+            if(!user){
+                return next({
+                    code:400,
+                    detail:{
+                        email:"User email has not beed registered yet"
+                    },
+                    message:"User not found",
+                    status:"USER_NOT_FOUND"
+                })
+            }
 
-        // }throw(exception){
-        //     next exception
-        // }
+        }catch(exception){
+            next (exception)
+        }
     }
     resetPassword=async(res, req, next)=>{}
 }
