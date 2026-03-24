@@ -12,5 +12,6 @@ authRouter.get('/auth/activater/:token', authCtr.activateUser);
 authRouter.post('/auth/me',allowUser(),authCtr.getMyProfile);
 authRouter.get('/auth/login',bodyValidator(LoginDTO),authCtr.loginUser);
 authRouter.post('/auth/forgot_password',bodyValidator(ForgetPasswordRequestDTO),authCtr.forgotPassword);
-authRouter.patch('/auth/reset-password/:token',authCtr.resetPassword);
+authRouter.get('/auth/verify-token/:token',authCtr.verifyFogetPasswordToken)
+authRouter.patch('/auth/reset-password',authCtr.resetPassword);
 export default authRouter;

@@ -3,6 +3,7 @@ import cloudianarySvc from "../../services/cloudinary.service.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken"
 import { AppConfig } from "../../config/constants.js";
+import { randomStringGenerator } from "../../utils/helpers.js";
 
 class AuthController {
     registerUser =async (req, res, next)=>{
@@ -57,7 +58,7 @@ class AuthController {
             await autSvc.updateSingleUserByFilter({_id:associatedUser._id}, userData)
             res.json({
                 data:null,
-                messaagge:'Thank you rehestering with us, Your account has been sucessfully activated',
+                messaagge:'Thank you registering with us, Your account has been sucessfully activated',
                 status:"ACTIVIATION_SUCESS",
                 option:null
             })
@@ -122,28 +123,135 @@ class AuthController {
             option:null
         })
     }
-    forgotPassword=async (req, res, next)=>{
-        try{
-            const{email}= req.body
-            const user = await autSvc.getSingleUserByFilter({
-                email: email
+    forgotPassword = async (req, res, next) => {
+    try {
+        const { email } = req.body;
+        const user = await autSvc.getSingleUserByFilter({
+            email: email,
+        });
+
+        if (!user) {
+            return next({
+                code: 400,
+                detail: {
+                    email: "User email has not been registered yet"
+                },
+                message: "User not found",
+                status: "USER_NOT_FOUND"
             });
+        }
+
+        let updateData = {
+            forgotPasswordToken: randomStringGenerator(100),
+            expireToken: new Date(Date.now() + 60 * 60 * 1000) 
+        };
+
+        await autSvc.updateSingleUserByFilter({
+            email: email
+        }, updateData);
+
+        await autSvc.notifyForgotPassword({
+            name: user.fullName || 'User', 
+            email: user.email, 
+            resetToken: updateData.forgotPasswordToken
+        });
+
+        res.json({
+            data: null,
+            message: 'A link has been sent to your registered email to reset your password',
+            status: "FORGETPASSWORD_LINK_SEND",
+            option: null
+        });
+
+    } catch (exception) {
+        next(exception);
+    }
+}
+
+verifyFogetPasswordToken = async (req, res, next) => {
+    try {
+        let token = req.params.token;
+        let user = await autSvc.getSingleUserByFilter({
+            forgotPasswordToken: token
+        });
+
+        if (!user) {
+            return next({
+                code: 422,
+                message: "Token does not exist or is already used",
+                status: "TOKEN_NOT_FOUND"
+            });
+        }
+        if (!user.expireToken) {
+            return next({
+                code: 400,
+                message: "Token expiry time is missing from the database.",
+                status: "INVALID_TOKEN_DATA"
+            });
+        }
+
+        const tokenExpiry = new Date(user.expireToken).getTime();
+        const currentTime = Date.now();
+
+        if (currentTime > tokenExpiry) {
+            return next({
+                code: 422,
+                message: "Password reset token expired",
+                status: "PASSWORD_RESET_TOKEN_EXPIRED"
+            });
+        }
+
+        const verifyToken = randomStringGenerator(100);
+        await autSvc.updateSingleUserByFilter({
+            _id: user._id 
+        }, {
+            forgotPasswordToken: verifyToken
+        });
+
+        res.json({
+            data: {
+                verifyToken: verifyToken
+            },
+            message: "Token Verified",
+            status: "FORGET_PASSWORD_VERIFIED",
+            option: null       
+        });
+    } catch (exception) {
+        next(exception);
+    }
+}
+    resetPassword=async(req, res, next)=>{
+        try{
+            const{token, password} = req.body;
+            const user = await autSvc.getSingleUserByFilter({
+                forgotPasswordToken:token
+            })
             if(!user){
-                return next({
-                    code:400,
-                    detail:{
-                        email:"User email has not beed registered yet"
-                    },
-                    message:"User not found",
-                    status:"USER_NOT_FOUND"
+                next({
+                    code:402,
+                    message:"Token does not exist or already used",
+                    status:"TOKEN_NOT_FOUND"
                 })
             }
-
-        }catch(exception){
-            next (exception)
+            const data = {
+                forgotPasswordToken:null,
+                expireToken:null,
+                password: bcrypt.hashSync(password, 12),
+                status:true
+            }
+            await autSvc.updateSingleUserByFilter({
+                _id:user._id
+            },data)
+            res.status(201).json({
+                data:null,
+                message:"Your password has been reset Sucessfullly. Please log in to continue",
+                status:"PASSWORD_RESET_SUCCESSFUL",
+                option:null
+            })
+        }catch(exceptio){
+            next(exceptio)
         }
     }
-    resetPassword=async(res, req, next)=>{}
 }
 const authCtr = new AuthController()
 export default authCtr

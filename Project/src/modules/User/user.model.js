@@ -55,7 +55,7 @@ const UserSchema = new mongoose.Schema({
     ,
     forgotPasswordToken:String
     ,
-    expireToken:String
+    expireToken:Date
     ,
     lastLogin: {
         type: Date

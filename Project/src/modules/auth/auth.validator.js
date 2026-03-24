@@ -73,3 +73,28 @@ export const ForgetPasswordRequestDTO = Joi.object({
     "any.required": "Email is required"
   })
 });
+
+export const ResetPasswordDTO = Joi.object({
+  token: Joi.string().min(100).max(100).required().messages({
+      "string.base": "Token must be a text value",
+      "string.empty": "Reset token is required",
+      "string.min": "Invalid token. The token must be exactly 100 characters long",
+      "string.max": "Invalid token. The token must be exactly 100 characters long",
+      "any.required": "Reset token is required"
+  }),
+  password: Joi.string()
+    .pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*_.-])[A-Za-z\d!@#$%^&*_.-]{8,25}$/)
+    .required()
+    .messages({
+      "string.base": "Password must be a text value",
+      "string.empty": "Password is required",
+      "string.pattern.base":
+        "Password must be 8–25 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character",
+      "any.required": "Password is required"
+    }),
+  confirmPassword: Joi.string().valid(Joi.ref("password")).required().messages({
+      "string.empty": "Confirm password is required",
+      "any.only": "Confirm password must match the password",
+      "any.required": "Confirm password is required"
+    }),
+});
