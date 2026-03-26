@@ -4,13 +4,8 @@
 // import App from './App.tsx'
 import React from "react"
 import { createRoot } from "react-dom/client"
+import HomePage from "./pages/home/home.page.jsx"
 
-const HomePage = ()=>{
-  return (
-    <div>
-    <p>what is my name</p></div>
-  )
-}
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <HomePage />
