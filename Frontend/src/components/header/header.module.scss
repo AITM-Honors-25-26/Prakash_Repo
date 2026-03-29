@@ -1,0 +1,47 @@
+// Variables for easy color management
+$bg-color: #ffffff;
+$text-color: #333333;
+$primary-color: #0056b3;
+$hover-color: #004494;
+
+.header {
+  // Flexbox to place the logo on the left and links on the right
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  padding: 1rem 5%;
+  background-color: $bg-color;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  // Keeps the header fixed at the top of the screen when scrolling
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $primary-color;
+    cursor: pointer;
+  }
+
+  .navLinks {
+    // Flexbox to space out the individual links
+    display: flex;
+    gap: 2rem;
+
+    // Because we are using SCSS, we can nest the 'a' tag styling directly inside .navLinks
+    a {
+      text-decoration: none;
+      color: $text-color;
+      font-weight: 500;
+      font-size: 1rem;
+      transition: color 0.2s ease-in-out;
+
+      &:hover {
+        color: $hover-color;
+      }
+    }
+  }
+}
