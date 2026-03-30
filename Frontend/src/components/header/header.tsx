@@ -1,5 +1,6 @@
 import React from 'react';
-import styles from './header.module.scss'; // You would create this SCSS file
+import styles from './header.module.scss';
+import profile from './../../../img/profile.png'
 
 const Header: React.FC = () => {
   return (
@@ -7,11 +8,12 @@ const Header: React.FC = () => {
       <div className={styles.logo}>MyApp</div>
       <nav className={styles.navLinks}>
         <a href="/">Home</a>
-        <a href="/features">Features</a>
-        <a href="/contact">Contact</a>
+        <a href="/features">Special</a>
+        <a href="/contact">About Us</a>
       </nav>
+      <div><img src={profile} className={styles.logo} alt="Profile" /></div>
     </header>
   );
 };
 
-export default Header;
+export default Header;       
