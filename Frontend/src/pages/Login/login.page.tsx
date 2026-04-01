@@ -4,36 +4,31 @@ import { Link, useNavigate } from 'react-router-dom';
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate(); // For redirecting after login
+  const navigate = useNavigate(); 
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      // 1. Point to your Express URL (ensure port matches your backend)
-      const response = await fetch('http://localhost:9005/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
+      const response = await fetch('http://192.168.1.67:9005/api/auth/login', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ email, password }),
+});
       const result = await response.json();
 
       if (response.ok) {
-        // 2. Success: Save the token if your backend sends one
         console.log("Success:", result);
         localStorage.setItem('token', result.token); 
         
         alert("Login Successful!");
-        navigate('/'); // Send user to Home page
+        navigate('/');
       } else {
-        // 3. Server-side error (e.g., 401 Unauthorized)
         alert(result.message || "Invalid credentials");
       }
     } catch (error) {
-      // 4. Network error (Server is down or CORS failed)
       console.error("Connection error:", error);
       alert("Cannot connect to the server. Check if the backend is running.");
     }

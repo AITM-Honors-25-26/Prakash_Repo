@@ -2,8 +2,15 @@ import express from "express";
 import multer from "multer";
 import router from "./router.config.js";
 import cookieParser from "cookie-parser";
+import cors from 'cors';
 import "./db.config.js"
 const app = express();
+
+app.use(cors({
+    origin: '*' // This allows requests from any IP/Port during development
+}));
+
+
 //parces 
 //for json data
 app.use(express.json())
