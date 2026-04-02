@@ -10,7 +10,7 @@ authRouter.post('/auth/register',uploader().single('image'),bodyValidator(Regist
 
 authRouter.get('/auth/activater/:token', authCtr.activateUser);
 authRouter.post('/auth/me',allowUser(),authCtr.getMyProfile);
-authRouter.get('/auth/login',bodyValidator(LoginDTO),authCtr.loginUser);
+authRouter.post('/auth/login',bodyValidator(LoginDTO),authCtr.loginUser);
 authRouter.post('/auth/forgot_password',bodyValidator(ForgetPasswordRequestDTO),authCtr.forgotPassword);
 authRouter.get('/auth/verify-token/:token',authCtr.verifyFogetPasswordToken)
 authRouter.patch('/auth/reset-password',authCtr.resetPassword);
