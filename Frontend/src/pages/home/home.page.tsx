@@ -7,7 +7,7 @@ const Homepage: React.FC = () => {
     <Layout>
       <section>
         <h1>My First Homepage</h1>
-        <p>This is where the magic happens.</p>
+        <p>Testing the homepage.</p>
         <Link to="/LoginPage">
           <button>Login Now</button>
         </Link>

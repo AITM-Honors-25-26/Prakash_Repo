@@ -5,7 +5,7 @@ import profile from './../../../img/profile.png'
 const Header: React.FC = () => {
   return (
     <header className={styles.header}>
-      <div className={styles.logo}>MyApp</div>
+      <div className={styles.logo}>Testing Navbar</div>
       <nav className={styles.navLinks}>
         <a href="/">Home</a>
         <a href="/features">Special</a>
