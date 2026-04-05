@@ -35,7 +35,7 @@ export const RegisterUserDTO = Joi.object({
   address: Joi.string().allow(null, "").messages({
       "string.base": "Address must be a text value"
     }),
-  role: Joi.string().valid("Admin", "Chef", "Waiter").default("Admin").messages({
+  role: Joi.string().valid("Admin", "Chef", "Waiter", "employee").insensitive().default("employee").messages({
       "string.base": "Role must be a text value",
       "any.only": "Role must be either admin, chef, or waiter"
     }),
@@ -45,7 +45,7 @@ export const RegisterUserDTO = Joi.object({
       "string.min": "Phone number must be at least 10 digits",
       "string.max": "Phone number must be at most 10 digits"
     }),
-  gender: Joi.string().valid("Male", "Female", "Other").messages({
+  gender: Joi.string().valid("Male", "Female", "Other").insensitive().messages({
       "string.base": "Gender must be a text value",
       "any.only": "Gender must be male, female, or other"
     })

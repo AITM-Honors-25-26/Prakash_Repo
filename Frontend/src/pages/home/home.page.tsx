@@ -11,6 +11,14 @@ const Homepage: React.FC = () => {
         <Link to="/LoginPage">
           <button>Login Now</button>
         </Link>
+
+
+
+
+
+        <Link to="/RegisterPage">
+          <button>Register Now</button>
+        </Link>
       </section>
     </Layout>
   );
