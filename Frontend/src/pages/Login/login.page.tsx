@@ -16,7 +16,7 @@ const LoginPage: React.FC = () => {
       const response = await fetch(API_ENDPOINTS.LOGIN, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password}),
       });
 
       let result;
@@ -27,6 +27,12 @@ const LoginPage: React.FC = () => {
       }
 
       if (response.ok) {
+        console.log("Full Result Data:", result.data);
+        const userStatus = result.data.status;
+        if(userStatus === false){
+          alert("Your account is not activated")
+          return;
+        }
         const token = result.data?.accessToken;
 
         if (token) {

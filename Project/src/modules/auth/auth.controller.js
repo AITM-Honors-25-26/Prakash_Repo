@@ -87,6 +87,12 @@ class AuthController {
                     message:"Credential does not match",
                     staus:"CREDENTIAL_NOT_MATCHED"
                 }
+            } else if (user.status === false) { 
+                throw {
+                    code: 403,
+                    message: "Your account is not activated. Please verify your email.",
+                    status: "ACCOUNT_NOT_ACTIVATED"
+                };
             } else{
                 let  accessToken = jwt.sign({
                     sub: user._id,

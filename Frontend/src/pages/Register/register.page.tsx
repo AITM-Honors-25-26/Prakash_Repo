@@ -34,7 +34,6 @@ const RegisterPage: React.FC = () => {
     e.preventDefault();
     setLoading(true);
 
-    // Create FormData object to handle text + file
     const data = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
       data.append(key, value);
@@ -47,7 +46,6 @@ const RegisterPage: React.FC = () => {
     try {
       const response = await fetch(API_ENDPOINTS.REGISTER, {
         method: 'POST',
-        // Note: Do NOT set Content-Type header when sending FormData
         body: data,
       });
 
@@ -55,7 +53,7 @@ const RegisterPage: React.FC = () => {
 
       if (response.ok) {
         alert("Registration Successful!");
-        navigate('/login');
+        navigate('/LoginPage');
       } else {
         alert(result.message || "Registration failed");
       }
@@ -102,7 +100,7 @@ const RegisterPage: React.FC = () => {
           {loading ? "Registering..." : "Register"}
         </button>
       </form>
-      <p>Already have an account? <Link to="/login">Login</Link></p>
+      <p>Already have an account? <Link to="LoginPage">Login</Link></p>
     </section>
   );
 };
