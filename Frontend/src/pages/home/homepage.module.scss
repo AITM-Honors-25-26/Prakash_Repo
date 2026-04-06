@@ -2,13 +2,7 @@ $font-Cursive: 'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', cursive;
 
 .topsection {
     width: 100%;
-}
-
-.logo {
-    padding-top: 40px;
-    height: 300px; 
-    max-width: 100%; 
-    object-fit: contain; 
+    position: relative; // Ensures children position correctly
 }
 
 .photoholder {
@@ -20,7 +14,7 @@ $font-Cursive: 'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', cursive;
     width: 100%;
     height: 85vh; 
     object-fit: cover; 
-    filter: brightness(0.6);
+    filter: brightness(0.5); // Darker filter makes white text easier to read
 }
 
 .welcomecontent {
@@ -31,38 +25,70 @@ $font-Cursive: 'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', cursive;
     text-align: center;
     color: #ffffff;           
     width: 100%;
+    max-width: 500px; // Keeps the text from getting too wide on desktop
+
+    .logo {
+        padding-top: 20px;
+        height: 250px; 
+        max-width: 100%; 
+        object-fit: contain; 
+    }
 
     h1 {
         font-family: $font-Cursive;
         font-size: 60px;
-        margin-bottom: 0px;
+        margin-bottom: 5px;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
     }
+
     p {
         font-family: $font-Cursive;
-        font-size: 15px;
-        margin-top: 0;
+        font-size: 18px;
+        margin: 5px 0;
+    }
+
+    .paragraph {
+        margin: 15px 0;
+        
+        p {
+            font-size: 14px;
+            margin: 2px 0;
+            opacity: 0.9;
+        }
     }
 }
 
 .logbutton {
-    padding: 10px 20px;
-    border-radius: 10px;
-    background-color: green;
-    border-color: transparent;
+    padding: 12px 30px;
+    border-radius: 25px; // Rounder buttons feel more modern/bakery-style
+    background-color: #2d6a4f; // A softer "Forest Green"
+    border: none;
     color: #ffffff;
-    font-weight:bold  
+    font-weight: bold;
+    cursor: pointer;
+    width: 200px;
+    transition: transform 0.2s;
+
+    &:hover {
+        transform: scale(1.05);
+        background-color: #1b4332;
+    }
 }
 
 .registerbutton {
-    padding: 10px 20px;
-    border-radius: 10px;
-    background-color: blue;
-    border-color: transparent;
+    padding: 12px 30px;
+    border-radius: 25px;
+    background-color: transparent;
+    border: 2px solid #ffffff; 
     color: #ffffff;
     font-weight: bold;
+    cursor: pointer;
+    width: 200px;
+    transition: all 0.2s;
     
     &:hover {
-        background-color: rgb(16, 8, 70);
+        background-color: #ffffff;
+        color: #000000;
     }
 }
 
@@ -70,30 +96,27 @@ $font-Cursive: 'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', cursive;
 @media (max-width: 768px) {
     .welcomecontent {
         width: 90%; 
-        
 
         .logo {
-            height: 150px; 
-            padding-top: 10px;
+            height: 120px; 
         }
 
         h1 {
-            font-size: 40px;
+            font-size: 38px;
         }
 
         p {
             font-size: 16px; 
-            margin-bottom: 20px;
         }
         
-        button {
+        .logbutton, .registerbutton {
             width: 100%; 
-            margin: 5px 0; 
+            margin: 8px 0; 
             box-sizing: border-box; 
         }
     }
     
     .photo {
-        height: 100vh; 
+        height: 100vh;
     }
 }

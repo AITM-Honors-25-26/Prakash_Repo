@@ -9,20 +9,30 @@ const Homepage: React.FC = () => {
   return (
     <Layout>
       <section className={styles.topsection}>
-        <div className={styles.photoholder}><img src={profile} className={styles.photo} alt="" /></div>
-        <div className={styles.welcomecontent}>
-          <img src={logo} className={styles.logo} alt="logo" />
-          <h1>Welcome to the Bakery</h1>
-        <p>Where passion blooms and pastries rise.</p>
-        <Link to="/LoginPage">
-          <button className={styles.logbutton}>Login Now</button>
-        </Link>
-        <Link to="/RegisterPage">
-          <button className={styles.registerbutton}>Register Now</button>
-        </Link>
-
+        <div className={styles.photoholder}>
+          <img src={profile} className={styles.photo} alt="Fresh baked goods" />
         </div>
-        
+
+        <div className={styles.welcomecontent}>
+          <img src={logo} className={styles.logo} alt="Flower Bakery Logo" />
+          
+          <h1>Welcome to the Bakery</h1>
+          <p className={styles.slogan}>Where passion blooms and pastries rise.</p>
+
+          <div className={styles.actionArea}>
+            <Link to="/LoginPage">
+              <button className={styles.logbutton}>Login Now</button>
+            </Link>
+
+            <div className={styles.registerPrompt}>
+              <span className={styles.divider}>or</span>
+              <p>Don't have an account yet?</p>
+              <Link to="/RegisterPage">
+                <button className={styles.registerbutton}>Register Now</button>
+              </Link>
+            </div>
+          </div>
+        </div>
       </section>
     </Layout>
   );
