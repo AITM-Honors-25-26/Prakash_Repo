@@ -1,25 +1,24 @@
 // Variables for easy color management
 $bg-color: #fefae0;
 $text-color:  #d4a373;
-
 $hover-color: #a01c26;
-
 $font-logo: 'Cormorant Garamond', serif;
 $font-nav: 'Amatic SC', cursive;
+
 .header {
-  // Flexbox to place the logo on the left and links on the right
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
   padding: 0rem 1%;
   background-color: $bg-color;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-  // Keeps the header fixed at the top of the screen when scrolling
   position: sticky;
   top: 0;
   z-index: 1000;
+  width: 100%;
+  box-sizing: border-box;
+
+  flex-wrap: nowrap; 
 
   .logo {
     font-size: 1.5rem;
@@ -27,11 +26,14 @@ $font-nav: 'Amatic SC', cursive;
     cursor: pointer;
     height: 100px;
     width: 100px;
+    transition: all 0.3s ease;
   }
+  
   .profile {
     cursor: pointer;
     height: 50px;
     width: 50px;
+    transition: all 0.3s ease;
   }
 
   .navLinks {
@@ -51,6 +53,52 @@ $font-nav: 'Amatic SC', cursive;
       &:hover {
         color: $hover-color;
       }
+    }
+  }
+
+
+  @media (max-width: 768px) {
+    .logo {
+      height: 70px;
+      width: 70px;
+    }
+    .profile {
+      height: 40px; 
+      width: 40px;
+    }
+    .navLinks {
+      gap: 1rem; 
+      a {
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  @media (max-width: 576px) {
+    padding: 0.5rem 15px; 
+    width: 100%; 
+
+    
+    .logo {
+      height: 40px; 
+      width: 40px;
+      order: 1;
+    }
+    
+    .navLinks {
+      order: 2; 
+      gap: 0.4rem; 
+      
+      a {
+        font-size: 0.7rem; 
+        letter-spacing: 0;  
+      }
+    }
+
+    .profile {
+      height: 30px; 
+      width: 30px;
+      order: 3; // Forces the profile icon to the far right
     }
   }
 }
