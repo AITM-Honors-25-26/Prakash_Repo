@@ -50,12 +50,22 @@ const RegisterPage: React.FC = () => {
       });
 
       const result = await response.json();
+      console.log("FULL BACKEND RESPONSE:", result);
 
       if (response.ok) {
         alert("Registration Successful!");
         navigate('/LoginPage');
       } else {
-        alert(result.message || "Registration failed");
+        if (result.error && typeof result.error === 'object') {
+          // Extract all the specific error messages and join them with a new line
+          const specificErrors = Object.values(result.error).join('\n');
+          
+          // Alert the generic message PLUS the specific errors
+          alert(`${result.message || "Registration Failed"}:\n\n${specificErrors}`);
+        } else {
+          // Fallback if there are no specific details
+          alert(result.message || "Registration failed");
+        }
       }
     } catch (error) {
       console.error("Connection error:", error);
@@ -76,9 +86,8 @@ const RegisterPage: React.FC = () => {
         <input name="address" placeholder="Address" onChange={handleChange} required />
         
         <select name="role" onChange={handleChange}>
-          <option value="Admin">Admin</option>
           <option value="Chef">Chef</option>
-          <option value="Witer">Waiter</option>
+          <option value="Waiter">Waiter</option> {/* Note: Fixed a small typo from "Witer" to "Waiter" here! */}
           <option value="Employee">Employee</option>
         </select>
 
@@ -100,7 +109,7 @@ const RegisterPage: React.FC = () => {
           {loading ? "Registering..." : "Register"}
         </button>
       </form>
-      <p>Already have an account? <Link to="LoginPage">Login</Link></p>
+      <p>Already have an account? <Link to="/LoginPage">Login</Link></p>
     </section>
   );
 };

@@ -1,16 +1,18 @@
 // Variables for easy color management
-$bg-color: #ffffff;
-$text-color: #333333;
-$primary-color: #0056b3;
-$hover-color: #004494;
+$bg-color: #fefae0;
+$text-color:  #d4a373;
 
+$hover-color: #a01c26;
+
+$font-logo: 'Cormorant Garamond', serif;
+$font-nav: 'Amatic SC', cursive;
 .header {
   // Flexbox to place the logo on the left and links on the right
   display: flex;
   justify-content: space-between;
   align-items: center;
   
-  padding: 1rem 5%;
+  padding: 0rem 1%;
   background-color: $bg-color;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
@@ -22,22 +24,27 @@ $hover-color: #004494;
   .logo {
     font-size: 1.5rem;
     font-weight: 700;
-    color: $primary-color;
+    cursor: pointer;
+    height: 100px;
+    width: 100px;
+  }
+  .profile {
     cursor: pointer;
     height: 50px;
     width: 50px;
   }
 
   .navLinks {
-    // Flexbox to space out the individual links
     display: flex;
     gap: 2rem;
 
-    // Because we are using SCSS, we can nest the 'a' tag styling directly inside .navLinks
     a {
+      font-family: $font-nav;
+      text-transform: uppercase;
+      letter-spacing: 1px;
       text-decoration: none;
       color: $text-color;
-      font-weight: 500;
+      font-weight: bold;
       font-size: 1rem;
       transition: color 0.2s ease-in-out;
 

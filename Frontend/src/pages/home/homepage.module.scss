@@ -1,3 +1,22 @@
-.container{
+.topsection{
+    width: 100%;
+}
 
+.photoholder{
+    position: relative;
+    overflow: hidden;
+}
+.photo{
+    width: 100%;
+
+}
+.welcomecontent{
+   position: absolute;       
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
+  text-align: center;
+  color: #ffffff;           
+  width: 100%;
+  padding: 0 20px; 
 }

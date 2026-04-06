@@ -83,6 +83,7 @@ const LoginPage: React.FC = () => {
       </form>
 
       <p>Or go back to <Link to="/">Home</Link></p>
+      <p>Or go back to <Link to="/RegisterPage">Register</Link></p>
     </section>
   );
 };
