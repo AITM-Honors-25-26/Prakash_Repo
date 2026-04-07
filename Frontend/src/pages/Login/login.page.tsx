@@ -3,6 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { API_ENDPOINTS } from '../../assets/constants/constants';
 import styles from "./loginpage.module.scss"
 import logo from "../../../img/Logo.png"
+import { toast, ToastContainer } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -32,30 +35,32 @@ const LoginPage: React.FC = () => {
         console.log("Full Result Data:", result.data);
         const userStatus = result.data.status;
         if(userStatus === false){
-          alert("Your account is not activated")
+          toast.error("Your account is not activated")
           return;
         }
         const token = result.data?.accessToken;
 
         if (token) {
           localStorage.setItem('token', token);
-          alert("Login Successful!");
+          toast.success("Login Successful!");
           navigate('/');
         } else {
-          alert("Login failed: No token received");
+          toast.error("Login failed: No token received");
         }
       } else {
-        alert(result.message || "Invalid credentials");
+        toast.error(result.message || "Invalid credentials");
       }
     } catch (error) {
       console.error("Connection error:", error);
-      alert("Check if backend is running and CORS is enabled.");
+      toast.error("Check if backend is running and CORS is enabled.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
+    <>
+    <ToastContainer position="top-right" autoClose={3000} />
     
    <section className={styles.whole}>
   <div className={styles.leftdisplay}>
@@ -100,6 +105,7 @@ const LoginPage: React.FC = () => {
     </div>
   </div>
 </section>
+</>
   );
 };
 

@@ -1,34 +1,28 @@
 $font-header: 'Amatic SC', cursive;
-.whole {
-  display: flex;
-  min-height: 100vh; 
-  align-items: center;
-  justify-content: center;
-  background-color: #f4f7f6;
-  padding: 20px px;
+
+.whole{
+    display: flex;
+    min-height: 100vh;
+    justify-content: center;
+    align-items: center;
 }
-
-.leftdisplay {
-  width: 40%;
-  height: 600px; 
-  background: linear-gradient(135deg, #bc7e51 0%, #f3c4cd 100%); 
-  border-radius: 20px 0 0 20px; 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  padding: 60px;
-
-  img {
-    width: 80%;
-    max-width: 100%px;
-    height: auto;
-    object-fit: contain;
-  }
+.leftside{
+    width: 40%;
+    height: 600px;
+    background-color: #7fffd4;
+    border-radius: 20px 0 0 20px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 60px;
+    img{
+        width: 100%;
+    }
 }
-
-.rightdsiplay {
-  width: 40%;
+.rightside{
+    width: 40%;
   height: 600px;
   background-color: #ffffff;
   border-radius: 0 20px 20px 0;
@@ -37,31 +31,11 @@ $font-header: 'Amatic SC', cursive;
   flex-direction: column;
   justify-content: center;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-
-  h2 {
-    font-family:$font-header;
-    margin-bottom: 30px;
-    font-size: 3rem;
-    color: #333;
-  }
-
-  form {
-    div {
-      margin-bottom: 15px;
-    }
-
-    label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 5px;
-      color: #555;
-      font-family:$font-header;
-    }
-
     input {
       width: 100%;
       padding: 12px 15px;
       border: 1.5px solid #eee;
+      margin-bottom: 10px;
       border-radius: 8px;
       font-size: 16px;
       outline: none;
@@ -73,9 +47,20 @@ $font-header: 'Amatic SC', cursive;
         box-shadow: 0 0 8px rgba(79, 172, 254, 0.2);
       }
     }
-
-    button {
-      width: 100%;
+    h2{
+        font-family: $font-header;
+        font-size: 3rem;
+        color: #333;
+        font-weight: bolder;
+    }
+    p{
+        font-family: $font-header;
+    }
+    label{
+        font-family: $font-header;
+    }
+    button{
+        width: 100%;
       padding: 14px;
       background-color: #4facfe;
       color: white;
@@ -87,19 +72,15 @@ $font-header: 'Amatic SC', cursive;
       cursor: pointer;
       transition: background 0.3s ease;
       margin-top: 10px;
-
       &:hover:not(:disabled) {
         background-color: #0089ff;
       }
-
       &:disabled {
         background-color: #ccc;
         cursor: not-allowed;
       }
-    }
-  }
-
-  .links {
+    }  
+     .links {
     margin-top: 20px;
     text-align: center;
     font-family:$font-header;
@@ -115,20 +96,5 @@ $font-header: 'Amatic SC', cursive;
       font-weight: 600;
       &:hover { text-decoration: underline; }
     }
-  }
-}
-
-
-@media (max-width: 768px) {
-  .whole {
-    flex-direction: column;
-  }
-  .leftdisplay, .rightdsiplay {
-    width: 100%;
-    height: auto;
-    border-radius: 20px;
-  }
-  .leftdisplay {
-    display: none; 
-  }
+  }    
 }

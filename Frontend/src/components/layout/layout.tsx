@@ -1,5 +1,7 @@
 import React from 'react';
 import Header from './../header/header';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -12,6 +14,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <main>
         {children}
       </main>
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

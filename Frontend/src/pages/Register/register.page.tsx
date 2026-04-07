@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { API_ENDPOINTS } from '../../assets/constants/constants';
+import logo from '../../../img/Logo.png'
+import styles from './registerPage.module.scss'
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -19,7 +20,6 @@ const RegisterPage: React.FC = () => {
   });
 
   const [image, setImage] = useState<File | null>(null);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -51,19 +51,14 @@ const RegisterPage: React.FC = () => {
 
       const result = await response.json();
       console.log("FULL BACKEND RESPONSE:", result);
-
       if (response.ok) {
         alert("Registration Successful!");
         navigate('/LoginPage');
       } else {
         if (result.error && typeof result.error === 'object') {
-          // Extract all the specific error messages and join them with a new line
           const specificErrors = Object.values(result.error).join('\n');
-          
-          // Alert the generic message PLUS the specific errors
           alert(`${result.message || "Registration Failed"}:\n\n${specificErrors}`);
         } else {
-          // Fallback if there are no specific details
           alert(result.message || "Registration failed");
         }
       }
@@ -74,9 +69,12 @@ const RegisterPage: React.FC = () => {
       setLoading(false);
     }
   };
-
   return (
-    <section>
+    <section className={styles.whole}>
+      <div className={styles.leftside}>
+        <img src={logo} alt="" />
+      </div>
+      <div className={styles.rightside}>
       <h2>Register</h2>
       <form onSubmit={handleRegister}>
         <input name="fullName" placeholder="Full Name" onChange={handleChange} required />
@@ -110,6 +108,7 @@ const RegisterPage: React.FC = () => {
         </button>
       </form>
       <p>Already have an account? <Link to="/LoginPage">Login</Link></p>
+      </div>
     </section>
   );
 };
