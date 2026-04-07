@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { API_ENDPOINTS } from '../../assets/constants/constants';
+import styles from "./loginpage.module.scss"
+import logo from "../../../img/Logo.png"
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -54,37 +56,50 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <section>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>Email: </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
+    
+   <section className={styles.whole}>
+  <div className={styles.leftdisplay}>
+    <img src={logo} alt="Company Logo" />
+  </div>
 
-        <div>
-          <label>Password: </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
+  <div className={styles.rightdsiplay}>
+    <h2>Login</h2>
+    <form onSubmit={handleLogin}>
+      <div>
+        <label htmlFor="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+      </div>
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form>
+      <div>
+        <label htmlFor="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          placeholder="Enter your Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </div>
 
-      <p>Or go back to <Link to="/">Home</Link></p>
-      <p>Or go back to <Link to="/RegisterPage">Register</Link></p>
-    </section>
+      <button type="submit" disabled={loading}>
+        {loading ? "Logging in..." : "Login"}
+      </button>
+    </form>
+
+    <div className={styles.links}>
+      <p>Don't have an account? <Link to="/RegisterPage">Register</Link></p>
+      <p><Link to="/">Back to Home</Link></p>
+    </div>
+  </div>
+</section>
   );
 };
 
