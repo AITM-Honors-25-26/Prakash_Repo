@@ -112,5 +112,4 @@ const RegisterPage: React.FC = () => {
     </section>
   );
 };
-
 export default RegisterPage;

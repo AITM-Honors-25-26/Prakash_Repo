@@ -31,6 +31,20 @@ $font-header: 'Amatic SC', cursive;
   flex-direction: column;
   justify-content: center;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  select{
+    width: 20%;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-size: 15px;
+    border: 1.5px solid #eee;
+    margin-bottom: 10px;
+    font-family: $font-header;
+    cursor: pointer;
+    &:focus {
+      border-color: #4facfe;
+      box-shadow: 0 0 8px rgba(79, 172, 254, 0.2);
+    }
+  }
     input {
       width: 100%;
       padding: 12px 15px;
@@ -96,5 +110,12 @@ $font-header: 'Amatic SC', cursive;
       font-weight: 600;
       &:hover { text-decoration: underline; }
     }
-  }    
+    select{
+      padding: 12px 15px;
+     
+    border-color: red;
+  }
+  }   
+   
+  
 }
