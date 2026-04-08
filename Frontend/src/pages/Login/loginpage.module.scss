@@ -37,9 +37,15 @@ $font-header: 'Amatic SC', cursive;
   flex-direction: column;
   justify-content: center;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-
+  img{
+    height: 200px;
+    width: 200px;
+    display: flex;
+    align-self: center; 
+  }
   h2 {
     font-family:$font-header;
+    margin-top: 0px;
     margin-bottom: 30px;
     font-size: 3rem;
     color: #333;
@@ -59,7 +65,7 @@ $font-header: 'Amatic SC', cursive;
     }
 
     input {
-      width: 100%;
+      width: 95%;
       padding: 12px 15px;
       border: 1.5px solid #eee;
       border-radius: 8px;
@@ -117,14 +123,50 @@ $font-header: 'Amatic SC', cursive;
     }
   }
 }
+.middle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 0px;
+  margin-bottom: 0px !important; 
 
+  div {
+    margin-bottom: 0px !important; 
+  }
+
+  .forgetpass {
+    font-family: $font-header;
+    a{
+      color: red;
+      text-decoration: none;
+      &:hover{
+        color: darken;
+      }
+    }
+  }
+
+  .remember {
+    font-family: $font-header;
+    display: flex; 
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+
+    .box {
+      background-color: #ffffff;
+      border: #333 5px solid;
+      height: 10px;
+      width: 10px;
+    }
+  }
+}
 
 @media (max-width: 768px) {
   .whole {
     flex-direction: column;
   }
-  .leftdisplay, .rightdsiplay {
-    width: 100%;
+  .rightdsiplay {
+    width: 95%;
     height: auto;
     border-radius: 20px;
   }

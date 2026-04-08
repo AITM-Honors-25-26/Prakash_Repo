@@ -4,6 +4,7 @@ import { API_ENDPOINTS } from '../../assets/constants/constants';
 import styles from "./loginpage.module.scss"
 import logo from "../../../img/Logo.png"
 import { toast, ToastContainer } from 'react-toastify';
+import leftDesign from "../../../img/walpaper/1.png"
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -12,7 +13,10 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+
   const navigate = useNavigate();
+
+  
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,6 +46,7 @@ const LoginPage: React.FC = () => {
 
         if (token) {
           localStorage.setItem('token', token);
+          
           toast.success("Login Successful!");
           navigate('/');
         } else {
@@ -64,11 +69,12 @@ const LoginPage: React.FC = () => {
     
    <section className={styles.whole}>
   <div className={styles.leftdisplay}>
-    <img src={logo} alt="Company Logo" />
+    <img src={leftDesign} alt="Company Logo" />
   </div>
 
   <div className={styles.rightdsiplay}>
-    <h2>Login</h2>
+  <img src={logo} alt="" />
+    <h2>Login to your account</h2>
     <form onSubmit={handleLogin}>
       <div>
         <label htmlFor="email">Email</label>
@@ -93,11 +99,21 @@ const LoginPage: React.FC = () => {
           required
         />
       </div>
+      <div className={styles.middle}>
+      <div className={styles.remember}>
+      <div className={styles.box}></div>
+      <p>Remember Your password</p>
+      </div>
+      <div className={styles.forgetpass}>
+      <p><Link to="/ForgetPassPage">Forget Password</Link></p>
+      </div>
+      </div>
 
       <button type="submit" disabled={loading}>
         {loading ? "Logging in..." : "Login"}
       </button>
     </form>
+    
 
     <div className={styles.links}>
       <p>Don't have an account? <Link to="/RegisterPage">Register</Link></p>

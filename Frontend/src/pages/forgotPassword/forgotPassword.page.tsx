@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { API_ENDPOINTS } from '../../assets/constants/constants';
 import styles from "./forgotPassword.module.scss"
+
 import logo from "../../../img/Logo.png"
 import { toast, ToastContainer } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
 
-const LoginPage: React.FC = () => {
+const ForgetPassPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -17,7 +18,7 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch(API_ENDPOINTS.LOGIN, {
+      const response = await fetch(API_ENDPOINTS.FORGETPASSWORD, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email}),
@@ -62,12 +63,16 @@ const LoginPage: React.FC = () => {
     <ToastContainer position="top-right" autoClose={3000} />
     
    <section className={styles.whole}>
+    <div>
+
+    </div>
   <div className={styles.leftdisplay}>
     <img src={logo} alt="Company Logo" />
   </div>
 
   <div className={styles.rightdsiplay}>
-    <h2>Login</h2>
+    <img src={logo} className={styles.smallLogo} alt="Company Logo" />
+    <h2>Forget Your Password</h2>
     <form onSubmit={handleLogin}>
       <div>
         <label htmlFor="email">Email</label>
@@ -81,12 +86,11 @@ const LoginPage: React.FC = () => {
         />
       </div>
       <button type="submit" disabled={loading}>
-        {loading ? "Logging in..." : "Login"}
+        {loading ? "Submitting..." : "Submit"}
       </button>
     </form>
 
     <div className={styles.links}>
-      <p>Don't have an account? <Link to="/RegisterPage">Register</Link></p>
       <p><Link to="/">Back to Home</Link></p>
     </div>
   </div>
@@ -95,4 +99,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default ForgetPassPage;
