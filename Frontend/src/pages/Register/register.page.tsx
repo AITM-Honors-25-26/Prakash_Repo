@@ -3,6 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { API_ENDPOINTS } from '../../assets/constants/constants';
 import logo from '../../../img/Logo.png'
 import styles from './registerPage.module.scss'
+import { toast, ToastContainer } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -52,24 +55,27 @@ const RegisterPage: React.FC = () => {
       const result = await response.json();
       console.log("FULL BACKEND RESPONSE:", result);
       if (response.ok) {
-        alert("Registration Successful!");
+        toast.success("Registration Successful!");
         navigate('/LoginPage');
       } else {
         if (result.error && typeof result.error === 'object') {
           const specificErrors = Object.values(result.error).join('\n');
-          alert(`${result.message || "Registration Failed"}:\n\n${specificErrors}`);
+          toast.error(`${result.message || "Registration Failed"}:\n\n${specificErrors}`);
         } else {
-          alert(result.message || "Registration failed");
+          toast.error(result.message || "Registration failed");
         }
       }
     } catch (error) {
       console.error("Connection error:", error);
-      alert("Check if backend is running.");
+      toast.error("Check if backend is running.");
     } finally {
       setLoading(false);
     }
   };
   return (
+    <>
+    <ToastContainer position="top-right" autoClose={3000} />
+        
     <section className={styles.whole}>
       <div className={styles.leftside}>
         <img src={logo} alt="" />
@@ -110,6 +116,7 @@ const RegisterPage: React.FC = () => {
       <p>Already have an account? <Link to="/LoginPage">Login</Link></p>
       </div>
     </section>
+    </>
   );
 };
 export default RegisterPage;

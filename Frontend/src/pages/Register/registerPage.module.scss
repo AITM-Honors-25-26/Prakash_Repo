@@ -1,121 +1,136 @@
 $font-header: 'Amatic SC', cursive;
+$primary-blue: #4facfe;
+$hover-blue: #0089ff;
+$border-color: #eee;
+$text-dark: #333;
+$text-muted: #666;
+$shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 
-.whole{
-    display: flex;
-    min-height: 100vh;
-    justify-content: center;
-    align-items: center;
+@mixin header-font {
+  font-family: $font-header;
 }
-.leftside{
-    width: 40%;
-    height: 600px;
-    background-color: #7fffd4;
-    border-radius: 20px 0 0 20px; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    padding: 60px;
-    img{
-        width: 100%;
-    }
+@mixin focus-state {
+  border-color: $primary-blue;
+  box-shadow: 0 0 8px rgba(79, 172, 254, 0.2);
 }
-.rightside{
-    width: 40%;
+.whole {
+  display: flex;
+  min-height: 100vh;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+.leftside, .rightside {
+  width: 40%;
   height: 600px;
+  box-shadow: $shadow;
+  display: flex;
+  padding: 60px;
+  @media (max-width: 768px) {
+    width: 100%;
+    height: auto;
+    padding: 40px 20px;
+  }
+}
+.leftside {
+  background-color: #7fffd4;
+  border-radius: 20px 0 0 20px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  @media (max-width: 768px) {
+    display: none; 
+  }
+
+  img {
+    width: 100%;
+    object-fit: contain;
+  }
+}
+.rightside {
   background-color: #ffffff;
   border-radius: 0 20px 20px 0;
-  padding: 60px;
-  display: flex;
   flex-direction: column;
   justify-content: center;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  select{
-    width: 20%;
-    padding: 10px 15px;
-    border-radius: 10px;
-    font-size: 15px;
-    border: 1.5px solid #eee;
+  @media (max-width: 768px) {
+    border-radius: 20px; 
+
+  }
+  h2 {
+    @include header-font;
+    font-size: 2rem;
+    color: $text-dark;
+    font-weight: bolder;
     margin-bottom: 10px;
-    font-family: $font-header;
-    cursor: pointer;
+  }
+  p, label {
+    @include header-font;
+  }
+  input, select {
+    @include header-font;
+    width: 100%;
+    padding: 10px 15px;
+    border: 1.5px solid $border-color;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+    @media (max-width: 768px) {
+    width: 95%;
+
+  }
+
     &:focus {
-      border-color: #4facfe;
-      box-shadow: 0 0 8px rgba(79, 172, 254, 0.2);
+      @include focus-state;
     }
   }
-    input {
+  select {
+    width: auto;
+    min-width: 20%;
+    cursor: pointer;
+    @media (max-width: 768px) {
       width: 100%;
-      padding: 12px 15px;
-      border: 1.5px solid #eee;
-      margin-bottom: 10px;
-      border-radius: 8px;
-      font-size: 16px;
-      outline: none;
-      transition: all 0.3s ease;
-      font-family:$font-header;
-
-      &:focus {
-        border-color: #4facfe;
-        box-shadow: 0 0 8px rgba(79, 172, 254, 0.2);
-      }
     }
-    h2{
-        font-family: $font-header;
-        font-size: 3rem;
-        color: #333;
-        font-weight: bolder;
+  }
+  button {
+    @include header-font;
+    width: 100%;
+    padding: 14px;
+    background-color: $primary-blue;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    margin-top: 10px;
+    &:hover:not(:disabled) {
+      background-color: $hover-blue;
     }
-    p{
-        font-family: $font-header;
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
     }
-    label{
-        font-family: $font-header;
-    }
-    button{
-        width: 100%;
-      padding: 14px;
-      background-color: #4facfe;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-family:$font-header;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s ease;
-      margin-top: 10px;
-      &:hover:not(:disabled) {
-        background-color: #0089ff;
-      }
-      &:disabled {
-        background-color: #ccc;
-        cursor: not-allowed;
-      }
-    }  
-     .links {
+  }
+  .links {
+    @include header-font;
     margin-top: 20px;
     text-align: center;
-    font-family:$font-header;
     p {
-      font-size: 10px;
-      color: #666;
+      color: $text-muted;
       margin: 5px 0;
       font-size: 20px;
     }
     a {
-      color: #4facfe;
+      color: $primary-blue;
       text-decoration: none;
       font-weight: 600;
-      &:hover { text-decoration: underline; }
+      &:hover {
+        text-decoration: underline;
+      }
     }
-    select{
-      padding: 12px 15px;
-     
-    border-color: red;
   }
-  }   
-   
-  
 }
