@@ -1,0 +1,19 @@
+$font-header: 'Amatic SC', cursive;
+.whole{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: $font-header;
+    background-color: antiquewhite;
+    .header{
+        text-align: center;
+    }
+    h1{
+        font-size: 50px;
+        padding-top: 40px;
+    }
+    h1 span{
+        display: block;
+        font-size: 45px;
+    }
+}
