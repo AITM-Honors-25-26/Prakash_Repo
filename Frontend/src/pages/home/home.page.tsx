@@ -25,7 +25,7 @@ const Homepage: React.FC = () => {
             </Link>
 
             <div className={styles.registerPrompt}>
-              <span className={styles.divider}>or</span>
+              <span className={styles.divider}><p>or</p></span>
               <p>Don't have an account yet?</p>
               <Link to="/RegisterPage">
                 <button className={styles.registerbutton}>Register Now</button>

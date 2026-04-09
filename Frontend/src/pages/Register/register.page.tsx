@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { API_ENDPOINTS } from '../../assets/constants/constants';
-import logo from '../../../img/Logo.png'
 import styles from './registerPage.module.scss'
 import { toast, ToastContainer } from 'react-toastify';
+import walpaper2 from '../../../img/walpaper/2.png'
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -74,11 +74,11 @@ const RegisterPage: React.FC = () => {
   };
   return (
     <>
-    <ToastContainer position="top-right" autoClose={3000} />
+    <ToastContainer position="top-right" theme="colored" autoClose={3000} />
         
     <section className={styles.whole}>
       <div className={styles.leftside}>
-        <img src={logo} alt="" />
+        <img src={walpaper2} alt="" />
       </div>
       <div className={styles.rightside}>
       <h2>Register</h2>

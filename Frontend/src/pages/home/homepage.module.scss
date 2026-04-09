@@ -1,8 +1,9 @@
 $font-Cursive: 'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', cursive;
+$font-header: 'Amatic SC', cursive;
 
 .topsection {
     width: 100%;
-    position: relative; // Ensures children position correctly
+    position: relative;
 }
 
 .photoholder {
@@ -14,21 +15,20 @@ $font-Cursive: 'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', cursive;
     width: 100%;
     height: 85vh; 
     object-fit: cover; 
-    filter: brightness(0.5); // Darker filter makes white text easier to read
+    filter: brightness(0.5);
 }
 
 .welcomecontent {
     position: absolute;       
-    top: 50%;
+    top: 45%;
     left: 50%;
     transform: translate(-50%, -50%); 
     text-align: center;
     color: #ffffff;           
     width: 100%;
-    max-width: 500px; // Keeps the text from getting too wide on desktop
+    max-width: 600px;
 
     .logo {
-        padding-top: 20px;
         height: 250px; 
         max-width: 100%; 
         object-fit: contain; 
@@ -36,15 +36,16 @@ $font-Cursive: 'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', cursive;
 
     h1 {
         font-family: $font-Cursive;
-        font-size: 60px;
-        margin-bottom: 5px;
+        font-size: 50px;
+        margin-bottom: 0px;
         text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
     }
 
     p {
-        font-family: $font-Cursive;
+        font-family: $font-header;
         font-size: 18px;
-        margin: 5px 0;
+        margin: 1px 0;
+        margin-bottom: 15px;
     }
 
     .paragraph {
@@ -60,14 +61,15 @@ $font-Cursive: 'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', cursive;
 
 .logbutton {
     padding: 12px 30px;
-    border-radius: 25px; // Rounder buttons feel more modern/bakery-style
-    background-color: #2d6a4f; // A softer "Forest Green"
+    border-radius: 25px; 
+    background-color: #2d6a4f;
     border: none;
     color: #ffffff;
     font-weight: bold;
     cursor: pointer;
     width: 200px;
     transition: transform 0.2s;
+    font-family: $font-header;
 
     &:hover {
         transform: scale(1.05);
@@ -85,6 +87,7 @@ $font-Cursive: 'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', cursive;
     cursor: pointer;
     width: 200px;
     transition: all 0.2s;
+    font-family: $font-header;
     
     &:hover {
         background-color: #ffffff;
