@@ -60,7 +60,7 @@ const ForgetPassPage: React.FC = () => {
 
   return (
     <>
-    <ToastContainer position="top-right" autoClose={3000} />
+    <ToastContainer position="top-right" theme="colored" autoClose={3000} />
     
    <section className={styles.whole}>
     <div>
