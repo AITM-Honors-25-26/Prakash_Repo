@@ -1,0 +1,34 @@
+$font-header: 'Amatic SC', cursive;
+
+.footer{
+    height: 400px;
+    background-color: #a3b18a;
+    margin-top: 10px;
+    border-radius: 10px 10px 0px 0px;
+    display: flex;
+    flex-direction: row;
+    div{
+        flex: 1;   
+        font-family: $font-header;       
+    }
+    .leftdiv{
+        background-color: #f0f3bd;
+        border-radius: 10px 0px 0px 0px;
+        img{
+            width: 30%;
+            padding-left: 50px;
+            padding-top: 20px;
+        }
+        h2{
+            padding-left: 10%;
+            margin-top: 0px;
+        }
+    }
+    .middlediv{
+        background-color: #02c39a;
+    }
+    .rightdiv{
+        background-color: #05668d;
+        border-radius: 0px 10px 0px 0px;
+    }
+}

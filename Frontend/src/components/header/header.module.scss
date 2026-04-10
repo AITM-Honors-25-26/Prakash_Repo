@@ -1,9 +1,7 @@
-$bg-color: #fefae0;
-$text-color:  #d4a373;
+$bg-color: #48392a;
+$text-color:  #f0e9e9;
 $hover-color: #a01c26;
-$font-logo: 'Cormorant Garamond', serif;
-$font-nav: 'Amatic SC', cursive;
-
+$font-nav: 'Verdana', Geneva, sans-serif;
 .header {
   display: flex;
   justify-content: space-between;
@@ -25,6 +23,7 @@ $font-nav: 'Amatic SC', cursive;
     height: 100px;
     width: 100px;
     transition: all 0.3s ease;
+    padding-left: 50px;
   }
   
   .profile {
@@ -32,6 +31,7 @@ $font-nav: 'Amatic SC', cursive;
     height: 50px;
     width: 50px;
     transition: all 0.3s ease;
+    padding-right: 50px;
   }
 
   .navLinks {

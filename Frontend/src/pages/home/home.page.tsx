@@ -2,8 +2,9 @@ import React from 'react';
 import Layout from './../../components/layout/layout';
 import { Link } from 'react-router-dom';
 import profile from '../../../img/bakery photo.png'
-import logo from '../../../img/Logo.png'
+import logowhite from '../../../img/log.white.png'
 import styles from './homepage.module.scss';
+
 
 const Homepage: React.FC = () => {
   return (
@@ -14,7 +15,7 @@ const Homepage: React.FC = () => {
         </div>
 
         <div className={styles.welcomecontent}>
-          <img src={logo} className={styles.logo} alt="Flower Bakery Logo" />
+          <img src={logowhite} className={styles.logo} alt="Flower Bakery Logo" />
           
           <h1>Welcome to the Bakery</h1>
           <p className={styles.slogan}>Where passion blooms and pastries rise.</p>

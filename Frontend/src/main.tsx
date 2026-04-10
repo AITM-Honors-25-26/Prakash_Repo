@@ -6,6 +6,7 @@ import LoginPage from "./pages/Login/login.page";
 import RegisterPage from "./pages/Register/register.page";
 import ForgetPassPage from "./pages/forgotPassword/forgotPassword.page";
 import ContactUs from "./pages/ContactUS/ContactUs.Page"
+import AboutUsPage from "./pages/AboutUs/aboutUs.page";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -16,6 +17,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/RegisterPage" element={<RegisterPage />} />
         <Route path="/ForgetPassPage" element={<ForgetPassPage />} />
         <Route path="/ContactUsPage" element={<ContactUs />}  />
+        <Route path="/AboutUsPage" element={<AboutUsPage />}/>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
