@@ -1,8 +1,6 @@
 import React from 'react';
 import Layout from './../../components/layout/layout';
 import location from '../../../img/logos/location.png'
-
-
 import styles from './ContactUsPage.module.scss';
 
 const ContactUs: React.FC = () => {
@@ -24,12 +22,8 @@ const ContactUs: React.FC = () => {
                 <p>tihs is 3</p>
             </div>
         </div>
-          
-          
-
       </section>
     </Layout>
   );
 };
-
 export default ContactUs;

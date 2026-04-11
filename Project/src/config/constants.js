@@ -10,9 +10,7 @@ export const DBConfig ={
     mongodbUrl:process.env.MONGODB_URL,
     dbName:process.env.MANGO_DB_NAME
 };
-
 export default CloudinaryConfig;
-
 export const UserRole={
     ADMIN:"Admin",
     CHEF:"Chef",
@@ -37,4 +35,3 @@ export const SMTPConfig={
     password:process.env.SMTP_PASSWORD,
     port:process.env.SMTP_PORT
 }
-

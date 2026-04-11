@@ -4,10 +4,8 @@ import { API_ENDPOINTS } from '../../assets/constants/constants';
 import styles from './registerPage.module.scss'
 import { toast, ToastContainer } from 'react-toastify';
 import walpaper2 from '../../../img/walpaper/2.png'
-
 import 'react-toastify/dist/ReactToastify.css';
-
-const RegisterPage: React.FC = () => {
+  const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -21,22 +19,18 @@ const RegisterPage: React.FC = () => {
     phone: '',
     dob: '',
   });
-
   const [image, setImage] = useState<File | null>(null);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setImage(e.target.files[0]);
     }
   };
-
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     const data = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
       data.append(key, value);
@@ -45,7 +39,6 @@ const RegisterPage: React.FC = () => {
     if (image) {
       data.append('image', image);
     }
-
     try {
       const response = await fetch(API_ENDPOINTS.REGISTER, {
         method: 'POST',
@@ -88,27 +81,22 @@ const RegisterPage: React.FC = () => {
         <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
         <input name="confirmPassword" type="password" placeholder="Confirm Password" onChange={handleChange} required />
         <input name="address" placeholder="Address" onChange={handleChange} required />
-        
         <select name="role" onChange={handleChange}>
           <option value="Chef">Chef</option>
-          <option value="Waiter">Waiter</option> {/* Note: Fixed a small typo from "Witer" to "Waiter" here! */}
+          <option value="Waiter">Waiter</option> 
           <option value="Employee">Employee</option>
         </select>
-
         <select name="gender" onChange={handleChange}>
           <option value="Male">Male</option>
           <option value="Female">Female</option>
           <option value="Other">Other</option>
         </select>
-
         <input name="phone" placeholder="Phone" onChange={handleChange} required />
         <input name="dob" type="date" onChange={handleChange} required />
-        
         <div>
           <label>Profile Image: </label>
           <input type="file" accept="image/*" onChange={handleFileChange} required />
         </div>
-
         <button type="submit" disabled={loading}>
           {loading ? "Registering..." : "Register"}
         </button>
