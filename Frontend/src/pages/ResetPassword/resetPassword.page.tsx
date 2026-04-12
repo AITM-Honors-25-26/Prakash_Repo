@@ -67,7 +67,7 @@ const ResetPasswordPage: React.FC = () => {
         <div className={styles.rightdsiplay}>
           <img src={logo} className={styles.smallLogo} alt="Company Logo" />
           <h2>Create New Password</h2>
-          <p style={{ marginBottom: "20px", color: "#555" }}>
+          <p>
             Please enter your new password below.
           </p>
           
@@ -85,7 +85,7 @@ const ResetPasswordPage: React.FC = () => {
               />
             </div>
             
-            <div style={{ marginTop: "15px" }}>
+            <div>
               <label htmlFor="confirmPassword">Confirm Password</label>
               <input
                 id="confirmPassword"

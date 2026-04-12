@@ -17,26 +17,40 @@ $font-header: 'Amatic SC', cursive;
         color: white;
         display: flex;
         flex-direction: column;
+        justify-content: center;
+        align-items: center;
         img{
             width: 30%;
-            padding-left: 50px;
-            padding-top: 20px;
         }
-        h2{
-            padding-left: 10%;
-            text-align: end;
-            margin-top: auto;
-            text-align: center;
+        h5{
+            text-align: justify;
+            padding-left: 15px;
+            padding-right: 15px;
+
+        }
+        .logs{
+            display: flex;
+            flex-direction: row;
+            gap: 40px;
         }
         .imglogo{
-            width: 30px;
+            width: 25px;
+            height: 25px;
+            &:hover{
+                cursor: pointer;
+                transform: scale(1.2);
+            }
+            
         }
     }
-    .middlediv{
-        background-color: #02c39a;
+    .middlleftediv{
+        background-color: #48392a;
+    }
+    .middlrightediv{
+        background-color: red;
     }
     .rightdiv{
-        background-color: #05668d;
+        background-color: #48392a;
         border-radius: 0px 10px 0px 0px;
     }
 }
