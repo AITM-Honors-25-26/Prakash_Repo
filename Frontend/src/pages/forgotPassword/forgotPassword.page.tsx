@@ -48,8 +48,8 @@ const ForgetPassPage: React.FC = () => {
         <div className={styles.rightdsiplay}>
           <img src={logo} className={styles.smallLogo} alt="Company Logo" />
           <h2>Forgot Your Password?</h2>
-          <p style={{ marginBottom: "20px", color: "#555" }}>
-            Enter your email address and we will send you a link to reset your password.
+          <p>
+            Enter your email address that you used to register.
           </p>
           <form onSubmit={handleSubmit}>
             <div>
@@ -68,7 +68,7 @@ const ForgetPassPage: React.FC = () => {
             </button>
           </form>
           <div className={styles.links}>
-            <p><Link to="/login">Back to Login</Link></p> 
+            <p><Link to="/LoginPage">Back to Login</Link></p> 
           </div>
         </div>
       </section>

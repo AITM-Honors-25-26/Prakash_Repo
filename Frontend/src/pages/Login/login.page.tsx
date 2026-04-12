@@ -86,13 +86,14 @@ const LoginPage: React.FC = () => {
         />
       </div>
       <div className={styles.middle}>
-      <div className={styles.remember}>
-      <div className={styles.box}></div>
-      <p>Remember Your password</p>
-      </div>
-      <div className={styles.forgetpass}>
-      <p><Link to="/ForgetPassPage">Forget Password</Link></p>
-      </div>
+        <div className={styles.remember}>
+          <div className={styles.box}>
+          </div>
+          <p>Remember Your password</p>
+        </div>
+        <div className={styles.forgetpass}>
+        <p><Link to="/ForgetPassPage">Forget Password</Link></p>
+        </div>
       </div>
       <button type="submit" disabled={loading}>
         {loading ? "Logging in..." : "Login"}

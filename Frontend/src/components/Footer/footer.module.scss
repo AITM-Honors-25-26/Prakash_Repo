@@ -7,9 +7,20 @@ $font-header: 'Amatic SC', cursive;
     border-radius: 10px 10px 0px 0px;
     display: flex;
     flex-direction: row;
+    border-radius: 10px;
+
+    @media (max-width: 768px) {
+        display: block;
+        height: 100%;
+        padding: 0px 0px 20px 0px;
+  }
     div{
         flex: 1;   
-        font-family: $font-header;       
+        font-family: $font-header; 
+        @media (max-width: 768px) {
+            padding: 0px 10px;
+            
+        }      
     }
     .leftdiv{
         background-color: #48392a;
@@ -19,19 +30,26 @@ $font-header: 'Amatic SC', cursive;
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        border-radius: 10px 10px 0px 0px;
         img{
             width: 30%;
+            @media (max-width: 768px) {
+            height: 50px;
+            width: 50px;
+        }
         }
         h5{
             text-align: justify;
             padding-left: 15px;
             padding-right: 15px;
-
+            @media (max-width: 768px) {
+            font-size: 8px;
+        }  
         }
         .logs{
             display: flex;
             flex-direction: row;
-            gap: 40px;
+            gap: 40px;                
         }
         .imglogo{
             width: 25px;
@@ -40,6 +58,10 @@ $font-header: 'Amatic SC', cursive;
                 cursor: pointer;
                 transform: scale(1.2);
             }
+            @media (max-width: 768px) {
+            height: 10px;
+            width: 10px;
+        } 
             
         }
     }
@@ -47,10 +69,66 @@ $font-header: 'Amatic SC', cursive;
         background-color: #48392a;
     }
     .middlrightediv{
-        background-color: red;
+        padding-left: 20px;
+        padding-top: 5px;
+        .navLinks{
+            p{
+                color: rgb(196, 196, 196);
+                font-size: 30px;
+                font-weight: 900;
+
+                @media (max-width: 768px) {
+                    font-size: 20px;
+                } 
+            }
+            a{
+                display: flex;
+                flex-direction: row;
+                color: white;
+                padding-left: 10px;
+                text-decoration: none;
+                font-weight: 600;
+                margin-bottom: 10px;
+                &:hover{
+                    cursor: pointer;
+                    text-decoration: underline;
+                    color: aqua;
+                }
+                @media (max-width: 768px) {
+            font-size: 10px;
+        } 
+            }
+        }        
     }
     .rightdiv{
-        background-color: #48392a;
         border-radius: 0px 10px 0px 0px;
+        h2{
+            color: white;
+
+            @media (max-width: 768px) {
+            font-size: 20px;
+            padding-left: 10px;
+        } 
+        }
+        input{
+            font-family: $font-header;
+            margin-bottom: 15px;    
+            padding: 4px 10px;  
+            border-radius: 10px; 
+            border-color: transparent;     
+        }
+        .messagepart{
+            display: flex;
+            flex-direction: column;
+            padding-right: 10px;
+            button{
+                font-family: $font-header;
+                padding: 10px 20px;
+                border-radius: 10px;  
+                background-color: rgb(17, 0, 130);  
+                border-color: transparent;
+                color: white;         
+            }
+        }
     }
 }

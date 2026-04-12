@@ -27,9 +27,35 @@ const Footer: React.FC = (  ) => {
 
           </div>
           <div className={styles.middlrightediv}>
+            <nav className={styles.navLinks}>
+              <p>Quick Links</p>
+              <a href="/">Home</a>
+              <a href="/MenuPage">Menu</a>
+              <a href="/ContactUsPage">Contact Us</a>
+              <a href="/AboutUsPage">About Us</a>
+            </nav>
           </div>
           <div className={styles.rightdiv}>
-            
+            <h2>Send message</h2>
+            <div className={styles.messagepart}>
+              <input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  // value={email}
+                  // onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+                <input
+                  id="Message"
+                  type="text"
+                  placeholder="Enter the message"
+                  // value={email}
+                  // onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+                <button>SEND</button>
+              </div>
           </div>
     </footer>
   );
