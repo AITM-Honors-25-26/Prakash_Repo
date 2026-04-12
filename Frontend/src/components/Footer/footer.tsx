@@ -1,13 +1,23 @@
 import React from 'react';
 import styles from './footer.module.scss';
-import log0 from '../../../img/Logo.png'
-const Footer: React.FC = () => {
-  return (
+import logWhite from '../../../img/log.white.png';
+import x from '../../../img/logos/x.png';
+import facebook from '../../../img/logos/Facebook.png';
+import instagram from '../../../img/logos/instagarm.png';
+import gmail from '../../../img/logos/gmail.png';
 
+const Footer: React.FC = (  ) => {
+  return (
     <footer className={styles.footer}>
           <div className={styles.leftdiv}>
-            <img src={log0} alt="" />
+            <img src={logWhite} alt="" />
             <h2>Flower Bakery</h2>
+            <div>
+            <img src={x} className={styles.imglogo}  alt="" />
+            <img src={facebook} className={styles.imglogo} alt="" />
+            <img src={instagram} className={styles.imglogo} alt="" />
+            <img src={gmail} className={styles.imglogo} alt="" />
+            </div>
           </div>
           <div className={styles.middlediv}>
           </div>
@@ -16,5 +26,4 @@ const Footer: React.FC = () => {
     </footer>
   );
 };
-
 export default Footer;

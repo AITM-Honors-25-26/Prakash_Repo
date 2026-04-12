@@ -213,15 +213,16 @@ verifyFogetPasswordToken = async (req, res, next) => {
         }, {
             forgotPasswordToken: verifyToken
         });
+        res.redirect(`${AppConfig.frontend_Url}/reset-password?token=${verifyToken}`);
 
-        res.json({
-            data: {
-                verifyToken: verifyToken
-            },
-            message: "Token Verified",
-            status: "FORGET_PASSWORD_VERIFIED",
-            option: null       
-        });
+        // res.json({
+        //     data: {
+        //         verifyToken: verifyToken
+        //     },
+        //     message: "Token Verified",
+        //     status: "FORGET_PASSWORD_VERIFIED",
+        //     option: null       
+        // });
     } catch (exception) {
         next(exception);
     }

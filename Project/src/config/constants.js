@@ -25,6 +25,7 @@ export const Gender={
 }
 export const AppConfig={
     frontend_Url:process.env.FRONTEND_URL,
+    backend_Url:process.env.BACKEND_URL,
     jwtSecret:process.env.JWT_SECRET
 }
 export const SMTPConfig={

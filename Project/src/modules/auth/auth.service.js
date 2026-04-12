@@ -65,7 +65,7 @@ class AuthService{
 
     notifyActivationEmail = async ({name, email, activationToken})=>{
         try{
-             let activationUrl = `${AppConfig.frontend_Url}/auth/activater/${activationToken}`;
+             let activationUrl = `${AppConfig.backend_Url}/auth/activater/${activationToken}`;
             let msg = `
             <div style="background-color: #f4f4f4; padding: 20px; font-family: 'Segoe UI', Helvetica, Arial, sans-serif;">
                 <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1px solid #e0e0e0;">
@@ -110,7 +110,7 @@ class AuthService{
     notifyForgotPassword = async ({name, email, resetToken}) => {
     try {
 
-        let resetUrl = `${AppConfig.frontend_Url}/auth/verify-token/${resetToken}`;
+        let resetUrl = `${AppConfig.backend_Url}/auth/verify-token/${resetToken}`;
         
         let msg = `
         <div style="background-color: #f4f4f4; padding: 20px; font-family: 'Segoe UI', Helvetica, Arial, sans-serif;">

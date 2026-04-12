@@ -2,7 +2,7 @@ $font-header: 'Amatic SC', cursive;
 
 .footer{
     height: 400px;
-    background-color: #a3b18a;
+    background-color: #48392a;
     margin-top: 10px;
     border-radius: 10px 10px 0px 0px;
     display: flex;
@@ -12,8 +12,11 @@ $font-header: 'Amatic SC', cursive;
         font-family: $font-header;       
     }
     .leftdiv{
-        background-color: #f0f3bd;
+        background-color: #48392a;
         border-radius: 10px 0px 0px 0px;
+        color: white;
+        display: flex;
+        flex-direction: column;
         img{
             width: 30%;
             padding-left: 50px;
@@ -21,7 +24,12 @@ $font-header: 'Amatic SC', cursive;
         }
         h2{
             padding-left: 10%;
-            margin-top: 0px;
+            text-align: end;
+            margin-top: auto;
+            text-align: center;
+        }
+        .imglogo{
+            width: 30px;
         }
     }
     .middlediv{
