@@ -23,7 +23,14 @@ export const Gender={
     FEMALE:"Female",
     OTHER:"Other"
 }
-export const AppConfig={
+export const Category={
+    Cake:'Cake',
+    BREAD:'Bread',
+    PASTERY:'Pastry',
+    COOKIE:'Cookie',
+    DRINKS: 'Drinks'
+}
+export const AppConfig={   
     frontend_Url:process.env.FRONTEND_URL,
     backend_Url:process.env.BACKEND_URL,
     jwtSecret:process.env.JWT_SECRET
