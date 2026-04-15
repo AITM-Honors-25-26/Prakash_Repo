@@ -46,9 +46,9 @@ const Footer: React.FC = (  ) => {
                   // onChange={(e) => setEmail(e.target.value)}
                   required
                 />
-                <input
+                <textarea
+                className={styles.messageinput}
                   id="Message"
-                  type="text"
                   placeholder="Enter the message"
                   // value={email}
                   // onChange={(e) => setEmail(e.target.value)}

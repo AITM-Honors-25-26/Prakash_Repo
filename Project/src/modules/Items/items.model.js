@@ -1,9 +1,19 @@
 import mongoose from "mongoose";
 
 const bakerySchema = new mongoose.Schema({
-    name: { type: String, required: true, trim: true },
-    description: { type: String, required: true },
-    price: { type: Number, required: true },
+    name: { 
+        type: String, 
+        required: true,
+        trim: true 
+    },
+    description: { 
+        type: String, 
+        required: true 
+    },
+    price: { 
+        type: Number, 
+        required: true 
+    },
     category: { 
         type: String, 
         enum: ['Cake', 'Bread', 'Pastry', 'Cookie', 'drinks'], 
