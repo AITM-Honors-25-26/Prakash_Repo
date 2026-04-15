@@ -150,3 +150,51 @@ $font-nav: 'Lucida Handwriting', cursive;
     }
   }
 }
+
+
+
+.authSection {
+  display: flex;
+  align-items: center;
+  padding-right: 50px; 
+
+  @media (max-width: 768px) {
+    padding-right: 0;
+  }
+}
+
+.authButtons {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+
+  .loginLink {
+    text-decoration: none;
+    color: $text-color;
+    font-family: $font-nav;
+    font-size: 0.9rem;
+    &:hover { color: $hover-color; }
+  }
+
+  .signupBtn {
+    text-decoration: none;
+    background-color: $hover-color;
+    color: white;
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-family: $font-nav;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: scale(1.05);
+      filter: brightness(1.1);
+    }
+  }
+
+  @media (max-width: 768px) {
+    gap: 8px;
+    .loginLink, .signupBtn { font-size: 0.6rem; padding: 5px 10px; }
+  }
+}
