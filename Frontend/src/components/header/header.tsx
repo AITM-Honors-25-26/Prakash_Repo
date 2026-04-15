@@ -11,7 +11,6 @@ const Header: React.FC = () => {
         <a href="/">
           <img src={logowhite} className={styles.logo} alt="logo" />
         </a>
-        
         <nav className={styles.navLinks}>
           <a href="/">Home</a>
           <a href="/MenuPage">Menu</a>
@@ -20,7 +19,6 @@ const Header: React.FC = () => {
         </nav>
         <div className={styles.authSection}>
           {isLoggedIn ? (
-
             <div className={styles.profileWrapper}>
               <img src={profile} className={styles.profile} alt="Profile" />
               <div className={styles.DropdownBar}>
