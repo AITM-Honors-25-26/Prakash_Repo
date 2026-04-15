@@ -1,7 +1,8 @@
 $bg-color: #48392a;
-$text-color:  #f0e9e9;
+$text-color: #f0e9e9;
 $hover-color: #a01c26;
 $font-nav: 'Lucida Handwriting', cursive;
+
 .header {
   display: flex;
   flex-direction: row;
@@ -15,7 +16,8 @@ $font-nav: 'Lucida Handwriting', cursive;
   z-index: 1000;
   width: 100%;
   box-sizing: border-box;
-  flex-wrap: nowrap; 
+  flex-wrap: nowrap;
+
   @media (max-width: 768px) {
     width: 100%;
     padding: 0rem 10px;
@@ -29,33 +31,21 @@ $font-nav: 'Lucida Handwriting', cursive;
     width: 100px;
     transition: all 0.3s ease;
     padding-left: 50px;
-    @media (max-width: 768px) {
-    width: 50px;
-    height: 50px;
-    padding-left: 0px;
-  }
-  }
-
-  .profile {
-    cursor: pointer;
-    height: 50px;
-    width: 50px;
-    transition: all 0.3s ease;
-    padding-right: 50px;
 
     @media (max-width: 768px) {
-    width: 20px;
-    height: 20px;
-    padding-right: 0px;
-  }
+      width: 50px;
+      height: 50px;
+      padding-left: 0px;
+    }
   }
 
   .navLinks {
     display: flex;
     gap: 2rem;
+
     @media (max-width: 768px) {
-    gap: 10px;
-  }
+      gap: 10px;
+    }
 
     a {
       font-family: $font-nav;
@@ -70,14 +60,93 @@ $font-nav: 'Lucida Handwriting', cursive;
       &:hover {
         color: $hover-color;
       }
+
       @media (max-width: 768px) {
-    font-size: 0.5rem;
-  }
+        font-size: 0.5rem;
+      }
     }
   }
 
+  .profileWrapper {
+    position: relative; 
+    display: flex;
+    align-items: center;
 
- 
+    .profile {
+      cursor: pointer;
+      height: 50px;
+      width: 50px;
+      transition: all 0.3s ease;
+      padding-right: 50px;
+
+      @media (max-width: 768px) {
+        width: 30px; 
+        height: 30px;
+        padding-right: 0px;
+      }
+    }
+
+    .DropdownBar {
+      font-family: $font-nav;
+      position: absolute;
+      top: 100%;
+      margin-top: 26px; 
+      right: 100px; 
+      
+      width: 200px;
+      background-color: white; 
+      color: #333; 
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      z-index: 1001;
 
 
+      .userInfo p {
+        margin: 0;
+        font-weight: bold;
+        color: $bg-color;
+      }
+
+      hr {
+        margin: 10px 0;
+        border: 0;
+        border-top: 1px solid #eee;
+      }
+
+      .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        a {
+          text-decoration: none;
+          color: #555;
+          font-size: 0.9rem;
+          &:hover { color: $hover-color; }
+        }
+
+        .logoutBtn {
+          background-color: $hover-color;
+          color: white;
+          border: none;
+          padding: 5px 10px;
+          border-radius: 4px;
+          cursor: pointer;
+          font-family: inherit;
+          &:hover { filter: brightness(0.9); }
+        }
+      }
+    }
+
+    &:hover .DropdownBar {
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }

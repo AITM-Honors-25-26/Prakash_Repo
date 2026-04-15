@@ -15,7 +15,21 @@ const Header: React.FC = () => {
           <a href="/ContactUsPage">Contact Us</a>
           <a href="/AboutUsPage">About Us</a>
         </nav>
-        <img src={profile} className={styles.profile} alt="Profile" /> 
+        <div className={styles.profileWrapper}>
+          <img src={profile} className={styles.profile} alt="Profile" />
+          <div className={styles.DropdownBar}>
+            <div className={styles.userInfo}>
+              <p>this is where name will appear</p>
+            </div>
+            <p>Profile</p>
+            <hr />
+            <div className={styles.actions}>
+              <a href="/settings">Settings</a>
+            <hr />
+            <button className={styles.logoutBtn}>Logout</button>
+          </div>
+          </div>
+        </div>
     </header>
   );
 };
