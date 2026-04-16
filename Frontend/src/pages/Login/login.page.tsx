@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { API_ENDPOINTS } from '../../assets/constants/constants';
 import styles from "./loginpage.module.scss"
 import logo from "../../../img/Logo.png"
 import { toast, ToastContainer } from 'react-toastify';
 import leftDesign from "../../../img/walpaper/1.png"
 import 'react-toastify/dist/ReactToastify.css';
-import viewIcon from '../../../img/viewicon.png'
+
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const navigate = useNavigate();
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -23,24 +23,31 @@ const LoginPage: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password}),
       });
-      let result;
-      try {
-        result = await response.json();
-      } catch {
-        result = {};
-      }
+
+      const result = await response.json();
+
       if (response.ok) {
         console.log("Full Result Data:", result.data);
+        
         const userStatus = result.data.status;
         if(userStatus === false){
-          toast.error("Your account is not activated")
+          toast.error("Your account is not activated");
           return;
         }
+
         const token = result.data?.accessToken;
         if (token) {
           localStorage.setItem('token', token);   
+          
+          if(result.data?.user){
+            localStorage.setItem('user', JSON.stringify(result.data.user));
+          }else{
+            localStorage.setItem('user',JSON.stringify(result.data))
+          }
+
           toast.success("Login Successful!");
-          navigate('/');
+
+          window.location.href = '/'; 
         } else {
           toast.error("Login failed: No token received");
         }
@@ -54,6 +61,7 @@ const LoginPage: React.FC = () => {
       setLoading(false);
     }
   };
+
   return (
     <>
       <ToastContainer position="top-right" theme="colored" autoClose={3000} />

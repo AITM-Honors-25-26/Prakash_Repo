@@ -109,7 +109,8 @@ class AuthController {
                 res.json({
                     data:{
                         accessToken: accessToken,
-                        refreshToken: refreshToken
+                        refreshToken: refreshToken,
+                        user: autSvc.publicUserProfile(user)
                     },
                     message:"Login Successfully",
                     status: "LOGIN_SUCCESS",

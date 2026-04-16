@@ -71,13 +71,15 @@ $font-nav: 'Lucida Handwriting', cursive;
     position: relative; 
     display: flex;
     align-items: center;
+    padding-right: 50px;
 
     .profile {
       cursor: pointer;
       height: 50px;
       width: 50px;
       transition: all 0.3s ease;
-      padding-right: 50px;
+
+      border-radius: 50px;
 
       @media (max-width: 768px) {
         width: 30px; 
