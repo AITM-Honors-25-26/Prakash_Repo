@@ -23,7 +23,7 @@ const Header: React.FC = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
-    window.location.href = "/LoginPage";
+    window.location.href = "/";
   };
   return (
     <header className={styles.header}>
