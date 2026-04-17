@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { API_ENDPOINTS } from '../../assets/constants/constants';
+import { API_ENDPOINTS } from '../../constants/constants';
 import styles from "./MenuPage.module.scss"
 import logo from "../../../img/Logo.png"
 import { toast, ToastContainer } from 'react-toastify';

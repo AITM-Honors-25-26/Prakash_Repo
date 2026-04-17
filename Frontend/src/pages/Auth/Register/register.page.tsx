@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { API_ENDPOINTS } from '../../assets/constants/constants';
+import { API_ENDPOINTS } from '../../../constants/constants';
 import styles from './registerPage.module.scss'
 import { toast, ToastContainer } from 'react-toastify';
-import walpaper2 from '../../../img/walpaper/2.png'
+import walpaper2 from '../../../../img/walpaper/2.png'
 import 'react-toastify/dist/ReactToastify.css';
   const RegisterPage: React.FC = () => {
   const navigate = useNavigate();

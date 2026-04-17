@@ -34,18 +34,14 @@ $font-header: 'Amatic SC', cursive;
         max-width: 100%; 
         object-fit: contain; 
     }
-
     h1 {
         font-family: $font-Cursive;
         font-size: 50px;
-        margin-bottom: 0px;
         text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
     }
-
     p {
         font-family: $font-header;
         font-size: 18px;
-        margin: 1px 0;
         margin-bottom: 15px;
     }
 
@@ -60,36 +56,31 @@ $font-header: 'Amatic SC', cursive;
     }
 }
 
-.logbutton {
-    padding: 12px 30px;
-    border-radius: 25px; 
-    background-color: #2d6a4f;
+.logbutton, .registerbutton{
+    padding: 10px 30px;
+    border-radius: 20px;
     border: none;
-    color: #ffffff;
-    font-weight: bold;
     cursor: pointer;
-    width: 200px;
     transition: transform 0.2s;
     font-family: $font-header;
+    text-decoration: none;
+    font-weight: bold;
+}
 
+.logbutton {
+    background-color: #2d6a4f;
+    color: #ffffff;
+    width: 200px;
     &:hover {
         transform: scale(1.05);
         background-color: #1b4332;
     }
 }
-
 .registerbutton {
-    padding: 12px 30px;
-    border-radius: 25px;
     background-color: transparent;
     border: 2px solid #ffffff; 
     color: #ffffff;
-    font-weight: bold;
-    cursor: pointer;
     width: 200px;
-    transition: all 0.2s;
-    font-family: $font-header;
-    
     &:hover {
         background-color: #ffffff;
         color: #000000;
@@ -117,10 +108,14 @@ $font-header: 'Amatic SC', cursive;
             margin: 1px 0; 
             box-sizing: border-box; 
             padding: 8px;
+            
         }
     }
     
     .photo {
         height: 100vh;
     }
+}
+.loggedInArea{
+    font-family: $font-header;
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Layout from './../../components/layout/layout';
 import { Link } from 'react-router-dom';
 import profile from '../../../img/bakery photo.png';
@@ -6,16 +6,20 @@ import logowhite from '../../../img/log.white.png';
 import styles from './homepage.module.scss';
 
 const Homepage: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userName, setUserName] = useState('');
-  useEffect(() => {
-    const savedName = localStorage.getItem('name');
-    
-    if (savedName) {
-      setIsLosggedIn(true);
-      setUserName(savedName);
+  const [userData] = useState(() => {
+    const userString = localStorage.getItem('user');
+    if (userString) {
+      try {
+        return JSON.parse(userString);
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+        return null;
+      }
     }
-  }, []);
+    return null;
+  });
+  const isLoggedIn = !!userData; 
+  const userName = userData?.name || '';
 
   return (
     <Layout>
@@ -28,7 +32,7 @@ const Homepage: React.FC = () => {
           
           {isLoggedIn ? (
             <div className={styles.loggedInArea}>
-              <h2>Hello, {userName}!</h2>
+              <h1>Hello, {userName}!</h1>
               <p>We are so glad to see you again.</p>
             </div>
           ) : (

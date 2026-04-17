@@ -50,6 +50,8 @@ const Header: React.FC = () => {
                 </div>
                 <hr />
                 <div className={styles.actions}>
+                  <a href="">Profile</a>
+                  <hr />
                   <a href="/settings">Settings</a>
                   <button className={styles.logoutBtn} onClick={handleLogout}>
                     Logout

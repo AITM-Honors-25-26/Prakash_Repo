@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { API_ENDPOINTS } from '../../assets/constants/constants';
+import { API_ENDPOINTS } from '../../../constants/constants';
 import styles from "./resetPassword.page.module.scss"; 
-import logo from "../../../img/Logo.png";
+import logo from "../../../../img/Logo.png";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 

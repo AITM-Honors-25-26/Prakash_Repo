@@ -2,13 +2,13 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/home/home.page";
-import LoginPage from "./pages/Login/login.page";
-import RegisterPage from "./pages/Register/register.page";
-import ForgetPassPage from "./pages/forgotPassword/forgotPassword.page";
+import LoginPage from "./pages/Auth/Login/login.page";
+import RegisterPage from "./pages/Auth/Register/register.page";
+import ForgetPassPage from "./pages/Auth/forgotPassword/forgotPassword.page";
 import ContactUs from "./pages/ContactUS/ContactUs.Page"
 import AboutUsPage from "./pages/AboutUs/aboutUs.page";
 import MenuPage from "./pages/Menu/Menu.page";
-import ResetPasswordPage from "./pages/ResetPassword/resetPassword.page";
+import ResetPasswordPage from "./pages/Auth/ResetPassword/resetPassword.page";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
