@@ -1,0 +1,114 @@
+$font-header: 'Amatic SC', cursive;
+$font-body: sans-serif;
+
+.pageContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  padding: 40px 20px;
+  background-color: #f9f5f0; /* Soft bakery background color */
+}
+
+.profileCard {
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 500px;
+  overflow: hidden;
+}
+
+.imageSection {
+  background-color: #2d6a4f; /* Matches your buttons */
+  color: white;
+  text-align: center;
+  padding: 40px 20px 20px;
+  
+  .profileImage {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .userName {
+    font-family: $font-header;
+    font-size: 35px;
+    margin: 0;
+    letter-spacing: 1px;
+  }
+
+  .userRole {
+    font-family: $font-body;
+    font-size: 14px;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 5px;
+  }
+}
+
+.infoSection {
+  padding: 30px;
+
+  h3 {
+    font-family: $font-header;
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+  }
+}
+
+.infoRow {
+  display: flex;
+  margin-bottom: 15px;
+  font-family: $font-body;
+  font-size: 16px;
+
+  .label {
+    font-weight: bold;
+    color: #555;
+    width: 100px;
+  }
+
+  .value {
+    color: #333;
+    flex: 1;
+  }
+}
+
+.buttonGroup {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.editButton {
+  background-color: #2d6a4f;
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 20px;
+  font-family: $font-header;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: #1b4332;
+    transform: scale(1.05);
+  }
+}
+
+.errorContainer {
+  text-align: center;
+  padding: 100px 20px;
+  font-family: $font-header;
+  
+  h2 { font-size: 40px; color: #333; }
+  p { font-size: 24px; color: #666; }
+}

@@ -9,6 +9,7 @@ import ContactUs from "./pages/ContactUS/ContactUs.Page"
 import AboutUsPage from "./pages/AboutUs/aboutUs.page";
 import MenuPage from "./pages/Menu/Menu.page";
 import ResetPasswordPage from "./pages/Auth/ResetPassword/resetPassword.page";
+import Profile from "./pages/Profile/profile.page";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -22,6 +23,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/AboutUsPage" element={<AboutUsPage />}/>
         <Route path="/MenuPage" element={<MenuPage />} />
         <Route path="/Reset-password" element={<ResetPasswordPage />}/>
+        <Route path="/Profile" element={<Profile />}/>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
