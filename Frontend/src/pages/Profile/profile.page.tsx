@@ -4,7 +4,6 @@ import styles from './profilePage.module.scss';
 import defaultProfilePic from '../../../img/profile.png';
 
 const Profile: React.FC = () => {
-  // Grab the user data securely when the page loads
   const [userData] = useState(() => {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
@@ -17,8 +16,6 @@ const Profile: React.FC = () => {
     }
     return null;
   });
-
-  // If someone tries to visit the profile page without being logged in
   if (!userData) {
     return (
       <Layout>
@@ -29,7 +26,6 @@ const Profile: React.FC = () => {
       </Layout>
     );
   }
-
   return (
     <Layout>
       <div className={styles.pageContainer}>
@@ -58,7 +54,18 @@ const Profile: React.FC = () => {
               <span className={styles.label}>Address:</span>
               <span className={styles.value}>{userData.address || 'Not provided'}</span>
             </div>
-            
+            <div className={styles.infoRow}>
+                <span className={styles.label}>Date of Birth:</span>
+                <span className={styles.value}>
+                  {userData.dob 
+                    ? new Date(userData.dob).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      }) 
+                    : 'Not provided'}
+                </span>
+            </div>
             <div className={styles.buttonGroup}>
               <button className={styles.editButton}>Edit Profile</button>
             </div>

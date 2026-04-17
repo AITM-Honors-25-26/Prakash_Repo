@@ -23,7 +23,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/AboutUsPage" element={<AboutUsPage />}/>
         <Route path="/MenuPage" element={<MenuPage />} />
         <Route path="/Reset-password" element={<ResetPasswordPage />}/>
-        <Route path="/Profile" element={<Profile />}/>
+        <Route path="/ProfilePage" element={<Profile />}/>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
