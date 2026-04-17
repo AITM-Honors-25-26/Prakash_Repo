@@ -21,47 +21,54 @@ $font-header: 'Amatic SC', cursive;
             
         }      
     }
-    .leftdiv{
-        border-radius: 10px 0px 0px 0px;
-        color: white;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        border-radius: 10px 10px 0px 0px;
-        img{
-            width: 30%;
-            @media (max-width: 768px) {
-                height: 50px;
-                width: 50px;
-            }
-        }
-        h5{
-            text-align: justify;
-            padding-left: 15px;
-            padding-right: 15px;
-            @media (max-width: 768px) {
-                font-size: 8px;
-            }  
-        }
-        .logs{
-            display: flex;
-            flex-direction: row;
-            gap: 40px;                
-        }
-        .imglogo{
-            width: 25px;
-            height: 25px;
-            &:hover{
-                cursor: pointer;
-                transform: scale(1.2);
-            }
-            @media (max-width: 768px) {
-                height: 10px;
-                width: 10px;
-            }  
+    .leftdiv {
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px 10px 0px 0px;
+    
+    img {
+        width: 30%;
+        @media (max-width: 768px) {
+            height: 50px;
+            width: 50px;
         }
     }
+    
+    h5 {
+        text-align: justify;
+        padding: 10px 30px;
+        @media (max-width: 768px) {
+            font-size: 12px; /* Tip: 8px is incredibly hard to read on mobile. I bumped this to 12px for better readability! */
+        }  
+    }
+    
+    .logs {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly; 
+        width: 100%; 
+        padding: 10px 0;
+    }
+    
+    .imglogo {
+        width: 25px;
+        height: 25px;
+        transition: transform 0.2s ease-in-out; 
+        
+        &:hover {
+            cursor: pointer;
+            transform: scale(1.2);
+        }
+        
+        @media (max-width: 768px) {
+            height: 20px;
+            width: 20px;
+        }  
+    }
+}
     .middlleftediv{
     }
     .middlrightediv{

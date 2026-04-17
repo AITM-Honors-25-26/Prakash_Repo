@@ -5,7 +5,7 @@ import logowhite from './../../../img/log.white.png';
 
 const Header: React.FC = () => {
   const [user, setUser] = useState<{ 
-    fullName: string; 
+    name: string; 
     image?: { url: string }
   } | null>(() => {
     const savedUser = localStorage.getItem('user');
@@ -46,7 +46,7 @@ const Header: React.FC = () => {
               />
               <div className={styles.DropdownBar}>
                 <div className={styles.userInfo}>
-                  <p>{user.fullName}</p>
+                  <p>{user.name}</p>
                 </div>
                 <hr />
                 <div className={styles.actions}>

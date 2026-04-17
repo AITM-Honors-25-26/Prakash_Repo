@@ -11,11 +11,9 @@ const Footer: React.FC = (  ) => {
     <footer className={styles.footer}>
           <div className={styles.leftdiv}>
             <img src={logWhite} alt="" />
-            <h5>Nestled in the heart of Nepal, Melina's Bakery is your warm, welcoming destination for freshly 
-              baked delights. From the irresistible aroma of crusty artisan breads to a vibrant display of mouth-watering, 
-              handcrafted pastries, every treat is baked with love and the finest ingredients. Whether you are starting your 
-              morning with a hot cup of local tea or craving a sweet afternoon escape, Melina's Bakery offers a cozy slice of 
-              comfort for both locals and travelers alike.</h5>
+            <h5>Nestled in the heart of Nepal, Melina’s Bakery is a cozy spot filled with the aroma of freshly baked breads and 
+              handmade pastries. Whether you’re starting your day with a warm cup of tea or stopping by for a sweet treat, it’s 
+              a little place of comfort for everyone.</h5>
             <div className={styles.logs}>
             <img src={x} className={styles.imglogo}  alt="" />
             <img src={facebook} className={styles.imglogo} alt="" />
