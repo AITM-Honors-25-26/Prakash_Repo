@@ -52,7 +52,7 @@ const Header: React.FC = () => {
                 <div className={styles.actions}>
                   <a href="/ProfilePage">Profile</a>
                   <hr />
-                  <a href="/settings">Settings</a>
+                  <a href="/SettingsPage">Settings</a>
                   <button className={styles.logoutBtn} onClick={handleLogout}>
                     Logout
                   </button>

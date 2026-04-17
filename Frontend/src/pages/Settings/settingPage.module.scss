@@ -1,0 +1,117 @@
+$font-header: 'Amatic SC', cursive;
+$font-body: sans-serif;
+
+/* Matches the Profile page background */
+.pageContainer {
+  background-color: #f9f5f0; 
+  min-height: 80vh;
+  padding: 40px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.settingsWrapper {
+  width: 100%;
+  max-width: 600px;
+}
+
+.pageTitle {
+  font-family: $font-header;
+  font-size: 45px;
+  color: #333;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.settingsCard {
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  padding: 30px;
+  margin-bottom: 30px;
+
+  h2 {
+    font-family: $font-header;
+    font-size: 30px;
+    color: #4a3b32; /* Deep warm brown */
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-family: $font-body;
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+  }
+
+  input {
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: $font-body;
+    transition: border-color 0.3s, box-shadow 0.3s;
+
+    &:focus {
+      outline: none;
+      border-color: #2d6a4f; /* Matches your bakery green */
+      box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.2);
+    }
+  }
+}
+
+/* Shared button styling */
+%btn-shared {
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 20px;
+  font-family: $font-header;
+  font-size: 22px;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-start;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.saveBtn {
+  @extend %btn-shared;
+  background-color: #2d6a4f; /* Green */
+  
+  &:hover {
+    background-color: #1b4332;
+  }
+}
+
+.passwordBtn {
+  @extend %btn-shared;
+  background-color: #5c4033; /* Dark brown to separate it from profile save */
+
+  &:hover {
+    background-color: #3e2723;
+  }
+}
+
+.errorContainer {
+  text-align: center;
+  padding: 100px 20px;
+  font-family: $font-header;
+  color: #333;
+}
