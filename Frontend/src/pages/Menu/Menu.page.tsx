@@ -12,7 +12,6 @@ const MenuPage: React.FC = () => {
         </div>
         
         <div className={styles.itemSection}>
-          <div className={styles.itembox}>
             <div className={styles.photosection}>
               <img src={bread} alt="Fresh Bread" />
               <div className={styles.overlay}>
@@ -20,7 +19,6 @@ const MenuPage: React.FC = () => {
                 <p>$5.99</p>
                 <button>Add to cart</button>
               </div>
-            </div>
           </div>
           {/* End of itembox */}
         </div>

@@ -28,16 +28,33 @@ $color-text-light: #ffffff;
         height: 300px;
         display: flex;
         background-color: red;
-        .itembox{
+        padding: 10px;
+        gap: 10px;
+        overflow: hidden;
+
+        
+        .photosection{
             width: 300px;
-                overflow: hidden;
-            .photosection{
-                width: 300px;
-                img{
-                    width: 100%;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            &:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+            }
+            img{
+                width: 100%;
+            }
+            .overlay {
+                color: black;
+                opacity: 0;
+                &:hover{
+                    opacity: 1;
                 }
             }
         }
+        
     }
 
 }
