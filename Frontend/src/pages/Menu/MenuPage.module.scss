@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
+
+$font-header: 'Amatic SC', cursive;
+$font-body: 'Poppins', sans-serif;
+
+$color-bg: #faf8f5;
+$color-card-bg: #ffffff;
+$color-header: #3e2723; 
+$color-accent: #d84315; 
+$color-text-light: #ffffff;
+
+.main{
+    background-color: $color-bg;
+    font-family: $font-header;
+    overflow: hidden;
+    .topic{
+        display: flex;
+        justify-content: center;
+        border-radius: 10px 10px 0px 0px;
+        background-color: $color-header;
+        color: $color-text-light;
+        margin-top: 10px;
+        h1{
+            font-size: 40px;
+        }
+    }
+    .itemSection{
+        height: 300px;
+        display: flex;
+        background-color: red;
+        .itembox{
+            width: 300px;
+                overflow: hidden;
+            .photosection{
+                width: 300px;
+                img{
+                    width: 100%;
+                }
+            }
+        }
+    }
+
+}
