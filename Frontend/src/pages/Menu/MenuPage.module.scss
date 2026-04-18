@@ -9,52 +9,129 @@ $color-header: #3e2723;
 $color-accent: #d84315; 
 $color-text-light: #ffffff;
 
-.main{
+.main {
     background-color: $color-bg;
     font-family: $font-header;
     overflow: hidden;
-    .topic{
+
+    .topic {
         display: flex;
         justify-content: center;
         border-radius: 10px 10px 0px 0px;
         background-color: $color-header;
         color: $color-text-light;
         margin-top: 10px;
-        h1{
+        h1 {
             font-size: 40px;
         }
     }
-    .itemSection{
+
+    .itemSection {
         height: 300px;
         display: flex;
-        background-color: red;
-        padding: 10px;
+        background-color: red; /* Note: You can change this red to your preferred background! */
+        padding: 15px;
         gap: 10px;
         overflow: hidden;
+        border-radius: 0px 0px 10px 10px;
 
-        
-        .photosection{
+        .photosection {
             width: 300px;
-            overflow: hidden;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+
             &:hover {
-                transform: translateY(-8px);
-                box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
-            }
-            img{
-                width: 100%;
-            }
-            .overlay {
-                color: black;
-                opacity: 0;
-                &:hover{
-                    opacity: 1;
+                transform: translateY(-4px) scale(1.03);
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+
+                .overlay {
+                    opacity: 1; 
                 }
             }
-        }
-        
-    }
+            > img {
+                width: 100%;
+                display: block;
+            }
 
+            .overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(255, 255, 255, 0.4); 
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+                color: black;
+               
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 20px 15px; 
+                box-sizing: border-box;
+                
+                opacity: 0;
+                transition: opacity 0.3s ease;
+
+                h3 {
+                    font-family: $font-header;
+                    font-size: 40px;
+                    margin: 0; 
+                    text-align: center;
+                    color: $color-header;
+                    line-height: 1;
+                }
+
+                p {
+                    font-family: $font-body;
+                    text-align: center;
+                    margin: 0;
+
+                    &:nth-of-type(1) {
+                        font-weight: 400;
+                        font-size: 14px;
+                        margin: auto 0;
+                    }
+
+                    &:nth-of-type(2) {
+                        font-weight: 700;
+                        font-size: 22px;
+                        color: $color-accent; 
+                        margin-bottom: 12px;
+                    }
+                }
+
+                .buttonDiv {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: $color-accent; 
+                    color: white;
+                    padding: 5px 20px;
+                    border-radius: 25px;
+                    cursor: pointer;
+                    font-weight: 500;
+                    font-family: $font-body;
+                    transition: transform 0.2s ease, background-color 0.2s ease;
+                    font-size: 15px;
+
+                    &:hover {
+                        transform: scale(1.05);
+                        background-color: darken(#d84315, 10%);
+                    }
+                    img {
+                        width: 20px;   
+                        height: 20px;
+                        object-fit: contain;
+                        margin-left: 12px;     
+                        padding-left: 12px;    
+                        border-left: 2px solid rgba(255, 255, 255, 0.6); 
+                    }
+                }
+            } 
+        } 
+    } 
 }
