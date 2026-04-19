@@ -3,8 +3,7 @@ import axios from 'axios';
 import styles from './MenuPage.module.scss';
 import Layout from '../../components/layout/layout';
 import cartwhite from '../../../img/icons/cart.white.png';
-
-// 1. Define the Interface to fix the 'any' ESLint error
+import { API_ENDPOINTS } from '../../constants/constants';
 interface BakeryItem {
   _id: string;
   name: string;
@@ -15,21 +14,14 @@ interface BakeryItem {
   stock: number;
   isAvailable: boolean;
 }
-
 const MenuPage: React.FC = () => {
-  // 2. Use the interface instead of 'any'
   const [menuItems, setMenuItems] = useState<BakeryItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
   useEffect(() => {
     const fetchMenu = async () => {
       try {
-        const response = await axios.get('http://localhost:9005/api/menu/list');
-        
-        // 3. Extract the result from your backend response
+        const response = await axios.get(API_ENDPOINTS.LISTALLITEMS);
         const data = response.data?.result;
-
-        // Handle if backend returns a single object or an array
         if (Array.isArray(data)) {
           setMenuItems(data);
         } else if (data && typeof data === 'object') {
@@ -54,7 +46,6 @@ const MenuPage: React.FC = () => {
       </Layout>
     );
   }
-
   return (
     <Layout>
       <div className={styles.main}>
