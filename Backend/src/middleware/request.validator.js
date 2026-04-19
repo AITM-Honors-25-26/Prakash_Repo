@@ -5,7 +5,6 @@ export const bodyValidator = (schema)=>{
             await schema.validateAsync(data, {abortEarly:false})
             next()
         }catch(exception){
-            // console.log(exception)
             let errBag = {}
             if(exception.details){
                 exception.details.map((error)=>{
