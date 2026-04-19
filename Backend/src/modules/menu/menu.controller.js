@@ -1,5 +1,4 @@
 import menuSvc from "./menu.service.js";
-
 class MenuController {
     createBakeryItem = async (req, res, next) => {
         try {
@@ -14,7 +13,6 @@ class MenuController {
             next(exception); 
         }
     }
-
     getAllMenuItems = async (req, res, next) => {
         try {
             const list = await menuSvc.getMenuItemByFilter({}); 

@@ -49,7 +49,6 @@ const allowUser = (roles = null) => {
                     status:"UNAUTHENTACATED"
                 })
             }
-            
         }
         } catch(exception){
             next ({

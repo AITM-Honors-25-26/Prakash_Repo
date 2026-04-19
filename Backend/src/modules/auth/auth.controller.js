@@ -256,8 +256,8 @@ verifyFogetPasswordToken = async (req, res, next) => {
                 status:"PASSWORD_RESET_SUCCESSFUL",
                 option:null
             })
-        }catch(exceptio){
-            next(exceptio)
+        }catch(exception){
+            next(exception)
         }
     }
 }
