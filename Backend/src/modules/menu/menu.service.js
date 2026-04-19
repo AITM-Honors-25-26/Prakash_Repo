@@ -3,21 +3,22 @@ import cloudianarySvc from "../../services/cloudinary.service.js";
 
 class MenuService {
     transformMenuData = async (req) => {
-        try {
-            let data = { ...req.body };
-            if (req.file) {
-                const upload = await cloudianarySvc.fileUpload(req.file.path, 'bakery/');
-                data.image = {
-                    url: upload.secure_url || upload.url,
-                    public_id: upload.public_id
-                };
-            }
-            if (data.price) data.price = Number(data.price);
-            if (data.stock) data.stock = Number(data.stock);
-            data.isAvailable = String(data.isAvailable) === 'true';
-            return data;
+    try {
+        let data = { ...req.body };
+        data.images = []; 
+        if (req.file) {
+            const upload = await cloudianarySvc.fileUpload(req.file.path, 'bakery/');
+            data.images.push({
+                url: upload.secure_url || upload.url,
+                public_id: upload.public_id
+            });
+        }
+        if (data.price) data.price = Number(data.price);
+        if (data.stock) data.stock = Number(data.stock);
+        data.isAvailable = String(data.isAvailable) === 'true';
+        return data;
         } catch (exception) {
-            throw exception;
+        throw exception;
         }
     }
     storeMenuItem = async (data) => {
@@ -28,14 +29,14 @@ class MenuService {
             throw exception;
         }
     }
-    getMenuItemByFilter = async (filter) => {
-        try {
-            return await Bakery.findOne(filter);
-        } catch (exception) {
-            throw exception;
-        }
+    // Add this to your MenuService class
+getAllItems = async (filter = {}) => {
+    try {
+        return await Bakery.find(filter); // .find() returns an array []
+    } catch (exception) {
+        throw exception;
     }
 }
-
+}
 const menuSvc = new MenuService();
 export default menuSvc;

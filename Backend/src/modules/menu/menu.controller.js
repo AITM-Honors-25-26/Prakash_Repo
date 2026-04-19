@@ -15,7 +15,7 @@ class MenuController {
     }
     getAllMenuItems = async (req, res, next) => {
         try {
-            const list = await menuSvc.getMenuItemByFilter({}); 
+            const list = await menuSvc.getAllItems({});
             res.json({
                 result: list,
                 message: "Menu fetched successfully",
