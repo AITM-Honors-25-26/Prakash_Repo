@@ -33,7 +33,6 @@ const MenuPage: React.FC = () => {
         setLoading(false);
       }
     };
-
     fetchMenu();
   }, []);
 
@@ -73,6 +72,7 @@ const MenuPage: React.FC = () => {
                     Add to cart 
                     <img src={cartwhite} alt="Cart icon" />
                   </div>
+                  <div className={styles.deleteButton}>Delete Item</div>
                 </div>
               </div>
             ))

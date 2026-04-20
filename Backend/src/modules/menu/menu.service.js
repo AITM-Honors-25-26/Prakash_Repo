@@ -36,6 +36,17 @@ class MenuService {
             throw exception;
         }
     }
+    deleteItemById = async (id) => {
+        try {
+            const response = await Bakery.findByIdAndDelete(id);
+            if (!response) {
+                throw { status: 404, message: "Item not found or already deleted." };
+            }
+            return response;
+        } catch (exception) {
+            throw exception;
+        }
+    }
 }
 const menuSvc = new MenuService();
 export default menuSvc;

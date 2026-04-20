@@ -104,11 +104,10 @@ $color-text-light: #ffffff;
                     }
                 }
 
-                .buttonDiv {
+                .deleteButton, .buttonDiv{
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    background-color: $color-accent; 
                     color: white;
                     padding: 5px 20px;
                     border-radius: 25px;
@@ -122,6 +121,11 @@ $color-text-light: #ffffff;
                         transform: scale(1.05);
                         background-color: (#7a1e02);
                     }
+                    
+
+                }
+                .buttonDiv {
+                    background-color: $color-accent; 
                     img {
                         width: 20px;   
                         height: 20px;
@@ -130,6 +134,11 @@ $color-text-light: #ffffff;
                         padding-left: 12px;    
                         border-left: 2px solid rgba(255, 255, 255, 0.6); 
                     }
+                }
+                .deleteButton{
+                    margin-top: 10px;
+                    width:117px;
+                    background-color: red;
                 }
             } 
         } 
