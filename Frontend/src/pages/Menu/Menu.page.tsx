@@ -49,7 +49,7 @@ const MenuPage: React.FC = () => {
     <Layout>
       <div className={styles.main}>
         <div className={styles.topic}>
-          <h1>Hot sales</h1>
+          <h1>Breads</h1>
         </div>
         
         <div className={styles.itemSection}>
