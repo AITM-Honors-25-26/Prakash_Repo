@@ -43,7 +43,7 @@ const ResetPasswordPage: React.FC = () => {
       if (response.ok) {
         toast.success(result.message || "Password reset successfully! Redirecting to login...");
         setTimeout(() => {
-          navigate('/login');
+          navigate('/LoginPage');
         }, 3000);
       } else {
         toast.error(result.message || "Failed to reset password. The token might be expired.");

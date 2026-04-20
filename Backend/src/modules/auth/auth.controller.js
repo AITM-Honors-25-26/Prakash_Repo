@@ -212,9 +212,15 @@ verifyFogetPasswordToken = async (req, res, next) => {
         await autSvc.updateSingleUserByFilter({
             _id: user._id 
         }, {
-            forgotPasswordToken: verifyToken
+            forgotPasswordToken: verifyToken,
+            expireToken: new Date(Date.now() + 30 * 60 * 1000)
         });
+
+
+
+
         res.redirect(`${AppConfig.frontend_Url}/reset-password?token=${verifyToken}`);
+        return res.redirect(redirectUrl);
 
         // res.json({
         //     data: {

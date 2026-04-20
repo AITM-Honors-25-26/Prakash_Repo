@@ -29,14 +29,13 @@ class MenuService {
             throw exception;
         }
     }
-    // Add this to your MenuService class
-getAllItems = async (filter = {}) => {
-    try {
-        return await Bakery.find(filter); // .find() returns an array []
-    } catch (exception) {
-        throw exception;
+    getAllItems = async (filter = {}) => {
+        try {
+            return await Bakery.find(filter);
+        } catch (exception) {
+            throw exception;
+        }
     }
-}
 }
 const menuSvc = new MenuService();
 export default menuSvc;
