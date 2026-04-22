@@ -1,56 +1,126 @@
 $font-header: 'Amatic SC', cursive;
-.contactContainer{
-    font-family: $font-header; 
-    display: flex; 
+$primary-blue: #007bff;
+$card-bg: #ffffff;
+$text-dark: #2d2d2d;
+$text-muted: #666;
+
+.contactContainer {
+    font-family: 'Inter', sans-serif;
+    display: flex;
     flex-direction: column;
     align-items: center;
-    h1{
-        font-size: 2.5rem;
-        margin-top: 50px;
-        margin-bottom: 0px;
-    }  
-    h3{
-        margin-top: 0px;
-        color: rgb(66, 61, 61)
-        ;
+    padding: 60px 20px;
+    background-color: #f8f9fa; 
+    min-height: 80vh;
+
+    .textHeader {
+        text-align: center;
+        margin-bottom: 50px;
+
+        h1 {
+            font-family: $font-header;
+            font-size: 4rem;
+            margin: 0;
+            color: $text-dark;
+        }
+
+        h3 {
+            font-weight: 400;
+            color: $text-muted;
+            margin-top: 10px;
+        }
     }
-    .boxwhole{
+
+    .boxwhole {
         display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
         gap: 30px;
-        .leftdiv, .middlediv, .rightdiv{
-            background-color: rgb(161, 161, 161);
-            border-radius: 10px;
-            height: 350px;
-            width: 350px;
+        width: 100%;
+        max-width: 1200px;
+
+        .infoCard {
+            background-color: $card-bg;
+            border: 1px solid #eaeaea;
+            border-radius: 20px;
+            height: 380px;
+            width: 320px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            img{
-                height: 50px;
+            padding: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+
+            .iconCircle {
+                width: 80px;
+                height: 80px;
+                background: #f0f4ff;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 20px;
+
+                img {
+                    height: 35px;
+                    width: auto;
+                }
+            }
+
+            h3 {
+                font-family: $font-header;
+                font-size: 2.2rem;
+                margin-bottom: 15px;
+                color: $text-dark;
+            }
+
+            p {
+                margin: 2px 0;
+                color: $text-muted;
+                font-size: 1.1rem;
+            }
+
+            .highlight {
+                font-weight: 700;
+                color: $text-dark;
+                margin-top: 5px;
+            }
+
+            .link {
+                margin-top: 25px;
+                color: $primary-blue;
+                text-decoration: none;
+                font-weight: 600;
+                padding: 8px 20px;
+                border: 1px solid $primary-blue;
+                border-radius: 25px;
+                transition: all 0.2s;
+
+                &:hover {
+                    background-color: $primary-blue;
+                    color: white;
+                }
+            }
+
+            &:hover {
+                transform: translateY(-12px);
+                box-shadow: 0 20px 30px rgba(0, 0, 0, 0.08);
+                border-color: $primary-blue;
             }
         }
-        .leftdiv{
-            &:hover {
-                transform: translateY(-10px);
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
-            }
- 
-        }
-        .middlediv{
-            &:hover {
-                transform: translateY(-10px);
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
-            }
+        .mapdisplay {
+            width: 100%;
+            margin-top: 2rem;
+            border-radius: 5px;
+            overflow: hidden; 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             
-        }
-        .rightdiv{
-            &:hover {
-                transform: translateY(-10px);
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            iframe {
+              display: block;
             }
-            
         }
     }
+    
 }

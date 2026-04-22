@@ -97,17 +97,19 @@ $font-header: 'Amatic SC', cursive;
 
         h1 {
             font-size: 25px;
+            margin-bottom: 0px;
+
         }
         p {
             font-size: 10px; 
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
         
         .logbutton, .registerbutton {
             width: 60%; 
             margin: 1px 0; 
             box-sizing: border-box; 
-            padding: 8px;
+            padding: 5px 10px;
             
         }
     }
