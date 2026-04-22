@@ -120,6 +120,7 @@ const LoginPage: React.FC = () => {
             <button type="submit" disabled={loading} className={styles.loginBtn}>
               {loading ? "Logging in..." : "Login"}
             </button>
+            <div className={styles.backthome}><Link to="/">Back to Home</Link></div>
           </form>
         </div>
       </section>

@@ -18,7 +18,7 @@ const myStorage = multer.diskStorage({
 
 export const uploader = (type = 'image')=>{
     let allowerdExtension = ['jpg', 'jpeg', 'png','bmp','webp', 'svg']
-    let maxUploadSize = 3 * 1024 * 1024;
+    let maxUploadSize = 7 * 1024 * 1024;
     if (type==='doc'){
         allowerdExtension=['pdf','csv','txt','docx','doc','xlsx']
         maxUploadSize = 2 * 1025 * 1024
