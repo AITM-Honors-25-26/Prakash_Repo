@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify'; 
 import styles from './MenuPage.module.scss';
 import Layout from '../../components/layout/layout';
 import cartwhite from '../../../img/icons/cart.white.png';
@@ -19,42 +20,98 @@ interface BakeryItem {
 const MenuPage: React.FC = () => {
   const [menuItems, setMenuItems] = useState<BakeryItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  
-  // 1. Logic to check for Admin status
-  // In a real app, you'd get this from your AuthContext or Redux store
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
-  useEffect(() => {
-    // Check user role from localStorage (example)
-    const userRole = localStorage.getItem('userRole'); 
-    if (userRole === 'Admin') {
-      setIsAdmin(true);
-    }
-
-    const fetchMenu = async () => {
-      try {
-        const response = await axios.get(API_ENDPOINTS.LISTALLITEMS);
-        const data = response.data?.result;
-        if (Array.isArray(data)) {
-          setMenuItems(data);
-        } else if (data && typeof data === 'object') {
-          setMenuItems([data]); 
-        }
-      } catch (error) {
-        console.error("Error fetching menu:", error);
-      } finally {
-        setLoading(false);
+  const fetchMenu = useCallback(async (showLoading = true) => {
+    if (showLoading) setLoading(true);
+    try {
+      const response = await axios.get(API_ENDPOINTS.LISTALLITEMS);
+      const data = response.data?.result;
+      if (Array.isArray(data)) {
+        setMenuItems(data);
+      } else if (data && typeof data === 'object') {
+        setMenuItems([data]); 
       }
-    };
-    fetchMenu();
+    } catch (error) {
+      console.error("Error fetching menu:", error);
+      toast.error("Failed to load menu items.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  // 2. Handle Delete (Optional Functionality)
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user'); 
+    if (storedUser) {
+      try {
+        const userData = JSON.parse(storedUser);
+        if (userData.role === 'Admin') {
+          setIsAdmin(true);
+        }
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+      }
+    }
+    fetchMenu();
+  }, [fetchMenu]);
+
   const handleDelete = async (id: string) => {
     if (window.confirm("Are you sure you want to delete this item?")) {
-        // Add your axios.delete logic here
-        console.log("Deleting item:", id);
+      try {
+        await axios.delete(`${API_ENDPOINTS.MENU_ACTION}/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}` 
+          }
+        });
+        toast.success("Item deleted successfully!");
+        await fetchMenu(false); 
+      } catch (error: unknown) {
+        let errorMsg = "Failed to delete item.";
+        if (axios.isAxiosError(error)) {
+          errorMsg = error.response?.data?.message || error.message || errorMsg;
+        }
+        toast.error(errorMsg);
+      }
     }
+  };
+
+  const renderCategorySection = (title: string, categoryName: string) => {
+    const filteredItems = menuItems.filter(item => item.category === categoryName);
+
+    if (filteredItems.length === 0) return null;
+
+    return (
+      <>
+        <div className={styles.topic}>
+          <h1>{title}</h1>
+        </div>
+        <div className={styles.itemSection}>
+          {filteredItems.map((item) => (
+            <div key={item._id} className={styles.photosection}>
+              <img
+                src={item.images && item.images.length > 0 
+                  ? item.images[0].url 
+                  : 'https://via.placeholder.com/150'} 
+                alt={item.name} 
+              />
+              <div className={styles.overlay}>
+                <h3>{item.name}</h3>
+                <p>{item.description}</p>
+                <p>Rs {Number(item.price).toFixed(2)}</p>
+                <div className={styles.buttonDiv}>
+                  Add to cart <img src={cartwhite} alt="Cart icon" />
+                </div>
+                {isAdmin && (
+                  <div className={styles.deleteButton} onClick={() => handleDelete(item._id)}>
+                    Delete Item
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </>
+    );
   };
 
   if (loading) {
@@ -70,47 +127,18 @@ const MenuPage: React.FC = () => {
   return (
     <Layout>
       <div className={styles.main}>
-        <div className={styles.topic}>
-          <h1>Breads</h1>
-        </div>
-        
-        <div className={styles.itemSection}>
-          {menuItems.length > 0 ? (
-            menuItems.map((item) => (
-              <div key={item._id} className={styles.photosection}>
-                <img
-                  src={item.images && item.images.length > 0 
-                    ? item.images[0].url 
-                    : 'https://via.placeholder.com/150'} 
-                  alt={item.name} 
-                />
-                
-                <div className={styles.overlay}>
-                  <h3>{item.name || "Bakery Item"}</h3>
-                  <p>{item.description}</p>
-                  <p>Rs {item.price ? Number(item.price).toFixed(2) : '0.00'}</p>
-                  
-                  <div className={styles.buttonDiv}>
-                    Add to cart 
-                    <img src={cartwhite} alt="Cart icon" />
-                  </div>
+        {/* Render Breads Section */}
+        {renderCategorySection("Breads", "Bread")}
 
-                  {/* 3. Conditional Rendering Logic */}
-                  {isAdmin && (
-                    <div 
-                      className={styles.deleteButton} 
-                      onClick={() => handleDelete(item._id)}
-                    >
-                      Delete Item
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className={styles.topic}><p>No items found in the menu.</p></div>
-          )}
-        </div>
+        {/* Render Cakes Section */}
+        {renderCategorySection("Cakes", "Cake")}
+
+        {/* Fallback if both are empty */}
+        {menuItems.length === 0 && (
+          <div className={styles.topic}>
+            <p>No items found in the menu.</p>
+          </div>
+        )}
       </div>
     </Layout>
   );

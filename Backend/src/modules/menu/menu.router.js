@@ -10,5 +10,6 @@ const menuRouter = Router();
 
 menuRouter.post('/menu/add-item',allowUser([UserRole.ADMIN]),uploader().single('image'),bodyValidator(menuCreateSchema),menuCtrl.createBakeryItem);
 menuRouter.get('/menu/list', menuCtrl.getAllMenuItems);
-
+// Add this to your existing menuRouter file
+menuRouter.delete('/menu/:id', allowUser([UserRole.ADMIN]), menuCtrl.deleteMenuItem);
 export default menuRouter;

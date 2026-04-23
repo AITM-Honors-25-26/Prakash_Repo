@@ -37,16 +37,23 @@ class MenuService {
         }
     }
     deleteItemById = async (id) => {
-        try {
-            const response = await Bakery.findByIdAndDelete(id);
-            if (!response) {
-                throw { status: 404, message: "Item not found or already deleted." };
-            }
-            return response;
-        } catch (exception) {
-            throw exception;
+    try {
+        const item = await Bakery.findById(id);
+        if (!item) {
+            throw { status: 404, message: "Item not found." };
         }
+        if (item.images && item.images.length > 0) {
+            for (const img of item.images) {
+                if (img.public_id) {
+                    await cloudianarySvc.deleteFile(img.public_id); 
+                }
+            }
+        }
+        return await Bakery.findByIdAndDelete(id);
+    } catch (exception) {
+        throw exception;
     }
+}
 }
 const menuSvc = new MenuService();
 export default menuSvc;
