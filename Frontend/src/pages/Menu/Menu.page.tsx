@@ -4,6 +4,7 @@ import styles from './MenuPage.module.scss';
 import Layout from '../../components/layout/layout';
 import cartwhite from '../../../img/icons/cart.white.png';
 import { API_ENDPOINTS } from '../../constants/constants';
+
 interface BakeryItem {
   _id: string;
   name: string;
@@ -14,10 +15,22 @@ interface BakeryItem {
   stock: number;
   isAvailable: boolean;
 }
+
 const MenuPage: React.FC = () => {
   const [menuItems, setMenuItems] = useState<BakeryItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  
+  // 1. Logic to check for Admin status
+  // In a real app, you'd get this from your AuthContext or Redux store
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
   useEffect(() => {
+    // Check user role from localStorage (example)
+    const userRole = localStorage.getItem('userRole'); 
+    if (userRole === 'Admin') {
+      setIsAdmin(true);
+    }
+
     const fetchMenu = async () => {
       try {
         const response = await axios.get(API_ENDPOINTS.LISTALLITEMS);
@@ -36,6 +49,14 @@ const MenuPage: React.FC = () => {
     fetchMenu();
   }, []);
 
+  // 2. Handle Delete (Optional Functionality)
+  const handleDelete = async (id: string) => {
+    if (window.confirm("Are you sure you want to delete this item?")) {
+        // Add your axios.delete logic here
+        console.log("Deleting item:", id);
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -45,6 +66,7 @@ const MenuPage: React.FC = () => {
       </Layout>
     );
   }
+
   return (
     <Layout>
       <div className={styles.main}>
@@ -66,13 +88,22 @@ const MenuPage: React.FC = () => {
                 <div className={styles.overlay}>
                   <h3>{item.name || "Bakery Item"}</h3>
                   <p>{item.description}</p>
-                  <p>${item.price ? Number(item.price).toFixed(2) : '0.00'}</p>
+                  <p>Rs {item.price ? Number(item.price).toFixed(2) : '0.00'}</p>
                   
                   <div className={styles.buttonDiv}>
                     Add to cart 
                     <img src={cartwhite} alt="Cart icon" />
                   </div>
-                  <div className={styles.deleteButton}>Delete Item</div>
+
+                  {/* 3. Conditional Rendering Logic */}
+                  {isAdmin && (
+                    <div 
+                      className={styles.deleteButton} 
+                      onClick={() => handleDelete(item._id)}
+                    >
+                      Delete Item
+                    </div>
+                  )}
                 </div>
               </div>
             ))
