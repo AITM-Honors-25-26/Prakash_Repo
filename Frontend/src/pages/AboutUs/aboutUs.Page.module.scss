@@ -1,8 +1,8 @@
 $font-header: 'Amatic SC', cursive;
-$primary-warm: #d4a373; // Warm dough/crust color
-$accent-brown: #603808; // Dark chocolate/coffee color
-$bg-cream: #fefae0; // Soft flour/cream background
-$text-dark: #283618; // Forest green/earthy dark
+$primary-warm: #d4a373; 
+$accent-brown: #603808; 
+$bg-cream: #fefae0; 
+$text-dark: #283618; 
 
 .aboutContainer {
   font-family: 'Inter', sans-serif;
@@ -11,15 +11,20 @@ $text-dark: #283618; // Forest green/earthy dark
   padding: 60px 20px;
   background-color: transparent;
 
-  .hero {
+  .whole {
     text-align: center;
-    margin-bottom: 80px;
+    margin-bottom: 60px;
 
     h1 {
       font-family: $font-header;
       font-size: 5.5rem;
       color: $accent-brown;
       margin: 0;
+      line-height: 1;
+
+      @media (max-width: 768px) {
+        font-size: 3.5rem;
+      }
     }
 
     p {
@@ -28,6 +33,10 @@ $text-dark: #283618; // Forest green/earthy dark
       font-style: italic;
       max-width: 600px;
       margin: 10px auto;
+
+      @media (max-width: 768px) {
+        font-size: 1.1rem;
+      }
     }
   }
 
@@ -36,15 +45,26 @@ $text-dark: #283618; // Forest green/earthy dark
     grid-template-columns: 1fr 1.2fr;
     gap: 50px;
     align-items: center;
-    margin-bottom: 100px;
+    margin-bottom: 80px;
 
-    @media (max-width: 768px) { grid-template-columns: 1fr; }
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 30px;
+      text-align: center; 
+    }
 
     .imageWrapper {
       img {
         width: 100%;
-        border-radius: 40px 10px 40px 10px; // Unique "organic" corners
+        height: auto;
+        border-radius: 40px 10px 40px 10px;
         box-shadow: 20px 20px 0px $primary-warm;
+
+        @media (max-width: 768px) {
+          box-shadow: 10px 10px 0px $primary-warm; 
+          max-width: 90%; 
+          margin: 0 auto;
+        }
       }
     }
 
@@ -53,6 +73,10 @@ $text-dark: #283618; // Forest green/earthy dark
         font-family: $font-header;
         font-size: 3.5rem;
         color: $accent-brown;
+        
+        @media (max-width: 768px) {
+          font-size: 2.8rem;
+        }
       }
       p {
         line-height: 1.8;
@@ -74,15 +98,19 @@ $text-dark: #283618; // Forest green/earthy dark
     gap: 20px;
     margin-bottom: 80px;
 
-    @media (max-width: 768px) { flex-direction: column; }
+    @media (max-width: 768px) {
+      flex-direction: column; 
+      align-items: center;
+    }
 
     .statCard {
       flex: 1;
+      width: 100%; 
       background: white;
       padding: 40px;
       border-radius: 30px;
       text-align: center;
-      border: 2px dashed $primary-warm; // Looks like a flour sack or recipe card
+      border: 2px dashed $primary-warm;
       
       .icon { font-size: 3rem; display: block; margin-bottom: 10px; }
       h3 { font-family: $font-header; font-size: 2rem; color: $accent-brown; }
@@ -93,6 +121,10 @@ $text-dark: #283618; // Forest green/earthy dark
   .valuesSection {
     display: flex;
     gap: 30px;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
 
     .valueCard {
       flex: 1;

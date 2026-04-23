@@ -1,20 +1,16 @@
 import React from 'react';
 import Layout from './../../components/layout/layout';
 import styles from './aboutUs.Page.module.scss';
-// Tip: Add a high-quality photo of Malina or a signature sourdough loaf here!
 import bakeryHero from '../../../img/bakery photo.png'; 
 
 const AboutUsPage: React.FC = () => {
   return (
     <Layout>
       <section className={styles.aboutContainer}>
-        {/* Hero Section */}
-        <div className={styles.hero}>
+        <div className={styles.whole}>
           <h1>Baked with Love</h1>
           <p>From our oven to your table handcrafted treats made with organic ingredients and a dash of magic.</p>
         </div>
-
-        {/* The Story Section */}
         <div className={styles.contentGrid}>
           <div className={styles.imageWrapper}>
              <img src={bakeryHero} alt="Malina's Bakery Fresh Bread" />
@@ -28,11 +24,10 @@ const AboutUsPage: React.FC = () => {
               art of slow-baking. We believe that the best bread takes time, 
               and the best memories are made over a slice of cake.
             </p>
-            <div className={styles.signature}>— Melina</div>
+            <div className={styles.signature}>- Melina</div>
           </div>
         </div>
 
-        {/* Stat/Feature Cards */}
         <div className={styles.statsGrid}>
           <div className={styles.statCard}>
             <span className={styles.icon}>🌾</span>
@@ -51,7 +46,6 @@ const AboutUsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Mission Section */}
         <div className={styles.valuesSection}>
           <div className={styles.valueCard}>
             <h3>Our Promise</h3>
