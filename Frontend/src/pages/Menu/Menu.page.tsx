@@ -127,13 +127,8 @@ const MenuPage: React.FC = () => {
   return (
     <Layout>
       <div className={styles.main}>
-        {/* Render Breads Section */}
         {renderCategorySection("Breads", "Bread")}
-
-        {/* Render Cakes Section */}
         {renderCategorySection("Cakes", "Cake")}
-
-        {/* Fallback if both are empty */}
         {menuItems.length === 0 && (
           <div className={styles.topic}>
             <p>No items found in the menu.</p>
