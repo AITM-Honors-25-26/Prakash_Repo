@@ -78,8 +78,10 @@ $font-nav: 'Lucida Handwriting', cursive;
       height: 50px;
       width: 50px;
       transition: all 0.3s ease;
-
       border-radius: 50px;
+      &:hover{
+        
+      }
 
       @media (max-width: 768px) {
         width: 30px; 
