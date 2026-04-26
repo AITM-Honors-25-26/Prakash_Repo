@@ -111,6 +111,13 @@ $text-dark: #283618;
       border-radius: 30px;
       text-align: center;
       border: 2px dashed $primary-warm;
+      transition: all 0.3s ease;
+      &:hover{
+        background: #fff7f2; 
+        transform: scale(1.05);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); 
+
+      }
       
       .icon { font-size: 3rem; display: block; margin-bottom: 10px; }
       h3 { font-family: $font-header; font-size: 2rem; color: $accent-brown; }

@@ -15,7 +15,6 @@ const AboutUsPage: React.FC = () => {
           <div className={styles.imageWrapper}>
              <img src={bakeryHero} alt="Malina's Bakery Fresh Bread" />
           </div>
-          
           <div className={styles.textBlock}>
             <h2>Our Sweet Journey</h2>
             <p>
@@ -27,7 +26,6 @@ const AboutUsPage: React.FC = () => {
             <div className={styles.signature}>- Melina</div>
           </div>
         </div>
-
         <div className={styles.statsGrid}>
           <div className={styles.statCard}>
             <span className={styles.icon}>🌾</span>
@@ -45,7 +43,6 @@ const AboutUsPage: React.FC = () => {
             <p>The perfect partner for your pastry.</p>
           </div>
         </div>
-
         <div className={styles.valuesSection}>
           <div className={styles.valueCard}>
             <h3>Our Promise</h3>
@@ -60,5 +57,4 @@ const AboutUsPage: React.FC = () => {
     </Layout>
   );
 };
-
 export default AboutUsPage;
