@@ -28,7 +28,7 @@ const MenuPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
-  // 1. Fetch Menu (Updates locally without refreshing the page)
+  // 1. Fetch Menu
   const fetchMenu = useCallback(async (showLoading = true) => {
     if (showLoading) setLoading(true);
     try {
@@ -61,6 +61,70 @@ const MenuPage: React.FC = () => {
     fetchMenu();
   }, [fetchMenu]);
 
+  // 2. Add Item Function 
+  const handleAddItem = async () => {
+    const { value: formValues } = await MySwal.fire({
+      title: 'Add New Bakery Item',
+      background: '#faf7f2',
+      color: '#2d1b18',
+      html:
+        '<input id="swal-name" class="swal2-input" placeholder="Item Name">' +
+        '<input id="swal-desc" class="swal2-input" placeholder="Description">' +
+        '<input id="swal-price" type="number" class="swal2-input" placeholder="Price (Rs.)">' +
+        '<select id="swal-category" class="swal2-input">' +
+          '<option value="Bread">Bread</option>' +
+          '<option value="Cake">Cake</option>' +
+        '</select>' +
+        '<input id="swal-image" class="swal2-input" placeholder="Image URL">',
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Add to Menu',
+      confirmButtonColor: '#d84315',
+      cancelButtonColor: '#2d1b18',
+      preConfirm: () => {
+        const name = (document.getElementById('swal-name') as HTMLInputElement).value;
+        const description = (document.getElementById('swal-desc') as HTMLInputElement).value;
+        const price = (document.getElementById('swal-price') as HTMLInputElement).value;
+        const category = (document.getElementById('swal-category') as HTMLSelectElement).value;
+        const imageUrl = (document.getElementById('swal-image') as HTMLInputElement).value;
+
+        if (!name || !price) {
+          Swal.showValidationMessage('Name and Price are required');
+          return false;
+        }
+
+        return { 
+          name, 
+          description, 
+          price: Number(price), 
+          category, 
+          images: [{ url: imageUrl || 'https://via.placeholder.com/400x500?text=Bakery+Item' }],
+          isAvailable: true,
+          stock: 10 
+        };
+      }
+    });
+
+    if (formValues) {
+      try {
+        const token = localStorage.getItem('token');
+        await axios.post(API_ENDPOINTS.MENU_ACTION, formValues, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        toast.success(`${formValues.name} added successfully!`);
+        await fetchMenu(false); 
+      } catch (error: unknown) {
+        let errorMsg = "Failed to add item.";
+        if (axios.isAxiosError(error)) {
+          errorMsg = error.response?.data?.message || errorMsg;
+        }
+        toast.error(errorMsg);
+      }
+    }
+  };
+
+  // 3. Delete Item Function (Fixed the 'any' error from your screenshot)
   const handleDelete = async (id: string) => {
     const storedUser = localStorage.getItem('user');
     if (!storedUser) {
@@ -84,31 +148,14 @@ const MenuPage: React.FC = () => {
       color: '#2d1b18',
       icon: 'warning',
       iconColor: '#d84315',
-      inputAttributes: {
-        autocapitalize: 'off',
-        autocorrect: 'off'
-      },
-      customClass: {
-        popup: 'custom-swal-popup',
-        title: 'custom-swal-title',
-        htmlContainer: 'custom-swal-text', 
-        input: 'custom-swal-input',
-        confirmButton: 'custom-swal-confirm-btn',
-        cancelButton: 'custom-swal-cancel-btn'
-      }
     });
 
     if (password) {
       try {
         const token = localStorage.getItem('token');
-        
-        // Send delete request to the database
         await axios.delete(`${API_ENDPOINTS.MENU_ACTION}/${id}`, {
           headers: { 'Authorization': `Bearer ${token}` },
-          data: { 
-            password: password,
-            email: userEmail 
-          } 
+          data: { password: password, email: userEmail } 
         });
         
         toast.success("The item has been removed from the menu.");
@@ -120,10 +167,9 @@ const MenuPage: React.FC = () => {
         }
         toast.error(errorMsg);
       }
-    } else if (password === "") {
-      toast.warn("Action cancelled: Password is required.");
     }
   };
+
   const renderCategorySection = (title: string, categoryName: string) => {
     const filteredItems = menuItems.filter(item => item.category === categoryName);
 
@@ -143,9 +189,7 @@ const MenuPage: React.FC = () => {
               />
               <div className={styles.overlay}>
                 <h3>{item.name}</h3>
-                <p className={styles.itemDescription}>
-                  {item.description}
-                </p>
+                <p className={styles.itemDescription}>{item.description}</p>
                 <p className={styles.itemPrice}>
                   Rs. {Number(item.price).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                 </p>
@@ -173,6 +217,26 @@ const MenuPage: React.FC = () => {
   return (
     <Layout>
       <div className={styles.main}>
+        {/* Admin Header: Add Button */}
+        {isAdmin && (
+          <div className={styles.adminHeader} style={{ textAlign: 'center', marginBottom: '20px' }}>
+             <button 
+               className={styles.addBtn} 
+               onClick={handleAddItem}
+               style={{ 
+                 backgroundColor: '#d84315', 
+                 color: 'white', 
+                 padding: '10px 20px', 
+                 borderRadius: '5px', 
+                 border: 'none', 
+                 cursor: 'pointer' 
+               }}
+             >
+               + Add New Bakery Item
+             </button>
+          </div>
+        )}
+
         {loading ? (
           <div className={styles.topic}>
             <h1>Baking your menu...</h1>
