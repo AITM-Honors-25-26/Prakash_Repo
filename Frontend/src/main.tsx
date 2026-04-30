@@ -11,6 +11,7 @@ import MenuPage from "./pages/Menu/Menu.page";
 import ResetPasswordPage from "./pages/Auth/ResetPassword/resetPassword.page";
 import Profile from "./pages/Profile/profile.page";
 import Settings from "./pages/Settings/setting.page";
+import TableManagement from "./pages/TableManagement/TableManagement.page";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -26,6 +27,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/Reset-password" element={<ResetPasswordPage />}/>
         <Route path="/ProfilePage" element={<Profile />}/>
         <Route path="/SettingsPage" element={<Settings />} />
+        <Route path="/TableManagement" element={<TableManagement />}></Route>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

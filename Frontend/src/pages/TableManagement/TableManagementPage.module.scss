@@ -1,0 +1,64 @@
+$font-header: 'Amatic SC', cursive;
+$font-body: sans-serif;
+
+.container {
+  font-family: $font-body;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 80vh;
+
+  .headerSection {
+    text-align: center;
+    margin-bottom: 2rem;
+    h1 { color: #2d1b18; font-size: 2.5rem;
+         font-family: $font-header; }
+  }
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 2rem;
+  span {
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: white;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 25px;
+}
+
+.tableCard {
+  aspect-ratio: 1 / 1;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+  }
+
+  .tableNum { font-size: 2.5rem; font-weight: bold; }
+  .capacity { font-size: 0.9rem; opacity: 0.8; }
+  .statusLabel { margin-top: 10px; font-weight: bold; text-transform: uppercase; font-size: 0.7rem; }
+}
+
+// Status Colors
+.available { background-color: #4caf50; color: white; }
+.occupied { background-color: #d84315; color: white; } // Your theme orange
+.reserved { background-color: #ffa000; color: white; }
+.cleaning { background-color: #78909c; color: white; }

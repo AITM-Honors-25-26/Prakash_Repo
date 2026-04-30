@@ -61,21 +61,36 @@ const MenuPage: React.FC = () => {
     fetchMenu();
   }, [fetchMenu]);
 
-  // 2. Add Item Function 
+  // 2. Add Item Function (Handles File Upload + Form Data)
   const handleAddItem = async () => {
+    // Step A: Pick the File
+    const { value: file } = await MySwal.fire({
+      title: 'Select Item Image',
+      input: 'file',
+      inputAttributes: {
+        'accept': 'image/*',
+        'aria-label': 'Upload bakery item image'
+      },
+      confirmButtonColor: '#d84315',
+      showCancelButton: true
+    });
+
+    if (!file) return;
+
+    // Step B: Fill the Details
     const { value: formValues } = await MySwal.fire({
-      title: 'Add New Bakery Item',
+      title: 'Item Details',
       background: '#faf7f2',
       color: '#2d1b18',
       html:
         '<input id="swal-name" class="swal2-input" placeholder="Item Name">' +
         '<input id="swal-desc" class="swal2-input" placeholder="Description">' +
         '<input id="swal-price" type="number" class="swal2-input" placeholder="Price (Rs.)">' +
+        '<input id="swal-stock" type="number" class="swal2-input" placeholder="Stock Quantity" value="1">' +
         '<select id="swal-category" class="swal2-input">' +
           '<option value="Bread">Bread</option>' +
           '<option value="Cake">Cake</option>' +
-        '</select>' +
-        '<input id="swal-image" class="swal2-input" placeholder="Image URL">',
+        '</select>',
       focusConfirm: false,
       showCancelButton: true,
       confirmButtonText: 'Add to Menu',
@@ -83,11 +98,8 @@ const MenuPage: React.FC = () => {
       cancelButtonColor: '#2d1b18',
       preConfirm: () => {
         const name = (document.getElementById('swal-name') as HTMLInputElement).value;
-        const description = (document.getElementById('swal-desc') as HTMLInputElement).value;
         const price = (document.getElementById('swal-price') as HTMLInputElement).value;
-        const category = (document.getElementById('swal-category') as HTMLSelectElement).value;
-        const imageUrl = (document.getElementById('swal-image') as HTMLInputElement).value;
-
+        
         if (!name || !price) {
           Swal.showValidationMessage('Name and Price are required');
           return false;
@@ -95,12 +107,10 @@ const MenuPage: React.FC = () => {
 
         return { 
           name, 
-          description, 
-          price: Number(price), 
-          category, 
-          images: [{ url: imageUrl || 'https://via.placeholder.com/400x500?text=Bakery+Item' }],
-          isAvailable: true,
-          stock: 10 
+          description: (document.getElementById('swal-desc') as HTMLInputElement).value, 
+          price, 
+          stock: (document.getElementById('swal-stock') as HTMLInputElement).value,
+          category: (document.getElementById('swal-category') as HTMLSelectElement).value, 
         };
       }
     });
@@ -108,8 +118,22 @@ const MenuPage: React.FC = () => {
     if (formValues) {
       try {
         const token = localStorage.getItem('token');
-        await axios.post(API_ENDPOINTS.MENU_ACTION, formValues, {
-          headers: { 'Authorization': `Bearer ${token}` }
+        
+        // Prepare Multipart Form Data (matches your Postman request)
+        const formData = new FormData();
+        formData.append('image', file); 
+        formData.append('name', formValues.name);
+        formData.append('description', formValues.description);
+        formData.append('price', formValues.price);
+        formData.append('stock', formValues.stock);
+        formData.append('category', formValues.category);
+        formData.append('isAvailable', 'true');
+
+        await axios.post(API_ENDPOINTS.MENU_ACTION, formData, {
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data' 
+          }
         });
         
         toast.success(`${formValues.name} added successfully!`);
@@ -124,7 +148,7 @@ const MenuPage: React.FC = () => {
     }
   };
 
-  // 3. Delete Item Function (Fixed the 'any' error from your screenshot)
+  // 3. Delete Item Function
   const handleDelete = async (id: string) => {
     const storedUser = localStorage.getItem('user');
     if (!storedUser) {
@@ -226,9 +250,10 @@ const MenuPage: React.FC = () => {
                style={{ 
                  backgroundColor: '#d84315', 
                  color: 'white', 
-                 padding: '10px 20px', 
-                 borderRadius: '5px', 
+                 padding: '12px 25px', 
+                 borderRadius: '8px', 
                  border: 'none', 
+                 fontWeight: 'bold',
                  cursor: 'pointer' 
                }}
              >

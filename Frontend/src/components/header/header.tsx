@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; 
+import React, { useState} from 'react'; 
 import styles from './header.module.scss';
 import profile from './../../../img/profile.png';
 import logowhite from './../../../img/log.white.png';
@@ -6,6 +6,7 @@ import logowhite from './../../../img/log.white.png';
 const Header: React.FC = () => {
   const [user, setUser] = useState<{ 
     name: string; 
+    role: string; // Added role to the interface
     image?: { url: string }
   } | null>(() => {
     const savedUser = localStorage.getItem('user');
@@ -19,12 +20,17 @@ const Header: React.FC = () => {
     }
     return null;
   });
+
+  // Check if user has permission to see the Tables/Dashboard
+  const hasStaffAccess = user && ['Admin', 'Chef', 'Waiter', 'Employee'].includes(user.role);
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
     window.location.href = "/";
   };
+
   return (
     <header className={styles.header}>
         <a href="/">
@@ -33,9 +39,18 @@ const Header: React.FC = () => {
         <nav className={styles.navLinks}>
           <a href="/">Home</a>
           <a href="/MenuPage">Menu</a>
+          
+          {/* CONDITIONALLY RENDER TABLES LINK */}
+          {hasStaffAccess && (
+            <a href="/TableManagement" className={styles.staffLink}>
+              Tables
+            </a>
+          )}
+
           <a href="/ContactUsPage">Contact Us</a>
           <a href="/AboutUsPage">About Us</a>
         </nav>
+
         <div className={styles.authSection}>
           {user ? (
             <div className={styles.profileWrapper}>
@@ -47,6 +62,7 @@ const Header: React.FC = () => {
               <div className={styles.DropdownBar}>
                 <div className={styles.userInfo}>
                   <p>{user.name}</p>
+                  <small className={styles.userRole}>{user.role}</small>
                 </div>
                 <hr />
                 <div className={styles.actions}>
@@ -69,4 +85,5 @@ const Header: React.FC = () => {
     </header>
   );
 };
+
 export default Header;
