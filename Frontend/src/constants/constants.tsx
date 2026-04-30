@@ -6,7 +6,8 @@ export const API_ENDPOINTS = {
   FORGETPASSWORD: `${API_BASE_URL}/auth/forgot_password`,
   RESETPASSWORD:`${API_BASE_URL}/auth/reset-password`,
   LISTALLITEMS:`${API_BASE_URL}/menu/list`,
-  MENU_ACTION: `${API_BASE_URL}/menu`
+  MENU_ACTION: `${API_BASE_URL}/menu`,
+  TABLEMANAGEMENT:`${API_BASE_URL}/TableManagement`
 
 };
 export const CATAGOTY = {

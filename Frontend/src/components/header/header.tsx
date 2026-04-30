@@ -21,7 +21,6 @@ const Header: React.FC = () => {
     return null;
   });
 
-  // Check if user has permission to see the Tables/Dashboard
   const hasStaffAccess = user && ['Admin', 'Chef', 'Waiter', 'Employee'].includes(user.role);
 
   const handleLogout = () => {
@@ -40,7 +39,6 @@ const Header: React.FC = () => {
           <a href="/">Home</a>
           <a href="/MenuPage">Menu</a>
           
-          {/* CONDITIONALLY RENDER TABLES LINK */}
           {hasStaffAccess && (
             <a href="/TableManagement" className={styles.staffLink}>
               Tables
