@@ -4,7 +4,6 @@ import styles from './TableManagementPage.module.scss';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import axios from 'axios';
-// import { API_ENDPOINTS } from '../../constants/constants'; // Adjust this import based on your setup
 
 interface RestaurantTable {
   _id: string;
@@ -21,14 +20,12 @@ const TablePage: React.FC = () => {
   const fetchTables = async () => {
     setLoading(true);
     try {
-      // Replace with API_ENDPOINTS.TABLE_LIST if you have it in your constants
       const response = await axios.get('/table/list'); 
       const data = response.data?.result || response.data;
       
       if (Array.isArray(data)) {
         setTables(data);
       } else {
-        // Fallback dummy data if the database is empty, matching the new schema
         const generatedTables: RestaurantTable[] = Array.from({ length: 12 }, (_, i) => ({
           _id: `dummy-${i + 1}`,
           tableNumber: i + 1,
@@ -49,6 +46,62 @@ const TablePage: React.FC = () => {
   useEffect(() => {
     fetchTables();
   }, []);
+
+  // --- NEW: Add Table Function ---
+  const handleAddTable = () => {
+    Swal.fire({
+      title: 'Add New Table',
+      background: '#faf7f2',
+      color: '#2d1b18',
+      html: `
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+          <input type="number" id="swal-table-num" class="swal2-input" placeholder="Table Number (e.g. 15)" style="margin: 0; width: auto;">
+          <input type="number" id="swal-capacity" class="swal2-input" placeholder="Capacity (e.g. 4)" style="margin: 0; width: auto;">
+          <select id="swal-location" class="swal2-select" style="margin: 0; width: auto;">
+            <option value="Indoor">Indoor</option>
+            <option value="Outdoor">Outdoor</option>
+            <option value="Window">Window</option>
+            <option value="Balcony">Balcony</option>
+          </select>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Save Table',
+      confirmButtonColor: '#d84315',
+      cancelButtonColor: '#78909c',
+      preConfirm: () => {
+        const tableNumber = (document.getElementById('swal-table-num') as HTMLInputElement).value;
+        const capacity = (document.getElementById('swal-capacity') as HTMLInputElement).value;
+        const location = (document.getElementById('swal-location') as HTMLSelectElement).value;
+
+        if (!tableNumber || !capacity) {
+          Swal.showValidationMessage('Please enter both Table Number and Capacity');
+          return false;
+        }
+
+        return { 
+          tableNumber: Number(tableNumber), 
+          capacity: Number(capacity), 
+          location 
+        };
+      }
+    }).then(async (result) => {
+      if (result.isConfirmed && result.value) {
+        try {
+          // Adjust this route if your API endpoint is different
+          // Make sure to include auth headers here if your backend requires Admin token!
+          await axios.post('/table/add', result.value);
+          
+          toast.success(`Table ${result.value.tableNumber} added successfully!`);
+          fetchTables();
+        } catch (error: any) {
+          console.error("Add Table Error:", error);
+          const errorMsg = error.response?.data?.message || "Failed to add table.";
+          toast.error(errorMsg);
+        }
+      }
+    });
+  };
 
   const handleTableClick = (table: RestaurantTable) => {
     Swal.fire({
@@ -97,9 +150,6 @@ const TablePage: React.FC = () => {
 
     if (newStatus) {
       try {
-        // TODO: Add your PUT/PATCH API call here to update the status in the backend
-        // await axios.patch(`/table/${table._id}`, { status: newStatus });
-        
         console.log(`Updating Table ${table.tableNumber} to ${newStatus}`);
         toast.success(`Table ${table.tableNumber} set to ${newStatus}`);
         fetchTables(); 
@@ -136,8 +186,14 @@ const TablePage: React.FC = () => {
   return (
     <Layout>
       <div className={styles.container}>
+        {/* --- UPDATED: Header Section with Add Button --- */}
         <div className={styles.headerSection}>
-          <h1>Dining Area Overview</h1>
+          <div className={styles.headerTop}>
+            <h1>Dining Area Overview</h1>
+            <button className={styles.addButton} onClick={handleAddTable}>
+              + Add Table
+            </button>
+          </div>
           <p>Real-time floor plan management</p>
         </div>
 

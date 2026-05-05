@@ -4,7 +4,6 @@ $text-main: #2d1b18;
 $accent-color: #d84315;
 $text-muted: #78909c;
 
-// --- Status Colors ---
 $color-available: #4caf50; // Green
 $color-occupied: #f44336;  // Red
 $color-reserved: #ff9800;  // Orange
@@ -32,7 +31,6 @@ $color-reserved: #ff9800;  // Orange
   }
 }
 
-// --- Legend Styling ---
 .legend {
   display: flex;
   justify-content: center;
@@ -67,10 +65,8 @@ $color-reserved: #ff9800;  // Orange
   font-style: italic;
 }
 
-// --- Grid Layout ---
 .grid {
   display: grid;
-  // This automatically adjusts the number of columns based on screen size!
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1.5rem;
   padding: 1rem 0;
@@ -122,8 +118,6 @@ $color-reserved: #ff9800;  // Orange
     letter-spacing: 0.5px;
   }
 
-  // --- Dynamic Status Styling ---
-  // The React component passes "available", "occupied", or "reserved" as a class
   &.available {
     border-color: rgba($color-available, 0.3);
     .statusBadge { 
