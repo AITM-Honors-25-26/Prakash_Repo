@@ -43,3 +43,9 @@ export const SMTPConfig={
     password:process.env.SMTP_PASSWORD,
     port:process.env.SMTP_PORT
 }
+export const Status={
+    AVAILABLE:'Available',
+    OCCUPIED:'Occupied',
+    RESERVED: 'Reserved',
+    NOTAVAILABLE:'NotAvailable'
+}
