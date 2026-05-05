@@ -1,59 +1,51 @@
-import { Bakery } from "../Items/items.model.js";
-import cloudianarySvc from "../../services/cloudinary.service.js";
+import { Table } from "./table.model.js"; 
 
-class MenuService {
-    transformMenuData = async (req) => {
-    try {
-        let data = { ...req.body };
-        data.images = []; 
-        if (req.file) {
-            const upload = await cloudianarySvc.fileUpload(req.file.path, 'bakery/');
-            data.images.push({
-                url: upload.secure_url || upload.url,
-                public_id: upload.public_id
-            });
-        }
-        if (data.price) data.price = Number(data.price);
-        if (data.stock) data.stock = Number(data.stock);
-        data.isAvailable = String(data.isAvailable) === 'true';
-        return data;
-        } catch (exception) {
-        throw exception;
-        }
-    }
-    storeMenuItem = async (data) => {
+class TableService {
+    transformTableData = async (req) => {
         try {
-            const itemObj = new Bakery(data);
-            return await itemObj.save();
+            let data = { ...req.body };
+            
+            // Convert string inputs to Numbers to match our Table schema
+            if (data.tableNumber) data.tableNumber = Number(data.tableNumber);
+            if (data.capacity) data.capacity = Number(data.capacity);
+            
+            return data;
         } catch (exception) {
             throw exception;
         }
     }
-    getAllItems = async (filter = {}) => {
+
+    storeTable = async (data) => {
         try {
-            return await Bakery.find(filter);
+            const tableObj = new Table(data);
+            return await tableObj.save();
         } catch (exception) {
             throw exception;
         }
     }
-    deleteItemById = async (id) => {
-    try {
-        const item = await Bakery.findById(id);
-        if (!item) {
-            throw { status: 404, message: "Item not found." };
+
+    getAllTables = async (filter = {}) => {
+        try {
+            return await Table.find(filter);
+        } catch (exception) {
+            throw exception;
         }
-        if (item.images && item.images.length > 0) {
-            for (const img of item.images) {
-                if (img.public_id) {
-                    await cloudianarySvc.deleteFile(img.public_id); 
-                }
+    }
+
+    deleteTableById = async (id) => {
+        try {
+            const table = await Table.findById(id);
+            if (!table) {
+                throw { status: 404, message: "Table not found." };
             }
+            
+            // Since Tables don't have images in our schema, we can skip the Cloudinary deletion loop
+            return await Table.findByIdAndDelete(id);
+        } catch (exception) {
+            throw exception;
         }
-        return await Bakery.findByIdAndDelete(id);
-    } catch (exception) {
-        throw exception;
     }
 }
-}
-const menuSvc = new MenuService();
-export default menuSvc;
+
+const tableSvc = new TableService();
+export default tableSvc;

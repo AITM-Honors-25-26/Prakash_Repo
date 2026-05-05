@@ -1,15 +1,31 @@
 import { Router } from "express";
-import menuCtrl from "./menu.controller.js";
-import { menuCreateSchema } from "./menu.validator.js";
+import tableCtrl from "./table.controller.js";
+import { tableCreateSchema } from "./table.validator.js"; 
 import { bodyValidator } from "../../middleware/request.validator.js";
-import { uploader } from "../../middleware/file-handeling.middleware.js";
 import allowUser from "../../middleware/auth.middelware.js";
 import { UserRole } from "../../config/constants.js";
 
-const menuRouter = Router();
+const tableRouter = Router();
 
-menuRouter.post('/menu/add-item',allowUser([UserRole.ADMIN]),uploader().single('image'),bodyValidator(menuCreateSchema),menuCtrl.createBakeryItem);
-menuRouter.get('/menu/list', menuCtrl.getAllMenuItems);
-// Add this to your existing menuRouter file
-menuRouter.delete('/menu/:id', allowUser([UserRole.ADMIN]), menuCtrl.deleteMenuItem);
-export default menuRouter;
+// Add a new table
+tableRouter.post(
+    '/table/add', 
+    allowUser([UserRole.ADMIN]), 
+    bodyValidator(tableCreateSchema), 
+    tableCtrl.createTable
+);
+
+// Get a list of all tables
+tableRouter.get(
+    '/table/list', 
+    tableCtrl.getAllTables
+);
+
+// Delete a specific table by ID
+tableRouter.delete(
+    '/table/:id', 
+    allowUser([UserRole.ADMIN]), 
+    tableCtrl.deleteTable
+);
+
+export default tableRouter;

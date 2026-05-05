@@ -1,19 +1,23 @@
 import Joi from "joi";
 
-export const menuCreateSchema = Joi.object({
-    name: Joi.string().trim().required().messages({
-        "string.empty": "Item name is required"
+export const tableCreateSchema = Joi.object({
+    tableNumber: Joi.number().min(1).required().messages({
+        "number.base": "Table number must be a valid number",
+        "any.required": "Table number is required",
+        "number.min": "Table number must be 1 or greater"
     }),
-    description: Joi.string().required().messages({
-        "string.empty": "Description is required"
+    
+    capacity: Joi.number().min(1).required().messages({
+        "number.base": "Capacity must be a valid number",
+        "any.required": "Capacity is required",
+        "number.min": "Capacity must be at least 1 person"
     }),
-    price: Joi.number().min(0).required().messages({
-        "number.base": "Price must be a valid number",
-        "number.min": "Price cannot be negative"
+    
+    status: Joi.string().valid('Available', 'Occupied', 'Reserved').optional().empty('').messages({
+        "any.only": "Status must be 'Available', 'Occupied', or 'Reserved'"
     }),
-    category: Joi.string().valid('Cake', 'Bread', 'Pastry', 'Cookie', 'drinks').required().messages({
-        "any.only": "Category must be Cake, Bread, Pastry, Cookie, or drinks"
-    }),
-    stock: Joi.number().min(0).optional().empty(''),
-    isAvailable: Joi.boolean().optional().empty('')
+    
+    location: Joi.string().valid('Indoor', 'Outdoor', 'Window', 'Balcony').optional().empty('').messages({
+        "any.only": "Location must be 'Indoor', 'Outdoor', 'Window', or 'Balcony'"
+    })
 });

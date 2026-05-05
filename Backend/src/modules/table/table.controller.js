@@ -1,38 +1,44 @@
-import menuSvc from "./menu.service.js";
-class MenuController {
-    createBakeryItem = async (req, res, next) => {
+import tableSvc from "./table.service.js";
+
+class TableController {
+    createTable = async (req, res, next) => {
         try {
-            const data = await menuSvc.transformMenuData(req);
-            const savedItem = await menuSvc.storeMenuItem(data);
+            // Assuming your service handles validation/transformation
+            const data = await tableSvc.transformTableData(req);
+            const savedTable = await tableSvc.storeTable(data);
+            
             res.status(201).json({
-                result: savedItem,
-                message: "Bakery item added successfully!",
+                result: savedTable,
+                message: "Table added successfully!",
                 meta: null
             });
         } catch (exception) {
             next(exception); 
         }
     }
-    getAllMenuItems = async (req, res, next) => {
+
+    getAllTables = async (req, res, next) => {
         try {
-            const list = await menuSvc.getAllItems({});
+            const list = await tableSvc.getAllTables({});
+            
             res.json({
                 result: list,
-                message: "Menu fetched successfully",
+                message: "Tables fetched successfully",
                 meta: null
             });
         } catch (exception) {
             next(exception);
         }
     }
-    deleteMenuItem = async (req, res, next) => {
+
+    deleteTable = async (req, res, next) => {
         try {
             const id = req.params.id;
-            const deletedResponse = await menuSvc.deleteItemById(id);
+            const deletedResponse = await tableSvc.deleteTableById(id);
             
             res.json({
                 result: deletedResponse,
-                message: "Bakery item and associated images deleted successfully.",
+                message: "Table deleted successfully.",
                 meta: null
             });
         } catch (exception) {
@@ -41,5 +47,5 @@ class MenuController {
     }
 }
 
-const menuCtrl = new MenuController();
-export default menuCtrl;
+const tableCtrl = new TableController();
+export default tableCtrl;
