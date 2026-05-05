@@ -1,64 +1,150 @@
-$font-header: 'Amatic SC', cursive;
-$font-body: sans-serif;
+// --- Theme Variables ---
+$bg-color: #faf7f2;
+$text-main: #2d1b18;
+$accent-color: #d84315;
+$text-muted: #78909c;
+
+// --- Status Colors ---
+$color-available: #4caf50; // Green
+$color-occupied: #f44336;  // Red
+$color-reserved: #ff9800;  // Orange
 
 .container {
-  font-family: $font-body;
   padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  min-height: 80vh;
+  background-color: $bg-color;
+  min-height: 100vh;
+  color: $text-main;
+}
 
-  .headerSection {
-    text-align: center;
-    margin-bottom: 2rem;
-    h1 { color: #2d1b18; font-size: 2.5rem;
-         font-family: $font-header; }
+.headerSection {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: $text-main;
+  }
+
+  p {
+    color: $text-muted;
+    font-size: 1.1rem;
   }
 }
 
+// --- Legend Styling ---
 .legend {
   display: flex;
   justify-content: center;
-  gap: 20px;
-  margin-bottom: 2rem;
-  span {
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    color: white;
-  }
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
 }
 
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+
+  span {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+  }
+
+  .available { background-color: $color-available; }
+  .occupied { background-color: $color-occupied; }
+  .reserved { background-color: $color-reserved; }
+}
+
+.loadingState {
+  text-align: center;
+  padding: 4rem;
+  color: $text-muted;
+  font-style: italic;
+}
+
+// --- Grid Layout ---
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 25px;
+  // This automatically adjusts the number of columns based on screen size!
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem 0;
 }
 
+// --- Individual Table Card ---
 .tableCard {
-  aspect-ratio: 1 / 1;
-  border-radius: 15px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 2px solid transparent;
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+    transform: translateY(-6px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
   }
 
-  .tableNum { font-size: 2.5rem; font-weight: bold; }
-  .capacity { font-size: 0.9rem; opacity: 0.8; }
-  .statusLabel { margin-top: 10px; font-weight: bold; text-transform: uppercase; font-size: 0.7rem; }
-}
+  .tableNum {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: $text-main;
+    margin-bottom: 0.5rem;
+    line-height: 1;
+  }
 
-// Status Colors
-.available { background-color: #4caf50; color: white; }
-.occupied { background-color: #d84315; color: white; } // Your theme orange
-.reserved { background-color: #ffa000; color: white; }
-.cleaning { background-color: #78909c; color: white; }
+  .capacityInfo,
+  .locationInfo {
+    color: $text-muted;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+  }
+
+  .statusBadge {
+    margin-top: 1.2rem;
+    padding: 0.4rem 1.2rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  // --- Dynamic Status Styling ---
+  // The React component passes "available", "occupied", or "reserved" as a class
+  &.available {
+    border-color: rgba($color-available, 0.3);
+    .statusBadge { 
+      background-color: rgba($color-available, 0.1); 
+      color: darken($color-available, 10%); 
+    }
+  }
+
+  &.occupied {
+    border-color: rgba($color-occupied, 0.3);
+    .statusBadge { 
+      background-color: rgba($color-occupied, 0.1); 
+      color: darken($color-occupied, 10%); 
+    }
+  }
+
+  &.reserved {
+    border-color: rgba($color-reserved, 0.3);
+    .statusBadge { 
+      background-color: rgba($color-reserved, 0.1); 
+      color: darken($color-reserved, 15%); 
+    }
+  }
+}
