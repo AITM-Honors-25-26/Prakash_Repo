@@ -119,7 +119,6 @@ const MenuPage: React.FC = () => {
       try {
         const token = localStorage.getItem('token');
         
-        // Prepare Multipart Form Data (matches your Postman request)
         const formData = new FormData();
         formData.append('image', file); 
         formData.append('name', formValues.name);
@@ -148,7 +147,6 @@ const MenuPage: React.FC = () => {
     }
   };
 
-  // 3. Delete Item Function
   const handleDelete = async (id: string) => {
     const storedUser = localStorage.getItem('user');
     if (!storedUser) {
