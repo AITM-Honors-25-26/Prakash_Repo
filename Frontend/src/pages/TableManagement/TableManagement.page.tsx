@@ -47,7 +47,6 @@ const TablePage: React.FC = () => {
     fetchTables();
   }, []);
 
-  // --- NEW: Add Table Function ---
   const handleAddTable = () => {
     Swal.fire({
       title: 'Add New Table',
@@ -186,7 +185,6 @@ const TablePage: React.FC = () => {
   return (
     <Layout>
       <div className={styles.container}>
-        {/* --- UPDATED: Header Section with Add Button --- */}
         <div className={styles.headerSection}>
           <div className={styles.headerTop}>
             <h1>Dining Area Overview</h1>
