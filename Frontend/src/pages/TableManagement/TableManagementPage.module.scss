@@ -1,3 +1,5 @@
+@use "sass:color"; // Added this to enable the new color module
+
 // --- Theme Variables ---
 $bg-color: #faf7f2;
 $text-main: #2d1b18;
@@ -122,7 +124,8 @@ $color-reserved: #ff9800;  // Orange
     border-color: rgba($color-available, 0.3);
     .statusBadge { 
       background-color: rgba($color-available, 0.1); 
-      color: darken($color-available, 10%); 
+      // Updated: darken() replaced with color.adjust()
+      color: color.adjust($color-available, $lightness: -10%); 
     }
   }
 
@@ -130,7 +133,8 @@ $color-reserved: #ff9800;  // Orange
     border-color: rgba($color-occupied, 0.3);
     .statusBadge { 
       background-color: rgba($color-occupied, 0.1); 
-      color: darken($color-occupied, 10%); 
+      // Updated: darken() replaced with color.adjust()
+      color: color.adjust($color-occupied, $lightness: -10%); 
     }
   }
 
@@ -138,7 +142,8 @@ $color-reserved: #ff9800;  // Orange
     border-color: rgba($color-reserved, 0.3);
     .statusBadge { 
       background-color: rgba($color-reserved, 0.1); 
-      color: darken($color-reserved, 15%); 
+      // Updated: darken() replaced with color.adjust()
+      color: color.adjust($color-reserved, $lightness: -15%); 
     }
   }
 }
