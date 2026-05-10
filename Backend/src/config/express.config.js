@@ -6,10 +6,15 @@ import cors from 'cors';
 import "./db.config.js"
 const app = express();
 
-app.use(cors({
-    origin: '*' // This allows requests from any IP/Port during development
-}));
+// app.use(cors({
+//     origin: '*' // This allows requests from any IP/Port during development
+// }));
+// import cors from 'cors';
 
+app.use(cors({
+    origin: 'http://localhost:5173', // Your React App URL
+    credentials: true
+}));
 
 //parces 
 //for json data

@@ -4,13 +4,17 @@ import styles from './TableManagementPage.module.scss';
 import { toast } from 'react-toastify';
 import Swal, { SweetAlertResult } from 'sweetalert2';
 import axios, { AxiosError } from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+// --- Configuration ---
+const API_BASE_URL = 'http://localhost:9005/api';
 
 // --- Types ---
 export interface RestaurantTable {
   _id: string;
   tableNumber: number;
   capacity: number;
-  status: 'Available' | 'Occupied' | 'Reserved';
+  status: 'Available' | 'Occupied' | 'Reserved' | 'NotAvailable';
   location: 'Indoor' | 'Outdoor' | 'Window' | 'Balcony';
 }
 
@@ -36,29 +40,37 @@ const TableCard: React.FC<TableCardProps> = ({ table, onClick }) => (
 const TablePage: React.FC = () => {
   const [tables, setTables] = useState<RestaurantTable[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const navigate = useNavigate();
 
+  // 1. AXIOS INTERCEPTOR: Handle expired tokens globally for this page
+  useEffect(() => {
+    const interceptor = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401 || error.response?.data?.message?.includes("expired")) {
+          toast.error("Session expired. Please login again.");
+          localStorage.clear();
+          navigate('/login');
+        }
+        return Promise.reject(error);
+      }
+    );
+    return () => axios.interceptors.response.eject(interceptor);
+  }, [navigate]);
+
+  // 2. FETCH TABLES
   const fetchTables = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get('/table/list'); 
-      const data = response.data?.result || response.data;
+      const response = await axios.get(`${API_BASE_URL}/table/list`); 
+      const data = response.data?.data || response.data?.result || response.data;
       
       if (Array.isArray(data)) {
         setTables(data);
-      } else {
-        // Fallback dummy data generation
-        const generatedTables: RestaurantTable[] = Array.from({ length: 12 }, (_, i) => ({
-          _id: `dummy-${i + 1}`,
-          tableNumber: i + 1,
-          capacity: (i + 1) % 4 === 0 ? 6 : (i + 1) % 2 === 0 ? 4 : 2,
-          status: i === 2 || i === 7 ? 'Occupied' : i === 5 ? 'Reserved' : 'Available',
-          location: i > 8 ? 'Outdoor' : 'Indoor'
-        }));
-        setTables(generatedTables);
       }
     } catch (error: unknown) {
       console.error("Fetch Error:", error);
-      toast.error("Failed to load floor plan.");
+      toast.error("Failed to load tables.");
     } finally {
       setLoading(false);
     }
@@ -68,6 +80,7 @@ const TablePage: React.FC = () => {
     fetchTables();
   }, [fetchTables]);
 
+  // 3. ADD NEW TABLE
   const handleAddTable = async () => {
     const result: SweetAlertResult = await Swal.fire({
       title: 'Add New Table',
@@ -75,8 +88,8 @@ const TablePage: React.FC = () => {
       color: '#2d1b18',
       html: `
         <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-          <input type="number" id="swal-table-num" class="swal2-input" placeholder="Table Number (e.g. 15)" style="margin: 0; width: auto;">
-          <input type="number" id="swal-capacity" class="swal2-input" placeholder="Capacity (e.g. 4)" style="margin: 0; width: auto;">
+          <input type="number" id="swal-table-num" class="swal2-input" placeholder="Table Number" style="margin: 0; width: auto;">
+          <input type="number" id="swal-capacity" class="swal2-input" placeholder="Capacity" style="margin: 0; width: auto;">
           <select id="swal-location" class="swal2-select" style="margin: 0; width: auto;">
             <option value="Indoor">Indoor</option>
             <option value="Outdoor">Outdoor</option>
@@ -88,59 +101,50 @@ const TablePage: React.FC = () => {
       showCancelButton: true,
       confirmButtonText: 'Save Table',
       confirmButtonColor: '#d84315',
-      cancelButtonColor: '#78909c',
       preConfirm: () => {
         const tableNumber = (document.getElementById('swal-table-num') as HTMLInputElement).value;
         const capacity = (document.getElementById('swal-capacity') as HTMLInputElement).value;
         const location = (document.getElementById('swal-location') as HTMLSelectElement).value;
 
         if (!tableNumber || !capacity) {
-          Swal.showValidationMessage('Please enter both Table Number and Capacity');
+          Swal.showValidationMessage('Table Number and Capacity are required');
           return false;
         }
-
         return { tableNumber: Number(tableNumber), capacity: Number(capacity), location };
       }
     });
 
     if (result.isConfirmed && result.value) {
       try {
-        await axios.post('/table/add', result.value);
-        toast.success(`Table ${result.value.tableNumber} added successfully!`);
-        fetchTables();
-      } catch (error: unknown) {
-        console.error("Add Table Error:", error);
-        const axiosError = error as AxiosError<{ message: string }>;
-        const errorMsg = axiosError.response?.data?.message || "Failed to add table.";
-        toast.error(errorMsg);
+        const token = localStorage.getItem('token');
+        await axios.post(`${API_BASE_URL}/table/add`, result.value, {
+            headers: { Authorization: `Bearer ${token}` } 
+        });
+        toast.success(`Table ${result.value.tableNumber} added!`);
+        fetchTables(); 
+      } catch (error: any) {
+        toast.error(error.response?.data?.message || "Failed to add table.");
       }
     }
   };
 
+  // 4. MANAGEMENT ACTIONS (Delete / QR / Status)
   const handleTableClick = async (table: RestaurantTable) => {
     const result = await Swal.fire({
-      title: `Table ${table.tableNumber} Management`,
+      title: `Table ${table.tableNumber}`,
       background: '#faf7f2',
-      color: '#2d1b18',
-      html: `
-        <div style="text-align: left; padding: 10px;">
-          <p><strong>Status:</strong> ${table.status}</p>
-          <p><strong>Capacity:</strong> ${table.capacity} Persons</p>
-          <p><strong>Location:</strong> ${table.location}</p>
-        </div>
-      `,
       showDenyButton: true,
       showCancelButton: true,
-      confirmButtonText: 'View Order',
-      denyButtonText: 'Generate QR',
-      cancelButtonText: 'Update Status',
-      confirmButtonColor: '#d84315',
+      confirmButtonText: 'Delete',
+      denyButtonText: 'QR Code',
+      cancelButtonText: 'Status',
+      confirmButtonColor: '#d32f2f',
       denyButtonColor: '#2d1b18',
       cancelButtonColor: '#78909c',
     });
 
     if (result.isConfirmed) {
-      toast.info(`Opening order view for Table ${table.tableNumber}`);
+        handleDeleteTable(table._id);
     } else if (result.isDenied) {
       generateQR(table.tableNumber);
     } else if (result.dismiss === Swal.DismissReason.cancel) {
@@ -148,30 +152,44 @@ const TablePage: React.FC = () => {
     }
   };
 
+  const handleDeleteTable = async (id: string) => {
+      try {
+          const token = localStorage.getItem('token');
+          await axios.delete(`${API_BASE_URL}/table/${id}`, {
+              headers: { Authorization: `Bearer ${token}` }
+          });
+          toast.success("Table removed.");
+          fetchTables();
+      } catch (error: any) {
+          toast.error(error.response?.data?.message || "Delete failed.");
+      }
+  }
+
   const updateTableStatus = async (table: RestaurantTable) => {
     const { value: newStatus } = await Swal.fire({
-      title: 'Update Table Status',
+      title: 'Set Status',
       input: 'select',
       inputOptions: {
         'Available': 'Available',
         'Occupied': 'Occupied',
-        'Reserved': 'Reserved'
+        'Reserved': 'Reserved',
+        'NotAvailable': 'Not Available'
       },
       inputValue: table.status,
       showCancelButton: true,
-      confirmButtonColor: '#d84315',
     });
 
     if (newStatus) {
       try {
-        // NOTE: You probably want an axios call here to save to DB! 
-        // Example: await axios.patch(`/table/${table._id}/status`, { status: newStatus });
-        console.log(`Updating Table ${table.tableNumber} to ${newStatus}`);
-        toast.success(`Table ${table.tableNumber} set to ${newStatus}`);
+        const token = localStorage.getItem('token');
+        // If your backend has a PATCH route:
+        await axios.patch(`${API_BASE_URL}/table/${table._id}`, { status: newStatus }, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        toast.success("Status updated.");
         fetchTables(); 
-      } catch (error: unknown) {
-        console.error("Status Update Error:", error); 
-        toast.error("Failed to update status.");
+      } catch (error: any) {
+        toast.error("Status update failed.");
       }
     }
   };
@@ -182,19 +200,10 @@ const TablePage: React.FC = () => {
 
     Swal.fire({
       title: `QR Code: Table ${tableNum}`,
-      text: "Scan to view menu and order",
       imageUrl: qrImageURL,
       imageWidth: 250,
       imageHeight: 250,
-      imageAlt: 'Table QR Code',
-      confirmButtonText: 'Print QR Code',
       confirmButtonColor: '#d84315',
-      background: '#faf7f2',
-      color: '#2d1b18',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.print();
-      }
     });
   };
 
@@ -203,12 +212,9 @@ const TablePage: React.FC = () => {
       <div className={styles.container}>
         <div className={styles.headerSection}>
           <div className={styles.headerTop}>
-            <h1>Dining Area Overview</h1>
-            <button className={styles.addButton} onClick={handleAddTable}>
-              + Add Table
-            </button>
+            <h1>Dining Area</h1>
+            <button className={styles.addButton} onClick={handleAddTable}>+ Add Table</button>
           </div>
-          <p>Real-time floor plan management</p>
         </div>
 
         <div className={styles.legend}>
@@ -218,14 +224,16 @@ const TablePage: React.FC = () => {
         </div>
 
         {loading ? (
-          <div className={styles.loadingState}>
-            <h1>Loading tables...</h1>
-          </div>
+          <div className={styles.loadingState}><h1>Loading...</h1></div>
         ) : (
           <div className={styles.grid}>
-            {tables.map((table) => (
-              <TableCard key={table._id} table={table} onClick={handleTableClick} />
-            ))}
+            {tables.length > 0 ? (
+                tables.map((table) => (
+                  <TableCard key={table._id} table={table} onClick={handleTableClick} />
+                ))
+            ) : (
+                <p>No tables found.</p>
+            )}
           </div>
         )}
       </div>
