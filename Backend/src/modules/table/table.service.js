@@ -1,4 +1,4 @@
-import { Table } from "./table.model.js"; 
+import { Table } from "../tablemodel/table.model.js"; 
 
 class TableService {
     transformTableData = async (req) => {
