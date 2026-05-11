@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import styles from './TableManagementPage.module.scss';
+import { API_ENDPOINTS } from '../../constants/constants';
+
+import LoaderGif from './../../../img/gif/loading.gif';
 
 export interface RestaurantTable {
   _id: string;
@@ -9,48 +13,88 @@ export interface RestaurantTable {
   location: 'Indoor' | 'Outdoor' | 'Window' | 'Balcony';
 }
 
-const API_BASE_URL = 'http://localhost:9005/api';
-
-const TableFetcher: React.FC = () => {
+const TableManagement: React.FC = () => {
   const [tables, setTables] = useState<RestaurantTable[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true); // 2. Renamed state for clarity
 
   const fetchTables = useCallback(async () => {
-    setLoading(true);
+    setIsLoading(true);
     try {
-      const response = await axios.get(`${API_BASE_URL}/table/list`); 
-      
+      // Ensure this endpoint exists in your constants.tsx
+      const response = await axios.get(API_ENDPOINTS.LISTALLTABLE);
       const data = response.data?.data || response.data?.result || response.data;
       
       if (Array.isArray(data)) {
         setTables(data);
       }
     } catch (error) {
-      console.error("Database Fetch Error:", error);
+      console.error("Fetch Error:", error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }, []);
-
 
   useEffect(() => {
     fetchTables();
   }, [fetchTables]);
 
-  if (loading) return <div>Loading tables from database...</div>;
+  // 3. Render Loading State using the renamed Image import
+  if (isLoading) {
+    return (
+      <div className={styles.loader}>
+        <img src={LoaderGif} alt="Loading..." />
+        <h1>Loading Floor Plan...</h1>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <h1>Tables from Database</h1>
-      <ul>
-        {tables.map((table) => (
-          <li key={table._id}>
-            Table {table.tableNumber} - {table.location} ({table.capacity} seats)
-          </li>
-        ))}
-      </ul>
+    <div className={styles.container}>
+      <header className={styles.header}>
+        <h1 className={styles.title}>Floor Plan</h1>
+        <div className={styles.stats}>
+          Total Tables: <strong>{tables.length}</strong>
+        </div>
+      </header>
+
+      <div className={styles.grid}>
+        {tables.length > 0 ? (
+          tables.map((table) => {
+            const statusClass = table.status.toLowerCase();
+
+            return (
+              <div 
+                key={table._id} 
+                className={`${styles.card} ${styles[statusClass]}`}
+              >
+                <div className={styles.cardHeader}>
+                  <span className={styles.tableId}>T-{table.tableNumber}</span>
+                  <span className={`${styles.badge} ${styles[statusClass]}`}>
+                    {table.status}
+                  </span>
+                </div>
+
+                <div className={styles.cardBody}>
+                  <div className={styles.infoRow}>
+                    <span>Capacity:</span>
+                    <strong>{table.capacity} Guests</strong>
+                  </div>
+                  <div className={styles.infoRow}>
+                    <span>Location:</span>
+                    <strong>{table.location}</strong>
+                  </div>
+                </div>
+
+                <button className={styles.button}>View Details</button>
+              </div>
+            );
+          })
+        ) : (
+          <p className={styles.noData}>No tables found in the database.</p>
+        )}
+      </div>
     </div>
   );
 };
 
-export default TableFetcher;
+export default TableManagement;
