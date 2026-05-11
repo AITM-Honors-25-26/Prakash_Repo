@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import Layout from '../../components/layout/layout'; // Added Layout for consistency
 import styles from './TableManagementPage.module.scss';
 import { API_ENDPOINTS } from '../../constants/constants';
-
 import LoaderGif from './../../../img/gif/loading.gif';
+
+// Using a generic table icon or an image path if you have one
+
 
 export interface RestaurantTable {
   _id: string;
@@ -15,18 +18,14 @@ export interface RestaurantTable {
 
 const TableManagement: React.FC = () => {
   const [tables, setTables] = useState<RestaurantTable[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true); // 2. Renamed state for clarity
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const fetchTables = useCallback(async () => {
     setIsLoading(true);
     try {
-      // Ensure this endpoint exists in your constants.tsx
       const response = await axios.get(API_ENDPOINTS.LISTALLTABLE);
       const data = response.data?.data || response.data?.result || response.data;
-      
-      if (Array.isArray(data)) {
-        setTables(data);
-      }
+      if (Array.isArray(data)) setTables(data);
     } catch (error) {
       console.error("Fetch Error:", error);
     } finally {
@@ -34,66 +33,75 @@ const TableManagement: React.FC = () => {
     }
   }, []);
 
-  useEffect(() => {
-    fetchTables();
-  }, [fetchTables]);
+  useEffect(() => { fetchTables(); }, [fetchTables]);
 
-  // 3. Render Loading State using the renamed Image import
   if (isLoading) {
     return (
-      <div className={styles.loader}>
-        <img src={LoaderGif} alt="Loading..." />
-        <h1>Loading Floor Plan...</h1>
-      </div>
+      <Layout>
+        <div className={styles.loader}>
+          <img src={LoaderGif} alt="Loading..." />
+          <h1>Loading Floor Plan...</h1>
+        </div>
+      </Layout>
     );
   }
 
   return (
-    <div className={styles.container}>
-      <header className={styles.header}>
-        <h1 className={styles.title}>Floor Plan</h1>
-        <div className={styles.stats}>
-          Total Tables: <strong>{tables.length}</strong>
+    <Layout>
+      <div className={styles.pageContainer}>
+        <header className={styles.pageHeader}>
+          <h1>Dining Area Management</h1>
+          <p>Total Tables: <strong>{tables.length}</strong></p>
+        </header>
+
+        <div className={styles.grid}>
+          {tables.length > 0 ? (
+            tables.map((table) => {
+              const statusClass = table.status.toLowerCase();
+
+              return (
+                <div key={table._id} className={`${styles.profileCard} ${styles[statusClass]}`}>
+                  {/* Left/Top Section (Like ImageSection in Profile) */}
+                  <div className={styles.imageSection}>
+                    <div className={styles.iconWrapper}>
+                       <span className={styles.tableNumberLarge}>{table.tableNumber}</span>
+                    </div>
+                    <h2 className={styles.userName}>Table {table.tableNumber}</h2>
+                    <p className={`${styles.userRole} ${styles.statusText}`}>{table.status}</p>
+                  </div>
+
+                  {/* Right/Bottom Section (Like InfoSection in Profile) */}
+                  <div className={styles.infoSection}>
+                    <h3>Table Details</h3>
+                    <div className={styles.infoRow}>
+                      <span className={styles.label}>Capacity:</span>
+                      <span className={styles.value}>{table.capacity} Guests</span>
+                    </div>
+                    <div className={styles.infoRow}>
+                      <span className={styles.label}>Location:</span>
+                      <span className={styles.value}>{table.location}</span>
+                    </div>
+                    <div className={styles.infoRow}>
+                      <span className={styles.label}>Status:</span>
+                      <span className={`${styles.value} ${styles.statusBadge}`}>{table.status}</span>
+                    </div>
+                    
+                    <div className={styles.buttonGroup}>
+                      <button className={styles.editButton}>Manage Table</button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <div className={styles.errorContainer}>
+              <h2>No tables found.</h2>
+              <p>Add some tables in the database to see them here.</p>
+            </div>
+          )}
         </div>
-      </header>
-
-      <div className={styles.grid}>
-        {tables.length > 0 ? (
-          tables.map((table) => {
-            const statusClass = table.status.toLowerCase();
-
-            return (
-              <div 
-                key={table._id} 
-                className={`${styles.card} ${styles[statusClass]}`}
-              >
-                <div className={styles.cardHeader}>
-                  <span className={styles.tableId}>T-{table.tableNumber}</span>
-                  <span className={`${styles.badge} ${styles[statusClass]}`}>
-                    {table.status}
-                  </span>
-                </div>
-
-                <div className={styles.cardBody}>
-                  <div className={styles.infoRow}>
-                    <span>Capacity:</span>
-                    <strong>{table.capacity} Guests</strong>
-                  </div>
-                  <div className={styles.infoRow}>
-                    <span>Location:</span>
-                    <strong>{table.location}</strong>
-                  </div>
-                </div>
-
-                <button className={styles.button}>View Details</button>
-              </div>
-            );
-          })
-        ) : (
-          <p className={styles.noData}>No tables found in the database.</p>
-        )}
       </div>
-    </div>
+    </Layout>
   );
 };
 

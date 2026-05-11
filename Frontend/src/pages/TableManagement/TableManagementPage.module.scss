@@ -1,119 +1,118 @@
-.container {
-  padding: 40px;
-  background-color: #f8f9fa;
-  min-height: 100vh;
-  font-family: 'Segoe UI', Roboto, sans-serif;
+.pageContainer {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 20px;
-
-  .title {
-    color: #2c3e50;
-    margin: 0;
-    font-size: 24px;
-  }
-
-  .stats {
-    color: #7f8c8d;
-    strong {
-      color: #2c3e50;
-    }
-  }
+.pageHeader {
+  margin-bottom: 2rem;
+  text-align: center;
+  h1 { color: #2d1b18; }
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); // Wider cards like Profile
+  gap: 2rem;
 }
 
-.card {
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease;
+.profileCard {
+  background: #fff;
+  border-radius: 15px;
+  display: flex; // Side-by-side layout like Profile
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+
+  &:hover { transform: translateY(-5px); }
+
+  // Status color indicators
+  &.available { border-left: 8px solid #2ecc71; }
+  &.occupied { border-left: 8px solid #e74c3c; }
+  &.reserved { border-left: 8px solid #f1c40f; }
+}
+
+.imageSection {
+  flex: 1;
+  background: #faf7f2;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  border-top: 5px solid #95a5a6; // Default color
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #eee;
 
-  &:hover {
-    transform: translateY(-5px);
+  .iconWrapper {
+    width: 80px;
+    height: 80px;
+    background: #d84315;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
   }
-
-  // Status Modifiers
-  &.available { border-top-color: #2ecc71; }
-  &.occupied { border-top-color: #e74c3c; }
-  &.reserved { border-top-color: #f1c40f; }
 }
 
-.cardHeader {
+.infoSection {
+  flex: 2;
+  padding: 2rem;
+
+  h3 {
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    color: #2d1b18;
+    border-bottom: 2px solid #faf7f2;
+    padding-bottom: 0.5rem;
+  }
+}
+
+.infoRow {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 1rem;
 
-  .tableId {
-    fontSize: 20px;
-    font-weight: bold;
-    color: #34495e;
+  .label {
+    font-weight: 600;
+    color: #888;
+  }
+  .value {
+    color: #2d1b18;
+    font-weight: 500;
   }
 }
 
-.badge {
-  padding: 4px 10px;
-  border-radius: 20px;
-  color: #fff;
-  font-size: 11px;
-  font-weight: bold;
-  text-transform: uppercase;
+.buttonGroup {
+  margin-top: 2rem;
+  
+  .editButton {
+    width: 100%;
+    padding: 0.8rem;
+    background: #d84315;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
 
-  &.available { background-color: #2ecc71; }
-  &.occupied { background-color: #e74c3c; }
-  &.reserved { background-color: #f1c40f; }
-}
-
-.cardBody {
-  margin-bottom: 20px;
-
-  .infoRow {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
-    color: #7f8c8d;
-    margin: 8px 0;
-
-    strong {
-      color: #2c3e50;
-    }
-  }
-}
-
-.button {
-  background-color: #34495e;
-  color: #fff;
-  border: none;
-  padding: 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.3s;
-
-  &:hover {
-    background-color: #2c3e50;
+    &:hover { background: #bf360c; }
   }
 }
 
 .loader {
-  text-align: center;
-  padding: 50px;
-  font-size: 20px;
-  color: #7f8c8d;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  img { width: 100px; }
+}
+
+@media (max-width: 600px) {
+  .profileCard { flex-direction: column; }
+  .grid { grid-template-columns: 1fr; }
 }
