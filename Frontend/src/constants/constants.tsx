@@ -8,6 +8,8 @@ export const API_ENDPOINTS = {
   //Menu Route
   LISTALLITEMS:`${API_BASE_URL}/menu/list`,
   MENU_ACTION: `${API_BASE_URL}/menu`,
+  ADDMENUITEM: `${API_BASE_URL}/menu/add-item`,  
+  DELETEMENUITEM: `${API_BASE_URL}/menu`,
   //Table Route
   TABLEMANAGEMENT:`${API_BASE_URL}/TableManagement`,
   LISTALLTABLE:`${API_BASE_URL}/table/list`,
