@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import Layout from '../../components/layout/layout'; // Added Layout for consistency
+import Layout from '../../components/layout/layout';
 import styles from './TableManagementPage.module.scss';
 import { API_ENDPOINTS } from '../../constants/constants';
 import LoaderGif from './../../../img/gif/loading.gif';
-
-// Using a generic table icon or an image path if you have one
-
 
 export interface RestaurantTable {
   _id: string;
@@ -35,6 +32,31 @@ const TableManagement: React.FC = () => {
 
   useEffect(() => { fetchTables(); }, [fetchTables]);
 
+  // Handler for adding a new table (You can replace this with a modal or redirect)
+  const handleAddTable = () => {
+    console.log("Add New Table clicked. Open a modal or redirect to a form.");
+    // Example: navigate('/add-table') or setIsAddModalOpen(true);
+  };
+
+  // Handler for deleting a table
+  const handleDeleteTable = async (id: string) => {
+    const isConfirmed = window.confirm("Are you sure you want to delete this table?");
+    
+    if (isConfirmed) {
+      try {
+        // Uncomment and update with your actual delete endpoint:
+        // await axios.delete(`${API_ENDPOINTS.DELETETABLE}/${id}`);
+        
+        // Optimistically update the UI by removing the deleted table
+        setTables((prevTables) => prevTables.filter((table) => table._id !== id));
+        console.log(`Table ${id} deleted successfully.`);
+      } catch (error) {
+        console.error("Failed to delete table:", error);
+        alert("There was an error deleting the table.");
+      }
+    }
+  };
+
   if (isLoading) {
     return (
       <Layout>
@@ -50,8 +72,14 @@ const TableManagement: React.FC = () => {
     <Layout>
       <div className={styles.pageContainer}>
         <header className={styles.pageHeader}>
-          <h1>Dining Area Management</h1>
-          <p>Total Tables: <strong>{tables.length}</strong></p>
+          <div>
+            <h1>Dining Area Management</h1>
+            <p>Total Tables: <strong>{tables.length}</strong></p>
+          </div>
+          {/* ADD TABLE BUTTON */}
+          <button className={styles.addButton} onClick={handleAddTable}>
+            + Add New Table
+          </button>
         </header>
 
         <div className={styles.grid}>
@@ -61,7 +89,7 @@ const TableManagement: React.FC = () => {
 
               return (
                 <div key={table._id} className={`${styles.profileCard} ${styles[statusClass]}`}>
-                  {/* Left/Top Section (Like ImageSection in Profile) */}
+                  {/* Left/Top Section */}
                   <div className={styles.imageSection}>
                     <div className={styles.iconWrapper}>
                        <span className={styles.tableNumberLarge}>{table.tableNumber}</span>
@@ -70,7 +98,7 @@ const TableManagement: React.FC = () => {
                     <p className={`${styles.userRole} ${styles.statusText}`}>{table.status}</p>
                   </div>
 
-                  {/* Right/Bottom Section (Like InfoSection in Profile) */}
+                  {/* Right/Bottom Section */}
                   <div className={styles.infoSection}>
                     <h3>Table Details</h3>
                     <div className={styles.infoRow}>
@@ -87,7 +115,14 @@ const TableManagement: React.FC = () => {
                     </div>
                     
                     <div className={styles.buttonGroup}>
-                      <button className={styles.editButton}>Manage Table</button>
+                      <button className={styles.editButton}>Manage</button>
+                      {/* DELETE TABLE BUTTON */}
+                      <button 
+                        className={styles.deleteButton} 
+                        onClick={() => handleDeleteTable(table._id)}
+                      >
+                        Delete
+                      </button>
                     </div>
                   </div>
                 </div>
