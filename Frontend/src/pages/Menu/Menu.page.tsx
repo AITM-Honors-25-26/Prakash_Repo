@@ -6,9 +6,9 @@ import withReactContent from 'sweetalert2-react-content';
 import styles from './MenuPage.module.scss';
 import Layout from '../../components/layout/layout';
 import cartwhite from '../../../img/icons/cart.white.png';
-import { API_ENDPOINTS } from '../../constants/constants';
-
-import hot from '../../../img/gif/hot.gif'
+import hot from '../../../img/gif/hot.gif';
+// Importing your constants
+import { API_ENDPOINTS, CATAGOTY } from '../../constants/constants';
 
 const MySwal = withReactContent(Swal);
 
@@ -61,36 +61,36 @@ const MenuPage: React.FC = () => {
     fetchMenu();
   }, [fetchMenu]);
 
-  // 2. Add Item Function (Handles File Upload + Form Data)
+  // 2. Add Item Function
   const handleAddItem = async () => {
-    // Step A: Pick the File
     const { value: file } = await MySwal.fire({
       title: 'Select Item Image',
       input: 'file',
-      inputAttributes: {
-        'accept': 'image/*',
-        'aria-label': 'Upload bakery item image'
-      },
+      inputAttributes: { 'accept': 'image/*', 'aria-label': 'Upload bakery item image' },
       confirmButtonColor: '#d84315',
       showCancelButton: true
     });
 
     if (!file) return;
 
-    // Step B: Fill the Details
+    // Dynamically generate the category options from your constant
+    const categoryOptions = Object.values(CATAGOTY)
+      .map(cat => `<option value="${cat}">${cat}</option>`)
+      .join('');
+
     const { value: formValues } = await MySwal.fire({
       title: 'Item Details',
       background: '#faf7f2',
       color: '#2d1b18',
-      html:
-        '<input id="swal-name" class="swal2-input" placeholder="Item Name">' +
-        '<input id="swal-desc" class="swal2-input" placeholder="Description">' +
-        '<input id="swal-price" type="number" class="swal2-input" placeholder="Price (Rs.)">' +
-        '<input id="swal-stock" type="number" class="swal2-input" placeholder="Stock Quantity" value="1">' +
-        '<select id="swal-category" class="swal2-input">' +
-          '<option value="Bread">Bread</option>' +
-          '<option value="Cake">Cake</option>' +
-        '</select>',
+      html: `
+        <input id="swal-name" class="swal2-input" placeholder="Item Name">
+        <input id="swal-desc" class="swal2-input" placeholder="Description">
+        <input id="swal-price" type="number" class="swal2-input" placeholder="Price (Rs.)">
+        <input id="swal-stock" type="number" class="swal2-input" placeholder="Stock Quantity" value="1">
+        <select id="swal-category" class="swal2-input">
+          ${categoryOptions}
+        </select>
+      `,
       focusConfirm: false,
       showCancelButton: true,
       confirmButtonText: 'Add to Menu',
@@ -99,12 +99,10 @@ const MenuPage: React.FC = () => {
       preConfirm: () => {
         const name = (document.getElementById('swal-name') as HTMLInputElement).value;
         const price = (document.getElementById('swal-price') as HTMLInputElement).value;
-        
         if (!name || !price) {
           Swal.showValidationMessage('Name and Price are required');
           return false;
         }
-
         return { 
           name, 
           description: (document.getElementById('swal-desc') as HTMLInputElement).value, 
@@ -118,7 +116,6 @@ const MenuPage: React.FC = () => {
     if (formValues) {
       try {
         const token = localStorage.getItem('token');
-        
         const formData = new FormData();
         formData.append('image', file); 
         formData.append('name', formValues.name);
@@ -137,39 +134,25 @@ const MenuPage: React.FC = () => {
         
         toast.success(`${formValues.name} added successfully!`);
         await fetchMenu(false); 
-      } catch (error: unknown) {
-        let errorMsg = "Failed to add item.";
-        if (axios.isAxiosError(error)) {
-          errorMsg = error.response?.data?.message || errorMsg;
-        }
-        toast.error(errorMsg);
+      } catch  {
+        toast.error("Failed to add item.");
       }
     }
   };
 
   const handleDelete = async (id: string) => {
     const storedUser = localStorage.getItem('user');
-    if (!storedUser) {
-      toast.error("You must be logged in to perform this action.");
-      return;
-    }
+    if (!storedUser) return;
     
     const userData = JSON.parse(storedUser);
     const userEmail = userData.email;
 
     const { value: password } = await MySwal.fire({
       title: 'Security Verification',
-      text: `Enter the password for ${userEmail} to delete this item.`,
+      text: `Enter password for ${userEmail}`,
       input: 'password',
-      inputPlaceholder: 'Enter your password',
       showCancelButton: true,
-      confirmButtonText: 'Delete Item',
       confirmButtonColor: '#d84315',
-      cancelButtonColor: '#2d1b18',
-      background: '#faf7f2',
-      color: '#2d1b18',
-      icon: 'warning',
-      iconColor: '#d84315',
     });
 
     if (password) {
@@ -179,54 +162,36 @@ const MenuPage: React.FC = () => {
           headers: { 'Authorization': `Bearer ${token}` },
           data: { password: password, email: userEmail } 
         });
-        
-        toast.success("The item has been removed from the menu.");
+        toast.success("Item removed.");
         await fetchMenu(false); 
-      } catch (error: unknown) {
-        let errorMsg = "Incorrect password or delete failed.";
-        if (axios.isAxiosError(error)) {
-          errorMsg = error.response?.data?.message || errorMsg;
-        }
-        toast.error(errorMsg);
+      } catch  {
+        toast.error("Delete failed.");
       }
     }
   };
 
-  const renderCategorySection = (title: string, categoryName: string) => {
+  const renderCategorySection = (categoryName: string) => {
     const filteredItems = menuItems.filter(item => item.category === categoryName);
-
     if (filteredItems.length === 0) return null;
 
     return (
       <section className={styles.categoryWrap} key={categoryName}>
         <div className={styles.topic}>
-          <h1>{title}</h1>
+          <h1>{categoryName}s</h1>
         </div>
         <div className={styles.itemSection}>
           {filteredItems.map((item) => (
             <div key={item._id} className={styles.photosection}>
-              <img
-                src={item.images?.[0]?.url || 'https://via.placeholder.com/400x500?text=Bakery+Item'} 
-                alt={item.name} 
-              />
+              <img src={item.images?.[0]?.url || 'https://via.placeholder.com/400x500'} alt={item.name} />
               <div className={styles.overlay}>
                 <h3>{item.name}</h3>
                 <p className={styles.itemDescription}>{item.description}</p>
-                <p className={styles.itemPrice}>
-                  Rs. {Number(item.price).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                </p>
-                
+                <p className={styles.itemPrice}>Rs. {Number(item.price).toLocaleString()}</p>
                 <button className={styles.buttonDiv}>
                   Add to cart <img src={cartwhite} alt="Cart" />
                 </button>
-
                 {isAdmin && (
-                  <button 
-                    className={styles.deleteButton} 
-                    onClick={() => handleDelete(item._id)}
-                  >
-                    Delete
-                  </button>
+                  <button className={styles.deleteButton} onClick={() => handleDelete(item._id)}>Delete</button>
                 )}
               </div>
             </div>
@@ -239,39 +204,24 @@ const MenuPage: React.FC = () => {
   return (
     <Layout>
       <div className={styles.main}>
-        {/* Admin Header: Add Button */}
         {isAdmin && (
           <div className={styles.adminHeader} style={{ textAlign: 'center', marginBottom: '20px' }}>
-             <button 
-               className={styles.addBtn} 
-               onClick={handleAddItem}
-               style={{ 
-                 backgroundColor: '#d84315', 
-                 color: 'white', 
-                 padding: '12px 25px', 
-                 borderRadius: '8px', 
-                 border: 'none', 
-                 fontWeight: 'bold',
-                 cursor: 'pointer' 
-               }}
-             >
-               + Add New Bakery Item
+             <button className={styles.addBtn} onClick={handleAddItem}>
+               + Add New {CATAGOTY.CAKE} or Item
              </button>
           </div>
         )}
 
         {loading ? (
-          <div className={styles.topic}>
-            <h1>Baking your menu...</h1>
-          </div>
+          <div className={styles.topic}><h1>Baking your menu...</h1></div>
         ) : (
           <>
-            {renderCategorySection("Fresh Breads", "Bread")}
-            {renderCategorySection("Signature Cakes", "Cake")}
+            {/* Dynamically render all categories defined in your constants */}
+            {Object.values(CATAGOTY).map(cat => renderCategorySection(cat))}
             
-            {!loading && menuItems.length === 0 && (
+            {menuItems.length === 0 && (
               <div className={styles.noItems}>
-                <img src={hot} alt="" />
+                <img src={hot} alt="Empty" />
                 <p>Our oven is resting. No items found today.</p>
               </div>
             )}
