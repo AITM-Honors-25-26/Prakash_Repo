@@ -114,7 +114,6 @@ const TableManagement: React.FC = () => {
     }
   };
 
-  // 3. Delete Table Function
   const handleDeleteTable = async (id: string) => {
     const storedUser = localStorage.getItem('user');
     if (!storedUser) return;
@@ -161,13 +160,13 @@ const TableManagement: React.FC = () => {
     <Layout>
       <div className={styles.pageContainer}>
         <header className={styles.pageHeader}>
-          <div>
+          <div className={styles.title}>
             <h1>Dining Area Management</h1>
             <p>Total Tables: <strong>{tables.length}</strong></p>
           </div>
           {isAdmin && (
             <button className={styles.addButton} onClick={handleAddTable}>
-              + Add New Table
+              <span>+</span> Add Table
             </button>
           )}
         </header>
@@ -179,7 +178,6 @@ const TableManagement: React.FC = () => {
 
               return (
                 <div key={table._id} className={`${styles.profileCard} ${styles[statusClass]}`}>
-                  {/* Left/Top Section */}
                   <div className={styles.imageSection}>
                     <div className={styles.iconWrapper}>
                        <span className={styles.tableNumberLarge}>{table.tableNumber}</span>
@@ -188,7 +186,6 @@ const TableManagement: React.FC = () => {
                     <p className={`${styles.userRole} ${styles.statusText}`}>{table.status}</p>
                   </div>
 
-                  {/* Right/Bottom Section */}
                   <div className={styles.infoSection}>
                     <h3>Table Details</h3>
                     <div className={styles.infoRow}>
