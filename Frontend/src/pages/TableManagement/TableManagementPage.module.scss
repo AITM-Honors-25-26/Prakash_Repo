@@ -17,9 +17,15 @@ $font-nav: 'Lucida Handwriting', cursive;
     h1 { 
     color:$header_colour;
     margin-bottom: 0rem; 
+    @media (max-width: 768px) {
+      font-size: 20px;
+    }
     }
     p{
         align-items: start;
+        @media (max-width: 768px) {
+      font-size: 10px;
+    }
     }
   }
   .addButton {
@@ -93,7 +99,7 @@ $font-nav: 'Lucida Handwriting', cursive;
 
     h3 {
       margin-bottom: 1.5rem;
-      font-size: 1.2rem;
+      font-size: 1.5rem;
       color: $header_colour;
       border-bottom: 2px solid #faf7f2;
       padding-bottom: 0.5rem;
