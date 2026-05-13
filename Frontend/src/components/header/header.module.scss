@@ -71,7 +71,6 @@ $font-nav: 'Lucida Handwriting', cursive;
     position: relative; 
     display: flex;
     align-items: center;
-    padding-right: 50px;
 
     .profile {
       cursor: pointer;
@@ -95,7 +94,7 @@ $font-nav: 'Lucida Handwriting', cursive;
       position: absolute;
       top: 100%;
       margin-top: 26px; 
-      right: 100px; 
+      right: 50px; 
       
       width: 200px;
       background-color: white; 
