@@ -53,7 +53,6 @@ const TableManagement: React.FC = () => {
     fetchTables();
   }, [fetchTables]);
 
-  // 2. Add Table Function
   const handleAddTable = async () => {
     const { value: formValues } = await MySwal.fire({
       title: 'Add New Table Details',
@@ -105,7 +104,6 @@ const TableManagement: React.FC = () => {
             'Content-Type': 'application/json'
           }
         });
-
         toast.success(`Table ${formValues.tableNumber} added successfully!`);
         await fetchTables(false);
       } catch {
@@ -113,7 +111,6 @@ const TableManagement: React.FC = () => {
       }
     }
   };
-
   const handleDeleteTable = async (id: string) => {
     const storedUser = localStorage.getItem('user');
     if (!storedUser) return;
@@ -128,7 +125,6 @@ const TableManagement: React.FC = () => {
       showCancelButton: true,
       confirmButtonColor: '#d84315',
     });
-
     if (password) {
       try {
         const token = localStorage.getItem('token');
@@ -144,7 +140,6 @@ const TableManagement: React.FC = () => {
       }
     }
   };
-
   if (isLoading) {
     return (
       <Layout>
@@ -155,7 +150,6 @@ const TableManagement: React.FC = () => {
       </Layout>
     );
   }
-
   return (
     <Layout>
       <div className={styles.pageContainer}>
@@ -170,12 +164,10 @@ const TableManagement: React.FC = () => {
             </button>
           )}
         </header>
-
         <div className={styles.grid}>
           {tables.length > 0 ? (
             tables.map((table) => {
               const statusClass = table.status.toLowerCase();
-
               return (
                 <div key={table._id} className={`${styles.profileCard} ${styles[statusClass]}`}>
                   <div className={styles.imageSection}>
