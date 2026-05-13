@@ -22,8 +22,6 @@ const TableManagement: React.FC = () => {
   const [tables, setTables] = useState<RestaurantTable[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
-
-  // 1. Fetch Tables
   const fetchTables = useCallback(async (showLoading = true) => {
     if (showLoading) setIsLoading(true);
     try {

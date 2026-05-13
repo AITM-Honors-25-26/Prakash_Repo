@@ -54,7 +54,6 @@ $font-nav: 'Lucida Handwriting', cursive;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); 
   gap: 2rem;
 }
-
 .profileCard{
   font-family: $font-nav;
   border-radius: 10px;
@@ -108,10 +107,6 @@ $font-nav: 'Lucida Handwriting', cursive;
     }
   }
 }
-
-
-
-
 .infoRow {
   display: flex;
   justify-content: space-between;
@@ -126,7 +121,6 @@ $font-nav: 'Lucida Handwriting', cursive;
     font-weight: 500;
   }
 }
-
 .buttonGroup {
   margin-top: 2rem;
   
@@ -144,7 +138,6 @@ $font-nav: 'Lucida Handwriting', cursive;
     &:hover { background: #bf360c; }
   }
 }
-
 .loader {
   display: flex;
   flex-direction: column;
@@ -153,12 +146,10 @@ $font-nav: 'Lucida Handwriting', cursive;
   height: 60vh;
   img { width: 100px; }
 }
-
 @media (max-width: 600px) {
   .profileCard { flex-direction: column; }
   .grid { grid-template-columns: 1fr; }
 }
-/* Add Table Button in the Header */
 .pageHeader {
   display: flex;
   justify-content: space-between;
