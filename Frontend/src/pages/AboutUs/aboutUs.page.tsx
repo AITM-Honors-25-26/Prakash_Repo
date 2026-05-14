@@ -50,7 +50,7 @@ const AboutUsPage: React.FC = () => {
           </div>
           <div className={styles.valueCard}>
             <h3>Community</h3>
-            <p>We’re more than a shop; we’re a gathering place for the Baluwatar community.</p>
+            <p>We’re more than a shop. We are a gathering place for the Baluwatar community.</p>
           </div>
         </div>
       </section>
