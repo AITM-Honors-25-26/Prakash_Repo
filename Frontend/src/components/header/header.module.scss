@@ -79,9 +79,11 @@ $font-nav: 'Lucida Handwriting', cursive;
       transition: all 0.3s ease;
       border-radius: 50px;
       &:hover{
-        
+        background-color: #ffffff;
+        box-shadow:      
+        0 0 10px #fff,  
+         
       }
-
       @media (max-width: 768px) {
         width: 30px; 
         height: 30px;
@@ -108,7 +110,6 @@ $font-nav: 'Lucida Handwriting', cursive;
       transition: all 0.3s ease;
       z-index: 1001;
 
-
       .userInfo p {
         margin: 0;
         font-weight: bold;
@@ -124,7 +125,7 @@ $font-nav: 'Lucida Handwriting', cursive;
       .actions {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 0px;
 
         a {
           text-decoration: none;
@@ -142,11 +143,9 @@ $font-nav: 'Lucida Handwriting', cursive;
           cursor: pointer;
           font-family: inherit;
           &:hover { filter: brightness(0.9); }
-          
         }
       }
     }
-
     &:hover .DropdownBar {
       visibility: visible;
       opacity: 1;
@@ -154,8 +153,6 @@ $font-nav: 'Lucida Handwriting', cursive;
     }
   }
 }
-
-
 
 .authSection {
   display: flex;

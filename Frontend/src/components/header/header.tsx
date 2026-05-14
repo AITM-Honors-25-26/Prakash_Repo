@@ -67,6 +67,7 @@ const Header: React.FC = () => {
                   <a href="/ProfilePage">Profile</a>
                   <hr />
                   <a href="/SettingsPage">Settings</a>
+                  <hr />
                   <button className={styles.logoutBtn} onClick={handleLogout}>
                     Logout
                   </button>

@@ -1,5 +1,10 @@
 $header_colour: #48392a;
 $font-nav: 'Lucida Handwriting', cursive;
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
 .pageContainer {
   padding: 1rem;
@@ -107,40 +112,59 @@ $font-nav: 'Lucida Handwriting', cursive;
       border-bottom: 2px solid #faf7f2;
       padding-bottom: 0.5rem;
     }
+    .infoRow {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+
+      .label {
+        font-weight: 600;
+        color: #888;
+      }
+      .value {
+        color: #2d1b18;
+        font-weight: 500;
+      }
+    }
+    .buttonGroup {
+      margin-top: 2rem;
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+
+      .editButton {
+        font-family: $font-nav;
+        width: 100%;
+        padding: 0.8rem;
+        background: #d84315;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s;
+      
+        &:hover { background: #bf360c; }
+      }
+      .deleteButton {
+        background-color: #dc3545;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:hover {
+          background-color: #c82333;
+        }
+      }
+    }
   }
   
 }
-.infoRow {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 1rem;
 
-  .label {
-    font-weight: 600;
-    color: #888;
-  }
-  .value {
-    color: #2d1b18;
-    font-weight: 500;
-  }
-}
-.buttonGroup {
-  margin-top: 2rem;
-  
-  .editButton {
-    width: 100%;
-    padding: 0.8rem;
-    background: #d84315;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: 0.3s;
 
-    &:hover { background: #bf360c; }
-  }
-}
 .loader {
   display: flex;
   flex-direction: column;
@@ -153,28 +177,5 @@ $font-nav: 'Lucida Handwriting', cursive;
   .profileCard { flex-direction: column; }
   .grid { grid-template-columns: 1fr; }
 }
-.pageHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 
-.buttonGroup {
-  display: flex;
-  gap: 10px;
-  margin-top: 15px;
-}
 
-.deleteButton {
-  background-color: #dc3545;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #c82333;
-  }
-}

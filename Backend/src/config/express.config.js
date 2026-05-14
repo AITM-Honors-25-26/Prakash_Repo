@@ -7,7 +7,7 @@ import "./db.config.js"
 const app = express();
 
 app.use(cors({
-    origin: '*' // This allows requests from any IP/Port during development
+    origin: '*' 
 }));
 
 //parces 
@@ -32,7 +32,6 @@ app.use("/health", (req, res) => {
 
 app.use("/api", router);
 
-//routing error catching
 app.use((req, res, next)=>{
   next({
     code:404,
@@ -78,7 +77,6 @@ app.use((error, req, res, next) => {
     }
   }
 
-  // // Custom numeric status
   if (typeof error.code === "number" && error.code >= 100 && error.code < 600) {
   statusCode = error.code;
 }
