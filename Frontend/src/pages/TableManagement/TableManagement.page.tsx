@@ -50,7 +50,6 @@ const TableManagement: React.FC = () => {
     }
     fetchTables();
   }, [fetchTables]);
-
   const handleAddTable = async () => {
     const { value: formValues } = await MySwal.fire({
       title: 'Add New Table Details',
@@ -92,7 +91,6 @@ const TableManagement: React.FC = () => {
         };
       }
     });
-
     if (formValues) {
       try {
         const token = localStorage.getItem('token');
@@ -130,7 +128,6 @@ const TableManagement: React.FC = () => {
           headers: { 'Authorization': `Bearer ${token}` },
           data: { password: password, email: userEmail }
         });
-
         toast.success("Table removed.");
         await fetchTables(false);
       } catch {
@@ -175,7 +172,6 @@ const TableManagement: React.FC = () => {
                     <h2 className={styles.userName}>Table {table.tableNumber}</h2>
                     <p className={`${styles.userRole} ${styles.statusText}`}>{table.status}</p>
                   </div>
-
                   <div className={styles.infoSection}>
                     <h3>Table Details</h3>
                     <div className={styles.infoRow}>

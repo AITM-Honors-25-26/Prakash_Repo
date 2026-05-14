@@ -22,31 +22,32 @@ $font-nav: 'Lucida Handwriting', cursive;
     }
     }
     p{
-        align-items: start;
-        @media (max-width: 768px) {
+      align-items: start;
+      @media (max-width: 768px) {
       font-size: 10px;
-    }
+      }
     }
   }
-  .addButton {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center; 
-  gap: 6px;                
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  padding: 8px 12px;      
 
-  &:hover {
-    background-color: #218838;
+  .addButton {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center; 
+    gap: 6px;                
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    padding: 8px 12px;      
+
+    &:hover {
+      background-color: #218838;
+    }
   }
-}
 }
 
 .grid {
@@ -54,6 +55,7 @@ $font-nav: 'Lucida Handwriting', cursive;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); 
   gap: 2rem;
 }
+
 .profileCard{
   font-family: $font-nav;
   border-radius: 10px;
@@ -106,6 +108,7 @@ $font-nav: 'Lucida Handwriting', cursive;
       padding-bottom: 0.5rem;
     }
   }
+  
 }
 .infoRow {
   display: flex;
@@ -155,8 +158,6 @@ $font-nav: 'Lucida Handwriting', cursive;
   justify-content: space-between;
   align-items: center;
 }
-
-
 
 .buttonGroup {
   display: flex;
