@@ -75,7 +75,6 @@ const MenuPage: React.FC = () => {
 
     if (!file) return;
 
-    // Dynamically generate the category options from your constant
     const categoryOptions = Object.values(CATAGOTY)
       .map(cat => `<option value="${cat}">${cat}</option>`)
       .join('');

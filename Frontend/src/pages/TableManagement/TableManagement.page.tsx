@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { useNavigate } from 'react-router-dom'; // Added for redirection
 import Layout from '../../components/layout/layout';
 import styles from './TableManagementPage.module.scss';
 import LoaderGif from './../../../img/gif/loading.gif';
@@ -22,6 +23,15 @@ const TableManagement: React.FC = () => {
   const [tables, setTables] = useState<RestaurantTable[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  // Helper to handle Logout on Token Expiry
+  const handleSessionExpired = useCallback(() => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    toast.error("Session expired. Please log in again.");
+    navigate('/login');
+  }, [navigate]);
 
   const fetchTables = useCallback(async (showLoading = true) => {
     if (showLoading) setIsLoading(true);
@@ -31,13 +41,18 @@ const TableManagement: React.FC = () => {
       if (Array.isArray(data)) {
         setTables(data);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Fetch Error:", error);
-      toast.error("Failed to load floor plan.");
+      // If fetching fails due to token (if protected), handle it
+      if (error.response?.status === 401) {
+        handleSessionExpired();
+      } else {
+        toast.error("Failed to load floor plan.");
+      }
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [handleSessionExpired]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -50,9 +65,11 @@ const TableManagement: React.FC = () => {
       }
     }
     fetchTables();
+    
     const interval = setInterval(() => {
-      fetchTables(false); // Passing 'false' prevents the annoying full-screen loading spinner from popping up
+      fetchTables(false);
     }, 5000);
+    
     return () => clearInterval(interval);
   }, [fetchTables]);
 
@@ -101,6 +118,11 @@ const TableManagement: React.FC = () => {
     if (formValues) {
       try {
         const token = localStorage.getItem('token');
+        if (!token) {
+           handleSessionExpired();
+           return;
+        }
+
         await axios.post(API_ENDPOINTS.ADDTABLE, formValues, {
           headers: { 
             'Authorization': `Bearer ${token}`,
@@ -109,8 +131,12 @@ const TableManagement: React.FC = () => {
         });
         toast.success(`Table ${formValues.tableNumber} added successfully!`);
         await fetchTables(false);
-      } catch {
-        toast.error("Failed to add new table.");
+      } catch (error: any) {
+        if (error.response?.status === 401 || error.response?.data?.message === "jwt expired") {
+          handleSessionExpired();
+        } else {
+          toast.error("Failed to add new table.");
+        }
       }
     }
   };
@@ -124,10 +150,8 @@ const TableManagement: React.FC = () => {
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <label style="text-align: left; font-size: 0.85rem; margin-bottom: -5px; padding-left: 15px; font-weight: bold;">Table Number</label>
           <input id="swal-number" type="number" class="swal2-input" placeholder="Table Number" value="${table.tableNumber}" style="margin-top: 0;">
-          
           <label style="text-align: left; font-size: 0.85rem; margin-bottom: -5px; padding-left: 15px; font-weight: bold;">Capacity</label>
           <input id="swal-capacity" type="number" class="swal2-input" placeholder="Capacity (Guests)" value="${table.capacity}" style="margin-top: 0;">
-          
           <label style="text-align: left; font-size: 0.85rem; margin-bottom: -5px; padding-left: 15px; font-weight: bold;">Location</label>
           <select id="swal-location" class="swal2-input" style="margin-top: 0;">
             <option value="Indoor" ${table.location === 'Indoor' ? 'selected' : ''}>Indoor</option>
@@ -135,7 +159,6 @@ const TableManagement: React.FC = () => {
             <option value="Window" ${table.location === 'Window' ? 'selected' : ''}>Window</option>
             <option value="Balcony" ${table.location === 'Balcony' ? 'selected' : ''}>Balcony</option>
           </select>
-          
           <label style="text-align: left; font-size: 0.85rem; margin-bottom: -5px; padding-left: 15px; font-weight: bold;">Status</label>
           <select id="swal-status" class="swal2-input" style="margin-top: 0;">
             <option value="Available" ${table.status === 'Available' ? 'selected' : ''}>Available</option>
@@ -153,7 +176,6 @@ const TableManagement: React.FC = () => {
       preConfirm: () => {
         const tableNumber = (document.getElementById('swal-number') as HTMLInputElement).value;
         const capacity = (document.getElementById('swal-capacity') as HTMLInputElement).value;
-        
         if (!tableNumber || !capacity) {
           Swal.showValidationMessage('Table Number and Capacity are required');
           return false;
@@ -170,7 +192,6 @@ const TableManagement: React.FC = () => {
     if (formValues) {
       try {
         const token = localStorage.getItem('token');
-        
         await axios.put(`${API_ENDPOINTS.UPDATETABLE}/${table._id}`, formValues, {
           headers: { 
             'Authorization': `Bearer ${token}`,
@@ -178,34 +199,11 @@ const TableManagement: React.FC = () => {
           }
         });
         
-        // Strict types matching mapping layout structure
-        const updatedTableData: RestaurantTable = {
-          ...table,
-          tableNumber: formValues.tableNumber,
-          capacity: formValues.capacity,
-          location: formValues.location as 'Indoor' | 'Outdoor' | 'Window' | 'Balcony',
-          status: formValues.status as 'Available' | 'Occupied' | 'Reserved' | 'NotAvailable'
-        };
-
-        // Strict casting lookup modifications
-        setTables((prevTables) => {
-          return prevTables.map((t) => {
-            const isIdMatch = String(t._id) === String(table._id);
-            const isNumMatch = Number(t.tableNumber) === Number(table.tableNumber);
-            return (isIdMatch || isNumMatch) ? updatedTableData : t;
-          });
-        });
-        
-        toast.success(`Table ${formValues.tableNumber} updated successfully!`);
-
-        // Async background fallback hook to completely eliminate memory desyncs
-        setTimeout(() => {
-          fetchTables(false);
-        }, 300);
-
-      } catch (error) {
-        console.error("Update Error:", error);
-        toast.error("Failed to update table details.");
+        setTables((prev) => prev.map((t) => t._id === table._id ? { ...t, ...formValues } : t));
+        toast.success(`Table ${formValues.tableNumber} updated!`);
+      } catch (error: any) {
+        if (error.response?.status === 401) handleSessionExpired();
+        else toast.error("Update failed.");
       }
     }
   };
@@ -213,28 +211,28 @@ const TableManagement: React.FC = () => {
   const handleDeleteTable = async (id: string) => {
     const storedUser = localStorage.getItem('user');
     if (!storedUser) return;
-
-    const userData = JSON.parse(storedUser);
-    const userEmail = userData.email;
+    const { email } = JSON.parse(storedUser);
 
     const { value: password } = await MySwal.fire({
       title: 'Security Verification',
-      text: `Enter password for ${userEmail} to delete table`,
+      text: `Enter password for ${email}`,
       input: 'password',
       showCancelButton: true,
       confirmButtonColor: '#d84315',
     });
+
     if (password) {
       try {
         const token = localStorage.getItem('token');
         await axios.delete(`${API_ENDPOINTS.DELETETABLE}/${id}`, {
           headers: { 'Authorization': `Bearer ${token}` },
-          data: { password: password, email: userEmail }
+          data: { password, email }
         });
         toast.success("Table removed.");
-        setTables((prevTables) => prevTables.filter((t) => t._id !== id));
-      } catch {
-        toast.error("Delete failed.");
+        setTables((prev) => prev.filter((t) => t._id !== id));
+      } catch (error: any) {
+        if (error.response?.status === 401) handleSessionExpired();
+        else toast.error("Delete failed.");
       }
     }
   };
@@ -266,66 +264,37 @@ const TableManagement: React.FC = () => {
         </header>
         <div className={styles.grid}>
           {tables.length > 0 ? (
-            tables.map((table) => {
-              const statusClass = table.status.toLowerCase();
-              const appliedCardStyle = styles[statusClass] || '';
-              
-              return (
-                <div key={table._id} className={`${styles.profileCard} ${appliedCardStyle}`}>
-                  <div className={styles.imageSection}>
-                    <div className={styles.iconWrapper}>
-                       <span className={styles.tableNumberLarge}>{table.tableNumber}</span>
-                    </div>
-                    <h2 className={styles.userName}>Table {table.tableNumber}</h2>
-                    <p className={styles.statusText}>{table.status}</p>
+            tables.map((table) => (
+              <div key={table._id} className={`${styles.profileCard} ${styles[table.status.toLowerCase()] || ''}`}>
+                <div className={styles.imageSection}>
+                  <div className={styles.iconWrapper}>
+                    <span className={styles.tableNumberLarge}>{table.tableNumber}</span>
                   </div>
-                  <div className={styles.infoSection}>
-                    <h3>Table Details</h3>
-                    <div className={styles.infoRow}>
-                      <span className={styles.label}>Capacity:</span>
-                      <span className={styles.value}>{table.capacity} Guests</span>
-                    </div>
-                    <div className={styles.infoRow}>
-                      <span className={styles.label}>Location:</span>
-                      <span className={styles.value}>{table.location}</span>
-                    </div>
-                    <div className={styles.infoRow}>
-                      <span className={styles.label}>Status:</span>
-                      <span className={styles.value}>{table.status}</span>
-                    </div>
-                    
-                    <div className={styles.buttonGroup}>
-                      <button 
-                        className={styles.editButton} 
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleEditTable(table);
-                        }}
-                      >
-                        Manage
-                      </button>
-                      {isAdmin && (
-                        <button 
-                          className={styles.deleteButton} 
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleDeleteTable(table._id);
-                          }}
-                        >
-                          Delete
-                        </button>
-                      )}
-                    </div>
+                  <h2 className={styles.userName}>Table {table.tableNumber}</h2>
+                  <p className={styles.statusText}>{table.status}</p>
+                </div>
+                <div className={styles.infoSection}>
+                  <h3>Details</h3>
+                  <div className={styles.infoRow}>
+                    <span className={styles.label}>Capacity:</span>
+                    <span className={styles.value}>{table.capacity} Guests</span>
+                  </div>
+                  <div className={styles.infoRow}>
+                    <span className={styles.label}>Location:</span>
+                    <span className={styles.value}>{table.location}</span>
+                  </div>
+                  <div className={styles.buttonGroup}>
+                    <button className={styles.editButton} onClick={() => handleEditTable(table)}>Manage</button>
+                    {isAdmin && (
+                      <button className={styles.deleteButton} onClick={() => handleDeleteTable(table._id)}>Delete</button>
+                    )}
                   </div>
                 </div>
-              );
-            })
+              </div>
+            ))
           ) : (
             <div className={styles.errorContainer}>
               <h2>No tables found.</h2>
-              <p>Add some tables in the database to see them here.</p>
             </div>
           )}
         </div>
