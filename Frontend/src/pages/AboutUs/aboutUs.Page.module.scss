@@ -1,156 +1,185 @@
-$font-header: 'Amatic SC', cursive;
-$primary-warm: #d4a373; 
-$accent-brown: #603808; 
-$bg-cream: #fefae0; 
-$text-dark: #283618; 
+$header_colour: #48392a;
+$font-nav: 'Lucida Handwriting', cursive;
 
-.aboutContainer {
-  font-family: 'Inter', sans-serif;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 60px 20px;
-  background-color: transparent;
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-  .whole {
-    text-align: center;
-    margin-bottom: 60px;
+.pageContainer {
+  padding: 1rem;
+  max-width: 100%;
+}
 
-    h1 {
-      font-family: $font-header;
-      font-size: 5.5rem;
-      color: $accent-brown;
-      margin: 0;
-      line-height: 1;
-
-      @media (max-width: 768px) {
-        font-size: 3.5rem;
-      }
-    }
-
-    p {
-      font-size: 1.3rem;
-      color: $text-dark;
-      font-style: italic;
-      max-width: 600px;
-      margin: 10px auto;
-
-      @media (max-width: 768px) {
-        font-size: 1.1rem;
-      }
-    }
-  }
-
-  .contentGrid {
-    display: grid;
-    grid-template-columns: 1fr 1.2fr;
-    gap: 50px;
-    align-items: center;
-    margin-bottom: 80px;
-
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
-      gap: 30px;
-      text-align: center; 
-    }
-
-    .imageWrapper {
-      img {
-        width: 100%;
-        height: auto;
-        border-radius: 40px 10px 40px 10px;
-        box-shadow: 20px 20px 0px $primary-warm;
-
-        @media (max-width: 768px) {
-          box-shadow: 10px 10px 0px $primary-warm; 
-          max-width: 90%; 
-          margin: 0 auto;
-        }
-      }
-    }
-
-    .textBlock {
-      h2 {
-        font-family: $font-header;
-        font-size: 3.5rem;
-        color: $accent-brown;
-        
-        @media (max-width: 768px) {
-          font-size: 2.8rem;
-        }
-      }
-      p {
-        line-height: 1.8;
-        font-size: 1.1rem;
-        color: #444;
-      }
-      .signature {
-        font-family: $font-header;
-        font-size: 2.5rem;
-        color: $primary-warm;
-        margin-top: 20px;
-      }
-    }
-  }
-
-  .statsGrid {
+.pageHeader {
+  margin-bottom: 2rem;
+  text-align: center;
+  font-family: $font-nav;
+  
+  .title {
     display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    margin-bottom: 80px;
-
-    @media (max-width: 768px) {
-      flex-direction: column; 
-      align-items: center;
-    }
-
-    .statCard {
-      flex: 1;
-      width: 100%; 
-      background: white;
-      padding: 40px;
-      border-radius: 30px;
-      text-align: center;
-      border: 2px dashed $primary-warm;
-      transition: all 0.3s ease;
-      &:hover{
-        background: #fff7f2; 
-        transform: scale(1.05);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); 
-      }
-      
-      .icon { font-size: 3rem; display: block; margin-bottom: 10px; }
-      h3 { font-family: $font-header; font-size: 2rem; color: $accent-brown; }
-      p { color: #666; font-size: 0.9rem; }
-    }
-  }
-
-  .valuesSection {
-    display: flex;
-    gap: 30px;
+    flex-direction: column;
+    align-items: start;
     
-    @media (max-width: 768px) {
-      flex-direction: column;
+    h1 { 
+      color: $header_colour;
+      margin-bottom: 0rem; 
+      @media (max-width: 768px) {
+        font-size: 20px;
+      }
     }
-    .valueCard {
-      flex: 1;
-      background: $text-dark;
-      color: $bg-cream;
-      padding: 40px;
-      border-radius: 20px;
-      transition: all 0.3s ease;
-    &:hover{
-       background: #9c4712; 
-        transform: scale(1.05);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    }
-      
-      h3 { font-family: $font-header; font-size: 2.5rem; }
-      p { opacity: 0.9; line-height: 1.6; }
-
-      &:first-child {
-        background: $primary-warm;
-        color: white;
+    
+    p {
+      align-items: start;
+      @media (max-width: 768px) {
+        font-size: 10px;
       }
     }
   }
+
+  .addButton {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center; 
+    gap: 6px;                
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    padding: 8px 12px;      
+
+    &:hover {
+      background-color: #218838;
+    }
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); 
+  gap: 2rem;
+}
+
+.profileCard {
+  font-family: $font-nav;
+  border-radius: 10px;
+  background: #fff;
+  display: flex;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+
+  &:hover { transform: translateY(-5px); }
+
+  &.available { border-left: 8px solid #2ecc71; }
+  &.occupied { border-left: 8px solid #e74c3c; }
+  &.reserved { border-left: 8px solid #f1c40f; }
+  &.notavailable { border-left: 8px solid #7f8c8d; } /* Added gray sidebar glow styling for NotAvailable status */
+
+  .imageSection {
+    flex: 1;
+    background: #faf7f2;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #eee;
+
+    .iconWrapper {
+      width: 80px;
+      height: 80px;
+      background: #d84315;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+  }
+  
+  .infoSection {
+    flex: 2;
+    padding: 2rem;
+
+    h3 {
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      color: $header_colour;
+      border-bottom: 2px solid #faf7f2;
+      padding-bottom: 0.5rem;
+    }
+    
+    .infoRow {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+
+      .label {
+        font-weight: 600;
+        color: #888;
+      }
+      .value {
+        color: #2d1b18;
+        font-weight: 500;
+      }
+    }
+    
+    .buttonGroup {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+
+      .editButton {
+        font-family: $font-nav;
+        width: 100%;
+        padding: 0.8rem;
+        background: #d84315;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s;
+      
+        &:hover { background: #bf360c; }
+      }
+      
+      .deleteButton {
+        background-color: #dc3545;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:hover {
+          background-color: #c82333;
+        }
+      }
+    }
+  }
+}
+
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  img { width: 100px; }
+}
+
+@media (max-width: 600px) {
+  .profileCard { flex-direction: column; }
+  .grid { grid-template-columns: 1fr; }
 }

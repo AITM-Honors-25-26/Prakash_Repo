@@ -3,7 +3,6 @@ import tableSvc from "./table.service.js";
 class TableController {
     createTable = async (req, res, next) => {
         try {
-            // Assuming your service handles validation/transformation
             const data = await tableSvc.transformTableData(req);
             const savedTable = await tableSvc.storeTable(data);
             
@@ -39,6 +38,23 @@ class TableController {
             res.json({
                 result: deletedResponse,
                 message: "Table deleted successfully.",
+                meta: null
+            });
+        } catch (exception) {
+            next(exception);
+        }
+    }
+
+    updateTable = async (req, res, next) => {
+        try {
+            const id = req.params.id;
+            const data = req.body; 
+
+            const updatedTable = await tableSvc.updateTableById(id, data);
+            
+            res.json({
+                result: updatedTable, 
+                message: "Table updated successfully.",
                 meta: null
             });
         } catch (exception) {

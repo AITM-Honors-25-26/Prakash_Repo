@@ -45,6 +45,17 @@ class TableService {
             throw exception;
         }
     }
+    updateTableById = async (id, data) => {
+    try {
+        const updated = await TableModel.findByIdAndUpdate(id, data, { new: true });
+        if (!updated) {
+            throw { status: 404, message: "Table not found" };
+        }
+        return updated;
+    } catch (error) {
+        throw error;
+    }
+}
 }
 
 const tableSvc = new TableService();

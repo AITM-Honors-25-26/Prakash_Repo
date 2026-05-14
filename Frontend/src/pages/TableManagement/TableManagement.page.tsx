@@ -22,6 +22,7 @@ const TableManagement: React.FC = () => {
   const [tables, setTables] = useState<RestaurantTable[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
   const fetchTables = useCallback(async (showLoading = true) => {
     if (showLoading) setIsLoading(true);
     try {
@@ -49,7 +50,12 @@ const TableManagement: React.FC = () => {
       }
     }
     fetchTables();
+    const interval = setInterval(() => {
+      fetchTables(false); // Passing 'false' prevents the annoying full-screen loading spinner from popping up
+    }, 5000);
+    return () => clearInterval(interval);
   }, [fetchTables]);
+
   const handleAddTable = async () => {
     const { value: formValues } = await MySwal.fire({
       title: 'Add New Table Details',
@@ -91,6 +97,7 @@ const TableManagement: React.FC = () => {
         };
       }
     });
+
     if (formValues) {
       try {
         const token = localStorage.getItem('token');
@@ -107,6 +114,102 @@ const TableManagement: React.FC = () => {
       }
     }
   };
+
+  const handleEditTable = async (table: RestaurantTable) => {
+    const { value: formValues } = await MySwal.fire({
+      title: `Edit Table ${table.tableNumber} Details`,
+      background: '#faf7f2',
+      color: '#2d1b18',
+      html: `
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <label style="text-align: left; font-size: 0.85rem; margin-bottom: -5px; padding-left: 15px; font-weight: bold;">Table Number</label>
+          <input id="swal-number" type="number" class="swal2-input" placeholder="Table Number" value="${table.tableNumber}" style="margin-top: 0;">
+          
+          <label style="text-align: left; font-size: 0.85rem; margin-bottom: -5px; padding-left: 15px; font-weight: bold;">Capacity</label>
+          <input id="swal-capacity" type="number" class="swal2-input" placeholder="Capacity (Guests)" value="${table.capacity}" style="margin-top: 0;">
+          
+          <label style="text-align: left; font-size: 0.85rem; margin-bottom: -5px; padding-left: 15px; font-weight: bold;">Location</label>
+          <select id="swal-location" class="swal2-input" style="margin-top: 0;">
+            <option value="Indoor" ${table.location === 'Indoor' ? 'selected' : ''}>Indoor</option>
+            <option value="Outdoor" ${table.location === 'Outdoor' ? 'selected' : ''}>Outdoor</option>
+            <option value="Window" ${table.location === 'Window' ? 'selected' : ''}>Window</option>
+            <option value="Balcony" ${table.location === 'Balcony' ? 'selected' : ''}>Balcony</option>
+          </select>
+          
+          <label style="text-align: left; font-size: 0.85rem; margin-bottom: -5px; padding-left: 15px; font-weight: bold;">Status</label>
+          <select id="swal-status" class="swal2-input" style="margin-top: 0;">
+            <option value="Available" ${table.status === 'Available' ? 'selected' : ''}>Available</option>
+            <option value="Occupied" ${table.status === 'Occupied' ? 'selected' : ''}>Occupied</option>
+            <option value="Reserved" ${table.status === 'Reserved' ? 'selected' : ''}>Reserved</option>
+            <option value="NotAvailable" ${table.status === 'NotAvailable' ? 'selected' : ''}>Not Available</option>
+          </select>
+        </div>
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Update Table',
+      confirmButtonColor: '#d84315',
+      cancelButtonColor: '#2d1b18',
+      preConfirm: () => {
+        const tableNumber = (document.getElementById('swal-number') as HTMLInputElement).value;
+        const capacity = (document.getElementById('swal-capacity') as HTMLInputElement).value;
+        
+        if (!tableNumber || !capacity) {
+          Swal.showValidationMessage('Table Number and Capacity are required');
+          return false;
+        }
+        return {
+          tableNumber: Number(tableNumber),
+          capacity: Number(capacity),
+          location: (document.getElementById('swal-location') as HTMLSelectElement).value,
+          status: (document.getElementById('swal-status') as HTMLSelectElement).value,
+        };
+      }
+    });
+
+    if (formValues) {
+      try {
+        const token = localStorage.getItem('token');
+        
+        await axios.put(`${API_ENDPOINTS.UPDATETABLE}/${table._id}`, formValues, {
+          headers: { 
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        // Strict types matching mapping layout structure
+        const updatedTableData: RestaurantTable = {
+          ...table,
+          tableNumber: formValues.tableNumber,
+          capacity: formValues.capacity,
+          location: formValues.location as 'Indoor' | 'Outdoor' | 'Window' | 'Balcony',
+          status: formValues.status as 'Available' | 'Occupied' | 'Reserved' | 'NotAvailable'
+        };
+
+        // Strict casting lookup modifications
+        setTables((prevTables) => {
+          return prevTables.map((t) => {
+            const isIdMatch = String(t._id) === String(table._id);
+            const isNumMatch = Number(t.tableNumber) === Number(table.tableNumber);
+            return (isIdMatch || isNumMatch) ? updatedTableData : t;
+          });
+        });
+        
+        toast.success(`Table ${formValues.tableNumber} updated successfully!`);
+
+        // Async background fallback hook to completely eliminate memory desyncs
+        setTimeout(() => {
+          fetchTables(false);
+        }, 300);
+
+      } catch (error) {
+        console.error("Update Error:", error);
+        toast.error("Failed to update table details.");
+      }
+    }
+  };
+
   const handleDeleteTable = async (id: string) => {
     const storedUser = localStorage.getItem('user');
     if (!storedUser) return;
@@ -129,12 +232,13 @@ const TableManagement: React.FC = () => {
           data: { password: password, email: userEmail }
         });
         toast.success("Table removed.");
-        await fetchTables(false);
+        setTables((prevTables) => prevTables.filter((t) => t._id !== id));
       } catch {
         toast.error("Delete failed.");
       }
     }
   };
+
   if (isLoading) {
     return (
       <Layout>
@@ -145,6 +249,7 @@ const TableManagement: React.FC = () => {
       </Layout>
     );
   }
+
   return (
     <Layout>
       <div className={styles.pageContainer}>
@@ -163,14 +268,16 @@ const TableManagement: React.FC = () => {
           {tables.length > 0 ? (
             tables.map((table) => {
               const statusClass = table.status.toLowerCase();
+              const appliedCardStyle = styles[statusClass] || '';
+              
               return (
-                <div key={table._id} className={`${styles.profileCard} ${styles[statusClass]}`}>
+                <div key={table._id} className={`${styles.profileCard} ${appliedCardStyle}`}>
                   <div className={styles.imageSection}>
                     <div className={styles.iconWrapper}>
                        <span className={styles.tableNumberLarge}>{table.tableNumber}</span>
                     </div>
                     <h2 className={styles.userName}>Table {table.tableNumber}</h2>
-                    <p className={`${styles.userRole} ${styles.statusText}`}>{table.status}</p>
+                    <p className={styles.statusText}>{table.status}</p>
                   </div>
                   <div className={styles.infoSection}>
                     <h3>Table Details</h3>
@@ -184,15 +291,28 @@ const TableManagement: React.FC = () => {
                     </div>
                     <div className={styles.infoRow}>
                       <span className={styles.label}>Status:</span>
-                      <span className={`${styles.value} ${styles.statusBadge}`}>{table.status}</span>
+                      <span className={styles.value}>{table.status}</span>
                     </div>
                     
                     <div className={styles.buttonGroup}>
-                      <button className={styles.editButton}>Manage</button>
+                      <button 
+                        className={styles.editButton} 
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleEditTable(table);
+                        }}
+                      >
+                        Manage
+                      </button>
                       {isAdmin && (
                         <button 
                           className={styles.deleteButton} 
-                          onClick={() => handleDeleteTable(table._id)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleDeleteTable(table._id);
+                          }}
                         >
                           Delete
                         </button>

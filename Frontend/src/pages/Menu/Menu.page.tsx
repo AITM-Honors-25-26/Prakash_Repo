@@ -7,7 +7,6 @@ import styles from './MenuPage.module.scss';
 import Layout from '../../components/layout/layout';
 import cartwhite from '../../../img/icons/cart.white.png';
 import hot from '../../../img/gif/hot.gif';
-// Importing your constants
 import { API_ENDPOINTS, CATAGOTY } from '../../constants/constants';
 
 const MySwal = withReactContent(Swal);
@@ -59,9 +58,12 @@ const MenuPage: React.FC = () => {
       }
     }
     fetchMenu();
+    const interval = setInterval(() => {
+      fetchMenu(false);
+    }, 5000);
+    return () => clearInterval(interval);
   }, [fetchMenu]);
 
-  // 2. Add Item Function
   const handleAddItem = async () => {
     const { value: file } = await MySwal.fire({
       title: 'Select Item Image',

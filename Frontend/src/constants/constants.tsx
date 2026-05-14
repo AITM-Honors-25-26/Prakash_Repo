@@ -14,7 +14,8 @@ export const API_ENDPOINTS = {
   TABLEMANAGEMENT:`${API_BASE_URL}/TableManagement`,
   LISTALLTABLE:`${API_BASE_URL}/table/list`,
   ADDTABLE: `${API_BASE_URL}/table/add`,
-  DELETETABLE: `${API_BASE_URL}/table`
+  DELETETABLE: `${API_BASE_URL}/table`,
+  UPDATETABLE: `${API_BASE_URL}/table`
 
 };
 export const CATAGOTY = {

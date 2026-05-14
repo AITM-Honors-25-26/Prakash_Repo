@@ -10,5 +10,6 @@ const tableRouter = Router();
 tableRouter.post('/table/add',allowUser([UserRole.ADMIN]),bodyValidator(tableCreateSchema),tableCtrl.createTable);
 tableRouter.get('/table/list',tableCtrl.getAllTables);
 tableRouter.delete('/table/:id',allowUser([UserRole.ADMIN]),tableCtrl.deleteTable);
+tableRouter.put('/table/:id', allowUser([UserRole.ADMIN]), tableCtrl.updateTable);
 
 export default tableRouter;
