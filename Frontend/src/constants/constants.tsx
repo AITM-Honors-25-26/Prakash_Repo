@@ -1,4 +1,6 @@
 export const API_BASE_URL = 'http://192.168.1.64:9005/api';
+export const API_FRONTEND = 'http://192.168.1.64:5173';
+
 
 export const API_ENDPOINTS = {
   LOGIN: `${API_BASE_URL}/auth/login`,
@@ -15,9 +17,13 @@ export const API_ENDPOINTS = {
   LISTALLTABLE:`${API_BASE_URL}/table/list`,
   ADDTABLE: `${API_BASE_URL}/table/add`,
   DELETETABLE: `${API_BASE_URL}/table`,
-  UPDATETABLE: `${API_BASE_URL}/table`
+  UPDATETABLE: `${API_BASE_URL}/table`,
+
+  TABLENUMBER:`${API_FRONTEND}/MenuPage`
 
 };
+
+
 export const CATAGOTY = {
   BREAD: 'Bread',
   CAKE: 'Cake',

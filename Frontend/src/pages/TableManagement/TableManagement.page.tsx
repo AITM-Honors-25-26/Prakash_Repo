@@ -5,10 +5,11 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { useNavigate } from 'react-router-dom';
 
-import Layout from '../../components/layout/layout';
+import Layout from '../../components/layout/layout.js';
 import styles from './TableManagementPage.module.scss';
 import LoaderGif from './../../../img/gif/loading.gif';
-import { API_ENDPOINTS } from '../../constants/constants';
+import { API_ENDPOINTS } from '../../constants/constants.js';
+import { generateTableQR } from './qr-generator.ts'; // Imported your QR utility
 
 const MySwal = withReactContent(Swal);
 
@@ -99,6 +100,34 @@ const TableManagement: React.FC = () => {
       inputValidator: (val) => !val && 'Password is required!'
     });
     return password ? { password, email } : null;
+  };
+
+  // --- QR Logic ---
+  const handleViewQR = async (table: RestaurantTable) => {
+    try {
+      const qrImage = await generateTableQR(table._id);
+
+      MySwal.fire({
+        title: `Table ${table.tableNumber} QR Code`,
+        imageUrl: qrImage,
+        imageAlt: `QR Code for Table ${table.tableNumber}`,
+        confirmButtonText: 'Download PNG',
+        confirmButtonColor: '#d84315',
+        showCancelButton: true,
+        cancelButtonText: 'Close',
+        background: '#faf7f2',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const link = document.createElement('a');
+          link.href = qrImage;
+          link.download = `Table-${table.tableNumber}-QR.png`;
+          link.click();
+          toast.success("Downloading QR Code...");
+        }
+      });
+    } catch  {
+      toast.error("Could not generate QR code");
+    }
   };
 
   // --- Action Handlers ---
@@ -210,7 +239,7 @@ const TableManagement: React.FC = () => {
         await axios.put(`${API_ENDPOINTS.UPDATETABLE}/${table._id}`, formValues, config);
         setTables((prev) => prev.map((t) => t._id === table._id ? { ...t, ...formValues } : t));
         toast.success("Table updated successfully!");
-      } catch  {
+      } catch {
         toast.error("Update failed.");
       }
     }
@@ -281,6 +310,16 @@ const TableManagement: React.FC = () => {
                   </div>
                   <div className={styles.buttonGroup}>
                     <button className={styles.editButton} onClick={() => handleEditTable(table)}>Manage</button>
+                    
+                    {/* NEW QR CODE BUTTON */}
+                    <button 
+                      className={styles.qrButton} 
+                      style={{ backgroundColor: '#4a3f35', color: 'white', padding: '8px 12px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                      onClick={() => handleViewQR(table)}
+                    >
+                      QR Code
+                    </button>
+
                     {isAdmin && (
                       <button className={styles.deleteButton} onClick={() => handleDeleteTable(table._id)}>Delete</button>
                     )}
