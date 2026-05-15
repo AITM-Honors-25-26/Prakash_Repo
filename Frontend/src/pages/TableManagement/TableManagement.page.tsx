@@ -87,44 +87,60 @@ const TableManagement: React.FC = () => {
 
   // --- Action Handlers ---
   const handleAddTable = async () => {
-    const { value: formValues } = await MySwal.fire({
-      title: 'Add New Table Details',
-      background: '#faf7f2',
-      color: '#2d1b18',
-      html: `
+  const { value: formValues } = await MySwal.fire({
+    title: 'Add New Table Details',
+    background: '#faf7f2',
+    color: '#2d1b18',
+    html: `
+      <div style="font-family: 'Lucida Handwriting', cursive; display: flex; flex-direction: column;">
         <input id="swal-number" type="number" class="swal2-input" placeholder="Table Number">
         <input id="swal-capacity" type="number" class="swal2-input" placeholder="Capacity (Guests)">
+        
         <select id="swal-location" class="swal2-input">
+          <option value="" disabled selected hidden>Select Location *</option>
           <option value="Indoor">Indoor</option>
           <option value="Outdoor">Outdoor</option>
           <option value="Window">Window</option>
           <option value="Balcony">Balcony</option>
         </select>
+        
         <select id="swal-status" class="swal2-input">
+          <option value="" disabled selected hidden>Select Status *</option>
           <option value="Available">Available</option>
           <option value="Occupied">Occupied</option>
           <option value="Reserved">Reserved</option>
           <option value="NotAvailable">Not Available</option>
         </select>
-      `,
-      showCancelButton: true,
-      confirmButtonText: 'Create Table',
-      confirmButtonColor: '#d84315',
-      preConfirm: () => {
-        const tableNumber = (document.getElementById('swal-number') as HTMLInputElement).value;
-        const capacity = (document.getElementById('swal-capacity') as HTMLInputElement).value;
-        if (!tableNumber || !capacity) {
-          Swal.showValidationMessage('Table Number and Capacity are required');
-          return false;
-        }
-        return {
-          tableNumber: Number(tableNumber),
-          capacity: Number(capacity),
-          location: (document.getElementById('swal-location') as HTMLSelectElement).value,
-          status: (document.getElementById('swal-status') as HTMLSelectElement).value,
-        };
-      }
-    });
+      </div>
+    `,
+    showCancelButton: true,
+    confirmButtonText: 'Create Table',
+    confirmButtonColor: '#d84315',
+    preConfirm: () => {
+  const tableNumber = (document.getElementById('swal-number') as HTMLInputElement).value;
+  const capacity = (document.getElementById('swal-capacity') as HTMLInputElement).value;
+  const location = (document.getElementById('swal-location') as HTMLSelectElement).value;
+  const status = (document.getElementById('swal-status') as HTMLSelectElement).value;
+
+  const missingFields = [];
+  if (!tableNumber) missingFields.push("Table Number");
+  if (!capacity) missingFields.push("Capacity");
+  if (!location) missingFields.push("Location");
+  if (!status) missingFields.push("Status");
+  if (missingFields.length > 0) {
+    Swal.showValidationMessage(
+      `Please fill in: ${missingFields.join(', ')}`
+    );
+    return false;
+  }
+  return {
+    tableNumber: Number(tableNumber),
+    capacity: Number(capacity),
+    location: location,
+    status: status,
+  };
+}
+  });
 
     if (formValues) {
       const config = getAuthHeader();
