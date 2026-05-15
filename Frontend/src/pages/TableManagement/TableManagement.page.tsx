@@ -105,7 +105,7 @@ const TableManagement: React.FC = () => {
   // --- QR Logic ---
   const handleViewQR = async (table: RestaurantTable) => {
     try {
-      const qrImage = await generateTableQR(table._id);
+      const qrImage = await generateTableQR(table.tableNumber);
 
       MySwal.fire({
         title: `Table ${table.tableNumber} QR Code`,

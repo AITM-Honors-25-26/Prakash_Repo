@@ -1,32 +1,28 @@
 import QRCode from 'qrcode';
-// Import your constants (adjust the path if necessary)
 import { API_ENDPOINTS } from '../../constants/constants';
 
 /**
- * Generates a QR code for a specific table.
- * The QR encodes a link to your frontend menu page.
+ * Generates a QR code image string.
+ * @param {string} id - The unique Table ID or Number.
+ * @returns {Promise<string>} - Base64 Data URL of the QR code.
  */
-export const generateTableQR = async (tableNumber: number | string): Promise<string> => {
+export const generateTableQR = async (id: string): Promise<string> => {
   try {
-    /**
-     * Logic: The QR should point to your FRONTEND route.
-     * When the guest scans it, they land on your Menu page.
-     * Your Menu page will then use API_ENDPOINTS.TABLENUMBER to get the data.
-     */
-    const frontendUrl = `${API_ENDPOINTS.TABLENUMBER}/${tableNumber}`;
-    
-    // Generate the QR as a Data URL
-    const qrDataUrl = await QRCode.toDataURL(frontendUrl, {
-      width: 300,      margin: 2,
+    // We take the constant "http://.../MenuPage/:id" 
+    const guestUrl = API_ENDPOINTS.TABLENUMBER.replace(':id', id);
+
+    const qrDataUrl = await QRCode.toDataURL(guestUrl, {
+      width: 300,
+      margin: 2,
       color: {
-        dark: '#000000', 
+        dark: '#48392a', 
         light: '#faf7f2',
       },
     });
-    
+
     return qrDataUrl;
   } catch (err) {
-    console.error('Error generating QR code:', err);
+    console.error('QR Generation Error:', err);
     throw err;
   }
 };
