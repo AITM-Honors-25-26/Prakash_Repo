@@ -41,10 +41,10 @@ const TableManagement: React.FC = () => {
       return null;
     }
     return { 
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        }
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
     };
   }, [handleSessionExpired]);
 
@@ -87,74 +87,93 @@ const TableManagement: React.FC = () => {
 
   // --- Action Handlers ---
   const handleAddTable = async () => {
-  const { value: formValues } = await MySwal.fire({
-    title: 'Add New Table Details',
-    background: '#faf7f2',
-    color: '#2d1b18',
-    html: `
-      <div style="font-family: 'Lucida Handwriting', cursive; display: flex; flex-direction: column;">
-        <input id="swal-number" type="number" class="swal2-input" placeholder="Table Number">
-        <input id="swal-capacity" type="number" class="swal2-input" placeholder="Capacity (Guests)">
-        
-        <select id="swal-location" class="swal2-input">
-          <option value="" disabled selected hidden>Select Location *</option>
-          <option value="Indoor">Indoor</option>
-          <option value="Outdoor">Outdoor</option>
-          <option value="Window">Window</option>
-          <option value="Balcony">Balcony</option>
-        </select>
-        
-        <select id="swal-status" class="swal2-input">
-          <option value="" disabled selected hidden>Select Status *</option>
-          <option value="Available">Available</option>
-          <option value="Occupied">Occupied</option>
-          <option value="Reserved">Reserved</option>
-          <option value="NotAvailable">Not Available</option>
-        </select>
-      </div>
-    `,
-    showCancelButton: true,
-    confirmButtonText: 'Create Table',
-    confirmButtonColor: '#d84315',
-    preConfirm: () => {
-  const tableNumber = (document.getElementById('swal-number') as HTMLInputElement).value;
-  const capacity = (document.getElementById('swal-capacity') as HTMLInputElement).value;
-  const location = (document.getElementById('swal-location') as HTMLSelectElement).value;
-  const status = (document.getElementById('swal-status') as HTMLSelectElement).value;
+    // Step 1: Collect Table Details
+    const { value: formValues } = await MySwal.fire({
+      title: 'Add New Table Details',
+      background: '#faf7f2',
+      color: '#2d1b18',
+      html: `
+        <div style="font-family: 'Lucida Handwriting', cursive; display: flex; flex-direction: column;">
+          <input id="swal-number" type="number" class="swal2-input" placeholder="Table Number">
+          <input id="swal-capacity" type="number" class="swal2-input" placeholder="Capacity (Guests)">
+          <select id="swal-location" class="swal2-input">
+            <option value="" disabled selected hidden>Select Location *</option>
+            <option value="Indoor">Indoor</option>
+            <option value="Outdoor">Outdoor</option>
+            <option value="Window">Window</option>
+            <option value="Balcony">Balcony</option>
+          </select>
+          <select id="swal-status" class="swal2-input">
+            <option value="" disabled selected hidden>Select Status *</option>
+            <option value="Available">Available</option>
+            <option value="Occupied">Occupied</option>
+            <option value="Reserved">Reserved</option>
+            <option value="NotAvailable">Not Available</option>
+          </select>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: 'Next',
+      confirmButtonColor: '#d84315',
+      preConfirm: () => {
+        const tableNumber = (document.getElementById('swal-number') as HTMLInputElement).value;
+        const capacity = (document.getElementById('swal-capacity') as HTMLInputElement).value;
+        const location = (document.getElementById('swal-location') as HTMLSelectElement).value;
+        const status = (document.getElementById('swal-status') as HTMLSelectElement).value;
 
-  const missingFields = [];
-  if (!tableNumber) missingFields.push("Table Number");
-  if (!capacity) missingFields.push("Capacity");
-  if (!location) missingFields.push("Location");
-  if (!status) missingFields.push("Status");
-  if (missingFields.length > 0) {
-    Swal.showValidationMessage(
-      `Please fill in: ${missingFields.join(', ')}`
-    );
-    return false;
-  }
-  return {
-    tableNumber: Number(tableNumber),
-    capacity: Number(capacity),
-    location: location,
-    status: status,
-  };
-}
-  });
+        const missingFields = [];
+        if (!tableNumber) missingFields.push("Table Number");
+        if (!capacity) missingFields.push("Capacity");
+        if (!location) missingFields.push("Location");
+        if (!status) missingFields.push("Status");
 
+        if (missingFields.length > 0) {
+          Swal.showValidationMessage(`Missing: ${missingFields.join(', ')}`);
+          return false;
+        }
+
+        return {
+          tableNumber: Number(tableNumber),
+          capacity: Number(capacity),
+          location,
+          status,
+        };
+      }
+    });
+
+    // Step 2: Password Verification
     if (formValues) {
-      const config = getAuthHeader();
-      if (!config) return;
+      const storedUser = localStorage.getItem('user');
+      if (!storedUser) return;
+      const { email } = JSON.parse(storedUser);
 
-      try {
-        await axios.post(API_ENDPOINTS.ADDTABLE, formValues, config);
-        toast.success(`Table ${formValues.tableNumber} added successfully!`);
-        fetchTables(false);
-      } catch (error: unknown) {
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
-          handleSessionExpired();
-        } else {
-          toast.error("Failed to add new table.");
+      const { value: password } = await MySwal.fire({
+        title: 'Security Verification',
+        text: `Enter password for ${email} to confirm creation`,
+        input: 'password',
+        inputPlaceholder: 'Confirm password',
+        showCancelButton: true,
+        confirmButtonText: 'Confirm & Create',
+        confirmButtonColor: '#d84315',
+        inputValidator: (value) => {
+          if (!value) return 'Password is required!';
+        }
+      });
+
+      if (password) {
+        const config = getAuthHeader();
+        if (!config) return;
+
+        try {
+          await axios.post(API_ENDPOINTS.ADDTABLE, { ...formValues, password, email }, config);
+          toast.success(`Table ${formValues.tableNumber} added successfully!`);
+          fetchTables(false);
+        } catch (error: unknown) {
+          if (axios.isAxiosError(error)) {
+            const msg = error.response?.data?.message || "Check your password.";
+            toast.error(`Failed: ${msg}`);
+            if (error.response?.status === 401) handleSessionExpired();
+          }
         }
       }
     }
