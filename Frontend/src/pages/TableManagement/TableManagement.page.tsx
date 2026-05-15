@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { useNavigate } from 'react-router-dom';
+
 import Layout from '../../components/layout/layout';
 import styles from './TableManagementPage.module.scss';
 import LoaderGif from './../../../img/gif/loading.gif';
@@ -26,7 +27,7 @@ const TableManagement: React.FC = () => {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  // --- Auth Helpers ---
+  // --- Auth & Session Helpers ---
   const handleSessionExpired = useCallback(() => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -40,7 +41,7 @@ const TableManagement: React.FC = () => {
       handleSessionExpired();
       return null;
     }
-    return { 
+    return {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -54,9 +55,7 @@ const TableManagement: React.FC = () => {
     try {
       const response = await axios.get(API_ENDPOINTS.LISTALLTABLE);
       const data = response.data?.data || response.data?.result || response.data;
-      if (Array.isArray(data)) {
-        setTables(data);
-      }
+      if (Array.isArray(data)) setTables(data);
     } catch (error: unknown) {
       console.error("Fetch Error:", error);
       if (axios.isAxiosError(error) && error.response?.status === 401) {
@@ -80,40 +79,56 @@ const TableManagement: React.FC = () => {
       }
     }
     fetchTables();
-
     const interval = setInterval(() => fetchTables(false), 5000);
     return () => clearInterval(interval);
   }, [fetchTables]);
 
+  // --- Reusable Authorized Action Logic ---
+  const requestPasswordConfirm = async (actionTitle: string) => {
+    const storedUser = localStorage.getItem('user');
+    if (!storedUser) return null;
+    const { email } = JSON.parse(storedUser);
+
+    const { value: password } = await MySwal.fire({
+      title: 'Security Verification',
+      text: `Confirm password for ${email} to ${actionTitle}`,
+      input: 'password',
+      inputPlaceholder: 'Password',
+      showCancelButton: true,
+      confirmButtonColor: '#d84315',
+      inputValidator: (val) => !val && 'Password is required!'
+    });
+    return password ? { password, email } : null;
+  };
+
   // --- Action Handlers ---
   const handleAddTable = async () => {
-    // Step 1: Collect Table Details
     const { value: formValues } = await MySwal.fire({
-      title: 'Add New Table Details',
+      title: 'Create New Table',
       background: '#faf7f2',
       color: '#2d1b18',
-      html: `
-        <div style="font-family: 'Lucida Handwriting', cursive; display: flex; flex-direction: column;">
-          <input id="swal-number" type="number" class="swal2-input" placeholder="Table Number">
-          <input id="swal-capacity" type="number" class="swal2-input" placeholder="Capacity (Guests)">
-          <select id="swal-location" class="swal2-input">
-            <option value="" disabled selected hidden>Select Location *</option>
+      html: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '10px' }}>
+          <input id="swal-number" type="number" className="swal2-input" placeholder="Table Number" style={{ margin: '0' }} />
+          <input id="swal-capacity" type="number" className="swal2-input" placeholder="Capacity (Guests)" style={{ margin: '0' }} />
+          <select id="swal-location" className="swal2-input" style={{ margin: '0' }}>
+            <option value="" disabled selected hidden>Location</option>
             <option value="Indoor">Indoor</option>
             <option value="Outdoor">Outdoor</option>
             <option value="Window">Window</option>
             <option value="Balcony">Balcony</option>
           </select>
-          <select id="swal-status" class="swal2-input">
-            <option value="" disabled selected hidden>Select Status *</option>
+          <select id="swal-status" className="swal2-input" style={{ margin: '0' }}>
+            <option value="" disabled selected hidden>Status</option>
             <option value="Available">Available</option>
             <option value="Occupied">Occupied</option>
             <option value="Reserved">Reserved</option>
             <option value="NotAvailable">Not Available</option>
           </select>
         </div>
-      `,
+      ),
       showCancelButton: true,
-      confirmButtonText: 'Next',
+      confirmButtonText: 'Continue',
       confirmButtonColor: '#d84315',
       preConfirm: () => {
         const tableNumber = (document.getElementById('swal-number') as HTMLInputElement).value;
@@ -121,59 +136,34 @@ const TableManagement: React.FC = () => {
         const location = (document.getElementById('swal-location') as HTMLSelectElement).value;
         const status = (document.getElementById('swal-status') as HTMLSelectElement).value;
 
-        const missingFields = [];
-        if (!tableNumber) missingFields.push("Table Number");
-        if (!capacity) missingFields.push("Capacity");
-        if (!location) missingFields.push("Location");
-        if (!status) missingFields.push("Status");
+        const missing = [];
+        if (!tableNumber) missing.push("Table Number");
+        if (!capacity) missing.push("Capacity");
+        if (!location) missing.push("Location");
+        if (!status) missing.push("Status");
 
-        if (missingFields.length > 0) {
-          Swal.showValidationMessage(`Missing: ${missingFields.join(', ')}`);
+        if (missing.length > 0) {
+          Swal.showValidationMessage(`Missing: ${missing.join(', ')}`);
           return false;
         }
-
-        return {
-          tableNumber: Number(tableNumber),
-          capacity: Number(capacity),
-          location,
-          status,
-        };
+        return { tableNumber: Number(tableNumber), capacity: Number(capacity), location, status };
       }
     });
 
-    // Step 2: Password Verification
     if (formValues) {
-      const storedUser = localStorage.getItem('user');
-      if (!storedUser) return;
-      const { email } = JSON.parse(storedUser);
+      const auth = await requestPasswordConfirm('create table');
+      if (!auth) return;
 
-      const { value: password } = await MySwal.fire({
-        title: 'Security Verification',
-        text: `Enter password for ${email} to confirm creation`,
-        input: 'password',
-        inputPlaceholder: 'Confirm password',
-        showCancelButton: true,
-        confirmButtonText: 'Confirm & Create',
-        confirmButtonColor: '#d84315',
-        inputValidator: (value) => {
-          if (!value) return 'Password is required!';
-        }
-      });
+      const config = getAuthHeader();
+      if (!config) return;
 
-      if (password) {
-        const config = getAuthHeader();
-        if (!config) return;
-
-        try {
-          await axios.post(API_ENDPOINTS.ADDTABLE, { ...formValues, password, email }, config);
-          toast.success(`Table ${formValues.tableNumber} added successfully!`);
-          fetchTables(false);
-        } catch (error: unknown) {
-          if (axios.isAxiosError(error)) {
-            const msg = error.response?.data?.message || "Check your password.";
-            toast.error(`Failed: ${msg}`);
-            if (error.response?.status === 401) handleSessionExpired();
-          }
+      try {
+        await axios.post(API_ENDPOINTS.ADDTABLE, { ...formValues, ...auth }, config);
+        toast.success(`Table ${formValues.tableNumber} added successfully!`);
+        fetchTables(false);
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+          toast.error(error.response?.data?.message || "Verify your credentials.");
         }
       }
     }
@@ -181,28 +171,28 @@ const TableManagement: React.FC = () => {
 
   const handleEditTable = async (table: RestaurantTable) => {
     const { value: formValues } = await MySwal.fire({
-      title: `Edit Table ${table.tableNumber}`,
+      title: `Manage Table ${table.tableNumber}`,
       background: '#faf7f2',
-      html: `
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          <input id="swal-number" type="number" class="swal2-input" value="${table.tableNumber}">
-          <input id="swal-capacity" type="number" class="swal2-input" value="${table.capacity}">
-          <select id="swal-location" class="swal2-input">
-            <option value="Indoor" ${table.location === 'Indoor' ? 'selected' : ''}>Indoor</option>
-            <option value="Outdoor" ${table.location === 'Outdoor' ? 'selected' : ''}>Outdoor</option>
-            <option value="Window" ${table.location === 'Window' ? 'selected' : ''}>Window</option>
-            <option value="Balcony" ${table.location === 'Balcony' ? 'selected' : ''}>Balcony</option>
+      html: (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <input id="swal-number" type="number" className="swal2-input" defaultValue={table.tableNumber} />
+          <input id="swal-capacity" type="number" className="swal2-input" defaultValue={table.capacity} />
+          <select id="swal-location" className="swal2-input" defaultValue={table.location}>
+            <option value="Indoor">Indoor</option>
+            <option value="Outdoor">Outdoor</option>
+            <option value="Window">Window</option>
+            <option value="Balcony">Balcony</option>
           </select>
-          <select id="swal-status" class="swal2-input">
-            <option value="Available" ${table.status === 'Available' ? 'selected' : ''}>Available</option>
-            <option value="Occupied" ${table.status === 'Occupied' ? 'selected' : ''}>Occupied</option>
-            <option value="Reserved" ${table.status === 'Reserved' ? 'selected' : ''}>Reserved</option>
-            <option value="NotAvailable" ${table.status === 'NotAvailable' ? 'selected' : ''}>Not Available</option>
+          <select id="swal-status" className="swal2-input" defaultValue={table.status}>
+            <option value="Available">Available</option>
+            <option value="Occupied">Occupied</option>
+            <option value="Reserved">Reserved</option>
+            <option value="NotAvailable">Not Available</option>
           </select>
         </div>
-      `,
+      ),
       showCancelButton: true,
-      confirmButtonText: 'Update Table',
+      confirmButtonText: 'Update Changes',
       confirmButtonColor: '#d84315',
       preConfirm: () => ({
         tableNumber: Number((document.getElementById('swal-number') as HTMLInputElement).value),
@@ -219,48 +209,26 @@ const TableManagement: React.FC = () => {
       try {
         await axios.put(`${API_ENDPOINTS.UPDATETABLE}/${table._id}`, formValues, config);
         setTables((prev) => prev.map((t) => t._id === table._id ? { ...t, ...formValues } : t));
-        toast.success(`Table ${formValues.tableNumber} updated!`);
-      } catch (error: unknown) {
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
-          handleSessionExpired();
-        } else {
-          toast.error("Update failed.");
-        }
+        toast.success("Table updated successfully!");
+      } catch  {
+        toast.error("Update failed.");
       }
     }
   };
 
   const handleDeleteTable = async (id: string) => {
-    const storedUser = localStorage.getItem('user');
-    if (!storedUser) return;
-    const { email } = JSON.parse(storedUser);
+    const auth = await requestPasswordConfirm('delete this table');
+    if (!auth) return;
 
-    const { value: password } = await MySwal.fire({
-      title: 'Security Verification',
-      text: `Enter password for ${email}`,
-      input: 'password',
-      showCancelButton: true,
-      confirmButtonColor: '#d84315',
-    });
+    const config = getAuthHeader();
+    if (!config) return;
 
-    if (password) {
-      const config = getAuthHeader();
-      if (!config) return;
-
-      try {
-        await axios.delete(`${API_ENDPOINTS.DELETETABLE}/${id}`, {
-          ...config,
-          data: { password, email }
-        });
-        toast.success("Table removed.");
-        setTables((prev) => prev.filter((t) => t._id !== id));
-      } catch (error: unknown) {
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
-          handleSessionExpired();
-        } else {
-          toast.error("Delete failed.");
-        }
-      }
+    try {
+      await axios.delete(`${API_ENDPOINTS.DELETETABLE}/${id}`, { ...config, data: auth });
+      toast.success("Table removed.");
+      setTables((prev) => prev.filter((t) => t._id !== id));
+    } catch {
+      toast.error("Deletion failed.");
     }
   };
 
@@ -269,7 +237,7 @@ const TableManagement: React.FC = () => {
       <Layout>
         <div className={styles.loader}>
           <img src={LoaderGif} alt="Loading..." />
-          <h1>Loading Floor Plan...</h1>
+          <h1>Synchronizing Floor Plan...</h1>
         </div>
       </Layout>
     );
@@ -281,7 +249,7 @@ const TableManagement: React.FC = () => {
         <header className={styles.pageHeader}>
           <div className={styles.title}>
             <h1>Dining Area Management</h1>
-            <p>Total Tables: <strong>{tables.length}</strong></p>
+            <p>Active Layout: <strong>{tables.length} Tables</strong></p>
           </div>
           {isAdmin && (
             <button className={styles.addButton} onClick={handleAddTable}>
@@ -289,6 +257,7 @@ const TableManagement: React.FC = () => {
             </button>
           )}
         </header>
+
         <div className={styles.grid}>
           {tables.length > 0 ? (
             tables.map((table) => (
@@ -301,7 +270,7 @@ const TableManagement: React.FC = () => {
                   <p className={styles.statusText}>{table.status}</p>
                 </div>
                 <div className={styles.infoSection}>
-                  <h3>Details</h3>
+                  <h3>Configuration</h3>
                   <div className={styles.infoRow}>
                     <span className={styles.label}>Capacity:</span>
                     <span className={styles.value}>{table.capacity} Guests</span>
@@ -321,7 +290,7 @@ const TableManagement: React.FC = () => {
             ))
           ) : (
             <div className={styles.errorContainer}>
-              <h2>No tables found.</h2>
+              <h2>No floor plan data available.</h2>
             </div>
           )}
         </div>
