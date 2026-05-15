@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import { useNavigate } from 'react-router-dom'; // Added for redirection
+import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/layout/layout';
 import styles from './TableManagementPage.module.scss';
 import LoaderGif from './../../../img/gif/loading.gif';
@@ -11,6 +11,7 @@ import { API_ENDPOINTS } from '../../constants/constants';
 
 const MySwal = withReactContent(Swal);
 
+// --- Types ---
 export interface RestaurantTable {
   _id: string;
   tableNumber: number;
@@ -25,7 +26,7 @@ const TableManagement: React.FC = () => {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  // Helper to handle Logout on Token Expiry
+  // --- Auth Helpers ---
   const handleSessionExpired = useCallback(() => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -33,6 +34,21 @@ const TableManagement: React.FC = () => {
     navigate('/login');
   }, [navigate]);
 
+  const getAuthHeader = useCallback(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      handleSessionExpired();
+      return null;
+    }
+    return { 
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    };
+  }, [handleSessionExpired]);
+
+  // --- Data Fetching ---
   const fetchTables = useCallback(async (showLoading = true) => {
     if (showLoading) setIsLoading(true);
     try {
@@ -41,10 +57,9 @@ const TableManagement: React.FC = () => {
       if (Array.isArray(data)) {
         setTables(data);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Fetch Error:", error);
-      // If fetching fails due to token (if protected), handle it
-      if (error.response?.status === 401) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
         handleSessionExpired();
       } else {
         toast.error("Failed to load floor plan.");
@@ -61,18 +76,16 @@ const TableManagement: React.FC = () => {
         const userData = JSON.parse(storedUser);
         setIsAdmin(userData.role === 'Admin');
       } catch (e) {
-        console.error("Parsing Error", e);
+        console.error("User Parse Error", e);
       }
     }
     fetchTables();
-    
-    const interval = setInterval(() => {
-      fetchTables(false);
-    }, 5000);
-    
+
+    const interval = setInterval(() => fetchTables(false), 5000);
     return () => clearInterval(interval);
   }, [fetchTables]);
 
+  // --- Action Handlers ---
   const handleAddTable = async () => {
     const { value: formValues } = await MySwal.fire({
       title: 'Add New Table Details',
@@ -94,11 +107,9 @@ const TableManagement: React.FC = () => {
           <option value="NotAvailable">Not Available</option>
         </select>
       `,
-      focusConfirm: false,
       showCancelButton: true,
       confirmButtonText: 'Create Table',
       confirmButtonColor: '#d84315',
-      cancelButtonColor: '#2d1b18',
       preConfirm: () => {
         const tableNumber = (document.getElementById('swal-number') as HTMLInputElement).value;
         const capacity = (document.getElementById('swal-capacity') as HTMLInputElement).value;
@@ -116,23 +127,15 @@ const TableManagement: React.FC = () => {
     });
 
     if (formValues) {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-           handleSessionExpired();
-           return;
-        }
+      const config = getAuthHeader();
+      if (!config) return;
 
-        await axios.post(API_ENDPOINTS.ADDTABLE, formValues, {
-          headers: { 
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
+      try {
+        await axios.post(API_ENDPOINTS.ADDTABLE, formValues, config);
         toast.success(`Table ${formValues.tableNumber} added successfully!`);
-        await fetchTables(false);
-      } catch (error: any) {
-        if (error.response?.status === 401 || error.response?.data?.message === "jwt expired") {
+        fetchTables(false);
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
           handleSessionExpired();
         } else {
           toast.error("Failed to add new table.");
@@ -143,24 +146,19 @@ const TableManagement: React.FC = () => {
 
   const handleEditTable = async (table: RestaurantTable) => {
     const { value: formValues } = await MySwal.fire({
-      title: `Edit Table ${table.tableNumber} Details`,
+      title: `Edit Table ${table.tableNumber}`,
       background: '#faf7f2',
-      color: '#2d1b18',
       html: `
         <div style="display: flex; flex-direction: column; gap: 10px;">
-          <label style="text-align: left; font-size: 0.85rem; margin-bottom: -5px; padding-left: 15px; font-weight: bold;">Table Number</label>
-          <input id="swal-number" type="number" class="swal2-input" placeholder="Table Number" value="${table.tableNumber}" style="margin-top: 0;">
-          <label style="text-align: left; font-size: 0.85rem; margin-bottom: -5px; padding-left: 15px; font-weight: bold;">Capacity</label>
-          <input id="swal-capacity" type="number" class="swal2-input" placeholder="Capacity (Guests)" value="${table.capacity}" style="margin-top: 0;">
-          <label style="text-align: left; font-size: 0.85rem; margin-bottom: -5px; padding-left: 15px; font-weight: bold;">Location</label>
-          <select id="swal-location" class="swal2-input" style="margin-top: 0;">
+          <input id="swal-number" type="number" class="swal2-input" value="${table.tableNumber}">
+          <input id="swal-capacity" type="number" class="swal2-input" value="${table.capacity}">
+          <select id="swal-location" class="swal2-input">
             <option value="Indoor" ${table.location === 'Indoor' ? 'selected' : ''}>Indoor</option>
             <option value="Outdoor" ${table.location === 'Outdoor' ? 'selected' : ''}>Outdoor</option>
             <option value="Window" ${table.location === 'Window' ? 'selected' : ''}>Window</option>
             <option value="Balcony" ${table.location === 'Balcony' ? 'selected' : ''}>Balcony</option>
           </select>
-          <label style="text-align: left; font-size: 0.85rem; margin-bottom: -5px; padding-left: 15px; font-weight: bold;">Status</label>
-          <select id="swal-status" class="swal2-input" style="margin-top: 0;">
+          <select id="swal-status" class="swal2-input">
             <option value="Available" ${table.status === 'Available' ? 'selected' : ''}>Available</option>
             <option value="Occupied" ${table.status === 'Occupied' ? 'selected' : ''}>Occupied</option>
             <option value="Reserved" ${table.status === 'Reserved' ? 'selected' : ''}>Reserved</option>
@@ -168,42 +166,31 @@ const TableManagement: React.FC = () => {
           </select>
         </div>
       `,
-      focusConfirm: false,
       showCancelButton: true,
       confirmButtonText: 'Update Table',
       confirmButtonColor: '#d84315',
-      cancelButtonColor: '#2d1b18',
-      preConfirm: () => {
-        const tableNumber = (document.getElementById('swal-number') as HTMLInputElement).value;
-        const capacity = (document.getElementById('swal-capacity') as HTMLInputElement).value;
-        if (!tableNumber || !capacity) {
-          Swal.showValidationMessage('Table Number and Capacity are required');
-          return false;
-        }
-        return {
-          tableNumber: Number(tableNumber),
-          capacity: Number(capacity),
-          location: (document.getElementById('swal-location') as HTMLSelectElement).value,
-          status: (document.getElementById('swal-status') as HTMLSelectElement).value,
-        };
-      }
+      preConfirm: () => ({
+        tableNumber: Number((document.getElementById('swal-number') as HTMLInputElement).value),
+        capacity: Number((document.getElementById('swal-capacity') as HTMLInputElement).value),
+        location: (document.getElementById('swal-location') as HTMLSelectElement).value,
+        status: (document.getElementById('swal-status') as HTMLSelectElement).value,
+      })
     });
 
     if (formValues) {
+      const config = getAuthHeader();
+      if (!config) return;
+
       try {
-        const token = localStorage.getItem('token');
-        await axios.put(`${API_ENDPOINTS.UPDATETABLE}/${table._id}`, formValues, {
-          headers: { 
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-        
+        await axios.put(`${API_ENDPOINTS.UPDATETABLE}/${table._id}`, formValues, config);
         setTables((prev) => prev.map((t) => t._id === table._id ? { ...t, ...formValues } : t));
         toast.success(`Table ${formValues.tableNumber} updated!`);
-      } catch (error: any) {
-        if (error.response?.status === 401) handleSessionExpired();
-        else toast.error("Update failed.");
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+          handleSessionExpired();
+        } else {
+          toast.error("Update failed.");
+        }
       }
     }
   };
@@ -222,17 +209,22 @@ const TableManagement: React.FC = () => {
     });
 
     if (password) {
+      const config = getAuthHeader();
+      if (!config) return;
+
       try {
-        const token = localStorage.getItem('token');
         await axios.delete(`${API_ENDPOINTS.DELETETABLE}/${id}`, {
-          headers: { 'Authorization': `Bearer ${token}` },
+          ...config,
           data: { password, email }
         });
         toast.success("Table removed.");
         setTables((prev) => prev.filter((t) => t._id !== id));
-      } catch (error: any) {
-        if (error.response?.status === 401) handleSessionExpired();
-        else toast.error("Delete failed.");
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+          handleSessionExpired();
+        } else {
+          toast.error("Delete failed.");
+        }
       }
     }
   };
