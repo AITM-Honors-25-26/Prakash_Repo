@@ -1,12 +1,16 @@
-import React, { useState} from 'react'; 
+import React, { useState } from 'react'; 
+import { Link } from 'react-router-dom';
 import styles from './header.module.scss';
 import profile from './../../../img/profile.png';
 import logowhite from './../../../img/log.white.png';
 
 const Header: React.FC = () => {
+  // Dynamically pull the table number straight from localStorage on every render pass
+  const activeTable = localStorage.getItem('bakery_table');
+
   const [user, setUser] = useState<{ 
     name: string; 
-    role: string; // Added role to the interface
+    role: string; 
     image?: { url: string }
   } | null>(() => {
     const savedUser = localStorage.getItem('user');
@@ -26,61 +30,66 @@ const Header: React.FC = () => {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    localStorage.removeItem('bakery_table'); 
     setUser(null);
     window.location.href = "/";
   };
 
   return (
     <header className={styles.header}>
-        <a href="/">
-          <img src={logowhite} className={styles.logo} alt="logo" />
-        </a>
-        <nav className={styles.navLinks}>
-          <a href="/">Home</a>
-          <a href="/MenuPage">Menu</a>
-          
-          {hasStaffAccess && (
-            <a href="/TableManagement" className={styles.staffLink}>
-              Tables
-            </a>
-          )}
+      <Link to="/">
+        <img src={logowhite} className={styles.logo} alt="logo" />
+      </Link>
+      <nav className={styles.navLinks}>
+        <Link to="/">Home</Link>
+        
+        {/* Reactively builds link paths based on the current storage value */}
+        <Link to={activeTable ? `/MenuPage/${activeTable}` : "/MenuPage"}>
+          Menu {activeTable && `(Table ${activeTable})`}
+        </Link>
+        
+        {hasStaffAccess && (
+          <Link to="/TableManagement" className={styles.staffLink}>
+            Tables
+          </Link>
+        )}
 
-          <a href="/ContactUsPage">Contact Us</a>
-          <a href="/AboutUsPage">About Us</a>
-        </nav>
+        <Link to="/ContactUsPage">Contact Us</Link>
+        <Link to="/AboutUsPage">About Us</Link>
+      </nav>
 
-        <div className={styles.authSection}>
-          {user ? (
-            <div className={styles.profileWrapper}>
-              <img 
-                src={user.image?.url || profile} 
-                className={styles.profile} 
-                alt="Profile" 
-              />
-              <div className={styles.DropdownBar}>
-                <div className={styles.userInfo}>
-                  <p>{user.name}</p>
-                  <small className={styles.userRole}>{user.role}</small>
-                </div>
+      <div className={styles.authSection}>
+        {user ? (
+          <div className={styles.profileWrapper}>
+            <img 
+              src={user.image?.url || profile} 
+              className={styles.profile} 
+              alt="Profile" 
+            />
+            <div className={styles.DropdownBar}>
+              <div className={styles.userInfo}>
+                <p>{user.name}</p>
+                <small className={styles.userRole}>{user.role}</small>
+              </div>
+              <hr />
+              <div className={styles.actions}>
+                <Link to="/ProfilePage">Profile</Link>
                 <hr />
-                <div className={styles.actions}>
-                  <a href="/ProfilePage">Profile</a>
-                  <hr />
-                  <a href="/SettingsPage">Settings</a>
-                  <hr />
-                  <button className={styles.logoutBtn} onClick={handleLogout}>
-                    Logout
-                  </button>
-                </div>
+                <Link to="/SettingsPage">Settings</Link>
+                <hr />
+                <button className={styles.logoutBtn} onClick={handleLogout}>
+                  Logout
+                </button>
               </div>
             </div>
-          ) : (
-            <div className={styles.authButtons}>
-              <a href="/LoginPage" className={styles.loginLink}>Login</a>
-              <a href="/RegisterPage" className={styles.signupBtn}>Register</a>
-            </div>
-          )}
-        </div>
+          </div>
+        ) : (
+          <div className={styles.authButtons}>
+            <Link to="/LoginPage" className={styles.loginLink}>Login</Link>
+            <Link to="/RegisterPage" className={styles.signupBtn}>Register</Link>
+          </div>
+        )}
+      </div>
     </header>
   );
 };
