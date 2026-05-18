@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify'; 
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { useParams } from 'react-router-dom'; // <-- ADDED: For grabbing table ID from URL
 import styles from './MenuPage.module.scss';
 import Layout from '../../components/layout/layout';
 import cartwhite from '../../../img/icons/cart.white.png';
@@ -23,6 +24,7 @@ interface BakeryItem {
 }
 
 const MenuPage: React.FC = () => {
+  const { id } = useParams<{ id: string }>(); // <-- ADDED: Extract the table ID parameter
   const [menuItems, setMenuItems] = useState<BakeryItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -46,6 +48,16 @@ const MenuPage: React.FC = () => {
       setLoading(false);
     }
   }, []);
+
+  // ADDED: Monitor QR Code URL parameter updates and lock the table configuration
+  useEffect(() => {
+    if (id) {
+      localStorage.setItem('bakery_table', id);
+      toast.success(`Welcome! Orders will be served to Table: ${id}`, {
+        autoClose: 4000
+      });
+    }
+  }, [id]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user'); 
