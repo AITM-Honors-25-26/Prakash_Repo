@@ -19,7 +19,11 @@ export const API_ENDPOINTS = {
   DELETETABLE: `${API_BASE_URL}/table`,
   UPDATETABLE: `${API_BASE_URL}/table`,
 
-  TABLENUMBER:`${API_FRONTEND}/MenuPage/:id`
+  TABLENUMBER:`${API_FRONTEND}/MenuPage/:id`,
+
+  ORDER_ACTION:`${API_FRONTEND}/Order`
+
+
 
 };
 
