@@ -23,29 +23,28 @@ const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [tableNumber, setTableNumber] = useState<string>('');
   
-  // Form Details State
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    orderType: 'Dine-In', // Default value
-    tableNumber: '',
-    notes: ''
-  });
+  // Single selection state for the payment method choice
+  const [paymentOption, setPaymentOption] = useState<string>('Pay Later');
 
-  // Load items from local storage
-  const loadCart = () => {
+  useEffect(() => {
+    // 1. Load cart items from local storage
     const existingCart = localStorage.getItem('bakery_cart');
     if (existingCart) {
       setCartItems(JSON.parse(existingCart));
     }
-  };
 
-  useEffect(() => {
-    loadCart();
+    // 2. Load the locked table number captured from the scanned QR url parameter
+    const savedTable = localStorage.getItem('bakery_table');
+    if (savedTable) {
+      setTableNumber(savedTable);
+    } else {
+      toast.warn("No table detected. Please rescan your table QR code.");
+    }
   }, []);
 
-  // Update item quantities directly on the checkout screen
+  // Adjust item quantities directly on the layout screen
   const updateQuantity = (id: string, amount: number) => {
     const updatedCart = cartItems.map(item => {
       if (item._id === id) {
@@ -56,10 +55,10 @@ const CheckoutPage: React.FC = () => {
     });
     setCartItems(updatedCart);
     localStorage.setItem('bakery_cart', JSON.stringify(updatedCart));
-    window.dispatchEvent(new Event('cartUpdated')); // Keep menu counter in sync
+    window.dispatchEvent(new Event('cartUpdated')); 
   };
 
-  // Remove item completely
+  // Remove individual items completely
   const removeItem = (id: string) => {
     const updatedCart = cartItems.filter(item => item._id !== id);
     setCartItems(updatedCart);
@@ -68,18 +67,12 @@ const CheckoutPage: React.FC = () => {
     toast.info("Item removed from cart.");
   };
 
-  // Compute Total Cost
+  // Compute Grand Total Cost
   const calculateTotal = () => {
     return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
-  // Handle Input Changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  // Submit Order Process (Updated to Client-Side Prototype Simulation)
+  // Process the order execution simulation block 100% on the frontend client
   const handlePlaceOrder = (e: React.FormEvent) => {
     e.preventDefault();
     if (cartItems.length === 0) {
@@ -87,38 +80,38 @@ const CheckoutPage: React.FC = () => {
       return;
     }
 
-    // Basic Validation
-    if (!formData.name || !formData.phone) {
-      toast.error("Please fill in your name and phone number.");
-      return;
-    }
-    if (formData.orderType === 'Dine-In' && !formData.tableNumber) {
-      toast.error("Please provide your table number.");
+    if (!tableNumber) {
+      toast.error("Table mapping missing! Please rescan your QR code.");
       return;
     }
 
     setLoading(true);
 
-    // Simulate backend network delay (1.2 seconds)
     setTimeout(async () => {
       try {
-        // Clear Cart local storage completely on client success
+        // Clear Cart local storage completely on success
         localStorage.removeItem('bakery_cart');
-        
-        // Let the rest of the application (like Navbar badge counts) know the cart cleared
         window.dispatchEvent(new Event('cartUpdated'));
 
-        // SweetAlert message confirming data successfully processed on the client side
-        await MySwal.fire({
-          title: 'Order Placed! 🎂',
-          text: 'Thank you! Your simulated bakery order has been processed.',
-          icon: 'success',
-          confirmButtonColor: '#d84315'
-        });
+        if (paymentOption === 'Pay Now') {
+          await MySwal.fire({
+            title: 'Redirecting to Payment Gateways...',
+            text: `Order confirmed for Table ${tableNumber}. Loading online checkout options...`,
+            icon: 'info',
+            confirmButtonColor: '#d84315'
+          });
+        } else {
+          await MySwal.fire({
+            title: 'Order Sent to Kitchen! 🍳',
+            text: `Table ${tableNumber}, your order has been sent. You can pay at the counter when you leave!`,
+            icon: 'success',
+            confirmButtonColor: '#d84315'
+          });
+        }
 
-        navigate('/menu'); // Take user back to the menu screen
+        navigate('/MenuPage'); // Direct user right back to the regular menu display
       } catch (error) {
-        console.error("Order processing failed:", error);
+        console.error("Order processing encountered an error:", error);
         toast.error("An unexpected error occurred.");
       } finally {
         setLoading(false);
@@ -130,97 +123,90 @@ const CheckoutPage: React.FC = () => {
     <Layout>
       <div className={styles.checkoutContainer}>
         <div className={styles.headerSection}>
-          <h1>Review Your Order</h1>
-          <p>Double-check your choices before we bake them up!</p>
+          <h1>Table {tableNumber || 'N/A'} - Order Review</h1>
+          <p>Review your selection and pick how you want to settle the bill.</p>
         </div>
 
         {cartItems.length === 0 ? (
           <div className={styles.emptyCart}>
             <p>Your cart is empty. Let's fix that!</p>
-            <button className={styles.backBtn} onClick={() => navigate('/menu')}>
+            <button className={styles.backBtn} onClick={() => navigate('/MenuPage')}>
               Back to Menu
             </button>
           </div>
         ) : (
           <div className={styles.checkoutGrid}>
             
-            {/* Left Side: Service Details Form */}
+            {/* Left Side: Simplified Payment Selection Options Form */}
             <div className={styles.formSection}>
-              <h2>Details</h2>
+              <h2>Payment Choice</h2>
               <form onSubmit={handlePlaceOrder}>
-                <div className={styles.inputGroup}>
-                  <label htmlFor="name">Name *</label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    placeholder="Enter your name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className={styles.inputGroup}>
-                  <label htmlFor="phone">Phone Number *</label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    placeholder="Enter phone number"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className={styles.inputGroup}>
-                  <label htmlFor="orderType">Order Context</label>
-                  <select
-                    id="orderType"
-                    name="orderType"
-                    value={formData.orderType}
-                    onChange={handleInputChange}
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '30px' }}>
+                  
+                  {/* Pay Later Option Block */}
+                  <label 
+                    style={{
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '15px', 
+                      padding: '15px', 
+                      border: paymentOption === 'Pay Later' ? '2px solid #d84315' : '1px solid #ccc', 
+                      borderRadius: '8px', 
+                      cursor: 'pointer',
+                      background: paymentOption === 'Pay Later' ? '#fff5f2' : '#fff'
+                    }}
                   >
-                    <option value="Dine-In">Dine-In (At Table)</option>
-                    <option value="Takeaway">Takeaway</option>
-                  </select>
-                </div>
-
-                {formData.orderType === 'Dine-In' && (
-                  <div className={styles.inputGroup}>
-                    <label htmlFor="tableNumber">Table Number *</label>
-                    <input
-                      type="text"
-                      id="tableNumber"
-                      name="tableNumber"
-                      placeholder="e.g. Table 4"
-                      value={formData.tableNumber}
-                      onChange={handleInputChange}
-                      required
+                    <input 
+                      type="radio" 
+                      name="paymentOption" 
+                      value="Pay Later"
+                      checked={paymentOption === 'Pay Later'}
+                      onChange={(e) => setPaymentOption(e.target.value)}
+                      style={{ accentColor: '#d84315', transform: 'scale(1.2)' }}
                     />
-                  </div>
-                )}
+                    <div>
+                      <strong style={{ display: 'block', fontSize: '1.1rem' }}>Pay Later (At Counter)</strong>
+                      <span style={{ color: '#666', fontSize: '0.9rem' }}>Send your items to the kitchen immediately and pay when you finish dining.</span>
+                    </div>
+                  </label>
 
-                <div className={styles.inputGroup}>
-                  <label htmlFor="notes">Special Notes (Optional)</label>
-                  <textarea
-                    id="notes"
-                    name="notes"
-                    rows={3}
-                    placeholder="Eggless, extra sugar, allergies, etc..."
-                    value={formData.notes}
-                    onChange={handleInputChange}
-                  />
+                  {/* Pay Now Option Block */}
+                  <label 
+                    style={{
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '15px', 
+                      padding: '15px', 
+                      border: paymentOption === 'Pay Now' ? '2px solid #d84315' : '1px solid #ccc', 
+                      borderRadius: '8px', 
+                      cursor: 'pointer',
+                      background: paymentOption === 'Pay Now' ? '#fff5f2' : '#fff'
+                    }}
+                  >
+                    <input 
+                      type="radio" 
+                      name="paymentOption" 
+                      value="Pay Now"
+                      checked={paymentOption === 'Pay Now'}
+                      onChange={(e) => setPaymentOption(e.target.value)}
+                      style={{ accentColor: '#d84315', transform: 'scale(1.2)' }}
+                    />
+                    <div>
+                      <strong style={{ display: 'block', fontSize: '1.1rem' }}>Pay Now (Online Payment)</strong>
+                      <span style={{ color: '#666', fontSize: '0.9rem' }}>Pay right now using your phone via cards or digital wallets.</span>
+                    </div>
+                  </label>
+
                 </div>
 
                 <button type="submit" className={styles.submitBtn} disabled={loading}>
-                  {loading ? 'Confirming Order...' : `Place Order (Rs. ${calculateTotal().toLocaleString()})`}
+                  {loading ? 'Processing Order...' : `Confirm Order (Rs. ${calculateTotal().toLocaleString()})`}
                 </button>
               </form>
             </div>
 
-            {/* Right Side: Order Items Panel Summary */}
+            {/* Right Side: Order Summary Panel */}
             <div className={styles.summarySection}>
               <h2>Summary</h2>
               <div className={styles.itemsList}>
