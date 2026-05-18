@@ -171,6 +171,29 @@ const MenuPage: React.FC = () => {
     }
   };
 
+  // 2. Handle Add to Cart
+  const handleAddToCart = (item: BakeryItem) => {
+    try {
+      const existingCart = localStorage.getItem('bakery_cart');
+      const cart = existingCart ? JSON.parse(existingCart) : [];
+
+      const existingItemIndex = cart.findIndex((cartItem: BakeryItem) => cartItem._id === item._id);
+
+      if (existingItemIndex !== -1) {
+        cart[existingItemIndex].quantity += 1;
+      } else {
+        cart.push({ ...item, quantity: 1 });
+      }
+
+      localStorage.setItem('bakery_cart', JSON.stringify(cart));
+      window.dispatchEvent(new Event('cartUpdated'));
+      toast.success(`${item.name} added to cart!`);
+    } catch (error) {
+      console.error("Cart Error:", error);
+      toast.error("Failed to add item to cart.");
+    }
+  };
+
   const renderCategorySection = (categoryName: string) => {
     const filteredItems = menuItems.filter(item => item.category === categoryName);
     if (filteredItems.length === 0) return null;
@@ -188,9 +211,15 @@ const MenuPage: React.FC = () => {
                 <h3>{item.name}</h3>
                 <p className={styles.itemDescription}>{item.description}</p>
                 <p className={styles.itemPrice}>Rs. {Number(item.price).toLocaleString()}</p>
-                <button className={styles.buttonDiv}>
+                
+                {/* Updated Button Here */}
+                <button 
+                  className={styles.buttonDiv} 
+                  onClick={() => handleAddToCart(item)}
+                >
                   Add to cart <img src={cartwhite} alt="Cart" />
                 </button>
+
                 {isAdmin && (
                   <button className={styles.deleteButton} onClick={() => handleDelete(item._id)}>Delete</button>
                 )}
