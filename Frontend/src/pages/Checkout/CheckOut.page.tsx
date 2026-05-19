@@ -5,6 +5,7 @@ import withReactContent from 'sweetalert2-react-content';
 import { useNavigate } from 'react-router-dom';
 import styles from './CheckoutPage.module.scss';
 import Layout from '../../components/layout/layout';
+import emptyCart from '../../../img/gif/emptycart.gif';
 
 const MySwal = withReactContent(Swal);
 
@@ -85,7 +86,7 @@ const CheckoutPage: React.FC = () => {
       return;
     }
 
-    setLoading(true);
+    loading(true);
 
     setTimeout(async () => {
       try {
@@ -130,6 +131,7 @@ const CheckoutPage: React.FC = () => {
         {cartItems.length === 0 ? (
           <div className={styles.emptyCart}>
             <p>Your cart is empty. Let's fix that!</p>
+            <img src={emptyCart} alt="" className={styles.emptyCarticon}/>
             <button className={styles.backBtn} onClick={() => navigate('/MenuPage')}>
               Back to Menu
             </button>
@@ -137,7 +139,50 @@ const CheckoutPage: React.FC = () => {
         ) : (
           <div className={styles.checkoutGrid}>
             
-            {/* Left Side: Simplified Payment Selection Options Form */}
+            {/* Left Side: Order Summary Panel */}
+            <div className={styles.summarySection}>
+              <h2>Summary</h2>
+              <div className={styles.itemsList}>
+                {cartItems.map((item) => (
+                  <div key={item._id} className={styles.cartItemRow}>
+                    <img 
+                      src={item.images?.[0]?.url || 'https://via.placeholder.com/100'} 
+                      alt={item.name} 
+                      className={styles.itemImage}
+                    />
+                    <div className={styles.itemInfo}>
+                      <h3>{item.name}</h3>
+                      <p className={styles.itemPrice}>Rs. {item.price.toLocaleString()}</p>
+                      
+                      <div className={styles.quantityControls}>
+                        <button type="button" onClick={() => updateQuantity(item._id, -1)}>-</button>
+                        <span>{item.quantity}</span>
+                        <button type="button" onClick={() => updateQuantity(item._id, 1)}>+</button>
+                      </div>
+                    </div>
+                    <div className={styles.itemRightSide}>
+                      <span className={styles.subtotal}>
+                        Rs. {(item.price * item.quantity).toLocaleString()}
+                      </span>
+                      <button 
+                        type="button" 
+                        className={styles.deleteBtn} 
+                        onClick={() => removeItem(item._id)}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className={styles.totalRow}>
+                <span>Grand Total:</span>
+                <span className={styles.totalPrice}>Rs. {calculateTotal().toLocaleString()}</span>
+              </div>
+            </div>
+
+            {/* Right Side: Simplified Payment Selection Options Form */}
             <div className={styles.formSection}>
               <h2>Payment Choice</h2>
               <form onSubmit={handlePlaceOrder}>
@@ -204,49 +249,6 @@ const CheckoutPage: React.FC = () => {
                   {loading ? 'Processing Order...' : `Confirm Order (Rs. ${calculateTotal().toLocaleString()})`}
                 </button>
               </form>
-            </div>
-
-            {/* Right Side: Order Summary Panel */}
-            <div className={styles.summarySection}>
-              <h2>Summary</h2>
-              <div className={styles.itemsList}>
-                {cartItems.map((item) => (
-                  <div key={item._id} className={styles.cartItemRow}>
-                    <img 
-                      src={item.images?.[0]?.url || 'https://via.placeholder.com/100'} 
-                      alt={item.name} 
-                      className={styles.itemImage}
-                    />
-                    <div className={styles.itemInfo}>
-                      <h3>{item.name}</h3>
-                      <p className={styles.itemPrice}>Rs. {item.price.toLocaleString()}</p>
-                      
-                      <div className={styles.quantityControls}>
-                        <button type="button" onClick={() => updateQuantity(item._id, -1)}>-</button>
-                        <span>{item.quantity}</span>
-                        <button type="button" onClick={() => updateQuantity(item._id, 1)}>+</button>
-                      </div>
-                    </div>
-                    <div className={styles.itemRightSide}>
-                      <span className={styles.subtotal}>
-                        Rs. ${(item.price * item.quantity).toLocaleString()}
-                      </span>
-                      <button 
-                        type="button" 
-                        className={styles.deleteBtn} 
-                        onClick={() => removeItem(item._id)}
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className={styles.totalRow}>
-                <span>Grand Total:</span>
-                <span className={styles.totalPrice}>Rs. {calculateTotal().toLocaleString()}</span>
-              </div>
             </div>
 
           </div>

@@ -18,30 +18,38 @@ $mainfont:'Amatic SC', cursive;
       color: #666;
     }
   }
-}
+  .emptyCart {
+    text-align: center;
+    font-size: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    align-items: center;
+    .emptyCarticon{
+      height: 250px;
+      width: 250px;
+    }
+    .backBtn {
+      font-family: $mainfont;
+      margin-top: 20px;
+      background-color: $mainColour;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
 
-.emptyCart {
-  text-align: center;
-  margin-top: 60px;
-  font-size: 1.2rem;
-
-  .backBtn {
-    margin-top: 20px;
-    background-color: #d84315;
-    color: white;
-    border: none;
-    padding: 12px 30px;
-    border-radius: 25px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.2s;
-
-    &:hover {
-      background-color: #bf360c;
+      &:hover {
+        background-color: #491e11;
+      }
     }
   }
 }
+
+
 
 .checkoutGrid {
   display: grid;
