@@ -153,7 +153,7 @@ const CheckoutPage: React.FC = () => {
                       
                       <div className={styles.quantityControls}>
                         <button type="button" onClick={() => updateQuantity(item._id, -1)}>-</button>
-                        <span>{item.quantity}</span>
+                        <span className={styles.itemCount}>{item.quantity}</span>
                         <button type="button" onClick={() => updateQuantity(item._id, 1)}>+</button>
                       </div>
                     </div>
@@ -182,18 +182,11 @@ const CheckoutPage: React.FC = () => {
               <h2>Payment Choice</h2>
               <form onSubmit={handlePlaceOrder}>
                 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '30px' }}>
+                <div className={styles.radioGroupContainer}>
                   <label 
-                    style={{
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: '15px', 
-                      padding: '15px', 
-                      border: paymentOption === 'Pay Later' ? '2px solid #d84315' : '1px solid #ccc', 
-                      borderRadius: '8px', 
-                      cursor: 'pointer',
-                      background: paymentOption === 'Pay Later' ? '#fff5f2' : '#fff'
-                    }}
+                    className={`${styles.paymentLabel} ${
+                    paymentOption === 'Pay Later' ? styles.activeOption : ''
+                    }`}
                   >
                     <input 
                       type="radio" 
@@ -201,25 +194,20 @@ const CheckoutPage: React.FC = () => {
                       value="Pay Later"
                       checked={paymentOption === 'Pay Later'}
                       onChange={(e) => setPaymentOption(e.target.value)}
-                      style={{ accentColor: '#d84315', transform: 'scale(1.2)' }}
+                      className={styles.radioInput}
                     />
-                    <div>
-                      <strong style={{ display: 'block', fontSize: '1.1rem' }}>Pay Later (At Counter)</strong>
-                      <span style={{ color: '#666', fontSize: '0.9rem' }}>Send your items to the kitchen immediately and pay when you finish dining.</span>
+                    <div className={styles.labelTextWrapper}>
+                      <strong className={styles.optionTitle}>Pay Later (At Counter)</strong>
+                      <span className={styles.optionDescription}>
+                        Send your items to the kitchen immediately and pay when you finish dining.
+                      </span>
                     </div>
                   </label>
 
                   <label 
-                    style={{
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: '15px', 
-                      padding: '15px', 
-                      border: paymentOption === 'Pay Now' ? '2px solid #d84315' : '1px solid #ccc', 
-                      borderRadius: '8px', 
-                      cursor: 'pointer',
-                      background: paymentOption === 'Pay Now' ? '#fff5f2' : '#fff'
-                    }}
+                    className={`${styles.paymentLabel} ${
+                      paymentOption === 'Pay Now' ? styles.activeOption : ''
+                    }`}
                   >
                     <input 
                       type="radio" 
@@ -227,11 +215,13 @@ const CheckoutPage: React.FC = () => {
                       value="Pay Now"
                       checked={paymentOption === 'Pay Now'}
                       onChange={(e) => setPaymentOption(e.target.value)}
-                      style={{ accentColor: '#d84315', transform: 'scale(1.2)' }}
+                      className={styles.radioInput}
                     />
-                    <div>
-                      <strong style={{ display: 'block', fontSize: '1.1rem' }}>Pay Now (Online Payment)</strong>
-                      <span style={{ color: '#666', fontSize: '0.9rem' }}>Pay right now using your phone via cards or digital wallets.</span>
+                    <div className={styles.labelTextWrapper}>
+                      <strong className={styles.optionTitle}>Pay Now (Online Payment)</strong>
+                      <span className={styles.optionDescription}>
+                        Pay right now using your phone via cards or digital wallets.
+                      </span>
                     </div>
                   </label>
 
