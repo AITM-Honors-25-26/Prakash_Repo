@@ -162,11 +162,10 @@ const CheckoutPage: React.FC = () => {
                         Rs. {(item.price * item.quantity).toLocaleString()}
                       </span>
                       <button 
-                        type="button" 
                         className={styles.deleteBtn} 
                         onClick={() => removeItem(item._id)}
                       >
-                        ✕
+                        Delete
                       </button>
                     </div>
                   </div>
@@ -179,14 +178,11 @@ const CheckoutPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Side: Simplified Payment Selection Options Form */}
             <div className={styles.formSection}>
               <h2>Payment Choice</h2>
               <form onSubmit={handlePlaceOrder}>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginBottom: '30px' }}>
-                  
-                  {/* Pay Later Option Block */}
                   <label 
                     style={{
                       display: 'flex', 
@@ -213,7 +209,6 @@ const CheckoutPage: React.FC = () => {
                     </div>
                   </label>
 
-                  {/* Pay Now Option Block */}
                   <label 
                     style={{
                       display: 'flex', 

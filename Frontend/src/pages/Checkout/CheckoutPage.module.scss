@@ -1,5 +1,6 @@
 $mainColour: #48392a;
 $mainfont: 'Amatic SC', cursive;
+$green: #7ed957;
 
 .checkoutContainer {
   font-family: $mainfont;
@@ -98,10 +99,13 @@ $mainfont: 'Amatic SC', cursive;
 
     @media (max-width: 768px) {
       padding: 5px 15px;
+      margin-bottom: 10px;
+
       }
+      
   
     h2 {
-      font-size: 1.5rem;
+      font-size: 2rem;
       margin-bottom: 20px;
       border-bottom: 2px solid #e0dcd5;
       padding-bottom: 10px;
@@ -121,163 +125,132 @@ $mainfont: 'Amatic SC', cursive;
       height: 100%;
       min-height: 0;
     }
-  }
-}
+    .submitBtn {
+      font-family: $mainfont;
+      width: 100%;
+      background-color: $mainColour;
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
 
-.inputGroup {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 20px;
-  flex-shrink: 0;
+      margin-top: auto; 
+      flex-shrink: 0;
+      transition: opacity 0.2s;
 
-  label {
-    font-weight: 600;
-    margin-bottom: 8px;
-    font-size: 0.95rem;
-  }
-
-  input, select, textarea {
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 1rem;
-    background-color: #fff;
-    color: #2d1b18;
-
-    &:focus {
-      outline: none;
-      border-color: #d84315;
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
     }
   }
-}
-
-.submitBtn {
-  width: 100%;
-  background-color: #d84315;
-  color: white;
-  border: none;
-  padding: 15px;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  
-  // 🌟 FIX 4: Secure alignment pins to base of card grid
-  margin-top: auto; 
-  flex-shrink: 0;
-  transition: opacity 0.2s;
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-}
-
-.itemsList {
-  // 🌟 FIX 5: Isolate scrolling window strictly within item container bounds
-  flex-grow: 1;
-  overflow-y: auto; 
-  margin-bottom: 15px;
-  padding-right: 8px;
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: #c7c1b4;
-    border-radius: 10px;
-  }
-}
-
-.cartItemRow {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 12px 0;
-  border-bottom: 1px solid #e0dcd5;
-
-  &:first-child {
-    padding-top: 0;
-  }
-
-  .itemImage {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 6px;
-  }
-
-  .itemInfo {
+  .itemsList {
     flex-grow: 1;
+    overflow-y: auto; 
+    margin-bottom: 15px;
+    padding-right: 8px;
 
-    h3 {
-      font-size: 1.05rem;
-      margin-bottom: 4px;
+    .cartItemRow {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid #e0dcd5;
+
+      &:first-child {
+        padding-top: 0;
+      }
+      .itemImage {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 6px;
+        @media (max-width: 768px) {
+            width: 80px;
+            height: 80px;
+          }
+      }
+      .itemInfo {
+        flex-grow: 1;
+        h3 {
+          font-size: 2rem;
+          margin:0 0 4px 0;
+          @media (max-width: 768px) {
+            font-size: 1rem;
+          }
+        }
+        .itemPrice {
+          font-size: 1.5rem;
+          color: $green;
+          margin-bottom: 8px;
+        }
+        .quantityControls {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+
+          button {
+            background: #e0dcd5;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+          }
+        }
+        
+      }
+    } 
+      
+  }
+  .totalRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 2px dashed #ccc;
+    font-size: 1.3rem;
+    font-weight: bold;
+    
+    flex-shrink: 0; 
+
+    .totalPrice {
+      color: $green;
+    }
+    span{
+      @media (max-width: 768px) {
+            font-size: 1.1rem;
+          }
+      
+    }
+  } 
+  .itemRightSide {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+
+    .subtotal {
+      font-weight: bold;
     }
 
-    .itemPrice {
+    .deleteBtn {
+      background-color: red;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
       font-size: 0.9rem;
-      color: #666;
-      margin-bottom: 8px;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-weight: bold;
+
+      &:hover {
+        background-color: rgb(225, 0, 0);
+      }
     }
-  }
-}
-
-.quantityControls {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  button {
-    background: #e0dcd5;
-    border: none;
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-}
-
-.itemRightSide {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 10px;
-
-  .subtotal {
-    font-weight: bold;
-  }
-
-  .deleteBtn {
-    background: none;
-    border: none;
-    color: #999;
-    cursor: pointer;
-    font-size: 0.9rem;
-
-    &:hover {
-      color: #d84315;
-    }
-  }
-}
-
-.totalRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 15px;
-  border-top: 2px dashed #ccc;
-  font-size: 1.3rem;
-  font-weight: bold;
-  
-  // 🌟 FIX 6: Locks grand totals down safely to avoid text dynamic jumping
-  flex-shrink: 0; 
-
-  .totalPrice {
-    color: #d84315;
   }
 }
