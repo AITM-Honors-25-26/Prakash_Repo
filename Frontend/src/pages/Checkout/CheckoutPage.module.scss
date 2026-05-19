@@ -47,35 +47,37 @@ $mainfont:'Amatic SC', cursive;
       }
     }
   }
-}
+  .checkoutGrid {
+    padding: 10px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 60% 40%;
+    gap: 20px;
+    align-items: start;
 
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+  }
+  .formSection, .summarySection {
+    background: #c27d07; 
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 
-
-.checkoutGrid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 40px;
-  align-items: start;
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 25px;
+      border-bottom: 2px solid #e0dcd5;
+      padding-bottom: 10px;
+      color: $mainColour;
+    }
   }
 }
 
-.formSection, .summarySection {
-  background: #faf7f2; // Matching the warm light sweetalert backdrop you defined
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 
-  h2 {
-    font-size: 1.5rem;
-    margin-bottom: 25px;
-    border-bottom: 2px solid #e0dcd5;
-    padding-bottom: 10px;
-    color: #2d1b18;
-  }
-}
+
+
 
 .inputGroup {
   display: flex;
