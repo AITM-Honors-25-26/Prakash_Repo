@@ -1,23 +1,35 @@
 $mainColour: #48392a;
-$mainfont:'Amatic SC', cursive;
+$mainfont: 'Amatic SC', cursive;
 
 .checkoutContainer {
-  max-width: 100%;
-  min-height: 80vh;
   font-family: $mainfont;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 20px;
+
   .headerSection {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 15px;
+    flex-shrink: 0; 
     h1 {
       font-size: 2.5rem;
       color: $mainColour; 
       margin-bottom: 0px;
+      @media (max-width: 768px) {
+      font-size: 1.5rem;
+      }
     }
     p {
       font-size: 1.1rem;
       color: #666;
+      @media (max-width: 768px) {
+      font-size: 0.5rem;
+      }
     }
   }
+
   .emptyCart {
     text-align: center;
     font-size: 1.2rem;
@@ -25,7 +37,8 @@ $mainfont:'Amatic SC', cursive;
     flex-direction: column;
     height: 100%;
     align-items: center;
-    .emptyCarticon{
+    justify-content: center;
+    .emptyCarticon {
       height: 250px;
       width: 250px;
     }
@@ -39,50 +52,73 @@ $mainfont:'Amatic SC', cursive;
       border-radius: 25px;
       font-size: 1rem;
       font-weight: bold;
+      
       cursor: pointer;
       transition: background 0.2s;
-
+      
       &:hover {
         background-color: #491e11;
       }
     }
   }
+
   .checkoutGrid {
-    padding: 10px;
+    padding: 15px;
     width: 100%;
+    border-radius: 12px;
+    box-sizing: border-box;
     display: grid;
-    grid-template-columns: 60% 40%;
-    gap: 20px;
-    align-items: start;
+    grid-template-columns: 60% 38.5%; 
+    justify-content: center;
+    flex-grow: 1;
+    margin-bottom: 15px;
+    height: auto;
+    justify-content: space-between;
 
     @media (max-width: 768px) {
-      grid-template-columns: 1fr;
+      display:flex ;
+      flex-direction: column;
+      overflow-y: auto; 
+      height: auto;
+      padding: 0px;
     }
   }
+
   .formSection, .summarySection {
-    background: #c27d07; 
-    padding: 30px;
+    background: #faf7f2; 
+    padding: 25px;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-
+    
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    min-height: 0; 
+  
     h2 {
       font-size: 1.5rem;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       border-bottom: 2px solid #e0dcd5;
       padding-bottom: 10px;
       color: $mainColour;
+      flex-shrink: 0;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
     }
   }
 }
-
-
-
-
 
 .inputGroup {
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;
+  flex-shrink: 0;
 
   label {
     font-weight: 600;
@@ -115,7 +151,10 @@ $mainfont:'Amatic SC', cursive;
   font-size: 1.1rem;
   font-weight: bold;
   cursor: pointer;
-  margin-top: 15px;
+  
+  // 🌟 FIX 4: Secure alignment pins to base of card grid
+  margin-top: auto; 
+  flex-shrink: 0;
   transition: opacity 0.2s;
 
   &:disabled {
@@ -125,17 +164,34 @@ $mainfont:'Amatic SC', cursive;
 }
 
 .itemsList {
-  max-height: 400px;
-  overflow-y: auto;
-  margin-bottom: 20px;
+  // 🌟 FIX 5: Isolate scrolling window strictly within item container bounds
+  flex-grow: 1;
+  overflow-y: auto; 
+  margin-bottom: 15px;
+  padding-right: 8px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #c7c1b4;
+    border-radius: 10px;
+  }
 }
 
 .cartItemRow {
   display: flex;
   align-items: center;
   gap: 15px;
-  padding: 15px 0;
+  padding: 12px 0;
   border-bottom: 1px solid #e0dcd5;
+
+  &:first-child {
+    padding-top: 0;
+  }
 
   .itemImage {
     width: 60px;
@@ -203,10 +259,13 @@ $mainfont:'Amatic SC', cursive;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 20px;
+  padding-top: 15px;
   border-top: 2px dashed #ccc;
   font-size: 1.3rem;
   font-weight: bold;
+  
+  // 🌟 FIX 6: Locks grand totals down safely to avoid text dynamic jumping
+  flex-shrink: 0; 
 
   .totalPrice {
     color: #d84315;

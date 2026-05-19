@@ -86,8 +86,6 @@ const CheckoutPage: React.FC = () => {
       return;
     }
 
-    loading(true);
-
     setTimeout(async () => {
       try {
         // Clear Cart local storage completely on success
