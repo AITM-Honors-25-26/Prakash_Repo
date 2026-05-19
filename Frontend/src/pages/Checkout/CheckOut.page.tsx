@@ -137,7 +137,6 @@ const CheckoutPage: React.FC = () => {
         ) : (
           <div className={styles.checkoutGrid}>
             
-            {/* Left Side: Order Summary Panel */}
             <div className={styles.summarySection}>
               <h2>Summary</h2>
               <div className={styles.itemsList}>

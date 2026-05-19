@@ -95,6 +95,10 @@ $mainfont: 'Amatic SC', cursive;
     flex-direction: column;
     box-sizing: border-box;
     min-height: 0; 
+
+    @media (max-width: 768px) {
+      padding: 5px 15px;
+      }
   
     h2 {
       font-size: 1.5rem;
@@ -103,6 +107,12 @@ $mainfont: 'Amatic SC', cursive;
       padding-bottom: 10px;
       color: $mainColour;
       flex-shrink: 0;
+
+      @media (max-width: 768px) {
+      font-size: 1.2rem;
+      margin-bottom: 0px;
+      padding-top: 0px;
+      }
     }
 
     form {
