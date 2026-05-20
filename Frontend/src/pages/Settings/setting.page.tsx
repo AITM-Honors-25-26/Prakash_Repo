@@ -4,7 +4,6 @@ import styles from './settingPage.module.scss';
 import defaultProfile from '../../../img/gif/profile.gif'
 
 const Settings: React.FC = () => {
-
   const [userData, setUserData] = useState(() => {
     const saved = localStorage.getItem('user');
     return saved ? JSON.parse(saved) : null;
@@ -21,7 +20,6 @@ const Settings: React.FC = () => {
       ? new Date(userData.dob).toISOString().split('T')[0]
       : '',
   });
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -32,18 +30,14 @@ const Settings: React.FC = () => {
       [name]: value,
     }));
   };
-
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
-
     const updatedUser = {
       ...userData,
       ...formData,
     };
-
     localStorage.setItem('user', JSON.stringify(updatedUser));
     setUserData(updatedUser);
-
     alert('Profile Updated Successfully');
   };
 
@@ -56,26 +50,19 @@ const Settings: React.FC = () => {
       </Layout>
     );
   }
-
   return (
     <Layout>
       <div className={styles.pageContainer}>
-
-        {/* Header */}
         <div className={styles.headerSection}>
           <h1 className={styles.pageTitle}>
             Account Settings
           </h1>
-
           <p>
             Manage your profile information and account preferences
           </p>
         </div>
-
         <section className={styles.settingsCard}>
-
           <div className={styles.profileTop}>
-
             <div className={styles.imageSection}>
               <img
                 src={
