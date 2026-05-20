@@ -1,18 +1,22 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState } from 'react'; 
 import { Link, useMatch } from 'react-router-dom';
 import styles from './header.module.scss';
 import profile from './../../../img/profile.png';
 import logowhite from './../../../img/log.white.png';
 
 const Header: React.FC = () => {
-  // 1. Check if the current route has a table parameter
+  // 1. Get the current table from the URL route parameter
   const menuMatch = useMatch("/MenuPage/:tableId");
   const urlTableId = menuMatch?.params.tableId;
 
-  // 2. State to hold the active table across non-menu routes
-  const [activeTable, setActiveTable] = useState<string | null>(() => {
-    return urlTableId || localStorage.getItem('bakery_table');
-  });
+  // 2. If a fresh ID is parsed out of the URL, save it immediately during render.
+  // This completely eliminates the need for an asynchronous useEffect state sync loop.
+  if (urlTableId) {
+    localStorage.setItem('bakery_table', urlTableId);
+  }
+
+  // 3. Fallback safely to whatever is stored if the user moves to Home/About/Contact
+  const activeTable = urlTableId || localStorage.getItem('bakery_table');
 
   const [user, setUser] = useState<{ 
     name: string; 
@@ -31,27 +35,12 @@ const Header: React.FC = () => {
     return null;
   });
 
-  // 3. Keep localStorage and activeTable state perfectly synced whenever a new QR code is scanned
-  useEffect(() => {
-    if (urlTableId) {
-      localStorage.setItem('bakery_table', urlTableId);
-      setActiveTable(urlTableId);
-    } else {
-      // Fallback to whatever was stored if navigating off the MenuPage
-      const storedTable = localStorage.getItem('bakery_table');
-      if (storedTable) {
-        setActiveTable(storedTable);
-      }
-    }
-  }, [urlTableId]);
-
   const hasStaffAccess = user && ['Admin', 'Chef', 'Waiter', 'Employee'].includes(user.role);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     localStorage.removeItem('bakery_table'); 
-    setActiveTable(null);
     setUser(null);
     window.location.href = "/";
   };
@@ -65,7 +54,7 @@ const Header: React.FC = () => {
       <nav className={styles.navLinks}>
         <Link to="/">Home</Link>
         
-        {/* Reactively builds menu path so they never lose their cart or context */}
+        {/* Dynamic menu string interpolation based on active session */}
         <Link to={activeTable ? `/MenuPage/${activeTable}` : "/MenuPage"}>
           Menu {activeTable && `(Table ${activeTable})`}
         </Link>
@@ -81,7 +70,7 @@ const Header: React.FC = () => {
       </nav>
 
       <div className={styles.authSection}>
-        {/* If an active table session exists anywhere on the site, persist the badge */}
+        {/* The badge renders smoothly as activeTable evaluates line-by-line */}
         {activeTable ? (
           <div className={styles.tableBadge}>
             <span>Table {activeTable}</span>
