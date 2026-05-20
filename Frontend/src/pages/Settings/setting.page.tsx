@@ -10,7 +10,7 @@ const Settings: React.FC = () => {
   });
 
   const [formData, setFormData] = useState({
-    fullName: userData?.fullName || '',
+    fullName: userData?.name || '',
     email: userData?.email || '',
     phone: userData?.phone || '',
     address: userData?.address || '',
