@@ -94,20 +94,7 @@ const Settings: React.FC = () => {
               <button type="submit" className={styles.saveBtn}>Save Changes</button>
             </form>
           </section>
-          <section className={styles.settingsCard}>
-            <h2>Change Password</h2>
-            <form className={styles.form} onSubmit={(e) => { e.preventDefault(); alert("Password feature coming soon!"); }}>
-              <div className={styles.inputGroup}>
-                <label>Current Password</label>
-                <input type="password" placeholder="Enter current password" />
-              </div>
-              <div className={styles.inputGroup}>
-                <label>New Password</label>
-                <input type="password" placeholder="Enter new password" />
-              </div>
-              <button type="submit" className={styles.passwordBtn}>Update Password</button>
-            </form>
-          </section>
+          
 
         </div>
       </div>

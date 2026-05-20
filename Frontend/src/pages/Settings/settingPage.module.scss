@@ -1,19 +1,19 @@
 $font-header: 'Amatic SC', cursive;
 $font-body: sans-serif;
 
-/* Matches the Profile page background */
 .pageContainer {
-  background-color: #f9f5f0; 
+  background-color: #b87019; 
   min-height: 80vh;
-  padding: 40px 20px;
   display: flex;
   justify-content: center;
+  .settingsWrapper {
+    width: 100%;
+    max-width: 600px;
+    background-color:gray ;
+  }
 }
 
-.settingsWrapper {
-  width: 100%;
-  max-width: 600px;
-}
+
 
 .pageTitle {
   font-family: $font-header;
