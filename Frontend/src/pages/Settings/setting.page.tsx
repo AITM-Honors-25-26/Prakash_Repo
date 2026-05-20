@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Layout from '../../components/layout/layout';
 import styles from './settingPage.module.scss';
+import defaultProfile from '../../../img/gif/profile.gif'
 
 const Settings: React.FC = () => {
 
@@ -71,7 +72,6 @@ const Settings: React.FC = () => {
           </p>
         </div>
 
-        {/* Profile Card */}
         <section className={styles.settingsCard}>
 
           <div className={styles.profileTop}>
@@ -80,7 +80,7 @@ const Settings: React.FC = () => {
               <img
                 src={
                   userData?.image?.url ||
-                  'https://ui-avatars.com/api/?name=User'
+                  {defaultProfile}
                 }
                 alt="profile"
               />
@@ -128,11 +128,8 @@ const Settings: React.FC = () => {
                   onChange={handleChange}
                 />
               </div>
-
             </div>
-
             <div className={styles.row}>
-
               <div className={styles.inputGroup}>
                 <label>Phone Number</label>
 
