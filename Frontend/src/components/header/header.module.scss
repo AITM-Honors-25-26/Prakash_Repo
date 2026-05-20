@@ -80,9 +80,7 @@ $font-nav: 'Lucida Handwriting', cursive;
       border-radius: 50px;
       &:hover{
         background-color: #ffffff;
-        box-shadow:      
-        0 0 10px #fff,  
-         
+        box-shadow: 0 0 10px #fff;
       }
       @media (max-width: 768px) {
         width: 30px; 
@@ -161,6 +159,38 @@ $font-nav: 'Lucida Handwriting', cursive;
 
   @media (max-width: 768px) {
     padding-right: 0;
+  }
+
+  /* Premium, clean micro-badge styling for the scanned guest view */
+  .tableBadge {
+    display: inline-flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 6px 18px;
+    border-radius: 25px;
+    backdrop-filter: blur(5px);
+    transition: all 0.2s ease-in-out;
+
+    span {
+      color: $text-color;
+      font-family: $font-nav;
+      font-size: 0.95rem;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    @media (max-width: 768px) {
+      padding: 4px 10px;
+      span {
+        font-size: 0.65rem;
+      }
+    }
   }
 }
 
