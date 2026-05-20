@@ -3,39 +3,54 @@ import Layout from '../../components/layout/layout';
 import styles from './settingPage.module.scss';
 
 const Settings: React.FC = () => {
+
   const [userData, setUserData] = useState(() => {
     const saved = localStorage.getItem('user');
     return saved ? JSON.parse(saved) : null;
   });
 
   const [formData, setFormData] = useState({
-    name: userData?.name || '',
+    fullName: userData?.fullName || '',
+    email: userData?.email || '',
     phone: userData?.phone || '',
     address: userData?.address || '',
-    dob: userData?.dob ? userData.dob.split('T')[0] : '', 
+    gender: userData?.gender || '',
+    role: userData?.role || '',
+    dob: userData?.dob
+      ? new Date(userData.dob).toISOString().split('T')[0]
+      : '',
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
+
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
-    
 
-    const updatedUser = { ...userData, ...formData };
-    
+    const updatedUser = {
+      ...userData,
+      ...formData,
+    };
+
     localStorage.setItem('user', JSON.stringify(updatedUser));
     setUserData(updatedUser);
-    
-    alert('Profile updated successfully!');
+
+    alert('Profile Updated Successfully');
   };
 
   if (!userData) {
     return (
       <Layout>
         <div className={styles.errorContainer}>
-          <h2>Please log in to view settings.</h2>
+          <h2>Please Login First</h2>
         </div>
       </Layout>
     );
@@ -44,59 +59,190 @@ const Settings: React.FC = () => {
   return (
     <Layout>
       <div className={styles.pageContainer}>
-        <div className={styles.settingsWrapper}>
-          <h1 className={styles.pageTitle}>Account Settings</h1>
-          <section className={styles.settingsCard}>
-            <h2>Edit Profile Information</h2>
-            <form onSubmit={handleSaveProfile} className={styles.form}>
-              
+
+        {/* Header */}
+        <div className={styles.headerSection}>
+          <h1 className={styles.pageTitle}>
+            Account Settings
+          </h1>
+
+          <p>
+            Manage your profile information and account preferences
+          </p>
+        </div>
+
+        {/* Profile Card */}
+        <section className={styles.settingsCard}>
+
+          <div className={styles.profileTop}>
+
+            <div className={styles.imageSection}>
+              <img
+                src={
+                  userData?.image?.url ||
+                  'https://ui-avatars.com/api/?name=User'
+                }
+                alt="profile"
+              />
+
+              <button>
+                Change Photo
+              </button>
+            </div>
+
+            <div className={styles.userInfo}>
+              <h2>{userData.fullName}</h2>
+              <span>{userData.role}</span>
+
+              <p>{userData.email}</p>
+            </div>
+
+          </div>
+
+          {/* Form */}
+          <form
+            onSubmit={handleSaveProfile}
+            className={styles.form}
+          >
+
+            <div className={styles.row}>
+
               <div className={styles.inputGroup}>
                 <label>Full Name</label>
-                <input 
-                  type="text" 
-                  name="name" 
-                  value={formData.name} 
-                  onChange={handleChange} 
-                  required 
+
+                <input
+                  type="text"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleChange}
                 />
               </div>
+
+              <div className={styles.inputGroup}>
+                <label>Email Address</label>
+
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                />
+              </div>
+
+            </div>
+
+            <div className={styles.row}>
 
               <div className={styles.inputGroup}>
                 <label>Phone Number</label>
-                <input 
-                  type="tel" 
-                  name="phone" 
-                  value={formData.phone} 
-                  onChange={handleChange} 
-                />
-              </div>
 
-              <div className={styles.inputGroup}>
-                <label>Delivery Address</label>
-                <input 
-                  type="text" 
-                  name="address" 
-                  value={formData.address} 
-                  onChange={handleChange} 
+                <input
+                  type="text"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
                 />
               </div>
 
               <div className={styles.inputGroup}>
                 <label>Date of Birth</label>
-                <input 
-                  type="date" 
-                  name="dob" 
-                  value={formData.dob} 
-                  onChange={handleChange} 
+
+                <input
+                  type="date"
+                  name="dob"
+                  value={formData.dob}
+                  onChange={handleChange}
                 />
               </div>
 
-              <button type="submit" className={styles.saveBtn}>Save Changes</button>
-            </form>
-          </section>
-          
+            </div>
 
-        </div>
+            <div className={styles.row}>
+
+              <div className={styles.inputGroup}>
+                <label>Gender</label>
+
+                <select
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleChange}
+                >
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div className={styles.inputGroup}>
+                <label>Role</label>
+
+                <input
+                  type="text"
+                  value={formData.role}
+                  disabled
+                />
+              </div>
+
+            </div>
+
+            <div className={styles.inputGroup}>
+              <label>Address</label>
+
+              <input
+                type="text"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+              />
+            </div>
+
+            <button
+              type="submit"
+              className={styles.saveBtn}
+            >
+              Save Changes
+            </button>
+
+          </form>
+        </section>
+
+        {/* Security Section */}
+        <section className={styles.settingsCard}>
+
+          <h2 className={styles.cardTitle}>
+            Security
+          </h2>
+
+          <div className={styles.settingItem}>
+
+            <div>
+              <h3>Change Password</h3>
+
+              <p>
+                Update your account password
+              </p>
+            </div>
+
+            <button className={styles.secondaryBtn}>
+              Change Password
+            </button>
+
+          </div>
+
+        </section>
+
+        <section className={styles.settingsCard}>
+
+          <h2 className={styles.cardTitle}>
+            Danger Zone
+          </h2>
+
+          <button className={styles.logoutBtn}>
+            Logout
+          </button>
+
+        </section>
+
       </div>
     </Layout>
   );

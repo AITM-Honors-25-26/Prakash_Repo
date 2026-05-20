@@ -1,42 +1,105 @@
 $font-header: 'Amatic SC', cursive;
 $font-body: sans-serif;
 
+$main-Colour: #48392a;
+$secondary-Colour: #5c4033;
+$green: #2d6a4f;
+
 .pageContainer {
-  background-color: #b87019; 
-  min-height: 80vh;
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
   display: flex;
-  justify-content: center;
-  .settingsWrapper {
-    width: 100%;
-    max-width: 600px;
-    background-color:gray ;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.headerSection {
+  text-align: center;
+
+  p {
+    color: #777;
+    margin-top: 5px;
   }
 }
 
-
-
 .pageTitle {
   font-family: $font-header;
-  font-size: 45px;
-  color: #333;
-  text-align: center;
-  margin-bottom: 30px;
+  font-size: 60px;
+  color: $main-Colour;
+  text-decoration: underline;
+  text-underline-offset: 10px;
+
+  @media (max-width: 768px) {
+    font-size: 40px;
+  }
 }
 
 .settingsCard {
-  background: #ffffff;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  background: white;
+  border-radius: 22px;
   padding: 30px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+
+  @media (max-width: 768px) {
+    padding: 20px;
+  }
+}
+
+.profileTop {
+  display: flex;
+  align-items: center;
+  gap: 30px;
   margin-bottom: 30px;
 
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.imageSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+
+  img {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid $main-Colour;
+  }
+
+  button {
+    background: $secondary-Colour;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+}
+
+.userInfo {
   h2 {
-    font-family: $font-header;
-    font-size: 30px;
-    color: #4a3b32; /* Deep warm brown */
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
+    font-size: 32px;
+    color: $main-Colour;
+  }
+
+  span {
+    background: rgba(45, 106, 79, 0.15);
+    color: $green;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  p {
+    margin-top: 10px;
+    color: #666;
   }
 }
 
@@ -46,45 +109,87 @@ $font-body: sans-serif;
   gap: 20px;
 }
 
+.row {
+  display: flex;
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
 .inputGroup {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8px;
 
   label {
-    font-family: $font-body;
     font-size: 14px;
     font-weight: bold;
     color: #555;
   }
 
-  input {
-    padding: 12px 15px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 16px;
-    font-family: $font-body;
-    transition: border-color 0.3s, box-shadow 0.3s;
+  input,
+  select {
+    padding: 14px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 15px;
+    background: #fafafa;
 
     &:focus {
       outline: none;
-      border-color: #2d6a4f; /* Matches your bakery green */
-      box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.2);
+      border-color: $green;
+      box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.15);
+      background: white;
     }
+  }
+
+  input:disabled {
+    background: #eee;
+    cursor: not-allowed;
   }
 }
 
-/* Shared button styling */
-%btn-shared {
-  color: white;
-  border: none;
-  padding: 12px 25px;
-  border-radius: 20px;
+.cardTitle {
   font-family: $font-header;
-  font-size: 22px;
+  font-size: 35px;
+  color: $main-Colour;
+  margin-bottom: 20px;
+}
+
+.settingItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  h3 {
+    margin: 0;
+    color: $main-Colour;
+  }
+
+  p {
+    margin-top: 5px;
+    color: #777;
+  }
+}
+
+%btnShared {
+  border: none;
+  border-radius: 30px;
+  padding: 12px 28px;
+  color: white;
   cursor: pointer;
-  transition: all 0.2s;
-  align-self: flex-start;
+  transition: 0.3s;
+  font-family: $font-header;
+  font-size: 24px;
 
   &:hover {
     transform: scale(1.05);
@@ -92,26 +197,29 @@ $font-body: sans-serif;
 }
 
 .saveBtn {
-  @extend %btn-shared;
-  background-color: #2d6a4f; /* Green */
-  
-  &:hover {
-    background-color: #1b4332;
-  }
+  @extend %btnShared;
+  background: $green;
+  align-self: flex-start;
 }
 
-.passwordBtn {
-  @extend %btn-shared;
-  background-color: #5c4033; /* Dark brown to separate it from profile save */
+.secondaryBtn {
+  @extend %btnShared;
+  background: $secondary-Colour;
+}
 
-  &:hover {
-    background-color: #3e2723;
-  }
+.logoutBtn {
+  @extend %btnShared;
+  background: #c1121f;
+  width: 100%;
 }
 
 .errorContainer {
   text-align: center;
   padding: 100px 20px;
-  font-family: $font-header;
-  color: #333;
+
+  h2 {
+    font-family: $font-header;
+    font-size: 50px;
+    color: $main-Colour;
+  }
 }
