@@ -54,9 +54,9 @@ const Settings: React.FC = () => {
     <Layout>
       <div className={styles.pageContainer}>
         <div className={styles.headerSection}>
-          <h1 className={styles.pageTitle}>
+          <p className={styles.pageTitle}>
             Account Settings
-          </h1>
+          </p>
           <p>
             Manage your profile information and account preferences
           </p>
@@ -66,19 +66,16 @@ const Settings: React.FC = () => {
             <div className={styles.imageSection}>
               <img
                 src={
-                  userData?.image?.url ||
-                  {defaultProfile}
+                  userData?.image?.url || {defaultProfile}
                 }
                 alt="profile"
               />
-
               <button>
                 Change Photo
               </button>
             </div>
-
             <div className={styles.userInfo}>
-              <h2>{userData.fullName}</h2>
+              <h2>{userData.name}</h2>
               <span>{userData.role}</span>
 
               <p>{userData.email}</p>

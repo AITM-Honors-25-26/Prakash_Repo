@@ -1,11 +1,65 @@
 $font-header: 'Amatic SC', cursive;
-$font-body: sans-serif;
 
 $main-Colour: #48392a;
 $secondary-Colour: #5c4033;
 $green: #2d6a4f;
 
 .pageContainer {
-  
-}
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: $font-header;
+  color: $main-Colour;
+  width: 100%;
 
+  .headerSection {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 10px 10px 0px 0px;
+    align-items: center;
+    .pageTitle{
+      font-size: 50px;
+      margin-bottom: 0px;
+      @media (max-width: 768px) {
+        font-size: 30px;
+      }
+    }
+    p {
+      margin: 0;
+      padding: 0;
+      margin-bottom: 10px;
+      @media (max-width: 768px) {
+       font-size: 10px; 
+      }      
+    }
+  }
+  .settingsCard{
+    width: 100%;
+    background-color: #5c4033;
+    .profileTop{
+      background-color: #2d6a4f;
+      
+      .imageSection{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        img{
+          border-radius: 50%;
+          border: 2px solid $main-Colour;
+          height: 200px;
+          width: 200px;
+          margin-top: 10px;
+          margin-bottom: 10px;
+          @media (max-width: 768px) {
+            height: 100px;
+            width: 100px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+          }
+        }
+      }
+    }
+  }
+}
