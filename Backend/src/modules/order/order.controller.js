@@ -1,0 +1,47 @@
+import * as OrderService from './order.service.js';
+
+export const createOrder = async (req, res) => {
+  try {
+    const newOrder = await OrderService.createOrder(req.body);
+
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('kitchen_new_order', newOrder);
+    }
+
+    return res.status(201).json({ success: true, data: newOrder });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const getKitchenOrders = async (req, res) => {
+  try {
+    const activeOrders = await OrderService.getOrdersForKitchen();
+    return res.status(200).json({ success: true, data: activeOrders });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const updateOrderStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const updatedOrder = await OrderService.updateStatus(id, status);
+    
+    if (!updatedOrder) {
+      return res.status(404).json({ success: false, message: 'Order not found.' });
+    }
+
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('order_status_updated', updatedOrder);
+    }
+
+    return res.status(200).json({ success: true, data: updatedOrder });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
