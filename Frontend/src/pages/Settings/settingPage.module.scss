@@ -21,6 +21,7 @@ $breakpoint-md: 768px;
   padding: 20px;
   box-sizing: border-box;
 
+
   .headerSection {
     display: flex;
     flex-direction: column;
@@ -40,7 +41,7 @@ $breakpoint-md: 768px;
     }
 
     p {
-      font-family: $font-body; // Body text is easier to read with a clean sans-serif
+      font-family: $font-header; 
       font-size: 1rem;
       margin: 5px 0 0 0;
       color: $secondary-Colour;
@@ -51,7 +52,6 @@ $breakpoint-md: 768px;
     }
   }
 
-  // Common card structure for profile, security, and danger sections
   .settingsCard {
     width: 100%;    
     background: #fff;
