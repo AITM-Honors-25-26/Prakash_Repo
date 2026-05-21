@@ -185,44 +185,9 @@ const Settings: React.FC = () => {
 
           </form>
         </section>
-
-        {/* Security Section */}
-        <section className={styles.settingsCard}>
-
-          <h2 className={styles.cardTitle}>
-            Security
-          </h2>
-
-          <div className={styles.settingItem}>
-
-            <div>
-              <h3>Change Password</h3>
-
-              <p>
-                Update your account password
-              </p>
-            </div>
-
-            <button className={styles.secondaryBtn}>
-              Change Password
-            </button>
-
-          </div>
-
-        </section>
-
-        <section className={styles.settingsCard}>
-
-          <h2 className={styles.cardTitle}>
-            Danger Zone
-          </h2>
-
           <button className={styles.logoutBtn}>
             Logout
           </button>
-
-        </section>
-
       </div>
     </Layout>
   );
