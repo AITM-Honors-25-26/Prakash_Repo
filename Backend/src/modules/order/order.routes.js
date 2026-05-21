@@ -4,9 +4,9 @@ import { validateCreateOrder, validateUpdateStatus } from './order.validator.js'
 
 const orderRouter = express.Router();
 
-router.post('/', validateCreateOrder, createOrder);
+orderRouter.post('/order/', validateCreateOrder, createOrder);
 
-router.get('/kitchen', getKitchenOrders);
-router.patch('/:id/status', validateUpdateStatus, updateOrderStatus);
+orderRouter.get('/order/kitchen', getKitchenOrders);
+orderRouter.patch('/order/:id/status', validateUpdateStatus, updateOrderStatus);
 
 export default orderRouter;

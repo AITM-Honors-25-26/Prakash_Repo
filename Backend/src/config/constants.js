@@ -1,4 +1,3 @@
-// constants.js
 import { config } from 'dotenv';
 config(); 
 

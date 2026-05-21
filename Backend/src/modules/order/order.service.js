@@ -1,5 +1,5 @@
-import Order from './Order.js'; // Your Mongoose model
-import { OrderStatus } from './constants.js';
+import Order from '../ordermodel/order.model.js'; 
+import { OrderStatus } from '../../config/constants.js';
 
 
 export const createOrder = async (orderData) => {

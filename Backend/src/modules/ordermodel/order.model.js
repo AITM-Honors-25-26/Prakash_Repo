@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { OrderStatus } from './constants.js';
+import { OrderStatus } from '../../config/constants.js';
 
 const OrderSchema = new mongoose.Schema({
   tableNumber: { 

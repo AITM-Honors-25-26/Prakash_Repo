@@ -1,4 +1,4 @@
-import { OrderStatus } from './constants.js';
+import { OrderStatus } from '../../config/constants.js';
 
 export const validateCreateOrder = (req, res, next) => {
   const { tableNumber, items } = req.body;
