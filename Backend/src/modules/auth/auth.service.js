@@ -48,6 +48,7 @@ class AuthService{
     }
     getSingleUserByFilter= async (filter, selectFields)=>{
         try{
+            
             const user = await UserModel.findOne(filter).select(selectFields);
             return user
         }catch(exception){

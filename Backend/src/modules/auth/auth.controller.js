@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken"
 import { AppConfig } from "../../config/constants.js";
 import { randomStringGenerator } from "../../utils/helpers.js";
-
+import mongoose from "mongoose";
 class AuthController {
     registerUser =async (req, res, next)=>{
         let userData;
@@ -73,7 +73,6 @@ class AuthController {
             const user = await autSvc.getSingleUserByFilter({
                 email:email
             },"+password")
-            console.log("Database user:",user)
             if(!user){
                 throw{
                     code:422,
