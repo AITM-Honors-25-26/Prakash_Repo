@@ -1,8 +1,9 @@
 $font-header: 'Amatic SC', cursive;
-
 $main-Colour: #48392a;
 $secondary-Colour: #5c4033;
 $green: #2d6a4f;
+
+$breakpoint-md: 768px;
 
 .pageContainer {
   display: flex;
@@ -11,7 +12,18 @@ $green: #2d6a4f;
   font-family: $font-header;
   color: $main-Colour;
   width: 100%;
-
+  max-width: 800px; 
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+  border: 4px solid $main-Colour;
+  border-radius: 20px;
+  margin-top: 10px;
+  @media (max-width: $breakpoint-md) {
+    border: 2px solid $main-Colour;
+    border-radius: 10px;
+    margin-top: 5px;
+  }
   .headerSection {
     display: flex;
     flex-direction: column;
@@ -22,7 +34,7 @@ $green: #2d6a4f;
     .pageTitle{
       font-size: 50px;
       margin-bottom: 0px;
-      @media (max-width: 768px) {
+      @media (max-width: $breakpoint-md) {
         font-size: 30px;
       }
     }
@@ -30,21 +42,27 @@ $green: #2d6a4f;
       margin: 0;
       padding: 0;
       margin-bottom: 10px;
-      @media (max-width: 768px) {
+      @media (max-width: $breakpoint-md) {
        font-size: 10px; 
       }      
     }
   }
   .settingsCard{
-    width: 100%;
-    background-color: #5c4033;
+    width: 100%;    
     .profileTop{
-      background-color: #2d6a4f;
-      
+      display: flex;
+      align-items: center;
+      gap: 0px;
+      margin-top: 20px;
+      border-radius: 20px;
+      @media (max-width: $breakpoint-md) {
+        padding: 5px;
+      }
       .imageSection{
         display: flex;
         flex-direction: column;
         align-items: center;
+        gap: 0px;
         img{
           border-radius: 50%;
           border: 2px solid $main-Colour;
@@ -52,12 +70,46 @@ $green: #2d6a4f;
           width: 200px;
           margin-top: 10px;
           margin-bottom: 10px;
-          @media (max-width: 768px) {
-            height: 100px;
-            width: 100px;
-            margin-top: 5px;
+          @media (max-width: $breakpoint-md) {
+            height: 90px;
+            width: 90px;
+            margin-top: 0px;
             margin-bottom: 5px;
           }
+        }
+        button{
+          padding: 10px 25px;
+          border-radius: 10px;
+          border: none;
+          background-color: $main-Colour;
+          color: white;
+          @media (max-width: $breakpoint-md) {
+          padding: 8px 10px; 
+          font-size: 8px;
+          }
+          &:hover{
+            background-color: $secondary-Colour;
+          }
+        }
+      }
+      .userInfo{
+        padding: 0px 50px;
+        @media (max-width: $breakpoint-md) {
+          padding: 0px 10px; 
+        }  
+        h2{
+          font-size: 30px;
+          margin: 0 0 0px 0;
+          @media (max-width: $breakpoint-md) {
+            font-size: 20px; 
+          } 
+        }
+        .span{
+          display: block;
+          margin-bottom: 5px;
+        }
+        p{
+          font-size: 12px;
         }
       }
     }

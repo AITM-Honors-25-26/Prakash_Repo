@@ -83,7 +83,6 @@ const Settings: React.FC = () => {
 
           </div>
 
-          {/* Form */}
           <form
             onSubmit={handleSaveProfile}
             className={styles.form}
