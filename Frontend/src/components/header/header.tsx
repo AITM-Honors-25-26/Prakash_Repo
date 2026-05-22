@@ -5,19 +5,12 @@ import profile from './../../../img/profile.png';
 import logowhite from './../../../img/log.white.png';
 
 const Header: React.FC = () => {
-  // 1. Get the current table from the URL route parameter
   const menuMatch = useMatch("/MenuPage/:tableId");
   const urlTableId = menuMatch?.params.tableId;
-
-  // 2. If a fresh ID is parsed out of the URL, save it immediately during render.
-  // This completely eliminates the need for an asynchronous useEffect state sync loop.
   if (urlTableId) {
     localStorage.setItem('bakery_table', urlTableId);
   }
-
-  // 3. Fallback safely to whatever is stored if the user moves to Home/About/Contact
   const activeTable = urlTableId || localStorage.getItem('bakery_table');
-
   const [user, setUser] = useState<{ 
     name: string; 
     role: string; 
@@ -54,7 +47,6 @@ const Header: React.FC = () => {
       <nav className={styles.navLinks}>
         <Link to="/">Home</Link>
         
-        {/* Dynamic menu string interpolation based on active session */}
         <Link to={activeTable ? `/MenuPage/${activeTable}` : "/MenuPage"}>
           Menu {activeTable && `(Table ${activeTable})`}
         </Link>
@@ -70,12 +62,13 @@ const Header: React.FC = () => {
       </nav>
 
       <div className={styles.authSection}>
-        {/* The badge renders smoothly as activeTable evaluates line-by-line */}
-        {activeTable ? (
+        {activeTable && (
           <div className={styles.tableBadge}>
             <span>Table {activeTable}</span>
           </div>
-        ) : user ? (
+        )}
+
+        {user ? (
           <div className={styles.profileWrapper}>
             <img 
               src={user.image?.url || profile} 
@@ -100,10 +93,12 @@ const Header: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className={styles.authButtons}>
-            <Link to="/LoginPage" className={styles.loginLink}>Login</Link>
-            <Link to="/RegisterPage" className={styles.signupBtn}>Register</Link>
-          </div>
+          !activeTable && (
+            <div className={styles.authButtons}>
+              <Link to="/LoginPage" className={styles.loginLink}>Login</Link>
+              <Link to="/RegisterPage" className={styles.signupBtn}>Register</Link>
+            </div>
+          )
         )}
       </div>
     </header>

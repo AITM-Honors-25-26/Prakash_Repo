@@ -1,209 +1,212 @@
-$font-header: 'Amatic SC', cursive;
-$font-body: 'Poppins', sans-serif;
-
-$color-bg: #faf8f5;
-$color-card-bg: #ffffff;
-$color-header: #3e2723; 
-$color-accent: #d84315; 
-$color-text-light: #ffffff;
-
-.main {
-    background-color: $color-bg;
-    font-family: $font-header;
-    overflow: hidden;
-
-    .topic {
-        display: flex;
-        justify-content: center;
-        border-radius: 10px 10px 0px 0px;
-        background-color: $color-header;
-        color: $color-text-light;
-        margin-top: 10px;
-        h1 {
-            font-size: 40px;
-            
-        }
-    }
-
-    .itemSection {
-        height: 300px;
-        display: flex;
-        background-color: rgb(0, 0, 0); 
-        padding: 15px;
-        gap: 10px;
-        overflow: hidden;
-        border-radius: 0px 0px 10px 10px;
-        @media (max-width: 768px) {
-            align-items: center;
-            flex-direction: column;
-            height: 100%;
-        }
-        .photosection {
-            width: 300px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            @media (max-width: 768px) {
-                margin-bottom: 10px;
-            }
-
-            &:hover {
-                transform: translateY(-4px) scale(1.03);
-                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
-
-                .overlay {
-                    opacity: 1; 
-                }
-            }
-            > img {
-                width: 100%;
-                display: block;
-            }
-
-            .overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(255, 255, 255, 0.4); 
-                backdrop-filter: blur(4px);
-                -webkit-backdrop-filter: blur(4px);
-                border-radius: 10px;
-                color: black;
-               
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                padding: 20px 15px; 
-                box-sizing: border-box;
-                
-                opacity: 0;
-                transition: opacity 0.3s ease;
-
-                h3 {
-                    font-family: $font-header;
-                    font-size: 40px;
-                    margin: 0; 
-                    text-align: center;
-                    color: $color-header;
-                    line-height: 1;
-                }
-
-                p {
-                    font-family: $font-body;
-                    text-align: center;
-                    margin: 0;
-
-                    &:nth-of-type(1) {
-                        font-weight: 400;
-                        font-size: 14px;
-                        margin: auto 0;
-                    }
-
-                    &:nth-of-type(2) {
-                        font-weight: 700;
-                        font-size: 22px;
-                        color: $color-accent; 
-                        margin-bottom: 12px;
-                    }
-                }
-                .deleteButton, .buttonDiv{
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: white;
-                    padding: 5px 20px;
-                    border-radius: 25px;
-                    cursor: pointer;
-                    font-weight: 500;
-                    font-family: $font-body;
-                    transition: transform 0.2s ease, background-color 0.2s ease;
-                    font-size: 15px;
-
-                    &:hover {
-                        transform: scale(1.05);
-                        background-color: (#7a1e02);
-                    }
-                }
-                .buttonDiv {
-                    background-color: $color-accent; 
-                    border-color: transparent;
-
-                    img {
-                        width: 20px;   
-                        height: 20px;
-                        object-fit: contain;
-                        margin-left: 12px;     
-                        padding-left: 12px;    
-                        border-left: 2px solid rgba(255, 255, 255, 0.6); 
-                    }
-                }
-                .deleteButton{
-                    margin-top: 10px;
-                    width:117px;
-                    background-color: red;
-                    border-color: transparent;
-                }
-            } 
-        } 
-    } 
-    .noItems{
-        img{
-            margin-top: 20px;
-            width: 350px;
-        }
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        font-size: 3rem;
-    }
-      
+.container {
+  padding: 2rem;
+  min-height: 100vh;
+  background: #faf7f2;
 }
 
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
 
-:global {
-  .custom-swal-popup {
-    border: 2px solid #d84315; 
-    border-radius: 12px; 
-    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+  h1 {
+    font-size: 3rem;
+    color: #2d1b18;
+    margin-bottom: 0.5rem;
   }
 
-  .custom-swal-title {
-    font-size: 1.8rem;
-    font-family: $font-header;
-    padding-bottom: 10px;
-    color: #3e2723; 
+  p {
+    color: #777;
+    font-size: 1rem;
+  }
+}
+
+.adminBtn {
+  margin-top: 1rem;
+  background: #ff6b35;
+  border: none;
+  color: white;
+  padding: 0.9rem 1.5rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    background: #e85a2a;
+  }
+}
+
+.categorySection {
+  margin-bottom: 4rem;
+}
+
+.categoryTitle {
+  font-size: 2rem;
+  color: #2d1b18;
+  margin-bottom: 1.5rem;
+  border-left: 6px solid #ff6b35;
+  padding-left: 1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.card {
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: 0.3s ease;
+
+  &:hover {
+    transform: translateY(-8px);
+  }
+}
+
+.imageWrapper {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.4s ease;
   }
 
-  .custom-swal-text {
-    font-family: $font-body !important;
-    font-size: 1.1rem !important; 
-    color: #3e2723 !important; 
+  &:hover img {
+    transform: scale(1.08);
+  }
+}
+
+.outOfStock {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: crimson;
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 30px;
+  font-size: 0.8rem;
+}
+
+.content {
+  padding: 1.2rem;
+
+  h3 {
+    font-size: 1.3rem;
+    color: #2d1b18;
+    margin-bottom: 0.5rem;
   }
 
-  .custom-swal-input {
-    border: 1px solid #ccc !important;
-    border-radius: 8px !important;
-    padding: 10px !important;
-    font-size: 1.1rem !important;
-    font-family: 'Poppins', sans-serif !important;
-    
-    
-    &:focus {
-      border-color: #d84315 !important;
-      box-shadow: 0 0 5px rgba(216, 67, 21, 0.5) !important;
-    }
+  p {
+    color: #666;
+    line-height: 1.5;
+    font-size: 0.95rem;
+  }
+}
+
+.bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.price {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #ff6b35;
+}
+
+.cartBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  background: #ff6b35;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  transition: 0.3s ease;
+  font-weight: 600;
+
+  img {
+    width: 18px;
+    height: 18px;
   }
 
-  .custom-swal-confirm-btn, .custom-swal-cancel-btn {
-    border-radius: 8px !important;
-    font-weight: bold !important;
-    letter-spacing: 1px;
-    padding: 10px 20px !important;
-    font-family: 'Poppins', sans-serif !important;
+  &:hover {
+    background: #e85a2a;
+    transform: scale(1.05);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.deleteBtn {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.7rem;
+  border: none;
+  border-radius: 12px;
+  background: #111;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s ease;
+
+  &:hover {
+    background: crimson;
+  }
+}
+
+.loader {
+  text-align: center;
+  padding: 5rem 0;
+
+  h2 {
+    color: #777;
+  }
+}
+
+.empty {
+  text-align: center;
+  padding: 5rem 0;
+
+  img {
+    width: 150px;
+  }
+
+  h2 {
+    margin-top: 1rem;
+    color: #666;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .header h1 {
+    font-size: 2rem;
+  }
+
+  .categoryTitle {
+    font-size: 1.5rem;
+  }
+
+  .grid {
+    gap: 1rem;
   }
 }

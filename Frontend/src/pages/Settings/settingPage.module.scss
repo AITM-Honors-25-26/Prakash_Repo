@@ -217,7 +217,7 @@ $breakpoint-md: 768px;
         margin-top: 10px;
 
         &:hover {
-          background-color: darken($green, 5%);
+          background-color: green;
         }
 
         @media (max-width: $breakpoint-md) {
