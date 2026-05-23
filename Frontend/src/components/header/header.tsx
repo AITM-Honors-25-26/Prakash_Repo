@@ -10,7 +10,6 @@ import logowhite from './../../../img/log.white.png';
 // Ensure this path is correct relative to your Header component
 import { API_ENDPOINTS } from '../../constants/constants.js'; 
 
-// 1. Define the interface here to fix the "any" type error safely
 export interface RestaurantTable {
   _id: string;
   tableNumber: number;
@@ -24,7 +23,6 @@ const Header: React.FC = () => {
   const menuMatch = useMatch("/MenuPage/:tableId");
   const urlTableId = menuMatch?.params.tableId;
 
-  // State for active table
   const [activeTable, setActiveTable] = useState<string | null>(
     localStorage.getItem('bakery_table')
   );
@@ -46,40 +44,38 @@ const Header: React.FC = () => {
     return null;
   });
 
-  // 2. Validate the table whenever the URL changes
   useEffect(() => {
     const verifyTable = async () => {
-      if (urlTableId) {
-        try {
-          // Fetch all tables from the backend
-          const response = await axios.get(API_ENDPOINTS.LISTALLTABLE);
-          const data = response.data?.data || response.data?.result || response.data;
+      if (!urlTableId) return;
+
+      // REUSABLE HELPER: Triggers if the table isn't found OR if the server throws an error
+      const handleTableNotFound = () => {
+        toast.error(`Table ${urlTableId} is not available in the database. Please scan a valid QR code.`);
+        localStorage.removeItem('bakery_table');
+        setActiveTable(null);
+        navigate('/MenuPage', { replace: true });
+      };
+
+      try {
+        const response = await axios.get(API_ENDPOINTS.LISTALLTABLE);
+        const data = response.data?.data || response.data?.result || response.data;
+        
+        if (Array.isArray(data)) {
+          const validTable = data.find((t: RestaurantTable) => String(t.tableNumber) === String(urlTableId));
           
-          if (Array.isArray(data)) {
-            // FIX: Using the RestaurantTable type instead of 'any'
-            const validTable = data.find((t: RestaurantTable) => String(t.tableNumber) === String(urlTableId));
-            
-            // NOTE: If you strictly want to ensure the table status is "Available" before they can view the menu, 
-            // you can change the condition below to: if (validTable && validTable.status === 'Available')
-            
-            if (validTable) {
-              // Table exists in the backend -> Save it
-              localStorage.setItem('bakery_table', urlTableId);
-              setActiveTable(urlTableId);
-            } else {
-              // Table does NOT exist -> Show toast and clear invalid data
-              toast.error(`Table ${urlTableId} is not valid or currently unavailable.`);
-              localStorage.removeItem('bakery_table');
-              setActiveTable(null);
-              
-              // Redirect them to the general menu page
-              navigate('/MenuPage', { replace: true });
-            }
+          if (validTable) {
+            // Table exists in the backend -> Save it
+            localStorage.setItem('bakery_table', urlTableId);
+            setActiveTable(urlTableId);
+          } else {
+            // Table NOT found in the database array
+            handleTableNotFound();
           }
-        } catch (error) {
-          console.error("Failed to verify table status", error);
-          toast.error("Could not verify table network. Please try again.");
         }
+      } catch (error) {
+        console.error("Failed to verify table status", error);
+        // AXIOS FIX: If the database throws a 404 because the table doesn't exist, we catch it here.
+        handleTableNotFound();
       }
     };
 
