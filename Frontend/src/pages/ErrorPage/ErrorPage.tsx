@@ -1,29 +1,28 @@
 import React from 'react';
-import {  useLocation } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import styles from './ErrorPage.module.scss';
-import wrong from '../../../img/gif/wrong.webp'
-
-interface LocationState {
-  title?: string;
-  message?: string;
-}
+import errorGif from '../../../img/gif/wrong.gif';
 
 const ErrorPage: React.FC = () => {
-  const location = useLocation();
-  
-  const state = location.state as LocationState;
-  const errorTitle = state?.title || "Oops! Something went wrong.";
-  const errorMessage = state?.message || "The table you are looking for doesn't exist, or you might have scanned an invalid QR code.";
+  const [searchParams] = useSearchParams();
+  const errorType = searchParams.get('type');
+
+  let errorTitle = "Oops! Wrong Turn........";
+  let errorMessage = "An unexpected error occurred.";
+
+  if (errorType === 'invalid-qr') {
+    errorTitle = "Invalid QR Code";
+    errorMessage = "The table you are looking for doesn't exist, or you might have scanned an invalid QR code.";
+  }
 
   return (
     <div className={styles.errorContainer}>
       <div className={styles.errorCard}>
         <div className={styles.iconWrapper}>
-          <img src={wrong} alt="" />
+          <h1 className={styles.title}>{errorTitle}</h1>
+          <img src={errorGif} alt="Error status illustration" />
+          <p className={styles.message}>{errorMessage}</p>
         </div>
-        <h1 className={styles.title}>hello{errorTitle}</h1>
-        <p className={styles.message}>{errorMessage}</p>
-
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ import Profile from "./pages/Profile/profile.page";
 import Settings from "./pages/Settings/setting.page";
 import TableManagement from "./pages/TableManagement/TableManagement.page";
 import CheckoutPage from "./pages/Checkout/CheckOut.page";
-import ErrorPage from "./pages/ErrorPage/errorpage";
+import ErrorPage from "./pages/ErrorPage/ErrorPage";
 
 
 createRoot(document.getElementById("root")!).render(
