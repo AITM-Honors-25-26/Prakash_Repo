@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import {  useLocation } from 'react-router-dom';
 import styles from './ErrorPage.module.scss';
 
 interface LocationState {
@@ -8,7 +8,6 @@ interface LocationState {
 }
 
 const ErrorPage: React.FC = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   
   const state = location.state as LocationState;
@@ -25,18 +24,7 @@ const ErrorPage: React.FC = () => {
         <p className={styles.message}>{errorMessage}</p>
         
         <div className={styles.actionButtons}>
-          <button 
-            className={styles.primaryButton} 
-            onClick={() => navigate('/')}
-          >
-            Return to Home
-          </button>
-          <button 
-            className={styles.secondaryButton} 
-            onClick={() => navigate('/MenuPage')}
-          >
-            View General Menu
-          </button>
+          
         </div>
       </div>
     </div>
