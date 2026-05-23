@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react'; 
 import { Link, useMatch, useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast'; 
 import axios from 'axios'; 
 
 import styles from './header.module.scss';
 import profile from './../../../img/profile.png';
 import logowhite from './../../../img/log.white.png';
 
-// Ensure this path is correct relative to your Header component
 import { API_ENDPOINTS } from '../../constants/constants.js'; 
 
 export interface RestaurantTable {
@@ -49,10 +47,15 @@ const Header: React.FC = () => {
       if (!urlTableId) return;
 
       const handleTableNotFound = () => {
-        toast.error(`Table ${urlTableId} is not recognized. Please scan a valid QR code.`);
         localStorage.removeItem('bakery_table');
         setActiveTable(null);
-        navigate('/MenuPage', { replace: true });
+        navigate('/ErrorPage', { 
+          state: { 
+            title: "Table Not Found", 
+            message: `Table ${urlTableId} is not recognized. Please scan a valid QR code at your table.` 
+          },
+          replace: true 
+        });
       };
 
       try {
@@ -60,22 +63,23 @@ const Header: React.FC = () => {
         const data = response.data?.data || response.data?.result || response.data;
         
         if (Array.isArray(data)) {
-          // 1. Find the table in the database
           const tableInDB = data.find((t: RestaurantTable) => String(t.tableNumber) === String(urlTableId));
           
           if (!tableInDB) {
-            // SCENARIO A: Table does not exist at all
             handleTableNotFound();
           } 
           else if (tableInDB.status !== 'Available') {
-            // SCENARIO B: Table exists, but is NOT 'Available' (e.g., Occupied, Reserved)
-            toast.error(`Table ${urlTableId} is currently ${tableInDB.status}. You cannot order from this table.`);
             localStorage.removeItem('bakery_table');
             setActiveTable(null);
-            navigate('/MenuPage', { replace: true });
+            navigate('/ErrorPage', { 
+              state: { 
+                title: "Table Unavailable", 
+                message: `Table ${urlTableId} is currently marked as ${tableInDB.status}. You cannot order from this table.` 
+              },
+              replace: true 
+            });
           } 
           else {
-            // SCENARIO C: Table exists AND is 'Available'
             localStorage.setItem('bakery_table', urlTableId);
             setActiveTable(urlTableId);
           }

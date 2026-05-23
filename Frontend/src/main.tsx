@@ -13,6 +13,7 @@ import Profile from "./pages/Profile/profile.page";
 import Settings from "./pages/Settings/setting.page";
 import TableManagement from "./pages/TableManagement/TableManagement.page";
 import CheckoutPage from "./pages/Checkout/CheckOut.page";
+import ErrorPage from "./pages/ErrorPage/errorpage";
 
 
 createRoot(document.getElementById("root")!).render(
@@ -32,6 +33,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/SettingsPage" element={<Settings />} />
         <Route path="/TableManagement" element={<TableManagement />} />
         <Route path="/CheckoutPage" element={<CheckoutPage />}  />
+        <Route path="/ErrorPage" element={<ErrorPage />}></Route>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
