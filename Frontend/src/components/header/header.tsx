@@ -1,16 +1,30 @@
 import React, { useState, useEffect } from 'react'; 
 import { Link, useMatch, useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast'; // Import your toaster library here
+import toast from 'react-hot-toast'; 
+import axios from 'axios'; 
+
 import styles from './header.module.scss';
 import profile from './../../../img/profile.png';
 import logowhite from './../../../img/log.white.png';
+
+// Ensure this path is correct relative to your Header component
+import { API_ENDPOINTS } from '../../constants/constants.js'; 
+
+// 1. Define the interface here to fix the "any" type error safely
+export interface RestaurantTable {
+  _id: string;
+  tableNumber: number;
+  capacity: number;
+  status: 'Available' | 'Occupied' | 'Reserved' | 'NotAvailable';
+  location: 'Indoor' | 'Outdoor' | 'Window' | 'Balcony';
+}
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const menuMatch = useMatch("/MenuPage/:tableId");
   const urlTableId = menuMatch?.params.tableId;
 
-  // 1. Change activeTable to state so we can update it after validation
+  // State for active table
   const [activeTable, setActiveTable] = useState<string | null>(
     localStorage.getItem('bakery_table')
   );
@@ -37,31 +51,40 @@ const Header: React.FC = () => {
     const verifyTable = async () => {
       if (urlTableId) {
         try {
-          // Replace this URL with your actual backend API endpoint!
-          const response = await fetch(`/api/tables/${urlTableId}`);
+          // Fetch all tables from the backend
+          const response = await axios.get(API_ENDPOINTS.LISTALLTABLE);
+          const data = response.data?.data || response.data?.result || response.data;
           
-          if (response.ok) {
-            // Table exists in the backend -> Save it
-            localStorage.setItem('bakery_table', urlTableId);
-            setActiveTable(urlTableId);
-          } else {
-            // Table does NOT exist -> Show toast and clear invalid data
-            toast.error(`Table ${urlTableId} is not available.`);
-            localStorage.removeItem('bakery_table');
-            setActiveTable(null);
+          if (Array.isArray(data)) {
+            // FIX: Using the RestaurantTable type instead of 'any'
+            const validTable = data.find((t: RestaurantTable) => String(t.tableNumber) === String(urlTableId));
             
-            // Optional: Redirect them to the general menu page
-            navigate('/MenuPage', { replace: true });
+            // NOTE: If you strictly want to ensure the table status is "Available" before they can view the menu, 
+            // you can change the condition below to: if (validTable && validTable.status === 'Available')
+            
+            if (validTable) {
+              // Table exists in the backend -> Save it
+              localStorage.setItem('bakery_table', urlTableId);
+              setActiveTable(urlTableId);
+            } else {
+              // Table does NOT exist -> Show toast and clear invalid data
+              toast.error(`Table ${urlTableId} is not valid or currently unavailable.`);
+              localStorage.removeItem('bakery_table');
+              setActiveTable(null);
+              
+              // Redirect them to the general menu page
+              navigate('/MenuPage', { replace: true });
+            }
           }
         } catch (error) {
           console.error("Failed to verify table status", error);
-          toast.error("Could not verify table. Please try again.");
+          toast.error("Could not verify table network. Please try again.");
         }
       }
     };
 
     verifyTable();
-  }, [urlTableId, navigate]); // Rerun if the URL table ID changes
+  }, [urlTableId, navigate]); 
 
   const hasStaffAccess = user && ['Admin', 'Chef', 'Waiter', 'Employee'].includes(user.role);
 
@@ -97,7 +120,6 @@ const Header: React.FC = () => {
       </nav>
 
       <div className={styles.authSection}>
-        {/* Table badge only shows if NO user is logged in AND a valid table exists */}
         {!user && activeTable && (
           <div className={styles.tableBadge}>
             <span>Table {activeTable}</span>
