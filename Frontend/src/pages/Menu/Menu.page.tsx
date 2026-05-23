@@ -32,7 +32,7 @@ interface CartItem extends BakeryItem {
 
 const MenuPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate(); // Fixed: Needed to make the add button route somewhere
+  const navigate = useNavigate();
 
   const [menuItems, setMenuItems] = useState<BakeryItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,12 +57,33 @@ const MenuPage: React.FC = () => {
     }
   }, []);
 
+  // --- THIS IS THE FIXED SECTION ---
   useEffect(() => {
-    if (id) {
-      localStorage.setItem('bakery_table', id);
-      toast.success(`Serving Table: ${id}`, { autoClose: 3000 });
-    }
+    if (!id) return;
+
+    let hasToasted = false;
+
+    // We check every 300ms to see if Header.tsx successfully validated the table
+    const checkInterval = setInterval(() => {
+      const verifiedTable = localStorage.getItem('bakery_table');
+      
+      if (verifiedTable === id && !hasToasted) {
+        // Table is officially valid! Show the toast.
+        toast.success(`Serving Table: ${id}`, { autoClose: 3000, toastId: `serving-${id}` });
+        hasToasted = true;
+        clearInterval(checkInterval); // Stop checking
+      }
+    }, 300);
+
+    // Stop checking after 4 seconds just in case the table was invalid (so it doesn't loop forever)
+    const timeout = setTimeout(() => clearInterval(checkInterval), 4000);
+
+    return () => {
+      clearInterval(checkInterval);
+      clearTimeout(timeout);
+    };
   }, [id]);
+  // ---------------------------------
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -96,7 +117,6 @@ const MenuPage: React.FC = () => {
       const existingCart = localStorage.getItem('bakery_cart');
       const cart: CartItem[] = existingCart ? JSON.parse(existingCart) : [];
 
-      // Fixed: Replaced 'any' with explicit CartItem type definition
       const existingItem = cart.find(
         (cartItem: CartItem) => cartItem._id === item._id
       );
@@ -153,6 +173,7 @@ const MenuPage: React.FC = () => {
       toast.error('Delete failed');
     }
   };
+
   return (
     <Layout>
       <div className={styles.container}>

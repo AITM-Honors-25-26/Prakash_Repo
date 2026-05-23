@@ -48,9 +48,8 @@ const Header: React.FC = () => {
     const verifyTable = async () => {
       if (!urlTableId) return;
 
-      // REUSABLE HELPER: Triggers if the table isn't found OR if the server throws an error
       const handleTableNotFound = () => {
-        toast.error(`Table ${urlTableId} is not available in the database. Please scan a valid QR code.`);
+        toast.error(`Table ${urlTableId} is not recognized. Please scan a valid QR code.`);
         localStorage.removeItem('bakery_table');
         setActiveTable(null);
         navigate('/MenuPage', { replace: true });
@@ -61,20 +60,28 @@ const Header: React.FC = () => {
         const data = response.data?.data || response.data?.result || response.data;
         
         if (Array.isArray(data)) {
-          const validTable = data.find((t: RestaurantTable) => String(t.tableNumber) === String(urlTableId));
+          // 1. Find the table in the database
+          const tableInDB = data.find((t: RestaurantTable) => String(t.tableNumber) === String(urlTableId));
           
-          if (validTable) {
-            // Table exists in the backend -> Save it
+          if (!tableInDB) {
+            // SCENARIO A: Table does not exist at all
+            handleTableNotFound();
+          } 
+          else if (tableInDB.status !== 'Available') {
+            // SCENARIO B: Table exists, but is NOT 'Available' (e.g., Occupied, Reserved)
+            toast.error(`Table ${urlTableId} is currently ${tableInDB.status}. You cannot order from this table.`);
+            localStorage.removeItem('bakery_table');
+            setActiveTable(null);
+            navigate('/MenuPage', { replace: true });
+          } 
+          else {
+            // SCENARIO C: Table exists AND is 'Available'
             localStorage.setItem('bakery_table', urlTableId);
             setActiveTable(urlTableId);
-          } else {
-            // Table NOT found in the database array
-            handleTableNotFound();
           }
         }
       } catch (error) {
         console.error("Failed to verify table status", error);
-        // AXIOS FIX: If the database throws a 404 because the table doesn't exist, we catch it here.
         handleTableNotFound();
       }
     };
