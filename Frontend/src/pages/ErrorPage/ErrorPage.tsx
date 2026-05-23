@@ -1,6 +1,7 @@
 import React from 'react';
 import {  useLocation } from 'react-router-dom';
 import styles from './ErrorPage.module.scss';
+import wrong from '../../../img/gif/wrong.webp'
 
 interface LocationState {
   title?: string;
@@ -18,14 +19,11 @@ const ErrorPage: React.FC = () => {
     <div className={styles.errorContainer}>
       <div className={styles.errorCard}>
         <div className={styles.iconWrapper}>
-          <span className={styles.icon}>🍞</span> 
+          <img src={wrong} alt="" />
         </div>
-        <h1 className={styles.title}>{errorTitle}</h1>
+        <h1 className={styles.title}>hello{errorTitle}</h1>
         <p className={styles.message}>{errorMessage}</p>
-        
-        <div className={styles.actionButtons}>
-          
-        </div>
+
       </div>
     </div>
   );
