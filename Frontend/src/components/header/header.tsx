@@ -7,9 +7,11 @@ import logowhite from './../../../img/log.white.png';
 const Header: React.FC = () => {
   const menuMatch = useMatch("/MenuPage/:tableId");
   const urlTableId = menuMatch?.params.tableId;
+  
   if (urlTableId) {
     localStorage.setItem('bakery_table', urlTableId);
   }
+  
   const activeTable = urlTableId || localStorage.getItem('bakery_table');
   const [user, setUser] = useState<{ 
     name: string; 
@@ -62,7 +64,9 @@ const Header: React.FC = () => {
       </nav>
 
       <div className={styles.authSection}>
-        {activeTable && (
+        
+        {/* FIX: Only show the table badge if there is NO user logged in */}
+        {!user && activeTable && (
           <div className={styles.tableBadge}>
             <span>Table {activeTable}</span>
           </div>
