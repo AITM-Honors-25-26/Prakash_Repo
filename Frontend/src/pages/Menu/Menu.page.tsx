@@ -10,6 +10,7 @@ import Layout from '../../components/layout/layout';
 
 import cartwhite from '../../../img/icons/cart.white.png';
 import hot from '../../../img/gif/hot.gif';
+import LoaderGif from '../../../img/gif/loading.gif'; // <-- Added Loader Import
 
 import { API_ENDPOINTS, CATAGOTY } from '../../constants/constants';
 
@@ -169,10 +170,21 @@ const MenuPage: React.FC = () => {
 
       toast.success('Item deleted');
       fetchMenu(false);
-    } catch  {
+    } catch {
       toast.error('Delete failed');
     }
   };
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className={styles.loader}>
+          <img src={LoaderGif} alt="Loading..." />
+          <h1>Loading Menu...</h1>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -190,71 +202,65 @@ const MenuPage: React.FC = () => {
             </button>
           )}
         </div>
-        {loading ? (
-          <div className={styles.loader}>
-            <h2>Loading Menu...</h2>
-          </div>
-        ) : (
-          <>
-            {groupedItems.map(({ category, items }) => {
-              if (items.length === 0) return null;
+        
+        {groupedItems.map(({ category, items }) => {
+          if (items.length === 0) return null;
 
-              return (
-                <section key={category} className={styles.categorySection}>
-                  <h2 className={styles.categoryTitle}>{category}</h2> 
-                  <div className={styles.grid}>
-                    {items.map((item) => (
-                      <div key={item._id} className={styles.card}>
-                        <div className={styles.imageWrapper}>
-                          <img
-                            src={item.images?.[0]?.url || 'https://via.placeholder.com/500'}
-                            alt={item.name}
-                          />
-                          {!item.isAvailable && (
-                            <span className={styles.outOfStock}>Unavailable</span>
-                          )}
-                        </div>
-                        <div className={styles.content}>
-                          <div>
-                            <h3>{item.name}</h3>
-                            <p>{item.description}</p>
-                          </div>
-                          <div className={styles.bottom}>
-                            <span className={styles.price}>Rs. {item.price}</span>
-                            <button
-                              disabled={!item.isAvailable}
-                              onClick={() => handleAddToCart(item)}
-                              className={styles.cartBtn}
-                            >
-                              <img src={cartwhite} alt="" />
-                              Add
-                            </button>
-                          </div>
-                          {isAdmin && (
-                            <button
-                              className={styles.deleteBtn}
-                              onClick={() => handleDelete(item._id)}
-                            >
-                              Delete
-                            </button>
-                          )}
-                        </div>
+          return (
+            <section key={category} className={styles.categorySection}>
+              <h2 className={styles.categoryTitle}>{category}</h2> 
+              <div className={styles.grid}>
+                {items.map((item) => (
+                  <div key={item._id} className={styles.card}>
+                    <div className={styles.imageWrapper}>
+                      <img
+                        src={item.images?.[0]?.url || 'https://via.placeholder.com/500'}
+                        alt={item.name}
+                      />
+                      {!item.isAvailable && (
+                        <span className={styles.outOfStock}>Unavailable</span>
+                      )}
+                    </div>
+                    <div className={styles.content}>
+                      <div>
+                        <h3>{item.name}</h3>
+                        <p>{item.description}</p>
                       </div>
-                    ))}
+                      <div className={styles.bottom}>
+                        <span className={styles.price}>Rs. {item.price}</span>
+                        <button
+                          disabled={!item.isAvailable}
+                          onClick={() => handleAddToCart(item)}
+                          className={styles.cartBtn}
+                        >
+                          <img src={cartwhite} alt="" />
+                          Add
+                        </button>
+                      </div>
+                      {isAdmin && (
+                        <button
+                          className={styles.deleteBtn}
+                          onClick={() => handleDelete(item._id)}
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </section>
-              );
-            })}
-            {menuItems.length === 0 && (
-              <div className={styles.empty}>
-                <img src={hot} alt="" />
-                <h2>No Items Found</h2>
+                ))}
               </div>
-            )}
-          </>
+            </section>
+          );
+        })}
+        {menuItems.length === 0 && (
+          <div className={styles.empty}>
+            <img src={hot} alt="" />
+            <h2>No Items Found</h2>
+          </div>
         )}
       </div>
     </Layout>
   );
 };
+
 export default MenuPage;

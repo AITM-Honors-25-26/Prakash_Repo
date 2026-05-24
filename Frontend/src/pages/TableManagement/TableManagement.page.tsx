@@ -312,7 +312,6 @@ const TableManagement: React.FC = () => {
                   <div className={styles.buttonGroup}>
                     <button className={styles.editButton} onClick={() => handleEditTable(table)}>Manage</button>
                     
-                    {/* QR CODE BUTTON */}
                     <button 
                       className={styles.qrButton} 
                       style={{ backgroundColor: '#4a3f35', color: 'white', padding: '8px 12px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}

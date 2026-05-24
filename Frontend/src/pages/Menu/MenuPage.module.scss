@@ -1,7 +1,11 @@
+$main-font: 'Lucida Handwriting', cursive;
+
+
 .container {
   padding: 2rem;
   min-height: 100vh;
   background: #faf7f2;
+  font-family: $main-font;
 }
 
 .header {
@@ -173,9 +177,16 @@
 .loader {
   text-align: center;
   padding: 5rem 0;
+  @media (max-width: 768px) {
+  img{
+    width: 300px;
+  }
+}
+
 
   h2 {
     color: #777;
+    font-family: $main-font;
   }
 }
 
