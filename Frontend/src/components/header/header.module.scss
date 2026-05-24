@@ -8,7 +8,7 @@ $font-nav: 'Lucida Handwriting', cursive;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0rem 50px;
+  padding: 0rem 20px; 
   background-color: $bg-color;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: sticky;
@@ -18,9 +18,14 @@ $font-nav: 'Lucida Handwriting', cursive;
   box-sizing: border-box;
   flex-wrap: nowrap;
 
+  @media (max-width: 1024px) {
+    padding: 0rem 15px;
+  }
   @media (max-width: 768px) {
-    width: 100%;
     padding: 0rem 10px;
+  }
+  @media (max-width: 480px) {
+    padding: 0rem 5px;
   }
 
   .logo {
@@ -30,21 +35,41 @@ $font-nav: 'Lucida Handwriting', cursive;
     height: 100px;
     width: 100px;
     transition: all 0.3s ease;
-    padding-left: 50px;
+    padding: 0 30px; 
 
+    @media (max-width: 1024px) {
+      width: 80px;
+      height: 80px;
+      padding: 0 20px;
+    }
     @media (max-width: 768px) {
+      width: 60px;
+      height: 60px;
+      padding: 0 10px;
+    }
+    @media (max-width: 480px) {
       width: 40px;
       height: 40px;
-      padding-left: 0px;
+      padding: 0 5px;
     }
   }
 
   .navLinks {
     display: flex;
     gap: 2rem;
+    padding: 0 20px;
 
+    @media (max-width: 1024px) {
+      gap: 1.5rem;
+      padding: 0 15px;
+    }
     @media (max-width: 768px) {
-      gap: 8px;
+      gap: 10px;
+      padding: 0 10px;
+    }
+    @media (max-width: 480px) {
+      gap: 5px;
+      padding: 0 5px;
     }
 
     a {
@@ -55,13 +80,22 @@ $font-nav: 'Lucida Handwriting', cursive;
       color: $text-color;
       font-size: 1rem;
       transition: color 0.2s ease-in-out;
+      padding: 5px 10px; 
 
       &:hover {
         color: $hover-color;
       }
 
+      @media (max-width: 1024px) {
+        font-size: 0.85rem;
+      }
       @media (max-width: 768px) {
+        font-size: 0.65rem;
+        padding: 5px;
+      }
+      @media (max-width: 480px) {
         font-size: 0.5rem;
+        padding: 2px;
       }
     }
   }
@@ -77,14 +111,23 @@ $font-nav: 'Lucida Handwriting', cursive;
       width: 50px;
       transition: all 0.3s ease;
       border-radius: 50px;
-      &:hover{
+      
+      &:hover {
         background-color: #ffffff;
         box-shadow: 0 0 10px #fff;
       }
+
+      @media (max-width: 1024px) {
+        width: 40px; 
+        height: 40px;
+      }
       @media (max-width: 768px) {
+        width: 35px; 
+        height: 35px;
+      }
+      @media (max-width: 480px) {
         width: 30px; 
         height: 30px;
-        padding-right: 0px;
       }
     }
 
@@ -93,15 +136,13 @@ $font-nav: 'Lucida Handwriting', cursive;
       position: absolute;
       top: 100%;
       margin-top: 26px; 
-      right: 50px; 
-      
+      right: 10px; // Adjusted slightly inward
       width: 200px;
       background-color: white; 
       color: #333; 
       padding: 1rem;
       border-radius: 8px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      
       visibility: hidden;
       transform: translateY(10px);
       transition: all 0.3s ease;
@@ -149,82 +190,117 @@ $font-nav: 'Lucida Handwriting', cursive;
       transform: translateY(0);
     }
   }
-}
 
-.authSection {
-  display: flex;
-  align-items: center;
-  padding-right: 50px; 
-
-  @media (max-width: 768px) {
-    padding-right: 0;
-  }
-
-  /* Premium, clean micro-badge styling for the scanned guest view */
-  .tableBadge {
-    display: inline-flex;
+  .authSection {
+    display: flex;
     align-items: center;
-    background-color: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    padding: 6px 18px;
-    border-radius: 25px;
-    backdrop-filter: blur(5px);
-    transition: all 0.2s ease-in-out;
+    padding: 0 30px; 
 
-    span {
-      color: $text-color;
-      font-family: $font-nav;
-      font-size: 0.95rem;
-      font-weight: bold;
-      letter-spacing: 0.5px;
+    @media (max-width: 1024px) {
+      padding: 0 20px;
     }
-
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.2);
-      border-color: rgba(255, 255, 255, 0.4);
-    }
-
     @media (max-width: 768px) {
-      padding: 4px 10px;
+      padding: 0 10px;
+    }
+    @media (max-width: 480px) {
+      padding: 0 5px;
+    }
+
+    .tableBadge {
+      display: inline-flex;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 6px 18px;
+      border-radius: 25px;
+      backdrop-filter: blur(5px);
+      transition: all 0.2s ease-in-out;
+
       span {
-        font-size: 0.65rem;
+        color: $text-color;
+        font-family: $font-nav;
+        font-size: 0.95rem;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+      }
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.4);
+      }
+
+      @media (max-width: 1024px) {
+        padding: 5px 14px;
+        span { font-size: 0.85rem; }
+      }
+      @media (max-width: 768px) {
+        padding: 4px 10px;
+        span { font-size: 0.75rem; }
+      }
+      @media (max-width: 480px) {
+        padding: 3px 8px;
+        span { font-size: 0.6rem; }
       }
     }
   }
-}
 
-.authButtons {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
+  .authButtons {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
 
-  .loginLink {
-    text-decoration: none;
-    color: $text-color;
-    font-family: $font-nav;
-    font-size: 0.9rem;
-    &:hover { color: $hover-color; }
-  }
-
-  .signupBtn {
-    text-decoration: none;
-    background-color: $hover-color;
-    color: white;
-    padding: 8px 18px;
-    border-radius: 20px;
-    font-family: $font-nav;
-    font-size: 0.9rem;
-    font-weight: bold;
-    transition: transform 0.2s ease;
-
-    &:hover {
-      transform: scale(1.05);
-      filter: brightness(1.1);
+    @media (max-width: 1024px) {
+      gap: 1rem;
     }
-  }
+    @media (max-width: 768px) {
+      gap: 8px;
+    }
+    @media (max-width: 480px) {
+      gap: 5px;
+    }
 
-  @media (max-width: 768px) {
-    gap: 8px;
-    .loginLink, .signupBtn { font-size: 0.6rem; padding: 5px 10px; }
+    .loginLink {
+      text-decoration: none;
+      color: $text-color;
+      font-family: $font-nav;
+      font-size: 0.9rem;
+      padding: 5px; 
+
+      &:hover { color: $hover-color; }
+
+      @media (max-width: 1024px) { font-size: 0.8rem; }
+      @media (max-width: 768px) { font-size: 0.7rem; padding: 2px; }
+      @media (max-width: 480px) { font-size: 0.6rem; }
+    }
+
+    .signupBtn {
+      text-decoration: none;
+      background-color: $hover-color;
+      color: white;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-family: $font-nav;
+      font-size: 0.9rem;
+      font-weight: bold;
+      transition: transform 0.2s ease;
+
+      &:hover {
+        transform: scale(1.05);
+        filter: brightness(1.1);
+      }
+
+      @media (max-width: 1024px) {
+        padding: 6px 14px;
+        font-size: 0.8rem;
+      }
+      @media (max-width: 768px) {
+        padding: 5px 10px;
+        font-size: 0.7rem;
+      }
+      @media (max-width: 480px) {
+        padding: 4px 8px;
+        font-size: 0.6rem;
+      }
+    }
   }
 }
