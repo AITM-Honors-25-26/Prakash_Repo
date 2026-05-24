@@ -1,63 +1,72 @@
-$main-colour: #48392a;
 $main-font: 'Lucida Handwriting', cursive;
-$text-light: #fefefe;
-$text-dark: #222222;
 
 .errorContainer {
-  font-family: $main-font;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100dvh; // Uses dynamic viewport height for mobile
-  width: 100%;
-  background-color: #f5f5f5; // Subtle page background
-  padding: 20px;
+  min-height: 100vh;
+  background-color: #f9fafb; 
+  padding: 2rem;
   box-sizing: border-box;
 
-  .errorCard {
-    background-color: rgb(237, 237, 237);
-    padding: 30px 24px;
-    border-radius: 16px;
-    width: 100%;
-    max-width: 450px; // Keeps it clean on desktop
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); // Elegant soft shadow
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+  @media (max-width: 768px) {
+    margin-top: 0px;
+    padding: 1px;
+  }
+  
+}
 
-    .iconWrapper {
-      background-color: $main-colour;
-      padding: 20px;    
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px; // Perfect spacing between elements
-      width: 100%;
-      box-sizing: border-box;
-      
-      img {
-        max-width: 150px; // Keeps your GIF uniform
-        width: 100%;
-        height: auto;
-        object-fit: contain;
-      }
-    }
+.errorCard {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  padding: 3rem 2rem;
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  
+  animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  
+}
 
-    .title {
-      color: $text-light;
-      font-size: 1.5rem;
-      margin: 0;
-      line-height: 1.3;
-    }
+.iconWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem; 
+  
 
-    .message {
-      color: lighten($main-colour, 60%); // Highly readable contrasting text
-      font-size: 0.95rem;
-      line-height: 1.5;
-      margin: 0;
-      font-family: sans-serif; // Fallback to clean text for long body copy
-    }
+  @media (max-width: 768px) {
+    width: 300px;
+  }
+  
+
+  img {
+    width: 500px; 
+    height: 300px;
+    object-fit: contain;
+    margin-bottom: 0.5rem;
+    @media (max-width: 768px) {
+    width: 300px;
+    height: 200px;
+  }
   }
 }
+
+.title {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827; 
+  margin: 0;
+}
+
+.message {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #6b7280; 
+  margin: 0;
+  padding: 0 1rem;
+}
+

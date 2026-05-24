@@ -1,14 +1,15 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import styles from './ErrorPage.module.scss';
-import errorGif from '../../../img/gif/wrong.gif';
+import wrongGif from '../../../img/gif/wrong.gif'
+
 
 const ErrorPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const errorType = searchParams.get('type');
 
-  let errorTitle = "Oops! Wrong Turn........";
-  let errorMessage = "An unexpected error occurred.";
+  let errorTitle = "Oops! Wrong Turn...";
+  let errorMessage = " We can't find the page you are searching for.";
 
   if (errorType === 'invalid-qr') {
     errorTitle = "Invalid QR Code";
@@ -19,8 +20,8 @@ const ErrorPage: React.FC = () => {
     <div className={styles.errorContainer}>
       <div className={styles.errorCard}>
         <div className={styles.iconWrapper}>
+          <img src={wrongGif} alt="" />
           <h1 className={styles.title}>{errorTitle}</h1>
-          <img src={errorGif} alt="Error status illustration" />
           <p className={styles.message}>{errorMessage}</p>
         </div>
       </div>
