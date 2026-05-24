@@ -10,6 +10,7 @@ import styles from './TableManagementPage.module.scss';
 import LoaderGif from './../../../img/gif/loading.gif';
 import { API_ENDPOINTS } from '../../constants/constants.js';
 import { generateTableQR } from './qr-generator.ts'; 
+import empty from "../../../img/gif/empty.gif"
 
 const MySwal = withReactContent(Swal);
 
@@ -329,6 +330,7 @@ const TableManagement: React.FC = () => {
             ))
           ) : (
             <div className={styles.errorContainer}>
+              <img src={empty} alt="" />
               <h2>No floor plan data available.</h2>
             </div>
           )}
