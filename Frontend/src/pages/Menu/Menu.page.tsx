@@ -10,7 +10,7 @@ import Layout from '../../components/layout/layout';
 
 import cartwhite from '../../../img/icons/cart.white.png';
 import hot from '../../../img/gif/hot.gif';
-import LoaderGif from '../../../img/gif/loading.gif'; // <-- Added Loader Import
+import LoaderGif from '../../../img/gif/loading.gif'; 
 
 import { API_ENDPOINTS, CATAGOTY } from '../../constants/constants';
 
@@ -58,25 +58,20 @@ const MenuPage: React.FC = () => {
     }
   }, []);
 
-  // --- THIS IS THE FIXED SECTION ---
   useEffect(() => {
     if (!id) return;
 
     let hasToasted = false;
-
-    // We check every 300ms to see if Header.tsx successfully validated the table
     const checkInterval = setInterval(() => {
       const verifiedTable = localStorage.getItem('bakery_table');
       
       if (verifiedTable === id && !hasToasted) {
-        // Table is officially valid! Show the toast.
         toast.success(`Serving Table: ${id}`, { autoClose: 3000, toastId: `serving-${id}` });
         hasToasted = true;
-        clearInterval(checkInterval); // Stop checking
+        clearInterval(checkInterval); 
       }
     }, 300);
 
-    // Stop checking after 4 seconds just in case the table was invalid (so it doesn't loop forever)
     const timeout = setTimeout(() => clearInterval(checkInterval), 4000);
 
     return () => {
@@ -84,7 +79,6 @@ const MenuPage: React.FC = () => {
       clearTimeout(timeout);
     };
   }, [id]);
-  // ---------------------------------
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -125,10 +119,7 @@ const MenuPage: React.FC = () => {
       if (existingItem) {
         existingItem.quantity += 1;
       } else {
-        cart.push({
-          ...item,
-          quantity: 1,
-        });
+        cart.push({ ...item, quantity: 1 });
       }
 
       localStorage.setItem('bakery_cart', JSON.stringify(cart));
@@ -159,13 +150,8 @@ const MenuPage: React.FC = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.delete(`${API_ENDPOINTS.MENU_ACTION}/${itemId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        data: {
-          email: parsed.email,
-          password,
-        },
+        headers: { Authorization: `Bearer ${token}` },
+        data: { email: parsed.email, password },
       });
 
       toast.success('Item deleted');
@@ -175,6 +161,7 @@ const MenuPage: React.FC = () => {
     }
   };
 
+  // Full-page Loader matching the Table Management page
   if (loading) {
     return (
       <Layout>
