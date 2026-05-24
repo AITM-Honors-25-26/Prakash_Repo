@@ -3,9 +3,10 @@ $main-color: #48392a;
 
 .container {
   padding: 2rem;
-  min-height: 100vh;
+  min-height: 100%;
   background: #faf7f2;
   font-family: $main-font;
+  
 }
 
 .header {
@@ -193,9 +194,14 @@ $main-color: #48392a;
 .empty {
   text-align: center;
   padding: 5rem 0;
-
+  @media (max-width: 768px) {
+      padding: 0px;
+    }
   img {
-    width: 150px;
+    width: 400px;
+    @media (max-width: 768px) {
+      width: 150px;
+    }
   }
 
   h2 {
