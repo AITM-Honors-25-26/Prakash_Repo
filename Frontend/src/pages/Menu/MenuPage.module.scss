@@ -1,5 +1,6 @@
 $main-font: 'Lucida Handwriting', cursive;
 $main-color: #48392a;
+$light-main-colour: #5e4934;
 
 .container {
   padding: 2rem;
@@ -8,38 +9,56 @@ $main-color: #48392a;
   font-family: $main-font;
   
 }
-
 .header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 0rem;
+  display: flex;
+  justify-content: space-between;
+  .headerPart{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: start;
+    h1 {
+      font-size: 2rem;
+      color: #2d1b18;
+      margin-bottom: 0rem;
+      margin-top: 0px;
+      @media (max-width: 768px) {
+        font-size: 1.5rem;
+      }
+    }
+    p {
+      color: #777;
+      font-size: 1rem;
+      margin-top: 0px;
+      margin-bottom: 0px;
+      @media (max-width: 768px) {
+        font-size: 0.8rem;
+      }
+    }
+  }
+  .adminBtn {
+    background: $main-color;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s ease;
 
-  h1 {
-    font-size: 3rem;
-    color: #2d1b18;
-    margin-bottom: 0.5rem;
+    &:hover {
+      transform: translateY(-2px);
+      background: $light-main-colour;
+    }
+    @media (max-width: 768px) {
+      font-size: 0.7rem;
+      height: 40px; 
+      margin-top: 10px;   
+    }
   }
 
-  p {
-    color: #777;
-    font-size: 1rem;
-  }
-}
-
-.adminBtn {
-  margin-top: 1rem;
-  background: $main-color;
-  border: none;
-  color: white;
-  padding: 0.9rem 1.5rem;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.3s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    background: #e85a2a;
-  }
 }
 
 .categorySection {

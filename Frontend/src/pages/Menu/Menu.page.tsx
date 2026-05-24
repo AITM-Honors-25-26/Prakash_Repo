@@ -190,15 +190,16 @@ const MenuPage: React.FC = () => {
     <Layout>
       <div className={styles.container}>
         <div className={styles.header}>
-          <h1>Our Menu</h1>
-          <p>Freshly baked happiness every day</p>
-
+          <div className={styles.headerPart}>
+            <h1>Our Menu</h1>
+            <p>Freshly baked happiness every day</p>
+          </div>
           {isAdmin && (
             <button 
               className={styles.adminBtn}
               onClick={() => navigate('/admin/menu/create')}
             >
-              + Add New Item
+              + Add Item
             </button>
           )}
         </div>
