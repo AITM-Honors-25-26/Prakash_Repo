@@ -161,7 +161,6 @@ const MenuPage: React.FC = () => {
     }
   };
 
-  // Full-page Loader matching the Table Management page
   if (loading) {
     return (
       <Layout>
@@ -214,6 +213,7 @@ const MenuPage: React.FC = () => {
                         <h3>{item.name}</h3>
                         <p>{item.description}</p>
                       </div>
+                      <div className={styles.bottompart}>
                       <div className={styles.bottom}>
                         <span className={styles.price}>Rs. {item.price}</span>
                         <button
@@ -232,7 +232,7 @@ const MenuPage: React.FC = () => {
                         >
                           Delete
                         </button>
-                      )}
+                      )}</div>
                     </div>
                   </div>
                 ))}
