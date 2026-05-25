@@ -39,7 +39,7 @@ $light-main-colour: rgb(128, 128, 128);
     align-items: center;
     justify-content: center; 
     gap: 6px;                
-    background-color: #28a745;
+    background-color: $header_colour;
     color: white;
     border: none;
     border-radius: 5px;
