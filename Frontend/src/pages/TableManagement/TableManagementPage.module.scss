@@ -1,5 +1,7 @@
 $header_colour: #48392a;
 $font-nav: 'Lucida Handwriting', cursive;
+$light-main-colour: rgb(128, 128, 128);
+
 
 .pageHeader {
   display: flex;
@@ -186,7 +188,12 @@ $font-nav: 'Lucida Handwriting', cursive;
   align-items: center;
   justify-content: center;
   height: 60vh;
-  img { width: 100px; }
+  img { width: 150px; }
+  h1{
+    font-family: $font-nav;
+    color: $light-main-colour;
+    
+  }
 }
 
 @media (max-width: 600px) {
