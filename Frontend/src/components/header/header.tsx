@@ -116,6 +116,13 @@ const Header: React.FC = () => {
           Menu {activeTable && `(Table ${activeTable})`}
         </Link>
         
+        {/* Dashboard link for Kitchen and Staff */}
+        {hasStaffAccess && (
+          <Link to="/Dashboard" className={styles.staffLink}>
+            Dashboard
+          </Link>
+        )}
+
         {hasStaffAccess && (
           <Link to="/TableManagement" className={styles.staffLink}>
             Tables
@@ -150,6 +157,7 @@ const Header: React.FC = () => {
                 <Link to="/ProfilePage">Profile</Link>
                 <hr />
                 <Link to="/SettingsPage">Settings</Link>
+                <hr />
                 <hr />
                 <button className={styles.logoutBtn} onClick={handleLogout}>
                   Logout
