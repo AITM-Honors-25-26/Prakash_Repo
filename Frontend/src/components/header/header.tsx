@@ -118,7 +118,7 @@ const Header: React.FC = () => {
         
         {/* Dashboard link for Kitchen and Staff */}
         {hasStaffAccess && (
-          <Link to="/Dashboard" className={styles.staffLink}>
+          <Link to="/DashboardPage" className={styles.staffLink}>
             Dashboard
           </Link>
         )}

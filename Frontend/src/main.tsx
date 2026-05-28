@@ -14,6 +14,7 @@ import Settings from "./pages/Settings/setting.page";
 import TableManagement from "./pages/TableManagement/TableManagement.page";
 import CheckoutPage from "./pages/Checkout/CheckOut.page";
 import ErrorPage from "./pages/ErrorPage/ErrorPage";
+import Dashboard from "./pages/DashboardPage/Dashboard.Page";
 
 
 createRoot(document.getElementById("root")!).render(
@@ -25,15 +26,16 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/RegisterPage" element={<RegisterPage />} />
         <Route path="/ForgetPassPage" element={<ForgetPassPage />} />
         <Route path="/ContactUsPage" element={<ContactUs />} />
-        <Route path="/AboutUsPage" element={<AboutUsPage />}/>
+        <Route path="/AboutUsPage" element={<AboutUsPage />} />
         <Route path="/MenuPage" element={<MenuPage />} />
-        <Route path="/MenuPage/:id" element={<MenuPage />}/>
-        <Route path="/Reset-password" element={<ResetPasswordPage />}/>
-        <Route path="/ProfilePage" element={<Profile />}/>
+        <Route path="/MenuPage/:id" element={<MenuPage />} />
+        <Route path="/Reset-password" element={<ResetPasswordPage /> }/>
+        <Route path="/ProfilePage" element={<Profile />} />
         <Route path="/SettingsPage" element={<Settings />} />
         <Route path="/TableManagement" element={<TableManagement />} />
         <Route path="/CheckoutPage" element={<CheckoutPage />}  />
-        <Route path="/ErrorPage" element={<ErrorPage />}></Route>
+        <Route path="/ErrorPage" element={<ErrorPage />} />
+        <Route  path="/DashboardPage" element={<Dashboard />}/>
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

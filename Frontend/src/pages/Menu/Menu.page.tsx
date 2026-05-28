@@ -12,7 +12,7 @@ import cartwhite from '../../../img/icons/cart.white.png';
 import hot from '../../../img/gif/hot.gif';
 import LoaderGif from '../../../img/gif/loading.gif'; 
 
-import { API_ENDPOINTS, CATAGOTY } from '../../constants/constants';
+import { API_ENDPOINTS, CATEGORY } from '../../constants/constants';
 
 const MySwal = withReactContent(Swal);
 
@@ -101,7 +101,7 @@ const MenuPage: React.FC = () => {
   }, [fetchMenu]);
 
   const groupedItems = useMemo(() => {
-    return Object.values(CATAGOTY).map((category) => ({
+    return Object.values(CATEGORY).map((category) => ({
       category,
       items: menuItems.filter((item) => item.category === category),
     }));
