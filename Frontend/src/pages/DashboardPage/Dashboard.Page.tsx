@@ -1,186 +1,287 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { io, Socket } from 'socket.io-client';
 import styles from './DashboardPage.module.scss';
 import { API_ENDPOINTS } from '../../constants/constants.js';
+import Layout from '../../components/layout/layout.js';
 
-// Define structures for TypeScript safety
+// Socket server is the backend root (no /api)
+const SOCKET_URL = 'http://192.168.1.64:9005';
+
 interface OrderItem {
   _id: string;
   name: string;
   quantity: number;
-  notes?: string;
+  specialNotes?: string;
 }
 
 interface Order {
   _id: string;
   tableNumber: string | number;
   items: OrderItem[];
-  status: 'Pending' | 'Preparing' | 'Ready' | 'Delivered';
+  status: 'Pending' | 'Preparing' | 'Ready' | 'Completed' | 'Cancelled';
   createdAt: string;
-  totalAmount: number;
+  totalPrice: number;
 }
 
 const Dashboard: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [connected, setConnected] = useState<boolean>(false);
 
-  // Fetch orders from backend
+  const socketRef = useRef<Socket | null>(null);
+
+  // Initial fetch — load all active orders when dashboard first opens
   const fetchOrders = async () => {
     try {
-      const response = await axios.get(API_ENDPOINTS.LISTALLORDERS || '/api/orders');
+      const response = await axios.get(`${API_ENDPOINTS.ORDER_ACTION}/kitchen`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
       const data = response.data?.data || response.data?.result || response.data;
-      
+
       if (Array.isArray(data)) {
-        const activeOrders = data.filter((order: Order) => order.status !== 'Delivered');
-        setOrders(activeOrders);
+        setOrders(data);
       }
       setError(null);
     } catch (err) {
-      console.error("Error fetching dashboard orders:", err);
-      setError("Failed to load live orders. Retrying...");
+      console.error('Error fetching orders:', err);
+      setError('Failed to load orders. Check your connection.');
     } finally {
       setLoading(false);
     }
   };
 
+  // Socket setup
   useEffect(() => {
     fetchOrders();
-    const interval = setInterval(fetchOrders, 15000);
-    return () => clearInterval(interval);
+
+    const socket = io(SOCKET_URL, {
+      transports: ['websocket'],
+      reconnectionAttempts: 5,
+      reconnectionDelay: 2000,
+    });
+
+    socketRef.current = socket;
+    socket.on('connect', () => {
+      console.log('Dashboard connected to socket. ID:', socket.id);
+      setConnected(true);
+      setError(null);
+      socket.emit('join-room', 'kitchen');
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Dashboard disconnected from socket.');
+      setConnected(false);
+    });
+
+    socket.on('connect_error', () => {
+      setError('Live connection lost. Trying to reconnect...');
+      setConnected(false);
+    });
+
+    // A customer just placed an order — add it to the top of the queue
+    socket.on('kitchen_new_order', (newOrder: Order) => {
+      console.log('New order received:', newOrder);
+      setOrders(prev => {
+        const exists = prev.find(o => o._id === newOrder._id);
+        if (exists) return prev;
+        return [newOrder, ...prev];
+      });
+      setError(null);
+    });
+
+    // Chef or waiter changed an order's status
+    socket.on('order_status_updated', (updatedOrder: Order) => {
+      console.log('Order status updated:', updatedOrder);
+      setOrders(prev => {
+        if (
+          updatedOrder.status === 'Completed' ||
+          updatedOrder.status === 'Cancelled'
+        ) {
+          return prev.filter(o => o._id !== updatedOrder._id);
+        }
+        return prev.map(o => (o._id === updatedOrder._id ? updatedOrder : o));
+      });
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
-  // Handle progressing order status
-  const updateOrderStatus = async (orderId: string, nextStatus: 'Preparing' | 'Ready' | 'Delivered') => {
+  // Update status — backend will emit socket event back to all connected clients
+  const updateOrderStatus = async (
+    orderId: string,
+    nextStatus: 'Preparing' | 'Ready' | 'Completed'
+  ) => {
     try {
-      // Optimistic UI update for immediate visual feedback
-      setOrders(prevOrders =>
-        prevOrders.map(order =>
-          order._id === orderId ? { ...order, status: nextStatus } : order
-        ).filter(order => order.status !== 'Delivered') // Remove immediately if marked completed
+      // Optimistic UI update for instant feedback
+      setOrders(prev =>
+        prev
+          .map(order =>
+            order._id === orderId ? { ...order, status: nextStatus } : order
+          )
+          .filter(
+            order =>
+              order.status !== 'Completed' && order.status !== 'Cancelled'
+          )
       );
 
-      await axios.patch(`${API_ENDPOINTS.UPDATEORDERSTATUS || '/api/orders'}/${orderId}`, {
-        status: nextStatus
-      });
+      // PATCH /api/order/:id/status
+      await axios.patch(
+        `${API_ENDPOINTS.ORDER_ACTION}/${orderId}/status`,
+        { status: nextStatus },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        }
+      );
     } catch (err) {
-      console.error("Failed to update status on server:", err);
-      // Rollback or alert staff
+      console.error('Failed to update order status:', err);
+      // Rollback optimistic update by re-fetching
       fetchOrders();
     }
   };
 
-  // Segregate orders based on station responsibility
-  const kitchenOrders = orders.filter(o => o.status === 'Pending' || o.status === 'Preparing');
+  const kitchenOrders = orders.filter(
+    o => o.status === 'Pending' || o.status === 'Preparing'
+  );
   const serviceOrders = orders.filter(o => o.status === 'Ready');
 
-  if (loading && orders.length === 0) return <div className={styles.loader}>Loading Live Orders...</div>;
+  if (loading && orders.length === 0) {
+    return (
+      <Layout>
+        <div className={styles.loader}>Loading Live Orders...</div>
+      </Layout>
+    );
+  }
 
   return (
-    <div className={styles.dashboardContainer}>
-      <header className={styles.dashHeader}>
-        <h1>Live Staff Dashboard</h1>
-        <button onClick={fetchOrders} className={styles.refreshBtn}>🔄 Refresh Board</button>
-      </header>
-
-      {error && <div className={styles.errorBanner}>{error}</div>}
-
-      <div className={styles.boardGrid}>
-        
-        {/* KITCHEN STATION */}
-        <section className={styles.stationSection}>
-          <div className={`${styles.stationHeader} ${styles.kitchenHeader}`}>
-            <h2>🍳 Kitchen Queue <span>({kitchenOrders.length})</span></h2>
+    <Layout>
+      <div className={styles.dashboardContainer}>
+        <header className={styles.dashHeader}>
+          <h1>Live Staff Dashboard</h1>
+          <div className={styles.headerRight}>
+            <span
+              className={`${styles.connectionBadge} ${
+                connected ? styles.connected : styles.disconnected
+              }`}
+            >
+              {connected ? '🟢 Live' : '🔴 Offline'}
+            </span>
+            <button onClick={fetchOrders} className={styles.refreshBtn}>
+              🔄 Refresh
+            </button>
           </div>
-          <div className={styles.cardContainer}>
-            {kitchenOrders.length === 0 ? (
-              <p className={styles.emptyMsg}>No meals to prepare right now.</p>
-            ) : (
-              kitchenOrders.map(order => (
-                <div key={order._id} className={`${styles.orderCard} ${styles[order.status.toLowerCase()]}`}>
-                  <div className={styles.cardTop}>
-                    <h3>Table {order.tableNumber}</h3>
-                    <span className={styles.timeTag}>
-                      {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  </div>
-                  
-                  <ul className={styles.itemList}>
-                    {order.items.map((item) => (
-                      <li key={item._id} className={styles.itemRow}>
-                        <span className={styles.qty}>❌ {item.quantity}</span>
-                        <div className={styles.itemDetails}>
-                          <p className={styles.itemName}>{item.name}</p>
-                          {item.notes && <span className={styles.notes}>📝 {item.notes}</span>}
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
+        </header>
 
-                  <div className={styles.cardActions}>
-                    {order.status === 'Pending' ? (
-                      <button 
-                        onClick={() => updateOrderStatus(order._id, 'Preparing')}
-                        className={styles.actionBtnStart}
+        {error && <div className={styles.errorBanner}>{error}</div>}
+
+        <div className={styles.boardGrid}>
+          {/* KITCHEN STATION */}
+          <section className={styles.stationSection}>
+            <div className={`${styles.stationHeader} ${styles.kitchenHeader}`}>
+              <h2>🍳 Kitchen Queue <span>({kitchenOrders.length})</span></h2>
+            </div>
+            <div className={styles.cardContainer}>
+              {kitchenOrders.length === 0 ? (
+                <p className={styles.emptyMsg}>No meals to prepare right now.</p>
+              ) : (
+                kitchenOrders.map(order => (
+                  <div
+                    key={order._id}
+                    className={`${styles.orderCard} ${styles[order.status.toLowerCase()]}`}
+                  >
+                    <div className={styles.cardTop}>
+                      <h3>Table {order.tableNumber}</h3>
+                      <span className={styles.timeTag}>
+                        {new Date(order.createdAt).toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </span>
+                    </div>
+
+                    <ul className={styles.itemList}>
+                      {order.items.map((item, index) => (
+                        <li key={item._id || index} className={styles.itemRow}>
+                          <span className={styles.qty}>{item.quantity}x</span>
+                          <div className={styles.itemDetails}>
+                            <p className={styles.itemName}>{item.name}</p>
+                            {item.specialNotes && (
+                              <span className={styles.notes}>📝 {item.specialNotes}</span>
+                            )}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className={styles.cardActions}>
+                      {order.status === 'Pending' ? (
+                        <button
+                          onClick={() => updateOrderStatus(order._id, 'Preparing')}
+                          className={styles.actionBtnStart}
+                        >
+                          Start Cooking
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => updateOrderStatus(order._id, 'Ready')}
+                          className={styles.actionBtnReady}
+                        >
+                          Mark Ready 🎉
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </section>
+
+          <section className={styles.stationSection}>
+            <div className={`${styles.stationHeader} ${styles.serviceHeader}`}>
+              <h2>🛎️ Service & Delivery <span>({serviceOrders.length})</span></h2>
+            </div>
+            <div className={styles.cardContainer}>
+              {serviceOrders.length === 0 ? (
+                <p className={styles.emptyMsg}>No orders waiting to go out.</p>
+              ) : (
+                serviceOrders.map(order => (
+                  <div
+                    key={order._id}
+                    className={`${styles.orderCard} ${styles.readyCard}`}
+                  >
+                    <div className={styles.cardTop}>
+                      <h3>Table {order.tableNumber}</h3>
+                      <span className={styles.readyBadge}>Ready to Serve</span>
+                    </div>
+
+                    <ul className={styles.itemList}>
+                      {order.items.map((item, index) => (
+                        <li key={item._id || index} className={styles.itemRow}>
+                          <span className={styles.qty}>{item.quantity}x</span>
+                          <span className={styles.itemName}>{item.name}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className={styles.cardActions}>
+                      <button
+                        onClick={() => updateOrderStatus(order._id, 'Completed')}
+                        className={styles.actionBtnComplete}
                       >
-                        Start Cooking
+                        Served & Completed ✓
                       </button>
-                    ) : (
-                      <button 
-                        onClick={() => updateOrderStatus(order._id, 'Ready')}
-                        className={styles.actionBtnReady}
-                      >
-                        Mark Ready 🎉
-                      </button>
-                    )}
+                    </div>
                   </div>
-                </div>
-              ))
-            )}
-          </div>
-        </section>
-
-        {/* STAFF / SERVICE STATION */}
-        <section className={styles.stationSection}>
-          <div className={`${styles.stationHeader} ${styles.serviceHeader}`}>
-            <h2>🛎️ Service & Delivery <span>({serviceOrders.length})</span></h2>
-          </div>
-          <div className={styles.cardContainer}>
-            {serviceOrders.length === 0 ? (
-              <p className={styles.emptyMsg}>No orders waiting to go out.</p>
-            ) : (
-              serviceOrders.map(order => (
-                <div key={order._id} className={`${styles.orderCard} ${styles.readyCard}`}>
-                  <div className={styles.cardTop}>
-                    <h3>Table {order.tableNumber}</h3>
-                    <span className={styles.readyBadge}>Ready to Serve</span>
-                  </div>
-                  
-                  <ul className={styles.itemList}>
-                    {order.items.map((item) => (
-                      <li key={item._id} className={styles.itemRow}>
-                        <span className={styles.qty}>{item.quantity}x</span>
-                        <span className={styles.itemName}>{item.name}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className={styles.cardActions}>
-                    <button 
-                      onClick={() => updateOrderStatus(order._id, 'Delivered')}
-                      className={styles.actionBtnComplete}
-                    >
-                      Served & Completed ✓
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </section>
-
+                ))
+              )}
+            </div>
+          </section>
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
