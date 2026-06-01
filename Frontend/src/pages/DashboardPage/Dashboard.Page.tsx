@@ -4,8 +4,10 @@ import { io, Socket } from 'socket.io-client';
 import styles from './DashboardPage.module.scss';
 import { API_ENDPOINTS } from '../../constants/constants.js';
 import Layout from '../../components/layout/layout.js';
-import refresh from '../../../img/icons/refresh.white.png' 
-import kitchen from '../../../img/RoleIcon/chef.png'
+import refresh from '../../../img/icons/refresh.white.png';
+import kitchen from '../../../img/typeicone/kitchen.png';
+import loadinggif from '../../../img/gif/loading.gif';
+import service from '../../../img/typeicone/serving.png';
 
 // Socket server is the backend root (no /api)
 const SOCKET_URL = 'http://192.168.1.64:9005';
@@ -153,7 +155,9 @@ const Dashboard: React.FC = () => {
   if (loading && orders.length === 0) {
     return (
       <Layout>
-        <div className={styles.loader}>Loading Live Orders...</div>
+        <div className={styles.loading}>
+          <img src={loadinggif} alt="Loading" /> 
+        </div>
       </Layout>
     );
   }
@@ -166,16 +170,18 @@ const Dashboard: React.FC = () => {
           <div className={styles.headerRight}>
             <span
               className={`${styles.connectionBadge} ${
-                connected ?styles.connected : styles.disconnected
+                connected ? styles.connected : styles.disconnected
               }`}
             >
             </span>
             <button onClick={fetchOrders} className={styles.refreshBtn}>
-              <img src={refresh} alt="" />
+              <img src={refresh} alt="Refresh" />
             </button>
           </div>
         </header>
+        
         {error && <div className={styles.errorBanner}>{error}</div>}
+        
         <div className={styles.boardGrid}>
           {/* KITCHEN STATION */}
           <section className={styles.stationSection}>
@@ -238,9 +244,10 @@ const Dashboard: React.FC = () => {
             </div>
           </section>
 
+          {/* SERVICE STATION */}
           <section className={styles.stationSection}>
             <div className={`${styles.stationHeader} ${styles.serviceHeader}`}>
-              <h2>🛎️ Service & Delivery <span>({serviceOrders.length})</span></h2>
+              <h2><img src={service} alt="" /> Service & Delivery <span>({serviceOrders.length})</span></h2>
             </div>
             <div className={styles.cardContainer}>
               {serviceOrders.length === 0 ? (
