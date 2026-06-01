@@ -32,7 +32,6 @@ const Dashboard: React.FC = () => {
       const data = response.data?.data || response.data?.result || response.data;
       
       if (Array.isArray(data)) {
-        // Filter out completed/delivered orders to keep the dashboard focused on active tasks
         const activeOrders = data.filter((order: Order) => order.status !== 'Delivered');
         setOrders(activeOrders);
       }
@@ -45,7 +44,6 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // Poll for live orders every 15 seconds to keep kitchen/staff updated
   useEffect(() => {
     fetchOrders();
     const interval = setInterval(fetchOrders, 15000);

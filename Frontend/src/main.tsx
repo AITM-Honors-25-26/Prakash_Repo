@@ -16,7 +16,6 @@ import CheckoutPage from "./pages/Checkout/CheckOut.page";
 import ErrorPage from "./pages/ErrorPage/ErrorPage";
 import Dashboard from "./pages/DashboardPage/Dashboard.Page";
 
-
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>

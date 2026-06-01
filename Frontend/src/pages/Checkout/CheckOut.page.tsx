@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -6,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import styles from './CheckoutPage.module.scss';
 import Layout from '../../components/layout/layout';
 import emptyCart from '../../../img/gif/emptycart.gif';
+import { API_ENDPOINTS } from '../../constants/constants';
 
 const MySwal = withReactContent(Swal);
 
@@ -18,6 +20,7 @@ interface CartItem {
   category: string;
   stock: number;
   quantity: number;
+  specialNotes?: string;
 }
 
 const CheckoutPage: React.FC = () => {
@@ -25,27 +28,22 @@ const CheckoutPage: React.FC = () => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [tableNumber, setTableNumber] = useState<string>('');
-  
-  // Single selection state for the payment method choice
   const [paymentOption, setPaymentOption] = useState<string>('Pay Later');
 
   useEffect(() => {
-    // 1. Load cart items from local storage
     const existingCart = localStorage.getItem('bakery_cart');
     if (existingCart) {
       setCartItems(JSON.parse(existingCart));
     }
 
-    // 2. Load the locked table number captured from the scanned QR url parameter
     const savedTable = localStorage.getItem('bakery_table');
     if (savedTable) {
       setTableNumber(savedTable);
     } else {
-      toast.warn("No table detected. Please rescan your table QR code.");
+      toast.warn('No table detected. Please rescan your table QR code.');
     }
   }, []);
 
-  // Adjust item quantities directly on the layout screen
   const updateQuantity = (id: string, amount: number) => {
     const updatedCart = cartItems.map(item => {
       if (item._id === id) {
@@ -56,66 +54,78 @@ const CheckoutPage: React.FC = () => {
     });
     setCartItems(updatedCart);
     localStorage.setItem('bakery_cart', JSON.stringify(updatedCart));
-    window.dispatchEvent(new Event('cartUpdated')); 
+    window.dispatchEvent(new Event('cartUpdated'));
   };
 
-  // Remove individual items completely
   const removeItem = (id: string) => {
     const updatedCart = cartItems.filter(item => item._id !== id);
     setCartItems(updatedCart);
     localStorage.setItem('bakery_cart', JSON.stringify(updatedCart));
     window.dispatchEvent(new Event('cartUpdated'));
-    toast.info("Item removed from cart.");
+    toast.info('Item removed from cart.');
   };
 
-  // Compute Grand Total Cost
   const calculateTotal = () => {
     return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
-  // Process the order execution simulation block 100% on the frontend client
-  const handlePlaceOrder = (e: React.FormEvent) => {
+  const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (cartItems.length === 0) {
-      toast.error("Your cart is empty!");
+      toast.error('Your cart is empty!');
       return;
     }
 
     if (!tableNumber) {
-      toast.error("Table mapping missing! Please rescan your QR code.");
+      toast.error('Table mapping missing! Please rescan your QR code.');
       return;
     }
 
-    setTimeout(async () => {
-      try {
-        // Clear Cart local storage completely on success
-        localStorage.removeItem('bakery_cart');
-        window.dispatchEvent(new Event('cartUpdated'));
+    setLoading(true);
 
-        if (paymentOption === 'Pay Now') {
-          await MySwal.fire({
-            title: 'Redirecting to Payment Gateways...',
-            text: `Order confirmed for Table ${tableNumber}. Loading online checkout options...`,
-            icon: 'info',
-            confirmButtonColor: '#d84315'
-          });
-        } else {
-          await MySwal.fire({
-            title: 'Order Sent to Kitchen! 🍳',
-            text: `Table ${tableNumber}, your order has been sent. You can pay at the counter when you leave!`,
-            icon: 'success',
-            confirmButtonColor: '#d84315'
-          });
-        }
+    try {
+      // Build the order payload matching the backend schema
+      const orderPayload = {
+        tableNumber,
+        items: cartItems.map(item => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+          specialNotes: item.specialNotes || '',
+        })),
+      };
 
-        navigate('/MenuPage'); // Direct user right back to the regular menu display
-      } catch (error) {
-        console.error("Order processing encountered an error:", error);
-        toast.error("An unexpected error occurred.");
-      } finally {
-        setLoading(false);
+      // POST to backend — this saves the order AND triggers io.emit('kitchen_new_order')
+      await axios.post(API_ENDPOINTS.ORDER_ACTION + '/', orderPayload);
+
+      // Clear cart after confirmed server response
+      localStorage.removeItem('bakery_cart');
+      window.dispatchEvent(new Event('cartUpdated'));
+
+      if (paymentOption === 'Pay Now') {
+        await MySwal.fire({
+          title: 'Redirecting to Payment Gateway...',
+          text: `Order confirmed for Table ${tableNumber}. Loading online checkout options...`,
+          icon: 'info',
+          confirmButtonColor: '#d84315',
+        });
+      } else {
+        await MySwal.fire({
+          title: 'Order Sent to Kitchen! 🍳',
+          text: `Table ${tableNumber}, your order is being prepared. Pay at the counter when you leave!`,
+          icon: 'success',
+          confirmButtonColor: '#d84315',
+        });
       }
-    }, 1200);
+
+      navigate('/MenuPage');
+    } catch (error) {
+      console.error('Order placement failed:', error);
+      toast.error('Failed to place order. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -129,28 +139,28 @@ const CheckoutPage: React.FC = () => {
         {cartItems.length === 0 ? (
           <div className={styles.emptyCart}>
             <p>Your cart is empty. Let's fix that!</p>
-            <img src={emptyCart} alt="" className={styles.emptyCarticon}/>
+            <img src={emptyCart} alt="" className={styles.emptyCarticon} />
             <button className={styles.backBtn} onClick={() => navigate('/MenuPage')}>
               Back to Menu
             </button>
           </div>
         ) : (
           <div className={styles.checkoutGrid}>
-            
+
             <div className={styles.summarySection}>
               <h2>Summary</h2>
               <div className={styles.itemsList}>
                 {cartItems.map((item) => (
                   <div key={item._id} className={styles.cartItemRow}>
-                    <img 
-                      src={item.images?.[0]?.url || 'https://via.placeholder.com/100'} 
-                      alt={item.name} 
+                    <img
+                      src={item.images?.[0]?.url || 'https://via.placeholder.com/100'}
+                      alt={item.name}
                       className={styles.itemImage}
                     />
                     <div className={styles.itemInfo}>
                       <h3>{item.name}</h3>
                       <p className={styles.itemPrice}>Rs. {item.price.toLocaleString()}</p>
-                      
+
                       <div className={styles.quantityControls}>
                         <button type="button" onClick={() => updateQuantity(item._id, -1)}>-</button>
                         <span className={styles.itemCount}>{item.quantity}</span>
@@ -161,8 +171,8 @@ const CheckoutPage: React.FC = () => {
                       <span className={styles.subtotal}>
                         Rs. {(item.price * item.quantity).toLocaleString()}
                       </span>
-                      <button 
-                        className={styles.deleteBtn} 
+                      <button
+                        className={styles.deleteBtn}
                         onClick={() => removeItem(item._id)}
                       >
                         Delete
@@ -181,16 +191,16 @@ const CheckoutPage: React.FC = () => {
             <div className={styles.formSection}>
               <h2>Payment Choice</h2>
               <form onSubmit={handlePlaceOrder}>
-                
+
                 <div className={styles.radioGroupContainer}>
-                  <label 
+                  <label
                     className={`${styles.paymentLabel} ${
-                    paymentOption === 'Pay Later' ? styles.activeOption : ''
+                      paymentOption === 'Pay Later' ? styles.activeOption : ''
                     }`}
                   >
-                    <input 
-                      type="radio" 
-                      name="paymentOption" 
+                    <input
+                      type="radio"
+                      name="paymentOption"
                       value="Pay Later"
                       checked={paymentOption === 'Pay Later'}
                       onChange={(e) => setPaymentOption(e.target.value)}
@@ -204,14 +214,14 @@ const CheckoutPage: React.FC = () => {
                     </div>
                   </label>
 
-                  <label 
+                  <label
                     className={`${styles.paymentLabel} ${
                       paymentOption === 'Pay Now' ? styles.activeOption : ''
                     }`}
                   >
-                    <input 
-                      type="radio" 
-                      name="paymentOption" 
+                    <input
+                      type="radio"
+                      name="paymentOption"
                       value="Pay Now"
                       checked={paymentOption === 'Pay Now'}
                       onChange={(e) => setPaymentOption(e.target.value)}
@@ -224,12 +234,12 @@ const CheckoutPage: React.FC = () => {
                       </span>
                     </div>
                   </label>
-
                 </div>
 
                 <button type="submit" className={styles.submitBtn} disabled={loading}>
-                  {loading ? 'Processing Order...' : `Confirm Order (Rs. ${calculateTotal().toLocaleString()})`}
+                  {loading ? 'Placing Order...' : `Confirm Order (Rs. ${calculateTotal().toLocaleString()})`}
                 </button>
+
               </form>
             </div>
 
