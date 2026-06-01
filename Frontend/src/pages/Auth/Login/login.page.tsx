@@ -7,7 +7,6 @@ import { toast, ToastContainer } from 'react-toastify';
 import leftDesign from "../../../../img/walpaper/1.png"
 import 'react-toastify/dist/ReactToastify.css';
 
-
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,33 +20,33 @@ const LoginPage: React.FC = () => {
       const response = await fetch(API_ENDPOINTS.LOGIN, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password}),
+        body: JSON.stringify({ email, password }),
       });
 
       const result = await response.json();
 
       if (response.ok) {
         console.log("Full Result Data:", result.data);
-        
-        const userStatus = result.data.status;
-        if(userStatus === false){
-          toast.error("Your account is not activated");
+
+        // FIX: status boolean lives on result.data.user, not result.data
+        const userStatus = result.data?.user?.status;
+        if (userStatus === false) {
+          toast.error("Your account is not activated. Please check your email.");
           return;
         }
 
         const token = result.data?.accessToken;
         if (token) {
-          localStorage.setItem('token', token);   
-          
-          if(result.data?.user){
+          localStorage.setItem('token', token);
+
+          if (result.data?.user) {
             localStorage.setItem('user', JSON.stringify(result.data.user));
-          }else{
-            localStorage.setItem('user',JSON.stringify(result.data))
+          } else {
+            localStorage.setItem('user', JSON.stringify(result.data));
           }
 
           toast.success("Login Successful!");
-
-          window.location.href = '/'; 
+          window.location.href = '/';
         } else {
           toast.error("Login failed: No token received");
         }
@@ -79,7 +78,7 @@ const LoginPage: React.FC = () => {
                 id="email"
                 name="email"
                 type="email"
-                autoComplete="email" 
+                autoComplete="email"
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -102,9 +101,9 @@ const LoginPage: React.FC = () => {
 
             <div className={styles.middle}>
               <div className={styles.remember}>
-                <input 
-                  type="checkbox" 
-                  id="remember" 
+                <input
+                  type="checkbox"
+                  id="remember"
                   checked={rememberMe}
                   onChange={() => setRememberMe(!rememberMe)}
                   className={styles.realCheckbox}
@@ -127,4 +126,5 @@ const LoginPage: React.FC = () => {
     </>
   );
 };
+
 export default LoginPage;
