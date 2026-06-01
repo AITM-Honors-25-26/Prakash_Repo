@@ -116,9 +116,11 @@ const Dashboard: React.FC = () => {
 
   // Update status — backend will emit socket event back to all connected clients
   const updateOrderStatus = async (
+    
     orderId: string,
     nextStatus: 'Preparing' | 'Ready' | 'Completed'
   ) => {
+    
     try {
       // Optimistic UI update for instant feedback
       setOrders(prev =>
@@ -131,14 +133,17 @@ const Dashboard: React.FC = () => {
               order.status !== 'Completed' && order.status !== 'Cancelled'
           )
       );
+      
 
       // PATCH /api/order/:id/status
       await axios.patch(
+        
         `${API_ENDPOINTS.ORDER_ACTION}/${orderId}/status`,
         { status: nextStatus },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }
+        
       );
     } catch (err) {
       console.error('Failed to update order status:', err);
