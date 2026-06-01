@@ -117,11 +117,13 @@ const Dashboard: React.FC = () => {
   // Update status — backend will emit socket event back to all connected clients
   const updateOrderStatus = async (
     
+    
     orderId: string,
     nextStatus: 'Preparing' | 'Ready' | 'Completed'
   ) => {
     
     try {
+      
       // Optimistic UI update for instant feedback
       setOrders(prev =>
         prev
