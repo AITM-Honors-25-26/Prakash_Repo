@@ -4,6 +4,8 @@ import { io, Socket } from 'socket.io-client';
 import styles from './DashboardPage.module.scss';
 import { API_ENDPOINTS } from '../../constants/constants.js';
 import Layout from '../../components/layout/layout.js';
+import refresh from '../../../img/icons/refresh.white.png' 
+import kitchen from '../../../img/RoleIcon/chef.png'
 
 // Socket server is the backend root (no /api)
 const SOCKET_URL = 'http://192.168.1.64:9005';
@@ -164,24 +166,21 @@ const Dashboard: React.FC = () => {
           <div className={styles.headerRight}>
             <span
               className={`${styles.connectionBadge} ${
-                connected ? styles.connected : styles.disconnected
+                connected ?styles.connected : styles.disconnected
               }`}
             >
-              {connected ? '🟢 Live' : '🔴 Offline'}
             </span>
             <button onClick={fetchOrders} className={styles.refreshBtn}>
-              🔄 Refresh
+              <img src={refresh} alt="" />
             </button>
           </div>
         </header>
-
         {error && <div className={styles.errorBanner}>{error}</div>}
-
         <div className={styles.boardGrid}>
           {/* KITCHEN STATION */}
           <section className={styles.stationSection}>
             <div className={`${styles.stationHeader} ${styles.kitchenHeader}`}>
-              <h2>🍳 Kitchen Queue <span>({kitchenOrders.length})</span></h2>
+              <h2><img src={kitchen} alt="" /> Kitchen Queue <span>({kitchenOrders.length})</span></h2>
             </div>
             <div className={styles.cardContainer}>
               {kitchenOrders.length === 0 ? (
