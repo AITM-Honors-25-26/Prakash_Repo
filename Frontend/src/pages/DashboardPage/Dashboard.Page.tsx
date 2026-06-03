@@ -9,7 +9,7 @@ import kitchen from '../../../img/typeicone/kitchen.png';
 import loadinggif from '../../../img/gif/loading.gif';
 import service from '../../../img/typeicone/serving.png';
 
-// Socket server is the backend root (no /api)
+// Socket server is the backend root
 const SOCKET_URL = 'http://192.168.1.64:9005';
 
 interface OrderItem {
@@ -67,6 +67,7 @@ const Dashboard: React.FC = () => {
     });
 
     socketRef.current = socket;
+    
     socket.on('connect', () => {
       console.log('Dashboard connected to socket. ID:', socket.id);
       setConnected(true);
@@ -114,31 +115,25 @@ const Dashboard: React.FC = () => {
     };
   }, []);
 
-  // Update status — backend will emit socket event back to all connected clients
+  // Update status (Start Cooking, Mark Ready)
   const updateOrderStatus = async (
     orderId: string,
-    nextStatus: 'Preparing' | 'Ready' | 'Completed'
+    nextStatus: 'Preparing' | 'Ready'
   ) => {
     try {
+      // Optimistic UI Update
       setOrders(prev =>
-        prev
-          .map(order =>
-            order._id === orderId ? { ...order, status: nextStatus } : order
-          )
-          .filter(
-            order =>
-              order.status !== 'Completed' && order.status !== 'Cancelled'
-          )
+        prev.map(order =>
+          order._id === orderId ? { ...order, status: nextStatus } : order
+        )
       );
       
       await axios.patch(
-        
         `${API_ENDPOINTS.ORDER_ACTION}/${orderId}/status`,
         { status: nextStatus },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }
-        
       );
     } catch (err) {
       console.error('Failed to update order status:', err);
@@ -147,6 +142,24 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  // Permanently delete order when served
+  const deleteCompletedOrder = async (orderId: string) => {
+    try {
+      // Optimistic UI Update: Instantly remove it from screen
+      setOrders(prev => prev.filter(order => order._id !== orderId));
+      
+      // Send DELETE request to backend
+      await axios.delete(`${API_ENDPOINTS.ORDER_ACTION}/${orderId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+      });
+      
+    } catch (err) {
+      console.error('Failed to delete order:', err);
+      fetchOrders(); // Bring it back if the server fails
+    }
+  };
+
+  // Filter orders for the different columns
   const kitchenOrders = orders.filter(
     o => o.status === 'Pending' || o.status === 'Preparing'
   );
@@ -274,7 +287,7 @@ const Dashboard: React.FC = () => {
 
                     <div className={styles.cardActions}>
                       <button
-                        onClick={() => updateOrderStatus(order._id, 'Completed')}
+                        onClick={() => deleteCompletedOrder(order._id)}
                         className={styles.actionBtnComplete}
                       >
                         Served & Completed ✓

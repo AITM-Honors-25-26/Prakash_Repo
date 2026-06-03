@@ -33,7 +33,7 @@ export const Category = {
 export const OrderStatus = {
     PENDING: 'Pending',       
     PREPARING: 'Preparing',            
-    COMPLETED: 'Completed',   
+    COMPLETED: 'Ready',   
     CANCELLED: 'Cancelled'  
 };
 export const TableStatus = {

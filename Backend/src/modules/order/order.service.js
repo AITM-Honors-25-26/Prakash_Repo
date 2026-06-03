@@ -34,3 +34,7 @@ export const updateStatus = async (orderId, newStatus) => {
     { new: true, runValidators: true }
   );
 };
+
+export const deleteOrder = async (orderId) => {
+  return await Order.findByIdAndDelete(orderId);
+};
