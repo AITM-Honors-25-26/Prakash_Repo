@@ -2,15 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { io, Socket } from 'socket.io-client';
 import styles from './DashboardPage.module.scss';
-import { API_ENDPOINTS } from '../../constants/constants.js';
+import { API_ENDPOINTS, SOCKET_URL } from '../../constants/constants.js';
 import Layout from '../../components/layout/layout.js';
 import refresh from '../../../img/icons/refresh.white.png';
 import kitchen from '../../../img/typeicone/kitchen.png';
 import loadinggif from '../../../img/gif/loading.gif';
 import service from '../../../img/typeicone/serving.png';
 
-// Socket server is the backend root
-const SOCKET_URL = 'http://192.168.1.64:9005';
 
 interface OrderItem {
   _id: string;
