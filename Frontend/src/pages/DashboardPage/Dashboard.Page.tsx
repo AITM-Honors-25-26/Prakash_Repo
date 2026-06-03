@@ -116,15 +116,10 @@ const Dashboard: React.FC = () => {
 
   // Update status — backend will emit socket event back to all connected clients
   const updateOrderStatus = async (
-    
-    
     orderId: string,
     nextStatus: 'Preparing' | 'Ready' | 'Completed'
   ) => {
-    
     try {
-      
-      // Optimistic UI update for instant feedback
       setOrders(prev =>
         prev
           .map(order =>
@@ -136,8 +131,6 @@ const Dashboard: React.FC = () => {
           )
       );
       
-
-      // PATCH /api/order/:id/status
       await axios.patch(
         
         `${API_ENDPOINTS.ORDER_ACTION}/${orderId}/status`,

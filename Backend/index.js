@@ -11,7 +11,7 @@ const io = new Server(httpServer, {
       "http://192.168.1.64:5173",
       process.env.FRONTEND_URL,
     ].filter(Boolean),
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     credentials: true,
   },
 });
