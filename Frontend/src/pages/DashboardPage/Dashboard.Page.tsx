@@ -9,7 +9,6 @@ import kitchen from '../../../img/typeicone/kitchen.png';
 import loadinggif from '../../../img/gif/loading.gif';
 import service from '../../../img/typeicone/serving.png';
 
-
 interface OrderItem {
   _id: string;
   name: string;
@@ -31,8 +30,27 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [connected, setConnected] = useState<boolean>(false);
+  const [userRole, setUserRole] = useState<string>(''); // NEW: State to hold the role
 
   const socketRef = useRef<Socket | null>(null);
+
+  // Safely extract the role from the 'user' object in localStorage on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        const parsed = JSON.parse(storedUser);
+        // Convert to lowercase to ensure 'Admin', 'ADMIN', or 'admin' all match safely
+        setUserRole(parsed.role?.toLowerCase() || ''); 
+      } catch (error) {
+        console.error("Failed to parse user role", error);
+      }
+    }
+  }, []);
+
+  // Determine what this user is allowed to see
+  const showKitchen = userRole === 'admin' || userRole === 'chef';
+  const showService = userRole === 'admin' || userRole === 'waiter';
 
   // Initial fetch — load all active orders when dashboard first opens
   const fetchOrders = async () => {
@@ -173,11 +191,24 @@ const Dashboard: React.FC = () => {
     );
   }
 
+  // Security Fallback: Block UI entirely if role is completely invalid/missing
+  if (!showKitchen && !showService) {
+    return (
+      <Layout>
+        <div style={{ padding: '50px', textAlign: 'center' }}>
+          <h2>Access Denied</h2>
+          <p>You do not have permission to view the staff dashboard.</p>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <div className={styles.dashboardContainer}>
         <header className={styles.dashHeader}>
-          <h1>Live Staff Dashboard</h1>
+          {/* Dynamically show the role in the title so you know it worked! */}
+          <h1>Live Staff Dashboard ({userRole.toUpperCase()})</h1>
           <div className={styles.headerRight}>
             <span
               className={`${styles.connectionBadge} ${
@@ -194,108 +225,113 @@ const Dashboard: React.FC = () => {
         {error && <div className={styles.errorBanner}>{error}</div>}
         
         <div className={styles.boardGrid}>
-          {/* KITCHEN STATION */}
-          <section className={styles.stationSection}>
-            <div className={`${styles.stationHeader} ${styles.kitchenHeader}`}>
-              <h2><img src={kitchen} alt="" /> Kitchen Queue <span>({kitchenOrders.length})</span></h2>
-            </div>
-            <div className={styles.cardContainer}>
-              {kitchenOrders.length === 0 ? (
-                <p className={styles.emptyMsg}>No meals to prepare right now.</p>
-              ) : (
-                kitchenOrders.map(order => (
-                  <div
-                    key={order._id}
-                    className={`${styles.orderCard} ${styles[order.status.toLowerCase()]}`}
-                  >
-                    <div className={styles.cardTop}>
-                      <h3>Table {order.tableNumber}</h3>
-                      <span className={styles.timeTag}>
-                        {new Date(order.createdAt).toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </span>
+          
+          {/* --- KITCHEN STATION --- */}
+          {/* This wrapper hides the section completely if showKitchen is false */}
+          {showKitchen && (
+            <section className={styles.stationSection}>
+              <div className={`${styles.stationHeader} ${styles.kitchenHeader}`}>
+                <h2><img src={kitchen} alt="" /> Kitchen Queue <span>({kitchenOrders.length})</span></h2>
+              </div>
+              <div className={styles.cardContainer}>
+                {kitchenOrders.length === 0 ? (
+                  <p className={styles.emptyMsg}>No meals to prepare right now.</p>
+                ) : (
+                  kitchenOrders.map(order => (
+                    <div
+                      key={order._id}
+                      className={`${styles.orderCard} ${styles[order.status.toLowerCase()]}`}
+                    >
+                      <div className={styles.cardTop}>
+                        <h3>Table {order.tableNumber}</h3>
+                        <span className={styles.timeTag}>
+                          {new Date(order.createdAt).toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </span>
+                      </div>
+
+                      <ul className={styles.itemList}>
+                        {order.items.map((item, index) => (
+                          <li key={item._id || index} className={styles.itemRow}>
+                            <span className={styles.qty}>{item.quantity}x</span>
+                            <div className={styles.itemDetails}>
+                              <p className={styles.itemName}>{item.name}</p>
+                              {item.specialNotes && (
+                                <span className={styles.notes}>📝 {item.specialNotes}</span>
+                              )}
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+
+                      <div className={styles.cardActions}>
+                        {order.status === 'Pending' ? (
+                          <button
+                            onClick={() => updateOrderStatus(order._id, 'Preparing')}
+                            className={styles.actionBtnStart}
+                          >
+                            Start Cooking
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => updateOrderStatus(order._id, 'Ready')}
+                            className={styles.actionBtnReady}
+                          >
+                            Mark Ready 🎉
+                          </button>
+                        )}
+                      </div>
                     </div>
+                  ))
+                )}
+              </div>
+            </section>
+          )}
+          {showService && (
+            <section className={styles.stationSection}>
+              <div className={`${styles.stationHeader} ${styles.serviceHeader}`}>
+                <h2><img src={service} alt="" /> Service & Delivery <span>({serviceOrders.length})</span></h2>
+              </div>
+              <div className={styles.cardContainer}>
+                {serviceOrders.length === 0 ? (
+                  <p className={styles.emptyMsg}>No orders waiting to go out.</p>
+                ) : (
+                  serviceOrders.map(order => (
+                    <div
+                      key={order._id}
+                      className={`${styles.orderCard} ${styles.readyCard}`}
+                    >
+                      <div className={styles.cardTop}>
+                        <h3>Table {order.tableNumber}</h3>
+                        <span className={styles.readyBadge}>Ready to Serve</span>
+                      </div>
 
-                    <ul className={styles.itemList}>
-                      {order.items.map((item, index) => (
-                        <li key={item._id || index} className={styles.itemRow}>
-                          <span className={styles.qty}>{item.quantity}x</span>
-                          <div className={styles.itemDetails}>
-                            <p className={styles.itemName}>{item.name}</p>
-                            {item.specialNotes && (
-                              <span className={styles.notes}>📝 {item.specialNotes}</span>
-                            )}
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
+                      <ul className={styles.itemList}>
+                        {order.items.map((item, index) => (
+                          <li key={item._id || index} className={styles.itemRow}>
+                            <span className={styles.qty}>{item.quantity}x</span>
+                            <span className={styles.itemName}>{item.name}</span>
+                          </li>
+                        ))}
+                      </ul>
 
-                    <div className={styles.cardActions}>
-                      {order.status === 'Pending' ? (
+                      <div className={styles.cardActions}>
                         <button
-                          onClick={() => updateOrderStatus(order._id, 'Preparing')}
-                          className={styles.actionBtnStart}
+                          onClick={() => deleteCompletedOrder(order._id)}
+                          className={styles.actionBtnComplete}
                         >
-                          Start Cooking
+                          Served & Completed ✓
                         </button>
-                      ) : (
-                        <button
-                          onClick={() => updateOrderStatus(order._id, 'Ready')}
-                          className={styles.actionBtnReady}
-                        >
-                          Mark Ready 🎉
-                        </button>
-                      )}
+                      </div>
                     </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </section>
+                  ))
+                )}
+              </div>
+            </section>
+          )}
 
-          {/* SERVICE STATION */}
-          <section className={styles.stationSection}>
-            <div className={`${styles.stationHeader} ${styles.serviceHeader}`}>
-              <h2><img src={service} alt="" /> Service & Delivery <span>({serviceOrders.length})</span></h2>
-            </div>
-            <div className={styles.cardContainer}>
-              {serviceOrders.length === 0 ? (
-                <p className={styles.emptyMsg}>No orders waiting to go out.</p>
-              ) : (
-                serviceOrders.map(order => (
-                  <div
-                    key={order._id}
-                    className={`${styles.orderCard} ${styles.readyCard}`}
-                  >
-                    <div className={styles.cardTop}>
-                      <h3>Table {order.tableNumber}</h3>
-                      <span className={styles.readyBadge}>Ready to Serve</span>
-                    </div>
-
-                    <ul className={styles.itemList}>
-                      {order.items.map((item, index) => (
-                        <li key={item._id || index} className={styles.itemRow}>
-                          <span className={styles.qty}>{item.quantity}x</span>
-                          <span className={styles.itemName}>{item.name}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <div className={styles.cardActions}>
-                      <button
-                        onClick={() => deleteCompletedOrder(order._id)}
-                        className={styles.actionBtnComplete}
-                      >
-                        Served & Completed ✓
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </section>
         </div>
       </div>
     </Layout>
