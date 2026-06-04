@@ -30,7 +30,8 @@ const Header: React.FC = () => {
     role: string; 
     image?: { url: string }
   } | null>(() => {
-    const savedUser = localStorage.getItem('user');
+    // 1. FIX: Changed 'user' to 'qr_user' so it ignores your other project
+    const savedUser = localStorage.getItem('qr_user');
     if (savedUser) {
       try {
         return JSON.parse(savedUser);
@@ -96,8 +97,11 @@ const Header: React.FC = () => {
   const hasStaffAccess = user && ['Admin', 'Chef', 'Waiter', 'Employee'].includes(user.role);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    // 2. FIX: Clearing the specific QR project keys on logout
+    localStorage.removeItem('qr_accessToken');
+    localStorage.removeItem('qr_refreshToken');
+    localStorage.removeItem('qr_user');
+    
     localStorage.removeItem('bakery_table'); 
     setUser(null);
     window.location.href = "/";

@@ -28,7 +28,6 @@ const LoginPage: React.FC = () => {
       if (response.ok) {
         console.log("Full Result Data:", result.data);
 
-        // FIX: status boolean lives on result.data.user, not result.data
         const userStatus = result.data?.user?.status;
         if (userStatus === false) {
           toast.error("Your account is not activated. Please check your email.");
@@ -36,13 +35,20 @@ const LoginPage: React.FC = () => {
         }
 
         const token = result.data?.accessToken;
+        const refreshToken = result.data?.refreshToken; // Grab the refresh token too!
+
         if (token) {
-          localStorage.setItem('token', token);
+          // 🛑 FIX: Use the specific "qr_" prefix so it doesn't clash with other projects!
+          localStorage.setItem('qr_accessToken', token);
+          
+          if (refreshToken) {
+              localStorage.setItem('qr_refreshToken', refreshToken);
+          }
 
           if (result.data?.user) {
-            localStorage.setItem('user', JSON.stringify(result.data.user));
+            localStorage.setItem('qr_user', JSON.stringify(result.data.user));
           } else {
-            localStorage.setItem('user', JSON.stringify(result.data));
+            localStorage.setItem('qr_user', JSON.stringify(result.data));
           }
 
           toast.success("Login Successful!");
