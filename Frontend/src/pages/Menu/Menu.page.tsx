@@ -81,7 +81,8 @@ const MenuPage: React.FC = () => {
   }, [id]);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
+    // 🛑 FIX 1: Changed 'user' to 'qr_user' so Admins can actually see the Add/Delete buttons
+    const storedUser = localStorage.getItem('qr_user');
     if (storedUser) {
       try {
         const parsed = JSON.parse(storedUser);
@@ -132,7 +133,8 @@ const MenuPage: React.FC = () => {
   };
 
   const handleDelete = async (itemId: string) => {
-    const user = localStorage.getItem('user');
+    // 🛑 FIX 2: Changed 'user' to 'qr_user'
+    const user = localStorage.getItem('qr_user');
     if (!user) return;
 
     const parsed = JSON.parse(user);
@@ -148,7 +150,8 @@ const MenuPage: React.FC = () => {
     if (!password) return;
 
     try {
-      const token = localStorage.getItem('token');
+      // 🛑 FIX 3: Changed 'token' to 'qr_accessToken' so the delete request doesn't get rejected by the backend!
+      const token = localStorage.getItem('qr_accessToken');
       await axios.delete(`${API_ENDPOINTS.MENU_ACTION}/${itemId}`, {
         headers: { Authorization: `Bearer ${token}` },
         data: { email: parsed.email, password },

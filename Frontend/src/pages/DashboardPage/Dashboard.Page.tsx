@@ -30,13 +30,14 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [connected, setConnected] = useState<boolean>(false);
-  const [userRole, setUserRole] = useState<string>(''); // NEW: State to hold the role
+  const [userRole, setUserRole] = useState<string>(''); 
 
   const socketRef = useRef<Socket | null>(null);
 
-  // Safely extract the role from the 'user' object in localStorage on mount
+  // Safely extract the role from the 'qr_user' object in localStorage on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
+    // 🛑 FIX 1: Look for 'qr_user' instead of 'user'
+    const storedUser = localStorage.getItem('qr_user');
     if (storedUser) {
       try {
         const parsed = JSON.parse(storedUser);
@@ -55,8 +56,9 @@ const Dashboard: React.FC = () => {
   // Initial fetch — load all active orders when dashboard first opens
   const fetchOrders = async () => {
     try {
+      // 🛑 FIX 2: Look for 'qr_accessToken' instead of 'token'
       const response = await axios.get(`${API_ENDPOINTS.ORDER_ACTION}/kitchen`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        headers: { Authorization: `Bearer ${localStorage.getItem('qr_accessToken')}` },
       });
       const data = response.data?.data || response.data?.result || response.data;
 
@@ -144,11 +146,12 @@ const Dashboard: React.FC = () => {
         )
       );
       
+      // 🛑 FIX 3: Look for 'qr_accessToken' instead of 'token'
       await axios.patch(
         `${API_ENDPOINTS.ORDER_ACTION}/${orderId}/status`,
         { status: nextStatus },
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          headers: { Authorization: `Bearer ${localStorage.getItem('qr_accessToken')}` },
         }
       );
     } catch (err) {
@@ -164,9 +167,9 @@ const Dashboard: React.FC = () => {
       // Optimistic UI Update: Instantly remove it from screen
       setOrders(prev => prev.filter(order => order._id !== orderId));
       
-      // Send DELETE request to backend
+      // 🛑 FIX 4: Look for 'qr_accessToken' instead of 'token'
       await axios.delete(`${API_ENDPOINTS.ORDER_ACTION}/${orderId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        headers: { Authorization: `Bearer ${localStorage.getItem('qr_accessToken')}` },
       });
       
     } catch (err) {

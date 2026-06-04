@@ -7,7 +7,8 @@ import styles from './homepage.module.scss';
 
 const Homepage: React.FC = () => {
   const [userData] = useState(() => {
-    const userString = localStorage.getItem('user');
+    const userString = localStorage.getItem('qr_user'); 
+    
     if (userString) {
       try {
         return JSON.parse(userString);
@@ -18,6 +19,7 @@ const Homepage: React.FC = () => {
     }
     return null;
   });
+  
   const isLoggedIn = !!userData; 
   const userName = userData?.name || '';
 

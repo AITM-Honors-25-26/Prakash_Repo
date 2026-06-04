@@ -5,12 +5,14 @@ import defaultProfile from '../../../img/gif/profile.gif'
 
 const Settings: React.FC = () => {
   const [userData, setUserData] = useState(() => {
-    const saved = localStorage.getItem('user');
+    // 🛑 FIX 1: Read from the new 'qr_user' key
+    const saved = localStorage.getItem('qr_user');
     return saved ? JSON.parse(saved) : null;
   });
 
   const [formData, setFormData] = useState({
-    fullName: userData?.name || '',
+    // Safely check for either fullName or name depending on your DB
+    fullName: userData?.fullName || userData?.name || '',
     email: userData?.email || '',
     phone: userData?.phone || '',
     address: userData?.address || '',
@@ -20,6 +22,7 @@ const Settings: React.FC = () => {
       ? new Date(userData.dob).toISOString().split('T')[0]
       : '',
   });
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -30,15 +33,31 @@ const Settings: React.FC = () => {
       [name]: value,
     }));
   };
+
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
     const updatedUser = {
       ...userData,
       ...formData,
+      // Ensure the name field gets updated properly if your DB uses 'name'
+      name: formData.fullName 
     };
-    localStorage.setItem('user', JSON.stringify(updatedUser));
+    
+    // 🛑 FIX 2: Save changes to the new 'qr_user' key
+    localStorage.setItem('qr_user', JSON.stringify(updatedUser));
     setUserData(updatedUser);
     alert('Profile Updated Successfully');
+    
+    // Note: You will eventually want to send an API request here to update the backend too!
+  };
+
+  // 🛑 FIX 3: Added a working logout function for your bottom button
+  const handleLogout = () => {
+    localStorage.removeItem('qr_accessToken');
+    localStorage.removeItem('qr_refreshToken');
+    localStorage.removeItem('qr_user');
+    localStorage.removeItem('bakery_table'); 
+    window.location.href = "/";
   };
 
   if (!userData) {
@@ -50,6 +69,7 @@ const Settings: React.FC = () => {
       </Layout>
     );
   }
+
   return (
     <Layout>
       <div className={styles.pageContainer}>
@@ -66,7 +86,7 @@ const Settings: React.FC = () => {
             <div className={styles.imageSection}>
               <img
                 src={
-                  userData?.image?.url || {defaultProfile}
+                  userData?.image?.url || defaultProfile // Removed the curly braces around defaultProfile
                 }
                 alt="profile"
               />
@@ -75,24 +95,19 @@ const Settings: React.FC = () => {
               </button>
             </div>
             <div className={styles.userInfo}>
-              <h2>{userData.name}</h2>
+              <h2>{userData.name || userData.fullName}</h2>
               <span>{userData.role}</span>
-
               <p>{userData.email}</p>
             </div>
-
           </div>
 
           <form
             onSubmit={handleSaveProfile}
             className={styles.form}
           >
-
             <div className={styles.row}>
-
               <div className={styles.inputGroup}>
                 <label>Full Name</label>
-
                 <input
                   type="text"
                   name="fullName"
@@ -103,7 +118,6 @@ const Settings: React.FC = () => {
 
               <div className={styles.inputGroup}>
                 <label>Email Address</label>
-
                 <input
                   type="email"
                   name="email"
@@ -115,7 +129,6 @@ const Settings: React.FC = () => {
             <div className={styles.row}>
               <div className={styles.inputGroup}>
                 <label>Phone Number</label>
-
                 <input
                   type="text"
                   name="phone"
@@ -126,7 +139,6 @@ const Settings: React.FC = () => {
 
               <div className={styles.inputGroup}>
                 <label>Date of Birth</label>
-
                 <input
                   type="date"
                   name="dob"
@@ -134,14 +146,11 @@ const Settings: React.FC = () => {
                   onChange={handleChange}
                 />
               </div>
-
             </div>
 
             <div className={styles.row}>
-
               <div className={styles.inputGroup}>
                 <label>Gender</label>
-
                 <select
                   name="gender"
                   value={formData.gender}
@@ -155,19 +164,16 @@ const Settings: React.FC = () => {
 
               <div className={styles.inputGroup}>
                 <label>Role</label>
-
                 <input
                   type="text"
                   value={formData.role}
                   disabled
                 />
               </div>
-
             </div>
 
             <div className={styles.inputGroup}>
               <label>Address</label>
-
               <input
                 type="text"
                 name="address"
@@ -182,12 +188,13 @@ const Settings: React.FC = () => {
             >
               Save Changes
             </button>
-
           </form>
         </section>
-          <button className={styles.logoutBtn}>
-            Logout
-          </button>
+        
+        {/* Wired up the logout function here! */}
+        <button className={styles.logoutBtn} onClick={handleLogout}>
+          Logout
+        </button>
       </div>
     </Layout>
   );

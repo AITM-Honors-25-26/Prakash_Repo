@@ -31,14 +31,17 @@ const TableManagement: React.FC = () => {
 
   // --- Auth & Session Helpers ---
   const handleSessionExpired = useCallback(() => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    // 🛑 FIX 1: Clear the specific QR project keys
+    localStorage.removeItem('qr_accessToken');
+    localStorage.removeItem('qr_refreshToken');
+    localStorage.removeItem('qr_user');
     toast.error("Session expired. Please log in again.");
-    navigate('/login');
+    navigate('/LoginPage'); // Made sure this matches your route name exactly
   }, [navigate]);
 
   const getAuthHeader = useCallback(() => {
-    const token = localStorage.getItem('token');
+    // 🛑 FIX 2: Look for the specific QR access token
+    const token = localStorage.getItem('qr_accessToken');
     if (!token) {
       handleSessionExpired();
       return null;
@@ -71,7 +74,8 @@ const TableManagement: React.FC = () => {
   }, [handleSessionExpired]);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
+    // 🛑 FIX 3: Look for the specific QR user to check for Admin status
+    const storedUser = localStorage.getItem('qr_user');
     if (storedUser) {
       try {
         const userData = JSON.parse(storedUser);
@@ -87,7 +91,8 @@ const TableManagement: React.FC = () => {
 
   // --- Reusable Authorized Action Logic ---
   const requestPasswordConfirm = async (actionTitle: string) => {
-    const storedUser = localStorage.getItem('user');
+    // 🛑 FIX 4: Ensure password confirmation uses the correct user email
+    const storedUser = localStorage.getItem('qr_user');
     if (!storedUser) return null;
     const { email } = JSON.parse(storedUser);
 
@@ -106,7 +111,6 @@ const TableManagement: React.FC = () => {
   // --- QR Logic ---
   const handleViewQR = async (table: RestaurantTable) => {
     try {
-      // FIX APPLIED HERE: Converted tableNumber to a string to satisfy TypeScript
       const qrImage = await generateTableQR(String(table.tableNumber));
 
       MySwal.fire({
