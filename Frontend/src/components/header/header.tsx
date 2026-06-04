@@ -30,7 +30,6 @@ const Header: React.FC = () => {
     role: string; 
     image?: { url: string }
   } | null>(() => {
-    // 1. FIX: Changed 'user' to 'qr_user' so it ignores your other project
     const savedUser = localStorage.getItem('qr_user');
     if (savedUser) {
       try {
