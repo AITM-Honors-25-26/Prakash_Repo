@@ -109,12 +109,12 @@ const CreateMenuItemPage: React.FC = () => {
       await axios.post(API_ENDPOINTS.ADDMENUITEM, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
+        //   'Content-Type': 'multipart/form-data',
         },
       });
 
       toast.success(`"${form.name}" added to the menu!`);
-      navigate('/menu');
+      navigate('/MenuPage');
     } catch (error: unknown) {
       console.error(error);
       
