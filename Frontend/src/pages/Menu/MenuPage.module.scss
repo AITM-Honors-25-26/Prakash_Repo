@@ -302,3 +302,63 @@ $light-main-colour: #5e4934;
     }
   }
 }
+/* --- Image Slider Styling --- */
+.imageWrapper {
+  position: relative; /* Ensure this is set so absolute arrows stay inside the image! */
+  overflow: hidden;
+  
+  .sliderBtn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s;
+    z-index: 2;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    &.left {
+      left: 10px;
+    }
+
+    &.right {
+      right: 10px;
+    }
+  }
+
+  /* The little dots at the bottom to show how many images there are */
+  .dotsContainer {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    z-index: 2;
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      transition: all 0.3s;
+
+      &.active {
+        background: #ffffff;
+        transform: scale(1.2);
+      }
+    }
+  }
+}

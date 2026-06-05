@@ -12,7 +12,7 @@ import cartwhite from '../../../img/icons/cart.white.png';
 import hot from '../../../img/gif/hot.gif';
 import LoaderGif from '../../../img/gif/loading.gif'; 
 
-import { API_ENDPOINTS, CATEGORY } from '../../constants/constants';
+import { API_ENDPOINTS } from '../../constants/constants';
 
 const MySwal = withReactContent(Swal);
 
@@ -30,6 +30,92 @@ interface BakeryItem {
 interface CartItem extends BakeryItem {
   quantity: number;
 }
+
+// ==========================================
+// NEW: Individual Card Component for Image Slider
+// ==========================================
+const MenuItemCard: React.FC<{
+  item: BakeryItem;
+  isAdmin: boolean;
+  handleAddToCart: (item: BakeryItem) => void;
+  handleDelete: (id: string) => void;
+}> = ({ item, isAdmin, handleAddToCart, handleDelete }) => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const hasMultipleImages = item.images && item.images.length > 1;
+
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % item.images.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + item.images.length) % item.images.length);
+  };
+
+  return (
+    <div className={styles.card}>
+      <div className={styles.imageWrapper}>
+        <img
+          src={item.images?.[currentImageIndex]?.url || 'https://via.placeholder.com/500'}
+          alt={`${item.name} - ${currentImageIndex + 1}`}
+        />
+        
+        {/* Render Arrows and Dots ONLY if there is more than 1 image */}
+        {hasMultipleImages && (
+          <>
+            <button className={`${styles.sliderBtn} ${styles.left}`} onClick={prevImage}>
+              ❮
+            </button>
+            <button className={`${styles.sliderBtn} ${styles.right}`} onClick={nextImage}>
+              ❯
+            </button>
+            <div className={styles.dotsContainer}>
+              {item.images.map((_, idx) => (
+                <span 
+                  key={idx} 
+                  className={`${styles.dot} ${idx === currentImageIndex ? styles.active : ''}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
+        {!item.isAvailable && (
+          <span className={styles.outOfStock}>Unavailable</span>
+        )}
+      </div>
+      
+      <div className={styles.content}>
+        <div>
+          <h3>{item.name}</h3>
+          <p>{item.description}</p>
+        </div>
+        <div className={styles.bottompart}>
+          <div className={styles.bottom}>
+            <span className={styles.price}>Rs. {item.price}</span>
+            <button
+              disabled={!item.isAvailable}
+              onClick={() => handleAddToCart(item)}
+              className={styles.cartBtn}
+            >
+              <img src={cartwhite} alt="" />
+              Add
+            </button>
+          </div>
+          {isAdmin && (
+            <button
+              className={styles.deleteBtn}
+              onClick={() => handleDelete(item._id)}
+            >
+              Delete
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+// ==========================================
 
 const MenuPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -100,10 +186,20 @@ const MenuPage: React.FC = () => {
     return () => clearInterval(interval);
   }, [fetchMenu]);
 
+  // Dynamic grouping logic
   const groupedItems = useMemo(() => {
-    return Object.values(CATEGORY).map((category) => ({
+    const grouped = menuItems.reduce((acc, item) => {
+      const categoryName = item.category || 'Other'; 
+      if (!acc[categoryName]) {
+        acc[categoryName] = [];
+      }
+      acc[categoryName].push(item);
+      return acc;
+    }, {} as Record<string, BakeryItem[]>);
+
+    return Object.entries(grouped).map(([category, items]) => ({
       category,
-      items: menuItems.filter((item) => item.category === category),
+      items,
     }));
   }, [menuItems]);
 
@@ -132,7 +228,6 @@ const MenuPage: React.FC = () => {
   };
 
   const handleDelete = async (itemId: string) => {
-    // 🛑 FIX 2: Changed 'user' to 'qr_user'
     const user = localStorage.getItem('qr_user');
     if (!user) return;
 
@@ -199,43 +294,14 @@ const MenuPage: React.FC = () => {
               <h2 className={styles.categoryTitle}>{category}</h2> 
               <div className={styles.grid}>
                 {items.map((item) => (
-                  <div key={item._id} className={styles.card}>
-                    <div className={styles.imageWrapper}>
-                      <img
-                        src={item.images?.[0]?.url || 'https://via.placeholder.com/500'}
-                        alt={item.name}
-                      />
-                      {!item.isAvailable && (
-                        <span className={styles.outOfStock}>Unavailable</span>
-                      )}
-                    </div>
-                    <div className={styles.content}>
-                      <div>
-                        <h3>{item.name}</h3>
-                        <p>{item.description}</p>
-                      </div>
-                      <div className={styles.bottompart}>
-                      <div className={styles.bottom}>
-                        <span className={styles.price}>Rs. {item.price}</span>
-                        <button
-                          disabled={!item.isAvailable}
-                          onClick={() => handleAddToCart(item)}
-                          className={styles.cartBtn}
-                        >
-                          <img src={cartwhite} alt="" />
-                          Add
-                        </button>
-                      </div>
-                      {isAdmin && (
-                        <button
-                          className={styles.deleteBtn}
-                          onClick={() => handleDelete(item._id)}
-                        >
-                          Delete
-                        </button>
-                      )}</div>
-                    </div>
-                  </div>
+                  // Use the new MenuItemCard component here!
+                  <MenuItemCard 
+                    key={item._id} 
+                    item={item} 
+                    isAdmin={isAdmin} 
+                    handleAddToCart={handleAddToCart}
+                    handleDelete={handleDelete}
+                  />
                 ))}
               </div>
             </section>
