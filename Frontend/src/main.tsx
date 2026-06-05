@@ -15,6 +15,7 @@ import TableManagement from "./pages/TableManagement/TableManagement.page";
 import CheckoutPage from "./pages/Checkout/CheckOut.page";
 import ErrorPage from "./pages/ErrorPage/ErrorPage";
 import Dashboard from "./pages/DashboardPage/Dashboard.Page";
+import CreateMenuItemPage from "./pages/Menu/menupage/menu.page.add";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -27,6 +28,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/ContactUsPage" element={<ContactUs />} />
         <Route path="/AboutUsPage" element={<AboutUsPage />} />
         <Route path="/MenuPage" element={<MenuPage />} />
+        <Route path="/Menu/Add" element={<CreateMenuItemPage />}></Route>
         <Route path="/MenuPage/:id" element={<MenuPage />} />
         <Route path="/Reset-password" element={<ResetPasswordPage /> }/>
         <Route path="/ProfilePage" element={<Profile />} />

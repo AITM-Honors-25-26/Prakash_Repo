@@ -265,17 +265,17 @@ $border-color: #e0e0e0;
     &.actionBtnStart {
       background-color: #ffc107;
       color: #333;
-      &:hover { background-color: darken(#ffc107, 10%); }
+      &:hover { background-color: #b29029; }
     }
 
     &.actionBtnReady {
       background-color: #28a745;
-      &:hover { background-color: darken(#28a745, 10%); }
+      &:hover { background-color: #135723; }
     }
 
     &.actionBtnComplete {
       background-color: #17a2b8;
-      &:hover { background-color: darken(#17a2b8, 10%); }
+      &:hover { background-color: #0e6673; }
     }
   }
 }
