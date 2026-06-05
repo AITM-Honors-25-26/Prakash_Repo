@@ -2,10 +2,16 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+// 1. ADDED SWEETALERT IMPORTS
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 import styles from './menu.page.add.module.scss';
 import Layout from '../../../components/layout/layout';
 import { API_ENDPOINTS } from '../../../constants/constants';
+
+// 2. SETUP SWEETALERT
+const MySwal = withReactContent(Swal);
 
 const CATEGORIES = ['Cake', 'Bread', 'Pastries', 'Cookie', 'Cupcake','Donuts', 'Beverage', 'Special'];
 
@@ -93,6 +99,25 @@ const CreateMenuItemPage: React.FC = () => {
       return;
     }
 
+    // 3. TRIGGER PASSWORD POPUP BEFORE SUBMITTING
+    const storedUser = localStorage.getItem('qr_user');
+    if (!storedUser) return;
+    const parsedUser = JSON.parse(storedUser);
+
+    const { value: password } = await MySwal.fire({
+      title: 'Admin Verification',
+      text: 'Enter your password to add this item to the menu.',
+      input: 'password',
+      inputPlaceholder: 'Enter password',
+      showCancelButton: true,
+      confirmButtonColor: '#ff6b35', // Matching your brand color from earlier!
+    });
+
+    // If they click cancel or leave it blank, stop the function
+    if (!password) {
+      return;
+    }
+
     setLoading(true);
     try {
       const token = localStorage.getItem('qr_accessToken');
@@ -105,11 +130,14 @@ const CreateMenuItemPage: React.FC = () => {
       formData.append('stock', form.stock || '0');
       formData.append('isAvailable', String(form.isAvailable));
       images.forEach((img) => formData.append('images', img.file));
+      
+      // 4. APPEND EMAIL AND PASSWORD FOR BACKEND VERIFICATION
+      formData.append('email', parsedUser.email);
+      formData.append('password', password);
 
       await axios.post(API_ENDPOINTS.ADDMENUITEM, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-        //   'Content-Type': 'multipart/form-data',
         },
       });
 
@@ -121,11 +149,9 @@ const CreateMenuItemPage: React.FC = () => {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.message || 'Failed to create item');
       } 
-      // Check if it is a standard JavaScript error
       else if (error instanceof Error) {
         toast.error(error.message);
       } 
-      // Fallback
       else {
         toast.error('An unexpected error occurred');
       }
@@ -138,7 +164,6 @@ const CreateMenuItemPage: React.FC = () => {
   return (
     <Layout>
       <div className={styles.container}>
-        {/* Header */}
         <div className={styles.header}>
           <button className={styles.backBtn} onClick={() => navigate(-1)}>
             ← Back
@@ -150,9 +175,7 @@ const CreateMenuItemPage: React.FC = () => {
         </div>
 
         <form onSubmit={handleSubmit} className={styles.form}>
-          {/* Left Column */}
           <div className={styles.leftCol}>
-            {/* Image Upload */}
             <div className={styles.card}>
               <h2 className={styles.cardTitle}>Product Images</h2>
               <p className={styles.cardSub}>Upload up to 4 images</p>
@@ -187,7 +210,6 @@ const CreateMenuItemPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Availability & Stock */}
             <div className={styles.card}>
               <h2 className={styles.cardTitle}>Status</h2>
 
@@ -224,7 +246,6 @@ const CreateMenuItemPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column */}
           <div className={styles.rightCol}>
             <div className={styles.card}>
               <h2 className={styles.cardTitle}>Item Details</h2>
@@ -300,7 +321,6 @@ const CreateMenuItemPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               className={styles.submitBtn}
