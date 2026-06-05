@@ -3,22 +3,29 @@ import cloudianarySvc from "../../services/cloudinary.service.js";
 
 class MenuService {
     transformMenuData = async (req) => {
-    try {
-        let data = { ...req.body };
-        data.images = []; 
-        if (req.file) {
-            const upload = await cloudianarySvc.fileUpload(req.file.path, 'bakery/');
-            data.images.push({
-                url: upload.secure_url || upload.url,
-                public_id: upload.public_id
-            });
-        }
-        if (data.price) data.price = Number(data.price);
-        if (data.stock) data.stock = Number(data.stock);
-        data.isAvailable = String(data.isAvailable) === 'true';
-        return data;
+        try {
+            let data = { ...req.body };
+            data.images = []; 
+            
+            // 1. CHANGED: Check for req.files (plural) instead of req.file
+            if (req.files && req.files.length > 0) {
+                // 2. CHANGED: Loop through every image that was uploaded
+                for (const file of req.files) {
+                    const upload = await cloudianarySvc.fileUpload(file.path, 'bakery/');
+                    data.images.push({
+                        url: upload.secure_url || upload.url,
+                        public_id: upload.public_id
+                    });
+                }
+            }
+            
+            if (data.price) data.price = Number(data.price);
+            if (data.stock) data.stock = Number(data.stock);
+            data.isAvailable = String(data.isAvailable) === 'true';
+            
+            return data;
         } catch (exception) {
-        throw exception;
+            throw exception;
         }
     }
     storeMenuItem = async (data) => {

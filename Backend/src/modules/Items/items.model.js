@@ -16,7 +16,7 @@ const bakerySchema = new mongoose.Schema({
     },
     category: { 
         type: String, 
-        enum: ['Cake', 'Bread', 'Pastry', 'Cookie', 'drinks'], 
+        enum: ['Cake', 'Bread', 'Pastries', 'Cookies', 'Beverage','Cupcake','Donuts','Special'], 
         required: true 
     },
     images: [{ 

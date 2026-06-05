@@ -24,11 +24,14 @@ export const Gender = {
     OTHER: "Other"
 };
 export const Category = {
-    Cake: 'Cake',
     BREAD: 'Bread',
-    PASTERY: 'Pastry',
-    COOKIE: 'Cookie',
-    DRINKS: 'Drinks'
+  CAKE: 'Cake',
+  CUPCAKE: 'Cupcake',
+  COOKIES: 'Cookies',
+  PASTRIES: 'Pastries',
+  DONUTS: 'Donuts',
+  BEVERAGE: 'Beverage',
+  SPECIAL: 'Special'
 };
 export const OrderStatus = {
     PENDING: 'Pending',       

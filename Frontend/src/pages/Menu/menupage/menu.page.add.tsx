@@ -7,7 +7,7 @@ import styles from './menu.page.add.module.scss';
 import Layout from '../../../components/layout/layout';
 import { API_ENDPOINTS } from '../../../constants/constants';
 
-const CATEGORIES = ['Cake', 'Bread', 'Pastry', 'Cookie', 'drinks'];
+const CATEGORIES = ['Cake', 'Bread', 'Pastries', 'Cookie', 'Cupcake','Donuts', 'Beverage', 'Special'];
 
 interface ImagePreview {
   file: File;
