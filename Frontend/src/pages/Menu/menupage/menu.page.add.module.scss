@@ -1,6 +1,6 @@
-// CreateMenuItemPage.module.scss
+$main-font: 'Amatic SC', cursive;
 
-$primary: #ff6b35;
+$primary: #48392a;
 $primary-dark: #e85c28;
 $bg: #fdf6f0;
 $card-bg: #ffffff;
@@ -13,6 +13,8 @@ $danger: #e53e3e;
   max-width: 1000px;
   margin: 0 auto;
   padding: 2rem 1.5rem 4rem;
+  font-family: $main-font;
+  
 }
 
 // ── Header ─────────────────────────────────────────────
@@ -47,6 +49,7 @@ $danger: #e53e3e;
   color: $text;
   cursor: pointer;
   transition: all 0.2s;
+  font-family: $main-font;
 
   &:hover {
     border-color: $primary;
