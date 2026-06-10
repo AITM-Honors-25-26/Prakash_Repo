@@ -10,14 +10,31 @@ const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // ONLY THIS FUNCTION WAS UPDATED
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); 
     
-    console.log("Data ready to send:", { email, message });
-    
-    alert(`Thank you! Your message has been sent.`);
-    setEmail('');
-    setMessage('');
+    try {
+      // Send the data to your backend
+      const response = await fetch('http://localhost:5000/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, message }),
+      });
+
+      if (response.ok) {
+        alert(`Thank you! Your message has been sent.`);
+        setEmail('');
+        setMessage('');
+      } else {
+        alert(`Failed to send message. Please try again later.`);
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+      alert(`Network error. Could not connect to the server.`);
+    }
   };
 
   return (
@@ -52,7 +69,6 @@ const Footer: React.FC = () => {
 
       <div className={styles.rightdiv}>
         <h2>Send message</h2>
-        {/* 3. Change the div to a form and add onSubmit */}
         <form className={styles.messagepart} onSubmit={handleSubmit}>
           <input
             id="email"
