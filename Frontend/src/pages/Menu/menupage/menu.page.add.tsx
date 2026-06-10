@@ -10,7 +10,6 @@ import styles from './menu.page.add.module.scss';
 import Layout from '../../../components/layout/layout';
 import { API_ENDPOINTS } from '../../../constants/constants';
 
-// 2. SETUP SWEETALERT
 const MySwal = withReactContent(Swal);
 
 const CATEGORIES = ['Cake', 'Bread', 'Pastries', 'Cookie', 'Cupcake','Donuts', 'Beverage', 'Special'];
@@ -99,7 +98,6 @@ const CreateMenuItemPage: React.FC = () => {
       return;
     }
 
-    // 3. TRIGGER PASSWORD POPUP BEFORE SUBMITTING
     const storedUser = localStorage.getItem('qr_user');
     if (!storedUser) return;
     const parsedUser = JSON.parse(storedUser);
@@ -110,10 +108,9 @@ const CreateMenuItemPage: React.FC = () => {
       input: 'password',
       inputPlaceholder: 'Enter password',
       showCancelButton: true,
-      confirmButtonColor: '#ff6b35', // Matching your brand color from earlier!
+      confirmButtonColor: '#ff6b35', 
     });
 
-    // If they click cancel or leave it blank, stop the function
     if (!password) {
       return;
     }

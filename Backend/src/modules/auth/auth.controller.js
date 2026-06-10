@@ -26,7 +26,6 @@ class AuthController {
                 option: null
             });
         } catch (exception) {
-            // FIX: was 'data.image_id' (undefined variable), now correctly 'userData.image_id'
             if (userData && userData.image_id) {
                 await cloudianarySvc.deleteFile(userData.image_id);
             }

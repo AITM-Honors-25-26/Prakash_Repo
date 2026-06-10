@@ -5,6 +5,7 @@ import x from '../../../img/logos/x.png';
 import facebook from '../../../img/logos/Facebook.png';
 import instagram from '../../../img/logos/instagarm.png';
 import gmail from '../../../img/logos/gmail.png';
+import { API_ENDPOINTS } from '../../constants/constants';
 
 const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -15,7 +16,6 @@ const Footer: React.FC = () => {
     e.preventDefault(); 
     
     try {
-      // Send the data to your backend
       const response = await fetch('http://localhost:5000/api/contact', {
         method: 'POST',
         headers: {

@@ -63,6 +63,7 @@ class AuthService{
             throw exception
         }
     }
+    
 
     notifyActivationEmail = async ({name, email, activationToken})=>{
         try{
