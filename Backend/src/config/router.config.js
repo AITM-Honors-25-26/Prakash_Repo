@@ -9,6 +9,6 @@ const router = Router();
 router.use(authRouter);
 router.use(menuRouter);
 router.use(tableRouter);
-router.use(orderRouter)
+router.use(orderRouter);
 
 export default router;

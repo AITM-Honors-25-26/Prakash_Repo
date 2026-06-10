@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-// 1. ADDED SWEETALERT IMPORTS
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
@@ -128,7 +127,6 @@ const CreateMenuItemPage: React.FC = () => {
       formData.append('isAvailable', String(form.isAvailable));
       images.forEach((img) => formData.append('images', img.file));
       
-      // 4. APPEND EMAIL AND PASSWORD FOR BACKEND VERIFICATION
       formData.append('email', parsedUser.email);
       formData.append('password', password);
 

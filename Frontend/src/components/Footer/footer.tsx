@@ -11,12 +11,11 @@ const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
 
-  // ONLY THIS FUNCTION WAS UPDATED
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); 
     
     try {
-      const response = await fetch('http://localhost:5000/api/contact', {
+      const response = await fetch(API_ENDPOINTS.CONTACTADMIN, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

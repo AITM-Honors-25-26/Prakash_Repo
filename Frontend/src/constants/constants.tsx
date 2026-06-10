@@ -12,7 +12,7 @@ export const API_ENDPOINTS = {
   // Menu Routes
   LISTALLITEMS: `${API_BASE_URL}/menu/list`,
   MENU_ACTION: `${API_BASE_URL}/menu`,
-  ADDMENUITEM: `${API_BASE_URL}/menu/add-item`,  
+  ADDMENUITEM: `${API_BASE_URL}/menu/add-item`,
   DELETEMENUITEM: `${API_BASE_URL}/menu`,
 
   // Table Routes
@@ -23,12 +23,14 @@ export const API_ENDPOINTS = {
   UPDATETABLE: `${API_BASE_URL}/table`,
 
   // Order Routes (Added for Dashboard & Kitchen Staff)
-  LISTALLORDERS: `${API_BASE_URL}/order/list`,      // Fetches active orders for the dashboard
-  UPDATEORDERSTATUS: `${API_BASE_URL}/order/status`, // Patches order state (Preparing, Ready, Delivered)
+  LISTALLORDERS: `${API_BASE_URL}/order/list`,
+  UPDATEORDERSTATUS: `${API_BASE_URL}/order/status`,
   ORDER_ACTION: `${API_BASE_URL}/order`,
 
   // Frontend Navigation Links
   TABLENUMBER: `${API_FRONTEND}/MenuPage/:id`,
+
+  CONTACTADMIN:`${API_BASE_URL}/conatctAdmin`
 };
 
 export const CATEGORY = {
@@ -53,5 +55,4 @@ export const OrderStatus={
   READY:'Ready',
   COMPLETED:'Completed',
   CANCELLED:'Cancelled'
-
 }
