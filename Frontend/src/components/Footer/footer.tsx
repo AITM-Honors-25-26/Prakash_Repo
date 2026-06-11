@@ -10,9 +10,11 @@ import { API_ENDPOINTS } from '../../constants/constants';
 const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); 
+    setIsLoading(true);
     
     try {
       const response = await fetch(API_ENDPOINTS.CONTACTADMIN, {
@@ -33,6 +35,8 @@ const Footer: React.FC = () => {
     } catch (error) {
       console.error("Error sending message:", error);
       alert(`Network error. Could not connect to the server.`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -76,6 +80,7 @@ const Footer: React.FC = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            disabled={isLoading}
           />
           <textarea
             className={styles.messageinput}
@@ -84,8 +89,11 @@ const Footer: React.FC = () => {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             required
+            disabled={isLoading}
           />
-          <button type="submit">SEND</button>
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? 'SENDING...' : 'SEND'}
+          </button>
         </form>
       </div>
     </footer>
