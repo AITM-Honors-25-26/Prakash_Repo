@@ -31,9 +31,7 @@ interface CartItem extends BakeryItem {
   quantity: number;
 }
 
-// ==========================================
-// NEW: Individual Card Component for Image Slider
-// ==========================================
+
 const MenuItemCard: React.FC<{
   item: BakeryItem;
   isAdmin: boolean;
@@ -60,7 +58,6 @@ const MenuItemCard: React.FC<{
           alt={`${item.name} - ${currentImageIndex + 1}`}
         />
         
-        {/* Render Arrows and Dots ONLY if there is more than 1 image */}
         {hasMultipleImages && (
           <>
             <button className={`${styles.sliderBtn} ${styles.left}`} onClick={prevImage}>
@@ -115,7 +112,6 @@ const MenuItemCard: React.FC<{
     </div>
   );
 };
-// ==========================================
 
 const MenuPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
