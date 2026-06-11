@@ -4,7 +4,6 @@ import { contactAdminCtrl } from "./contactAdmin.controller.js";
 
 const contactAdminRouter = Router();
 
-// This sets up the POST route. 
-contactAdminRouter.post('/', contactAdminCtrl.submitContactMessage);
+contactAdminRouter.post('/conatctAdmin', contactAdminCtrl.submitContactMessage);
 
 export default contactAdminRouter;
