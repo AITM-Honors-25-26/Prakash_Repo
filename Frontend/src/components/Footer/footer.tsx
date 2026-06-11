@@ -7,6 +7,9 @@ import instagram from '../../../img/logos/instagarm.png';
 import gmail from '../../../img/logos/gmail.png';
 import { API_ENDPOINTS } from '../../constants/constants';
 
+// 1. Import toast from react-toastify
+import { toast } from 'react-toastify'; 
+
 const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -26,15 +29,18 @@ const Footer: React.FC = () => {
       });
 
       if (response.ok) {
-        alert(`Thank you! Your message has been sent.`);
+        // 2. Use toast.success for a successful send
+        toast.success('Thank you! Your message has been sent.');
         setEmail('');
         setMessage('');
       } else {
-        alert(`Failed to send message. Please try again later.`);
+        // 3. Use toast.error for a failed response
+        toast.error('Failed to send message. Please try again later.');
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      alert(`Network error. Could not connect to the server.`);
+      // 4. Use toast.error for network issues
+      toast.error('Network error. Could not connect to the server.');
     } finally {
       setIsLoading(false);
     }
