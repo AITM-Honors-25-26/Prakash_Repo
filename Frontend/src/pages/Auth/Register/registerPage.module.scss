@@ -9,6 +9,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 @mixin header-font {
   font-family: $font-header;
 }
+
 @mixin focus-state {
   border-color: $primary-blue;
   box-shadow: 0 0 8px rgba(79, 172, 254, 0.2);
@@ -25,13 +26,13 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 
 .leftside, .rightside {
   width: 40%;
-  height: 600px;
+  height: auto;
+  min-height: 600px;
   box-shadow: $shadow;
   display: flex;
   padding: 60px;
   @media (max-width: 768px) {
     width: 100%;
-    height: auto;
     padding: 40px 20px;
   }
 }
@@ -75,7 +76,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 
   input, select {
     @include header-font;
-    box-sizing: border-box;
+    box-sizing: border-box; /* Fixes the width stretching issue */
     width: 100%;
     padding: 10px 15px;
     border: 1.5px solid $border-color;
@@ -85,7 +86,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     outline: none;
     transition: all 0.3s ease;
     @media (max-width: 768px) {
-      width: 95%;
+      width: 100%;
     }
 
     &:focus {
@@ -93,27 +94,22 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
   }
 
-  /* NEW: Password Container to hold the icon */
+  /* Password Container */
   .passwordContainer {
     position: relative;
     width: 100%;
-    @media (max-width: 768px) {
-      width: 95%;
-    }
+    box-sizing: border-box;
 
     input {
       box-sizing: border-box;
-      width: 100%; /* Fills the container */
-      padding-right: 40px; /* Leaves room for the icon so text doesn't overlap */
-      @media (max-width: 768px) {
-        width: 100%; /* Overrides the previous 95% media query so it doesn't shrink twice */
-      }
+      width: 100%; 
+      padding-right: 40px; 
     }
 
     .eyeIcon {
       position: absolute;
       right: 15px;
-      top: 22px; /* Centers the icon with the input vertically */
+      top: 22px; 
       transform: translateY(-50%);
       cursor: pointer;
       color: $text-muted;
@@ -136,9 +132,61 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
   }
 
+  /* --- CUSTOM FILE UPLOAD STYLES --- */
+  .fileUploadContainer {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+
+    label {
+      margin-bottom: 5px;
+    }
+  }
+
+  .hiddenFileInput {
+    display: none !important;
+  }
+
+  .customFileUpload {
+    @include header-font;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    padding: 10px 15px;
+    border: 1.5px dashed $primary-blue;
+    border-radius: 8px;
+    font-size: 16px;
+    color: $text-muted;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+
+    &:hover {
+      background-color: rgba(79, 172, 254, 0.05); 
+      border-color: $hover-blue;
+    }
+
+    .uploadIconImg {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+    }
+    
+    span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  /* --------------------------------- */
+
   button {
     @include header-font;
-    width: 105%;
+    box-sizing: border-box;
+    width: 100%;
     padding: 14px;
     background-color: $primary-blue;
     color: white;
