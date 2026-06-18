@@ -75,6 +75,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 
   input, select {
     @include header-font;
+    box-sizing: border-box;
     width: 100%;
     padding: 10px 15px;
     border: 1.5px solid $border-color;
