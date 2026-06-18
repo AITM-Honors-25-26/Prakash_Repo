@@ -35,10 +35,9 @@ const LoginPage: React.FC = () => {
         }
 
         const token = result.data?.accessToken;
-        const refreshToken = result.data?.refreshToken; // Grab the refresh token too!
+        const refreshToken = result.data?.refreshToken;
 
         if (token) {
-          // 🛑 FIX: Use the specific "qr_" prefix so it doesn't clash with other projects!
           localStorage.setItem('qr_accessToken', token);
           
           if (refreshToken) {
@@ -71,62 +70,68 @@ const LoginPage: React.FC = () => {
     <>
       <ToastContainer position="top-right" theme="colored" autoClose={3000} />
       <section className={styles.whole}>
-        <div className={styles.leftdisplay}>
-          <img src={leftDesign} alt="Design" />
-        </div>
-        <div className={styles.rightdsiplay}>
-          <img src={logo} alt="Bakery Logo" />
-          <h2>Login to your account</h2>
-          <form onSubmit={handleLogin}>
-            <div>
-              <label htmlFor="email">Email</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="password">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                placeholder="Enter your Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className={styles.middle}>
-              <div className={styles.remember}>
+        
+        <div className={styles.cardWrapper}>
+          
+          <div className={styles.leftdisplay}>
+            <img src={leftDesign} alt="Design" />
+          </div>
+          
+          <div className={styles.rightdsiplay}>
+            <img src={logo} alt="Bakery Logo" />
+            <h2>Login to your account</h2>
+            <form onSubmit={handleLogin}>
+              <div>
+                <label htmlFor="email">Email</label>
                 <input
-                  type="checkbox"
-                  id="remember"
-                  checked={rememberMe}
-                  onChange={() => setRememberMe(!rememberMe)}
-                  className={styles.realCheckbox}
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
-                <label htmlFor="remember" className={styles.customBox}></label>
-                <p>Remember Me</p>
               </div>
-              <div className={styles.forgetpass}>
-                <p><Link to="/ForgetPassPage">Forget Password?</Link></p>
+              <div>
+                <label htmlFor="password">Password</label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  placeholder="Enter your Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
               </div>
-            </div>
 
-            <button type="submit" disabled={loading} className={styles.loginBtn}>
-              {loading ? "Logging in..." : "Login"}
-            </button>
-            <div className={styles.backthome}><Link to="/">Back to Home</Link></div>
-          </form>
+              <div className={styles.middle}>
+                <div className={styles.remember}>
+                  <input
+                    type="checkbox"
+                    id="remember"
+                    checked={rememberMe}
+                    onChange={() => setRememberMe(!rememberMe)}
+                    className={styles.realCheckbox}
+                  />
+                  <label htmlFor="remember" className={styles.customBox}></label>
+                  <p>Remember Me</p>
+                </div>
+                <div className={styles.forgetpass}>
+                  <p><Link to="/ForgetPassPage">Forget Password?</Link></p>
+                </div>
+              </div>
+
+              <button type="submit" disabled={loading} className={styles.loginBtn}>
+                {loading ? "Logging in..." : "Login"}
+              </button>
+              <div className={styles.backthome}><Link to="/">Back to Home</Link></div>
+            </form>
+          </div>
+
         </div>
       </section>
     </>
