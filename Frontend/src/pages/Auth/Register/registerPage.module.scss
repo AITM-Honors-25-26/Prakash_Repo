@@ -102,6 +102,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
 
     input {
+      box-sizing: border-box;
       width: 100%; /* Fills the container */
       padding-right: 40px; /* Leaves room for the icon so text doesn't overlap */
       @media (max-width: 768px) {
