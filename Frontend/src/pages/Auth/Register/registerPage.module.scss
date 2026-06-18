@@ -94,7 +94,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
   }
 
-  /* Password Container */
+ /* Password Container */
   .passwordContainer {
     position: relative;
     width: 100%;
@@ -112,13 +112,21 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       top: 22px; 
       transform: translateY(-50%);
       cursor: pointer;
-      color: $text-muted;
       display: flex;
       align-items: center;
       justify-content: center;
 
-      &:hover {
-        color: $primary-blue;
+      /* NEW: Ensures your PNGs are the perfect size */
+      .passwordIconImg {
+        width: 20px;
+        height: 20px;
+        object-fit: contain;
+        opacity: 0.6; /* Makes the image look a bit faded until hovered */
+        transition: opacity 0.2s ease;
+
+        &:hover {
+          opacity: 1; /* Makes it fully visible on hover */
+        }
       }
     }
   }
