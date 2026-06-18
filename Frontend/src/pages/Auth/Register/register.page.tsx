@@ -85,95 +85,99 @@ const RegisterPage: React.FC = () => {
       <ToastContainer position="top-right" theme="colored" autoClose={3000} />
           
       <section className={styles.whole}>
-        <div className={styles.leftside}>
-          <img src={walpaper2} alt="Wallpaper" />
-        </div>
-        <div className={styles.rightside}>
-          <h2>Register</h2>
-          <form onSubmit={handleRegister}>
-            <input name="fullName" placeholder="Full Name" onChange={handleChange} required />
-            <input name="email" type="email" placeholder="Email" onChange={handleChange} required />
-            
-            {/* Password Field */}
-            <div className={styles.passwordContainer}>
-              <input 
-                name="password" 
-                type={showPassword ? "text" : "password"} 
-                placeholder="Password" 
-                onChange={handleChange} 
-                required 
-              />
-              <span className={styles.eyeIcon} onClick={() => setShowPassword(!showPassword)}>
-                {/* Replaced SVG with your imported icons */}
-                <img 
-                  src={showPassword ? hidePassword : viewPasssword} 
-                  alt={showPassword ? "Hide Password" : "Show Password"} 
-                  className={styles.passwordIconImg}
-                />
-              </span>
-            </div>
+        
+        {/* NEW: The Card Wrapper that locks both sides together */}
+        <div className={styles.cardWrapper}>
+          
+          <div className={styles.leftside}>
+            <img src={walpaper2} alt="Wallpaper" />
+          </div>
 
-            {/* Confirm Password Field */}
-            <div className={styles.passwordContainer}>
-              <input 
-                name="confirmPassword" 
-                type={showConfirmPassword ? "text" : "password"} 
-                placeholder="Confirm Password" 
-                onChange={handleChange} 
-                required 
-              />
-              <span className={styles.eyeIcon} onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                {/* Replaced SVG with your imported icons */}
-                <img 
-                  src={showConfirmPassword ? hidePassword : viewPasssword} 
-                  alt={showConfirmPassword ? "Hide Password" : "Show Password"} 
-                  className={styles.passwordIconImg}
-                />
-              </span>
-            </div>
-
-            <input name="address" placeholder="Address" onChange={handleChange} required />
-            
-            <select name="role" onChange={handleChange}>
-              <option value="Chef">Chef</option>
-              <option value="Waiter">Waiter</option> 
-              <option value="Employee">Employee</option>
-            </select>
-            
-            <select name="gender" onChange={handleChange}>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
-            
-            <input name="phone" placeholder="Phone" onChange={handleChange} required />
-            <input name="dob" type="date" onChange={handleChange} required />
-            
-            {/* Custom File Upload */}
-            <div className={styles.fileUploadContainer}>
-              <label>Profile Image: </label>
+          <div className={styles.rightside}>
+            <h2>Register</h2>
+            <form onSubmit={handleRegister}>
+              <input name="fullName" placeholder="Full Name" onChange={handleChange} required />
+              <input name="email" type="email" placeholder="Email" onChange={handleChange} required />
               
-              <label htmlFor="profile-upload" className={styles.customFileUpload}>
-                <img src={uploadIcon} alt="Upload Icon" className={styles.uploadIconImg} />
-                <span>{image ? image.name : "Click here to upload..."}</span>
-              </label>
+              {/* Password Field */}
+              <div className={styles.passwordContainer}>
+                <input 
+                  name="password" 
+                  type={showPassword ? "text" : "password"} 
+                  placeholder="Password" 
+                  onChange={handleChange} 
+                  required 
+                />
+                <span className={styles.eyeIcon} onClick={() => setShowPassword(!showPassword)}>
+                  <img 
+                    src={showPassword ? hidePassword : viewPasssword} 
+                    alt={showPassword ? "Hide Password" : "Show Password"} 
+                    className={styles.passwordIconImg}
+                  />
+                </span>
+              </div>
 
-              <input 
-                id="profile-upload" 
-                type="file" 
-                accept="image/*" 
-                onChange={handleFileChange} 
-                className={styles.hiddenFileInput}
-                required 
-              />
+              {/* Confirm Password Field */}
+              <div className={styles.passwordContainer}>
+                <input 
+                  name="confirmPassword" 
+                  type={showConfirmPassword ? "text" : "password"} 
+                  placeholder="Confirm Password" 
+                  onChange={handleChange} 
+                  required 
+                />
+                <span className={styles.eyeIcon} onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                  <img 
+                    src={showConfirmPassword ? hidePassword : viewPasssword} 
+                    alt={showConfirmPassword ? "Hide Password" : "Show Password"} 
+                    className={styles.passwordIconImg}
+                  />
+                </span>
+              </div>
+
+              <input name="address" placeholder="Address" onChange={handleChange} required />
+              
+              <select name="role" onChange={handleChange}>
+                <option value="Chef">Chef</option>
+                <option value="Waiter">Waiter</option> 
+                <option value="Employee">Employee</option>
+              </select>
+              
+              <select name="gender" onChange={handleChange}>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+              
+              <input name="phone" placeholder="Phone" onChange={handleChange} required />
+              <input name="dob" type="date" onChange={handleChange} required />
+              
+              {/* Custom File Upload */}
+              <div className={styles.fileUploadContainer}>
+                <label>Profile Image: </label>
+                
+                <label htmlFor="profile-upload" className={styles.customFileUpload}>
+                  <img src={uploadIcon} alt="Upload Icon" className={styles.uploadIconImg} />
+                  <span>{image ? image.name : "Click here to upload..."}</span>
+                </label>
+
+                <input 
+                  id="profile-upload" 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handleFileChange} 
+                  className={styles.hiddenFileInput}
+                  required 
+                />
+              </div>
+
+              <button type="submit" disabled={loading}>
+                {loading ? "Registering..." : "Register"}
+              </button>
+            </form>
+            <div className={styles.links}>
+              <p>Already have an account? <Link to="/LoginPage">Login</Link></p>
             </div>
-
-            <button type="submit" disabled={loading}>
-              {loading ? "Registering..." : "Register"}
-            </button>
-          </form>
-          <div className={styles.links}>
-            <p>Already have an account? <Link to="/LoginPage">Login</Link></p>
           </div>
         </div>
       </section>
