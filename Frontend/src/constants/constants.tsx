@@ -22,7 +22,6 @@ export const API_ENDPOINTS = {
   DELETETABLE: `${API_BASE_URL}/table`,
   UPDATETABLE: `${API_BASE_URL}/table`,
 
-  // Order Routes (Added for Dashboard & Kitchen Staff)
   LISTALLORDERS: `${API_BASE_URL}/order/list`,
   UPDATEORDERSTATUS: `${API_BASE_URL}/order/status`,
   ORDER_ACTION: `${API_BASE_URL}/order`,

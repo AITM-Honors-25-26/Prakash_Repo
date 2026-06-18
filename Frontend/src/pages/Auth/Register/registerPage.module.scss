@@ -13,6 +13,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   border-color: $primary-blue;
   box-shadow: 0 0 8px rgba(79, 172, 254, 0.2);
 }
+
 .whole {
   display: flex;
   min-height: 100vh;
@@ -21,6 +22,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   background-color: #f5f5f5;
   padding: 20px;
 }
+
 .leftside, .rightside {
   width: 40%;
   height: 600px;
@@ -33,6 +35,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     padding: 40px 20px;
   }
 }
+
 .leftside {
   background-color: #e19a87;
   border-radius: 20px 0 0 20px;
@@ -48,6 +51,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     object-fit: contain;
   }
 }
+
 .rightside {
   background-color: #ffffff;
   border-radius: 0 20px 20px 0;
@@ -55,8 +59,8 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   justify-content: center;
   @media (max-width: 768px) {
     border-radius: 20px; 
-
   }
+
   h2 {
     @include header-font;
     font-size: 2rem;
@@ -64,9 +68,11 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     font-weight: bolder;
     margin-bottom: 10px;
   }
+
   p, label {
     @include header-font;
   }
+
   input, select {
     @include header-font;
     width: 100%;
@@ -78,14 +84,47 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     outline: none;
     transition: all 0.3s ease;
     @media (max-width: 768px) {
-    width: 95%;
-
-  }
+      width: 95%;
+    }
 
     &:focus {
       @include focus-state;
     }
   }
+
+  /* NEW: Password Container to hold the icon */
+  .passwordContainer {
+    position: relative;
+    width: 100%;
+    @media (max-width: 768px) {
+      width: 95%;
+    }
+
+    input {
+      width: 100%; /* Fills the container */
+      padding-right: 40px; /* Leaves room for the icon so text doesn't overlap */
+      @media (max-width: 768px) {
+        width: 100%; /* Overrides the previous 95% media query so it doesn't shrink twice */
+      }
+    }
+
+    .eyeIcon {
+      position: absolute;
+      right: 15px;
+      top: 22px; /* Centers the icon with the input vertically */
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: $text-muted;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        color: $primary-blue;
+      }
+    }
+  }
+
   select {
     width: auto;
     min-width: 20%;
@@ -94,6 +133,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       width: 100%;
     }
   }
+
   button {
     @include header-font;
     width: 105%;
@@ -107,27 +147,33 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: background 0.3s ease;
     margin-top: 10px;
+    
     &:hover:not(:disabled) {
       background-color: $hover-blue;
     }
+    
     &:disabled { 
       background-color: #ccc;
       cursor: not-allowed;
     }
   }
+
   .links {
     @include header-font;
     margin-top: 20px;
     text-align: center;
+    
     p {
       color: $text-muted;
       margin: 5px 0;
       font-size: 20px;
     }
+    
     a {
       color: $primary-blue;
       text-decoration: none;
       font-weight: 600;
+      
       &:hover {
         text-decoration: underline;
       }
