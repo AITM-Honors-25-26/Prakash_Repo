@@ -27,8 +27,8 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 /* The wrapper that forces both sides to be equal height */
 .cardWrapper {
   display: flex;
-  width: 80%; 
-  max-width: 1000px;
+  width: 100%; 
+  max-width: 1400px;
   min-height: 600px;
   box-shadow: $shadow; 
   border-radius: 20px;
