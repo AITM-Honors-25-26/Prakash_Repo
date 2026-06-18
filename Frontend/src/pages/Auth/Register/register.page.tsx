@@ -86,7 +86,7 @@ const RegisterPage: React.FC = () => {
           
       <section className={styles.whole}>
         
-        {/* NEW: The Card Wrapper that locks both sides together */}
+        {/* The Card Wrapper that locks both sides together */}
         <div className={styles.cardWrapper}>
           
           <div className={styles.leftside}>
@@ -137,20 +137,26 @@ const RegisterPage: React.FC = () => {
 
               <input name="address" placeholder="Address" onChange={handleChange} required />
               
-              <select name="role" onChange={handleChange}>
-                <option value="Chef">Chef</option>
-                <option value="Waiter">Waiter</option> 
-                <option value="Employee">Employee</option>
-              </select>
+              {/* Row for Role and Gender */}
+              <div className={styles.row}>
+                <select name="role" onChange={handleChange}>
+                  <option value="Chef">Chef</option>
+                  <option value="Waiter">Waiter</option> 
+                  <option value="Employee">Employee</option>
+                </select>
+                
+                <select name="gender" onChange={handleChange}>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
               
-              <select name="gender" onChange={handleChange}>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-                <option value="Other">Other</option>
-              </select>
-              
-              <input name="phone" placeholder="Phone" onChange={handleChange} required />
-              <input name="dob" type="date" onChange={handleChange} required />
+              {/* Row for Phone and DOB */}
+              <div className={styles.row}>
+                <input name="phone" placeholder="Phone" onChange={handleChange} required />
+                <input name="dob" type="date" onChange={handleChange} required />
+              </div>
               
               {/* Custom File Upload */}
               <div className={styles.fileUploadContainer}>
