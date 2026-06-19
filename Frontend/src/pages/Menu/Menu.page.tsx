@@ -140,6 +140,7 @@ const MenuPage: React.FC = () => {
     }
   }, []);
 
+  // Toast notification for serving table
   useEffect(() => {
     if (!id) return;
 
@@ -162,6 +163,7 @@ const MenuPage: React.FC = () => {
     };
   }, [id]);
 
+  // Main Initialization: Check Table Status & Fetch Menu
   useEffect(() => {
     const storedUser = localStorage.getItem('qr_user');
     if (storedUser) {
@@ -173,14 +175,50 @@ const MenuPage: React.FC = () => {
       }
     }
 
-    fetchMenu();
+    const initializePage = async () => {
+      // If there is a table ID in the URL, try to occupy it first
+      if (id) {
+        try {
 
+          await axios.put(`${API_ENDPOINTS.TABLE_BASE}/${id}/occupy`);
+          
+          localStorage.setItem('bakery_table', id);
+          
+          // Fetch the menu data
+          fetchMenu();
+        } catch (error: any) {
+          if (error.response && error.response.status === 409) {
+            // Table is already occupied! Block them and redirect.
+            MySwal.fire({
+              icon: 'warning',
+              title: 'Table Occupied',
+              text: 'This table is currently in use by another customer.',
+              confirmButtonColor: '#ff6b35',
+              allowOutsideClick: false // Force them to click the button
+            }).then(() => {
+              navigate('/'); // Redirect to your home page or an error page
+            });
+          } else {
+            // If the server crashes or table doesn't exist (404), handle it gracefully
+            toast.error('Unable to verify table status.');
+            fetchMenu(); // Optionally still load the menu, or redirect them
+          }
+        }
+      } else {
+        // No table ID in the URL (e.g., just browsing the menu from home)
+        fetchMenu();
+      }
+    };
+
+    initializePage();
+
+    // Polling for live menu updates
     const interval = setInterval(() => {
       fetchMenu(false);
     }, 10000);
 
     return () => clearInterval(interval);
-  }, [fetchMenu]);
+  }, [id, fetchMenu, navigate]);
 
   // Dynamic grouping logic
   const groupedItems = useMemo(() => {
@@ -290,7 +328,6 @@ const MenuPage: React.FC = () => {
               <h2 className={styles.categoryTitle}>{category}</h2> 
               <div className={styles.grid}>
                 {items.map((item) => (
-                  // Use the new MenuItemCard component here!
                   <MenuItemCard 
                     key={item._id} 
                     item={item} 

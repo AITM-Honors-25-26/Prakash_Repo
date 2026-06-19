@@ -87,8 +87,6 @@ class TableController {
                     meta: null 
                 });
             }
-
-            // 3. Update status using your existing updateTableById service
             const updatedTable = await tableSvc.updateTableById(tableId, { status: 'occupied' });
 
             return res.status(200).json({ 

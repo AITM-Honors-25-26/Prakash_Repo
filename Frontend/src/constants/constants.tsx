@@ -28,6 +28,7 @@ export const API_ENDPOINTS = {
 
   // Frontend Navigation Links
   TABLENUMBER: `${API_FRONTEND}/MenuPage/:id`,
+  TABLE_BASE: `${API_BASE_URL}/table`,
 
   CONTACTADMIN:`${API_BASE_URL}/conatctAdmin`
 };
