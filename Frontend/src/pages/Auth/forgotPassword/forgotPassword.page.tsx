@@ -1,22 +1,38 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { API_ENDPOINTS } from '../../../constants/constants';
+// Updated to include CloudFare_Captcha
+import { API_ENDPOINTS, CloudFare_Captcha } from '../../../constants/constants';
 import styles from "./forgotPassword.module.scss";
 import logo from "../../../../img/Logo.png";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// Import Turnstile
+import { Turnstile } from '@marsidev/react-turnstile';
+
 const ForgetPassPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  
+  // Add state to hold the Cloudflare token
+  const [cfToken, setCfToken] = useState<string | null>(null);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Block submission if CAPTCHA isn't solved
+    if (!cfToken) {
+      toast.error("Please complete the security check first.");
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await fetch(API_ENDPOINTS.FORGETPASSWORD, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        // Append the cfToken to the backend request payload
+        body: JSON.stringify({ email, cfToken }),
       });
       let result;
       try {
@@ -37,6 +53,7 @@ const ForgetPassPage: React.FC = () => {
       setLoading(false);
     }
   };
+
   return (
     <>
       <ToastContainer position="top-right" theme="colored" autoClose={3000} />
@@ -63,6 +80,18 @@ const ForgetPassPage: React.FC = () => {
                 required
               />
             </div>
+
+            {/* Cloudflare CAPTCHA added here */}
+            <div className={styles.captchaContainer}>
+              <Turnstile 
+                siteKey={CloudFare_Captcha.SITE_KEY}
+                onSuccess={(token) => setCfToken(token)}
+                options={{
+                  theme: 'light', // Matches the white background
+                }}
+              />
+            </div>
+
             <button type="submit" disabled={loading}>
               {loading ? "Sending..." : "Send Reset Link"}
             </button>
