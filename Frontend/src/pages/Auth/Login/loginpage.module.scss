@@ -160,6 +160,15 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       }
     }
 
+    /* --- CAPTCHA Alignment --- */
+    .captchaContainer {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin-top: 5px;
+      margin-bottom: 15px;
+    }
+
     button {
       @include header-font;
       box-sizing: border-box;
