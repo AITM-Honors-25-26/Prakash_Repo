@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { API_ENDPOINTS } from '../../../constants/constants';
+// Updated to import CloudFare_Captcha alongside API_ENDPOINTS
+import { API_ENDPOINTS, CloudFare_Captcha } from '../../../constants/constants';
 import styles from "./loginpage.module.scss"
 import logo from "../../../../img/Logo.png"
 import { toast, ToastContainer } from 'react-toastify';
 import leftDesign from "../../../../img/walpaper/1.png"
 import 'react-toastify/dist/ReactToastify.css';
+
+// Import Turnstile
+import { Turnstile } from '@marsidev/react-turnstile';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -13,14 +17,25 @@ const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
+  // Add state to hold the Cloudflare token
+  const [cfToken, setCfToken] = useState<string | null>(null);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Block submission if CAPTCHA isn't solved
+    if (!cfToken) {
+      toast.error("Please complete the security check first.");
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await fetch(API_ENDPOINTS.LOGIN, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        // Append the cfToken to the backend request payload
+        body: JSON.stringify({ email, password, cfToken }),
       });
 
       const result = await response.json();
@@ -123,6 +138,17 @@ const LoginPage: React.FC = () => {
                 <div className={styles.forgetpass}>
                   <p><Link to="/ForgetPassPage">Forget Password?</Link></p>
                 </div>
+              </div>
+
+              {/* Cloudflare CAPTCHA added here */}
+              <div className={styles.captchaContainer}>
+                <Turnstile 
+                  siteKey={CloudFare_Captcha.SITE_KEY}
+                  onSuccess={(token) => setCfToken(token)}
+                  options={{
+                    theme: 'light', // Enforces light theme to match your white background
+                  }}
+                />
               </div>
 
               <button type="submit" disabled={loading} className={styles.loginBtn}>
