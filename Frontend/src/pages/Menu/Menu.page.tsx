@@ -140,7 +140,6 @@ const MenuPage: React.FC = () => {
     }
   }, []);
 
-  // Toast notification for serving table
   useEffect(() => {
     if (!id) return;
 
@@ -163,7 +162,6 @@ const MenuPage: React.FC = () => {
     };
   }, [id]);
 
-  // Main Initialization: Check Table Status & Fetch Menu
   useEffect(() => {
     const storedUser = localStorage.getItem('qr_user');
     if (storedUser) {
@@ -176,7 +174,6 @@ const MenuPage: React.FC = () => {
     }
 
     const initializePage = async () => {
-      // If there is a table ID in the URL, try to occupy it first
       if (id) {
         try {
 
@@ -184,28 +181,32 @@ const MenuPage: React.FC = () => {
           
           localStorage.setItem('bakery_table', id);
           
-          // Fetch the menu data
           fetchMenu();
-        } catch (error: any) {
+        } catch (error) { 
+        if (axios.isAxiosError(error)) {
+          
           if (error.response && error.response.status === 409) {
-            // Table is already occupied! Block them and redirect.
             MySwal.fire({
               icon: 'warning',
               title: 'Table Occupied',
               text: 'This table is currently in use by another customer.',
               confirmButtonColor: '#ff6b35',
-              allowOutsideClick: false // Force them to click the button
+              allowOutsideClick: false 
             }).then(() => {
-              navigate('/'); // Redirect to your home page or an error page
+              navigate('/'); 
             });
           } else {
-            // If the server crashes or table doesn't exist (404), handle it gracefully
             toast.error('Unable to verify table status.');
-            fetchMenu(); // Optionally still load the menu, or redirect them
+            fetchMenu(); 
           }
+
+        } else {
+          console.error("An unexpected error occurred:", error);
+          toast.error('An unexpected error occurred.');
+          fetchMenu();
         }
+      }
       } else {
-        // No table ID in the URL (e.g., just browsing the menu from home)
         fetchMenu();
       }
     };
