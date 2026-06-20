@@ -1,24 +1,28 @@
 $font-header: 'Amatic SC', cursive;
 
-.footer{
-    height: 400px;
+.footer {
+    min-height: 400px;      /* FIX: Allows the footer to stretch down for the CAPTCHA */
+    padding-bottom: 30px;   /* FIX: Gives the Send button breathing room at the bottom */
     background-color: #48392a;
     margin-top: 10px;
     border-radius: 10px 10px 0px 0px;
     display: flex;
     flex-direction: row;
+
     @media (max-width: 768px) {
         display: block;
-        height: 100%;
+        height: auto;       /* FIX: Prevents overlapping on mobile screens */
         padding: 0px 0px 20px 0px;
     }
-    div{
+
+    div {
         flex: 1;   
         font-family: $font-header; 
         @media (max-width: 768px) {
             padding: 0px 10px;
         }      
     }
+
     .leftdiv {
         color: white;
         display: flex;
@@ -67,13 +71,16 @@ $font-header: 'Amatic SC', cursive;
             }  
         }
     }
-    .middlleftediv{
+
+    .middlleftediv {
     }
-    .middlrightediv{
+
+    .middlrightediv {
         padding-left: 20px;
         padding-top: 5px;
-        .navLinks{
-            p{
+
+        .navLinks {
+            p {
                 color: rgb(196, 196, 196);
                 font-size: 30px;
                 font-weight: 900;
@@ -82,7 +89,7 @@ $font-header: 'Amatic SC', cursive;
                     font-size: 20px;
                 } 
             }
-            a{
+            a {
                 display: flex;
                 flex-direction: row;
                 color: white;
@@ -90,7 +97,8 @@ $font-header: 'Amatic SC', cursive;
                 text-decoration: none;
                 font-weight: 600;
                 margin-bottom: 10px;
-                &:hover{
+
+                &:hover {
                     cursor: pointer;
                     text-decoration: underline;
                     color: aqua;
@@ -101,27 +109,32 @@ $font-header: 'Amatic SC', cursive;
             }
         }        
     }
-    .rightdiv{
+
+    .rightdiv {
         border-radius: 0px 10px 0px 0px;
-        h2{
+        
+        h2 {
             color: white;
             @media (max-width: 768px) {
                 font-size: 20px;
                 padding-left: 10px;
             } 
         }
-        input{
+
+        input {
             font-family: $font-header;
             margin-bottom: 15px;    
             padding: 5px 10px;  
             border-radius: 5px;  
             border: none; 
         }
-        textarea{
+
+        textarea {
             margin-bottom: 15px;
             border: none;
             border-radius: 10px;
         }
+
         .messageinput {
             height: 150px;
             width: 100%;
@@ -132,11 +145,13 @@ $font-header: 'Amatic SC', cursive;
             font-family: inherit; 
             box-sizing: border-box; 
         }
-        .messagepart{
+
+        .messagepart {
             display: flex;
             flex-direction: column;
             padding-right: 10px;
-            button{
+
+            button {
                 font-family: $font-header;
                 padding: 10px 20px;
                 border-radius: 10px;  
