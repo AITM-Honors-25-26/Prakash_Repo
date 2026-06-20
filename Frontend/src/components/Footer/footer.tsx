@@ -5,7 +5,7 @@ import x from '../../../img/logos/x.png';
 import facebook from '../../../img/logos/Facebook.png';
 import instagram from '../../../img/logos/instagarm.png';
 import gmail from '../../../img/logos/gmail.png';
-import { API_ENDPOINTS } from '../../constants/constants';
+import { API_ENDPOINTS, CloudFare_Captcha } from '../../constants/constants';
 
 // 1. Import toast from react-toastify
 import { toast } from 'react-toastify'; 
@@ -111,10 +111,9 @@ const Footer: React.FC = () => {
             disabled={isLoading}
           />
 
-          {/* 6. ADD THE WIDGET HERE */}
           <div style={{ marginBottom: '10px' }}>
             <Turnstile 
-              siteKey="YOUR_SITE_KEY_GOES_HERE" // <-- PASTE YOUR PUBLIC SITE KEY HERE
+              siteKey= {CloudFare_Captcha.SITE_KEY}
               onSuccess={(token) => setCfToken(token)}
             />
           </div>

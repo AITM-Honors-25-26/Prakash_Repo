@@ -56,3 +56,8 @@ export const OrderStatus={
   COMPLETED:'Completed',
   CANCELLED:'Cancelled'
 }
+
+export const CloudFare_Captcha = {
+  SITE_KEY:`0x4AAAAAADoOvGKugWkb8Sdj`,
+  SECRET_KEY:`0x4AAAAAADoOvGLSC-y6FaPeGbgwvv4VTww`
+}
