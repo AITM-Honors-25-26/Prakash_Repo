@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { API_ENDPOINTS } from '../../../constants/constants';
+// Updated import to include CloudFare_Captcha
+import { API_ENDPOINTS, CloudFare_Captcha } from '../../../constants/constants';
 import styles from './registerPage.module.scss'
 import { toast, ToastContainer } from 'react-toastify';
 import walpaper2 from '../../../../img/walpaper/2.png'
@@ -9,6 +10,9 @@ import uploadIcon from "./../../../../img/icons/upload.png"
 import viewPasssword from "../../../../img/icons/ViewPassword.png"
 import hidePassword from "../../../../img/icons/HidePassword.png"
 
+// Import Turnstile
+import { Turnstile } from '@marsidev/react-turnstile';
+
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -16,6 +20,9 @@ const RegisterPage: React.FC = () => {
   // States for password visibility
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // State for Cloudflare Token
+  const [cfToken, setCfToken] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -42,6 +49,13 @@ const RegisterPage: React.FC = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Block submission if CAPTCHA isn't solved
+    if (!cfToken) {
+      toast.error("Please complete the security check first.");
+      return;
+    }
+
     setLoading(true);
     const data = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
@@ -51,6 +65,9 @@ const RegisterPage: React.FC = () => {
     if (image) {
       data.append('image', image);
     }
+
+    // Append the Cloudflare token so the backend can verify it
+    data.append('cfToken', cfToken);
     
     try {
       const response = await fetch(API_ENDPOINTS.REGISTER, {
@@ -86,7 +103,6 @@ const RegisterPage: React.FC = () => {
           
       <section className={styles.whole}>
         
-        {/* The Card Wrapper that locks both sides together */}
         <div className={styles.cardWrapper}>
           
           <div className={styles.leftside}>
@@ -174,6 +190,17 @@ const RegisterPage: React.FC = () => {
                   onChange={handleFileChange} 
                   className={styles.hiddenFileInput}
                   required 
+                />
+              </div>
+
+              {/* Cloudflare CAPTCHA added here */}
+              <div className={styles.captchaContainer}>
+                <Turnstile 
+                  siteKey={CloudFare_Captcha.SITE_KEY}
+                  onSuccess={(token) => setCfToken(token)}
+                  options={{
+                    theme: 'light', // explicitly set to light since your form background is white
+                  }}
                 />
               </div>
 
