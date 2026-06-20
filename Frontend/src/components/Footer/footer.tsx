@@ -10,13 +10,26 @@ import { API_ENDPOINTS } from '../../constants/constants';
 // 1. Import toast from react-toastify
 import { toast } from 'react-toastify'; 
 
+// 2. Import the Turnstile component
+import { Turnstile } from '@marsidev/react-turnstile';
+
 const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  
+  // 3. Add state to hold the Cloudflare token
+  const [cfToken, setCfToken] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); 
+
+    // 4. Block submission if the CAPTCHA isn't solved
+    if (!cfToken) {
+      toast.error("Please complete the security check first.");
+      return;
+    }
+
     setIsLoading(true);
     
     try {
@@ -25,21 +38,21 @@ const Footer: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, message }),
+        // 5. Send the token to the backend along with the email and message
+        body: JSON.stringify({ email, message, cfToken }),
       });
 
       if (response.ok) {
-        // 2. Use toast.success for a successful send
         toast.success('Thank you! Your message has been sent.');
         setEmail('');
         setMessage('');
+        // Note: Turnstile automatically resets itself after a certain period, 
+        // but the user will need to reload or re-verify if they want to send a SECOND message immediately.
       } else {
-        // 3. Use toast.error for a failed response
         toast.error('Failed to send message. Please try again later.');
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      // 4. Use toast.error for network issues
       toast.error('Network error. Could not connect to the server.');
     } finally {
       setIsLoading(false);
@@ -97,6 +110,15 @@ const Footer: React.FC = () => {
             required
             disabled={isLoading}
           />
+
+          {/* 6. ADD THE WIDGET HERE */}
+          <div style={{ marginBottom: '10px' }}>
+            <Turnstile 
+              siteKey="YOUR_SITE_KEY_GOES_HERE" // <-- PASTE YOUR PUBLIC SITE KEY HERE
+              onSuccess={(token) => setCfToken(token)}
+            />
+          </div>
+
           <button type="submit" disabled={isLoading}>
             {isLoading ? 'SENDING...' : 'SEND'}
           </button>
