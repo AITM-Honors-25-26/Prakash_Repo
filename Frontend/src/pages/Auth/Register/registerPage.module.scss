@@ -88,7 +88,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 
   input, select {
     @include header-font;
-    box-sizing: border-box; /* Fixes the width stretching issue */
+    box-sizing: border-box; 
     width: 100%;
     padding: 10px 15px;
     border: 1.5px solid $border-color;
@@ -208,6 +208,15 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   }
   /* --------------------------------- */
 
+  /* CAPTCHA Container Styles */
+  .captchaContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 15px;
+  }
+
   button {
     @include header-font;
     box-sizing: border-box;
@@ -221,7 +230,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     font-weight: bold;
     cursor: pointer;
     transition: background 0.3s ease;
-    margin-top: 10px;
+    margin-top: 5px;
     
     &:hover:not(:disabled) {
       background-color: $hover-blue;
