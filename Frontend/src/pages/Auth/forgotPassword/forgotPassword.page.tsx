@@ -87,7 +87,7 @@ const ForgetPassPage: React.FC = () => {
                 siteKey={CloudFare_Captcha.SITE_KEY}
                 onSuccess={(token) => setCfToken(token)}
                 options={{
-                  theme: 'light', // Matches the white background
+                  theme: 'light', 
                 }}
               />
             </div>
