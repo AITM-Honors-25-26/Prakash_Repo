@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Turnstile } from '@marsidev/react-turnstile';
-import type { TurnstileInstance } from '@marsidev/react-turnstile';// Updated import to include CloudFare_Captcha
+import type { TurnstileInstance } from '@marsidev/react-turnstile';
 import { API_ENDPOINTS, CloudFare_Captcha } from '../../../constants/constants';
 import styles from "../ResetPassword/resetPassword.page.module.scss";
 import logo from "../../../../img/Logo.png";
@@ -77,63 +77,69 @@ const ResetPasswordPage: React.FC = () => {
     <>
       <ToastContainer position="top-right" theme="colored" autoClose={3000} />
       <section className={styles.whole}>
-        <div></div>
-        <div className={styles.leftdisplay}>
-          <img src={logo} alt="Company Logo" />
-        </div>
-        <div className={styles.rightdsiplay}>
-          <img src={logo} className={styles.smallLogo} alt="Company Logo" />
-          <h2>Create New Password</h2>
-          <p>Please enter your new password below.</p>
+        
+        {/* NEW: Wrapper to hold both sides together and force equal height */}
+        <div className={styles.cardWrapper}>
           
-          <form onSubmit={handleSubmit}>
-            <div>
-              <label htmlFor="password">New Password</label>
-              <input
-                id="password"
-                type="password"
-                placeholder="Enter new password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-              />
-            </div>
+          <div className={styles.leftdisplay}>
+            <img src={logo} alt="Company Logo" />
+          </div>
+          
+          <div className={styles.rightdsiplay}>
+            <img src={logo} className={styles.smallLogo} alt="Company Logo" />
+            <h2>Create New Password</h2>
+            <p>Please enter your new password below.</p>
             
-            <div>
-              <label htmlFor="confirmPassword">Confirm Password</label>
-              <input
-                id="confirmPassword"
-                type="password"
-                placeholder="Confirm new password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-              />
-            </div>
+            <form onSubmit={handleSubmit}>
+              <div>
+                <label htmlFor="password">New Password</label>
+                <input
+                  id="password"
+                  type="password"
+                  placeholder="Enter new password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="confirmPassword">Confirm Password</label>
+                <input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="Confirm new password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
+              </div>
 
-            <div className={styles.captchaContainer}>
-              <Turnstile
-                ref={turnstileRef}
-                siteKey={CloudFare_Captcha.SITE_KEY}
-                onSuccess={(token) => setCaptchaToken(token)}
-                onError={() => setCaptchaToken(null)}
-                onExpire={() => setCaptchaToken(null)}
-                options={{
-                  theme: 'light', 
-                }}
-              />
-            </div>
+              <div className={styles.captchaContainer}>
+                <Turnstile
+                  ref={turnstileRef}
+                  siteKey={CloudFare_Captcha.SITE_KEY}
+                  onSuccess={(token) => setCaptchaToken(token)}
+                  onError={() => setCaptchaToken(null)}
+                  onExpire={() => setCaptchaToken(null)}
+                  options={{
+                    theme: 'light', 
+                  }}
+                />
+              </div>
 
-            <button type="submit" disabled={loading || !captchaToken} style={{ marginTop: "10px" }}>
-              {loading ? "Resetting..." : "Reset Password"}
-            </button>
-          </form>
-          
-          <div className={styles.links}>
-            <p><Link to="/LoginPage">Back to Login</Link></p> 
+              <button type="submit" disabled={loading || !captchaToken} style={{ marginTop: "10px" }}>
+                {loading ? "Resetting..." : "Reset Password"}
+              </button>
+            </form>
+            
+            <div className={styles.links}>
+              <p><Link to="/LoginPage">Back to Login</Link></p> 
+            </div>
           </div>
         </div>
+
       </section>
     </>
   );
