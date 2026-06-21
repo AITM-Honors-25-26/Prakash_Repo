@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';// Updated import to include CloudFare_Captcha
 import { API_ENDPOINTS, CloudFare_Captcha } from '../../../constants/constants';
-import styles from "./resetPassword.page.module.scss"; 
+import styles from "./registerPage.module.scss";
 import logo from "../../../../img/Logo.png";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
