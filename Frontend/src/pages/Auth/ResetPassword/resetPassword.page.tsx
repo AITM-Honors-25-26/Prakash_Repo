@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import ReCAPTCHA from 'react-google-recaptcha';
 import { API_ENDPOINTS } from '../../../constants/constants';
 import styles from "./resetPassword.page.module.scss"; 
 import logo from "../../../../img/Logo.png";
@@ -9,30 +10,42 @@ import 'react-toastify/dist/ReactToastify.css';
 const ResetPasswordPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
   
   const token = searchParams.get('token');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!token) {
       toast.error("Invalid or missing reset token. Please request a new link.");
       return;
     }
+    
     if (password !== confirmPassword) {
       toast.error("Passwords do not match. Please try again.");
       return;
     }
+
+    if (!captchaToken) {
+      toast.error("Please complete the CAPTCHA to proceed.");
+      return;
+    }
+
     setLoading(true);
+    
     try {
+      // Note: Make sure your backend expects and verifies the 'captchaToken'
       const response = await fetch(API_ENDPOINTS.RESETPASSWORD, {
         method: 'PATCH', 
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token, password }),
+        body: JSON.stringify({ token, password, captchaToken }),
       });
-
+      
       let result;
       try {
         result = await response.json();
@@ -47,10 +60,16 @@ const ResetPasswordPage: React.FC = () => {
         }, 3000);
       } else {
         toast.error(result.message || "Failed to reset password. The token might be expired.");
+        // Reset captcha so the user has to solve it again on failure
+        recaptchaRef.current?.reset();
+        setCaptchaToken(null);
       }
     } catch (error) {
       console.error("Connection error:", error);
       toast.error("Network error. Check if backend is running and CORS is enabled.");
+      // Reset captcha on network error as well
+      recaptchaRef.current?.reset();
+      setCaptchaToken(null);
     } finally {
       setLoading(false);
     }
@@ -67,9 +86,7 @@ const ResetPasswordPage: React.FC = () => {
         <div className={styles.rightdsiplay}>
           <img src={logo} className={styles.smallLogo} alt="Company Logo" />
           <h2>Create New Password</h2>
-          <p>
-            Please enter your new password below.
-          </p>
+          <p>Please enter your new password below.</p>
           
           <form onSubmit={handleSubmit}>
             <div>
@@ -97,7 +114,15 @@ const ResetPasswordPage: React.FC = () => {
               />
             </div>
 
-            <button type="submit" disabled={loading} style={{ marginTop: "20px" }}>
+            <div style={{ marginTop: "15px", marginBottom: "15px" }}>
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY || "YOUR_RECAPTCHA_SITE_KEY"}
+                onChange={(token) => setCaptchaToken(token)}
+              />
+            </div>
+
+            <button type="submit" disabled={loading || !captchaToken} style={{ marginTop: "10px" }}>
               {loading ? "Resetting..." : "Reset Password"}
             </button>
           </form>

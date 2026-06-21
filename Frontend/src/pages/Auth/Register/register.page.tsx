@@ -1,97 +1,73 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useRef } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile';
 // Updated import to include CloudFare_Captcha
 import { API_ENDPOINTS, CloudFare_Captcha } from '../../../constants/constants';
-import styles from './registerPage.module.scss'
+import styles from "./resetPassword.page.module.scss"; 
+import logo from "../../../../img/Logo.png";
 import { toast, ToastContainer } from 'react-toastify';
-import walpaper2 from '../../../../img/walpaper/2.png'
 import 'react-toastify/dist/ReactToastify.css';
-import uploadIcon from "./../../../../img/icons/upload.png"
-import viewPasssword from "../../../../img/icons/ViewPassword.png"
-import hidePassword from "../../../../img/icons/HidePassword.png"
 
-// Import Turnstile
-import { Turnstile } from '@marsidev/react-turnstile';
-
-const RegisterPage: React.FC = () => {
-  const navigate = useNavigate();
+const ResetPasswordPage: React.FC = () => {
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const turnstileRef = useRef<TurnstileInstance>(null);
   
-  // States for password visibility
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const token = searchParams.get('token');
 
-  // State for Cloudflare Token
-  const [cfToken, setCfToken] = useState<string | null>(null);
-
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    address: '',
-    role: 'Employee', 
-    gender: 'Male',
-    phone: '',
-    dob: '',
-  });
-  const [image, setImage] = useState<File | null>(null);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setImage(e.target.files[0]);
-    }
-  };
-
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!token) {
+      toast.error("Invalid or missing reset token. Please request a new link.");
+      return;
+    }
+    
+    if (password !== confirmPassword) {
+      toast.error("Passwords do not match. Please try again.");
+      return;
+    }
 
-    // Block submission if CAPTCHA isn't solved
-    if (!cfToken) {
-      toast.error("Please complete the security check first.");
+    if (!captchaToken) {
+      toast.error("Please complete the security check to proceed.");
       return;
     }
 
     setLoading(true);
-    const data = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      data.append(key, value);
-    });
-    
-    if (image) {
-      data.append('image', image);
-    }
-
-    // Append the Cloudflare token so the backend can verify it
-    data.append('cfToken', cfToken);
     
     try {
-      const response = await fetch(API_ENDPOINTS.REGISTER, {
-        method: 'POST',
-        body: data,
+      const response = await fetch(API_ENDPOINTS.RESETPASSWORD, {
+        method: 'PATCH', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, password, captchaToken }),
       });
-
-      const result = await response.json();
-      console.log("FULL BACKEND RESPONSE:", result);
       
+      let result;
+      try {
+        result = await response.json();
+      } catch {
+        result = {};
+      }
+
       if (response.ok) {
-        toast.success("Registration Successful!");
-        navigate('/LoginPage');
+        toast.success(result.message || "Password reset successfully! Redirecting to login...");
+        setTimeout(() => {
+          navigate('/LoginPage');
+        }, 3000);
       } else {
-        if (result.error && typeof result.error === 'object') {
-          const specificErrors = Object.values(result.error).join('\n');
-          toast.error(`${result.message || "Registration Failed"}:\n\n${specificErrors}`);
-        } else {
-          toast.error(result.message || "Registration failed");
-        }
+        toast.error(result.message || "Failed to reset password. The token might be expired.");
+        turnstileRef.current?.reset();
+        setCaptchaToken(null);
       }
     } catch (error) {
       console.error("Connection error:", error);
-      toast.error("Check if backend is running.");
+      toast.error("Network error. Check if backend is running and CORS is enabled.");
+      turnstileRef.current?.reset();
+      setCaptchaToken(null);
     } finally {
       setLoading(false);
     }
@@ -100,117 +76,62 @@ const RegisterPage: React.FC = () => {
   return (
     <>
       <ToastContainer position="top-right" theme="colored" autoClose={3000} />
-          
       <section className={styles.whole}>
-        
-        <div className={styles.cardWrapper}>
+        <div></div>
+        <div className={styles.leftdisplay}>
+          <img src={logo} alt="Company Logo" />
+        </div>
+        <div className={styles.rightdsiplay}>
+          <img src={logo} className={styles.smallLogo} alt="Company Logo" />
+          <h2>Create New Password</h2>
+          <p>Please enter your new password below.</p>
           
-          <div className={styles.leftside}>
-            <img src={walpaper2} alt="Wallpaper" />
-          </div>
-
-          <div className={styles.rightside}>
-            <h2>Register</h2>
-            <form onSubmit={handleRegister}>
-              <input name="fullName" placeholder="Full Name" onChange={handleChange} required />
-              <input name="email" type="email" placeholder="Email" onChange={handleChange} required />
-              
-              {/* Password Field */}
-              <div className={styles.passwordContainer}>
-                <input 
-                  name="password" 
-                  type={showPassword ? "text" : "password"} 
-                  placeholder="Password" 
-                  onChange={handleChange} 
-                  required 
-                />
-                <span className={styles.eyeIcon} onClick={() => setShowPassword(!showPassword)}>
-                  <img 
-                    src={showPassword ? hidePassword : viewPasssword} 
-                    alt={showPassword ? "Hide Password" : "Show Password"} 
-                    className={styles.passwordIconImg}
-                  />
-                </span>
-              </div>
-
-              {/* Confirm Password Field */}
-              <div className={styles.passwordContainer}>
-                <input 
-                  name="confirmPassword" 
-                  type={showConfirmPassword ? "text" : "password"} 
-                  placeholder="Confirm Password" 
-                  onChange={handleChange} 
-                  required 
-                />
-                <span className={styles.eyeIcon} onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                  <img 
-                    src={showConfirmPassword ? hidePassword : viewPasssword} 
-                    alt={showConfirmPassword ? "Hide Password" : "Show Password"} 
-                    className={styles.passwordIconImg}
-                  />
-                </span>
-              </div>
-
-              <input name="address" placeholder="Address" onChange={handleChange} required />
-              
-              {/* Row for Role and Gender */}
-              <div className={styles.row}>
-                <select name="role" onChange={handleChange}>
-                  <option value="Chef">Chef</option>
-                  <option value="Waiter">Waiter</option> 
-                  <option value="Employee">Employee</option>
-                </select>
-                
-                <select name="gender" onChange={handleChange}>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              
-              {/* Row for Phone and DOB */}
-              <div className={styles.row}>
-                <input name="phone" placeholder="Phone" onChange={handleChange} required />
-                <input name="dob" type="date" onChange={handleChange} required />
-              </div>
-              
-              {/* Custom File Upload */}
-              <div className={styles.fileUploadContainer}>
-                <label>Profile Image: </label>
-                
-                <label htmlFor="profile-upload" className={styles.customFileUpload}>
-                  <img src={uploadIcon} alt="Upload Icon" className={styles.uploadIconImg} />
-                  <span>{image ? image.name : "Click here to upload..."}</span>
-                </label>
-
-                <input 
-                  id="profile-upload" 
-                  type="file" 
-                  accept="image/*" 
-                  onChange={handleFileChange} 
-                  className={styles.hiddenFileInput}
-                  required 
-                />
-              </div>
-
-              {/* Cloudflare CAPTCHA added here */}
-              <div className={styles.captchaContainer}>
-                <Turnstile 
-                  siteKey={CloudFare_Captcha.SITE_KEY}
-                  onSuccess={(token) => setCfToken(token)}
-                  options={{
-                    theme: 'light', // explicitly set to light since your form background is white
-                  }}
-                />
-              </div>
-
-              <button type="submit" disabled={loading}>
-                {loading ? "Registering..." : "Register"}
-              </button>
-            </form>
-            <div className={styles.links}>
-              <p>Already have an account? <Link to="/LoginPage">Login</Link></p>
+          <form onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="password">New Password</label>
+              <input
+                id="password"
+                type="password"
+                placeholder="Enter new password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+              />
             </div>
+            
+            <div>
+              <label htmlFor="confirmPassword">Confirm Password</label>
+              <input
+                id="confirmPassword"
+                type="password"
+                placeholder="Confirm new password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className={styles.captchaContainer}>
+              <Turnstile
+                ref={turnstileRef}
+                siteKey={CloudFare_Captcha.SITE_KEY}
+                onSuccess={(token) => setCaptchaToken(token)}
+                onError={() => setCaptchaToken(null)}
+                onExpire={() => setCaptchaToken(null)}
+                options={{
+                  theme: 'light', 
+                }}
+              />
+            </div>
+
+            <button type="submit" disabled={loading || !captchaToken} style={{ marginTop: "10px" }}>
+              {loading ? "Resetting..." : "Reset Password"}
+            </button>
+          </form>
+          
+          <div className={styles.links}>
+            <p><Link to="/LoginPage">Back to Login</Link></p> 
           </div>
         </div>
       </section>
@@ -218,4 +139,4 @@ const RegisterPage: React.FC = () => {
   );
 };
 
-export default RegisterPage;
+export default ResetPasswordPage;
