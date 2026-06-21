@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import ReCAPTCHA from 'react-google-recaptcha';
-import { API_ENDPOINTS } from '../../../constants/constants';
+import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile';
+// Updated import to include CloudFare_Captcha
+import { API_ENDPOINTS, CloudFare_Captcha } from '../../../constants/constants';
 import styles from "./resetPassword.page.module.scss"; 
 import logo from "../../../../img/Logo.png";
 import { toast, ToastContainer } from 'react-toastify';
@@ -14,7 +15,7 @@ const ResetPasswordPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const recaptchaRef = useRef<ReCAPTCHA>(null);
+  const turnstileRef = useRef<TurnstileInstance>(null);
   
   const token = searchParams.get('token');
 
@@ -32,14 +33,13 @@ const ResetPasswordPage: React.FC = () => {
     }
 
     if (!captchaToken) {
-      toast.error("Please complete the CAPTCHA to proceed.");
+      toast.error("Please complete the security check to proceed.");
       return;
     }
 
     setLoading(true);
     
     try {
-      // Note: Make sure your backend expects and verifies the 'captchaToken'
       const response = await fetch(API_ENDPOINTS.RESETPASSWORD, {
         method: 'PATCH', 
         headers: { 'Content-Type': 'application/json' },
@@ -60,15 +60,13 @@ const ResetPasswordPage: React.FC = () => {
         }, 3000);
       } else {
         toast.error(result.message || "Failed to reset password. The token might be expired.");
-        // Reset captcha so the user has to solve it again on failure
-        recaptchaRef.current?.reset();
+        turnstileRef.current?.reset();
         setCaptchaToken(null);
       }
     } catch (error) {
       console.error("Connection error:", error);
       toast.error("Network error. Check if backend is running and CORS is enabled.");
-      // Reset captcha on network error as well
-      recaptchaRef.current?.reset();
+      turnstileRef.current?.reset();
       setCaptchaToken(null);
     } finally {
       setLoading(false);
@@ -114,11 +112,16 @@ const ResetPasswordPage: React.FC = () => {
               />
             </div>
 
-            <div style={{ marginTop: "15px", marginBottom: "15px" }}>
-              <ReCAPTCHA
-                ref={recaptchaRef}
-                sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY || "YOUR_RECAPTCHA_SITE_KEY"}
-                onChange={(token) => setCaptchaToken(token)}
+            <div className={styles.captchaContainer}>
+              <Turnstile
+                ref={turnstileRef}
+                siteKey={CloudFare_Captcha.SITE_KEY}
+                onSuccess={(token) => setCaptchaToken(token)}
+                onError={() => setCaptchaToken(null)}
+                onExpire={() => setCaptchaToken(null)}
+                options={{
+                  theme: 'light', 
+                }}
               />
             </div>
 
