@@ -15,6 +15,8 @@ export const API_ENDPOINTS = {
   ADDMENUITEM: `${API_BASE_URL}/menu/add-item`,
   DELETEMENUITEM: `${API_BASE_URL}/menu`,
 
+  GET_MENU_ITEM: `${API_BASE_URL}/menu`,
+
   // Table Routes
   TABLEMANAGEMENT: `${API_BASE_URL}/TableManagement`,
   LISTALLTABLE: `${API_BASE_URL}/table/list`,

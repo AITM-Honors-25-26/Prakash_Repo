@@ -25,6 +25,29 @@ class MenuController {
             next(exception);
         }
     }
+
+    getSingleMenuItem = async (req, res, next) => {
+        try {
+            const id = req.params.id;
+            const item = await menuSvc.getItemById(id);
+            
+            if (!item) {
+                return next({
+                    code: 404,
+                    message: "Bakery item not found."
+                });
+            }
+
+            res.json({
+                data: item, // Matches your frontend expectation
+                message: "Item details fetched successfully",
+                meta: null
+            });
+        } catch (exception) {
+            next(exception);
+        }
+    }
+    
     deleteMenuItem = async (req, res, next) => {
         try {
             const id = req.params.id;
