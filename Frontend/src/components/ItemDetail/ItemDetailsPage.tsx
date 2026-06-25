@@ -1,67 +1,61 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { API_ENDPOINTS } from '../../constants/constants';
-import Layout from '../../components/layout/layout';
-import styles from './ItemDetailPage.module.scss';
+import React from 'react';
+import styles from './ItemDetailModal.module.scss';
 
-// Define a proper interface for your menu item
-interface MenuItem {
+// Use the exact same BakeryItem interface from your MenuPage
+interface BakeryItem {
   _id: string;
   name: string;
   description: string;
   price: number;
   images: { url: string; public_id: string }[];
+  category: string;
+  stock: number;
+  isAvailable: boolean;
 }
 
-const ItemDetailPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const [item, setItem] = useState<MenuItem | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+interface ItemDetailModalProps {
+  item: BakeryItem;
+  onClose: () => void;
+  onAddToCart: (item: BakeryItem) => void;
+}
 
-  useEffect(() => {
-    const fetchItem = async () => {
-      if (!id) return;
-      try {
-        const { data } = await axios.get(`${API_ENDPOINTS.GET_MENU_ITEM}/${id}`);
-        setItem(data.data); 
-      } catch  {
-        toast.error("Failed to load item details");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchItem();
-  }, [id]);
-
-  if (loading) return <div className={styles.loader}>Loading...</div>;
-  if (!item) return <div className={styles.notFound}>Item not found</div>;
+const ItemDetailModal: React.FC<ItemDetailModalProps> = ({ item, onClose, onAddToCart }) => {
+  if (!item) return null;
 
   return (
-    <Layout>
-      <div className={styles.detailContainer}>
-        {/* Use optional chaining to prevent crashes */}
-        <img 
-          src={item.images?.[0]?.url || '/default-bakery-item.png'} 
-          alt={item.name} 
-        />
-        <h1>{item.name}</h1>
-        <p className={styles.price}>Rs. {item.price.toLocaleString()}</p>
-        <p className={styles.desc}>{item.description}</p>
+    // The overlay background that covers the whole screen
+    <div className={styles.modalOverlay} onClick={onClose}>
+      
+      {/* The actual popup box. e.stopPropagation() stops clicks inside the box from closing it */}
+      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         
-        <button 
-          className={styles.addBtn}
-          onClick={() => {
-            // Placeholder: Add your add-to-cart logic here
-            toast.success(`${item.name} added to cart!`);
-          }}
-        >
-          Add to Cart
+        <button className={styles.closeBtn} onClick={onClose}>
+          &times;
         </button>
+
+        <div className={styles.imageContainer}>
+            <img src={item.images?.[0]?.url || '/placeholder.jpg'} alt={item.name} />
+        </div>
+
+        <div className={styles.detailsContainer}>
+            <h2>{item.name}</h2>
+            <p className={styles.price}>Rs. {item.price.toLocaleString()}</p>
+            <p className={styles.desc}>{item.description}</p>
+            
+            <button 
+              className={styles.addBtn} 
+              disabled={!item.isAvailable}
+              onClick={() => {
+                onAddToCart(item);
+                onClose(); // Automatically close the modal after adding to cart
+              }}
+            >
+              {item.isAvailable ? 'Add to Cart' : 'Out of Stock'}
+            </button>
+        </div>
       </div>
-    </Layout>
+    </div>
   );
 };
 
-export default ItemDetailPage;
+export default ItemDetailModal;

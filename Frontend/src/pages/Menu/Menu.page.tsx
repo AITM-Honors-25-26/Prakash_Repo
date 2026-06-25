@@ -31,27 +31,29 @@ interface CartItem extends BakeryItem {
   quantity: number;
 }
 
-
 const MenuItemCard: React.FC<{
   item: BakeryItem;
   isAdmin: boolean;
   handleAddToCart: (item: BakeryItem) => void;
   handleDelete: (id: string) => void;
-}> = ({ item, isAdmin, handleAddToCart, handleDelete }) => {
+  onClick: () => void;
+}> = ({ item, isAdmin, handleAddToCart, handleDelete, onClick }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const hasMultipleImages = item.images && item.images.length > 1;
 
-  const nextImage = () => {
+  const nextImage = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card navigation
     setCurrentImageIndex((prev) => (prev + 1) % item.images.length);
   };
 
-  const prevImage = () => {
+  const prevImage = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card navigation
     setCurrentImageIndex((prev) => (prev - 1 + item.images.length) % item.images.length);
   };
 
   return (
-    <div className={styles.card}>
+    <div className={styles.card} onClick={onClick} style={{ cursor: 'pointer' }}>
       <div className={styles.imageWrapper}>
         <img
           src={item.images?.[currentImageIndex]?.url || 'https://via.placeholder.com/500'}
@@ -89,10 +91,13 @@ const MenuItemCard: React.FC<{
         </div>
         <div className={styles.bottompart}>
           <div className={styles.bottom}>
-            <span className={styles.price}>Rs. {item.price}</span>
+            <span className={styles.price}>Rs. {item.price.toLocaleString()}</span>
             <button
               disabled={!item.isAvailable}
-              onClick={() => handleAddToCart(item)}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent card navigation
+                handleAddToCart(item);
+              }}
               className={styles.cartBtn}
             >
               <img src={cartwhite} alt="" />
@@ -102,7 +107,10 @@ const MenuItemCard: React.FC<{
           {isAdmin && (
             <button
               className={styles.deleteBtn}
-              onClick={() => handleDelete(item._id)}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent card navigation
+                handleDelete(item._id);
+              }}
             >
               Delete
             </button>
@@ -176,36 +184,31 @@ const MenuPage: React.FC = () => {
     const initializePage = async () => {
       if (id) {
         try {
-
           await axios.put(`${API_ENDPOINTS.TABLE_BASE}/${id}/occupy`);
-          
           localStorage.setItem('bakery_table', id);
-          
           fetchMenu();
         } catch (error) { 
-        if (axios.isAxiosError(error)) {
-          
-          if (error.response && error.response.status === 409) {
-            MySwal.fire({
-              icon: 'warning',
-              title: 'Table Occupied',
-              text: 'This table is currently in use by another customer.',
-              confirmButtonColor: '#ff6b35',
-              allowOutsideClick: false 
-            }).then(() => {
-              navigate('/'); 
-            });
+          if (axios.isAxiosError(error)) {
+            if (error.response && error.response.status === 409) {
+              MySwal.fire({
+                icon: 'warning',
+                title: 'Table Occupied',
+                text: 'This table is currently in use by another customer.',
+                confirmButtonColor: '#ff6b35',
+                allowOutsideClick: false 
+              }).then(() => {
+                navigate('/'); 
+              });
+            } else {
+              toast.error('Unable to verify table status.');
+              fetchMenu(); 
+            }
           } else {
-            toast.error('Unable to verify table status.');
-            fetchMenu(); 
+            console.error("An unexpected error occurred:", error);
+            toast.error('An unexpected error occurred.');
+            fetchMenu();
           }
-
-        } else {
-          console.error("An unexpected error occurred:", error);
-          toast.error('An unexpected error occurred.');
-          fetchMenu();
         }
-      }
       } else {
         fetchMenu();
       }
@@ -335,6 +338,7 @@ const MenuPage: React.FC = () => {
                     isAdmin={isAdmin} 
                     handleAddToCart={handleAddToCart}
                     handleDelete={handleDelete}
+                    onClick={() => navigate(`/item/${item._id}`)} 
                   />
                 ))}
               </div>
