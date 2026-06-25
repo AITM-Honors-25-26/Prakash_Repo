@@ -1,7 +1,6 @@
 import React from 'react';
 import styles from './ItemDetailModal.module.scss';
 
-// Use the exact same BakeryItem interface from your MenuPage
 interface BakeryItem {
   _id: string;
   name: string;
@@ -23,36 +22,37 @@ const ItemDetailModal: React.FC<ItemDetailModalProps> = ({ item, onClose, onAddT
   if (!item) return null;
 
   return (
-    // The overlay background that covers the whole screen
     <div className={styles.modalOverlay} onClick={onClose}>
-      
-      {/* The actual popup box. e.stopPropagation() stops clicks inside the box from closing it */}
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         
-        <button className={styles.closeBtn} onClick={onClose}>
+        <button className={styles.closeBtn} onClick={onClose} aria-label="Close modal">
           &times;
         </button>
 
-        <div className={styles.imageContainer}>
+        <div className={styles.imageSection}>
             <img src={item.images?.[0]?.url || '/placeholder.jpg'} alt={item.name} />
         </div>
 
-        <div className={styles.detailsContainer}>
-            <h2>{item.name}</h2>
-            <p className={styles.price}>Rs. {item.price.toLocaleString()}</p>
-            <p className={styles.desc}>{item.description}</p>
+        <div className={styles.infoSection}>
+            <div className={styles.textDetails}>
+              <h2>{item.name}</h2>
+              <p className={styles.price}>Rs. {item.price.toLocaleString()}</p>
+              <div className={styles.divider}></div>
+              <p className={styles.desc}>{item.description}</p>
+            </div>
             
             <button 
               className={styles.addBtn} 
               disabled={!item.isAvailable}
               onClick={() => {
                 onAddToCart(item);
-                onClose(); // Automatically close the modal after adding to cart
+                onClose(); 
               }}
             >
               {item.isAvailable ? 'Add to Cart' : 'Out of Stock'}
             </button>
         </div>
+
       </div>
     </div>
   );

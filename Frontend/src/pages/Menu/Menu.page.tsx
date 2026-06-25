@@ -7,7 +7,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 import styles from './MenuPage.module.scss';
 import Layout from '../../components/layout/layout';
-import ItemDetailModal from '../../components/ItemDetail/ItemDetailsPage'; // Ensure this path matches where you saved the modal component
+import ItemDetailModal from '../../components/ItemDetail/ItemDetailsPage'; 
 
 import cartwhite from '../../../img/icons/cart.white.png';
 import hot from '../../../img/gif/hot.gif';
