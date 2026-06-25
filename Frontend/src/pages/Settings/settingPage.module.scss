@@ -1,0 +1,297 @@
+// 
+$font-header: 'Amatic SC', cursive;
+$font-body: 'Arial', sans-serif; 
+$main-Colour: #48392a;
+$secondary-Colour: #5c4033;
+$green: #2d6a4f;
+$danger-colour: #bc4749;
+$border-colour: #e0dcd5;
+
+$breakpoint-md: 768px;
+
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: $font-header;
+  color: $main-Colour;
+  width: 100%;
+  max-width: 800px; 
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+
+
+  .headerSection {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+    text-align: center;
+
+    .pageTitle {
+      font-size: 50px;
+      margin-bottom: 0px;
+
+      @media (max-width: $breakpoint-md) {
+        font-size: 35px;
+      }
+    }
+
+    p {
+      font-family: $font-header; 
+      font-size: 1rem;
+      margin: 5px 0 0 0;
+      color: $secondary-Colour;
+
+      @media (max-width: $breakpoint-md) {
+        font-size: 0.85px; 
+      }      
+    }
+  }
+
+  .settingsCard {
+    width: 100%;    
+    background: #fff;
+    border: 1px solid $border-colour;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 25px;
+    box-sizing: border-box;
+
+    @media (max-width: $breakpoint-md) {
+      padding: 20px;
+    }
+
+
+    .profileTop {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      margin-bottom: 30px;
+
+      @media (max-width: $breakpoint-md) {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+      }
+
+      .imageSection {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+
+        img {
+          border-radius: 50%;
+          border: 3px solid $main-Colour;
+          height: 150px;
+          width: 150px;
+          object-fit: cover; 
+
+          @media (max-width: $breakpoint-md) {
+            height: 100px;
+            width: 100px;
+          }
+        }
+
+        button {
+          padding: 8px 16px;
+          border-radius: 20px;
+          border: 1px solid $main-Colour;
+          background-color: transparent;
+          color: $main-Colour;
+          font-family: $font-body;
+          font-size: 0.85rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:hover {
+            background-color: $main-Colour;
+            color: white;
+          }
+        }
+      }
+
+      .userInfo {
+        h2 {
+          font-size: 36px;
+          margin: 0 0 5px 0;
+
+          @media (max-width: $breakpoint-md) {
+            font-size: 26px; 
+          } 
+        }
+
+        span {
+          display: inline-block;
+          font-family: $font-body;
+          background-color: rgba($green, 0.1);
+          color: $green;
+          padding: 4px 12px;
+          border-radius: 12px;
+          font-size: 0.85rem;
+          font-weight: bold;
+          margin-bottom: 8px;
+        }
+
+        p {
+          font-family: $font-body;
+          margin: 0;
+          color: $secondary-Colour;
+          font-size: 0.95rem;
+        }
+      }
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+
+      .row {
+        display: flex;
+        gap: 20px;
+        width: 100%;
+
+        @media (max-width: $breakpoint-md) {
+          flex-direction: column;
+          gap: 20px;
+        }
+      }
+
+      .inputGroup {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        gap: 8px;
+
+        label {
+          font-family: $font-body;
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: $secondary-Colour;
+        }
+
+        input, select {
+          font-family: $font-body;
+          font-size: 1rem;
+          padding: 12px;
+          border: 1px solid $border-colour;
+          border-radius: 8px;
+          background-color: #faf9f6;
+          color: $main-Colour;
+          outline: none;
+          transition: border-color 0.2s;
+          box-sizing: border-box;
+          width: 100%;
+
+          &:focus {
+            border-color: $main-Colour;
+            background-color: #fff;
+          }
+
+          &:disabled {
+            background-color: #f0eee9;
+            color: #a0988e;
+            cursor: not-allowed;
+          }
+        }
+      }
+
+      .saveBtn {
+        align-self: flex-start;
+        padding: 12px 30px;
+        font-family: $font-body;
+        font-size: 1rem;
+        font-weight: 600;
+        background-color: $green;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        margin-top: 10px;
+
+        &:hover {
+          background-color: green;
+        }
+
+        @media (max-width: $breakpoint-md) {
+          width: 100%; // Spans full width on mobile
+        }
+      }
+    }
+
+    .settingItem {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+
+      @media (max-width: $breakpoint-md) {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      h3 {
+        font-size: 24px;
+        margin: 0 0 5px 0;
+      }
+
+      p {
+        font-family: $font-body;
+        margin: 0;
+        color: $secondary-Colour;
+        font-size: 0.9rem;
+      }
+
+      .secondaryBtn {
+        padding: 10px 20px;
+        font-family: $font-body;
+        background: transparent;
+        border: 1px solid $main-Colour;
+        color: $main-Colour;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+          background-color: $main-Colour;
+          color: white;
+        }
+
+        @media (max-width: $breakpoint-md) {
+          width: 100%;
+        }
+      }
+    }
+
+  }
+
+  .errorContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+    
+    h2 {
+      font-size: 40px;
+      color: $danger-colour;
+    }
+  }
+  .logoutBtn{
+    width: 100%;
+    padding: 10px 10px;
+    border-radius: 10px;
+    border: none;
+    background-color: red;
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+  }
+}

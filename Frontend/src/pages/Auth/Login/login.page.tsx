@@ -1,0 +1,167 @@
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+// Updated to import CloudFare_Captcha alongside API_ENDPOINTS
+import { API_ENDPOINTS, CloudFare_Captcha } from '../../../constants/constants';
+import styles from "./loginpage.module.scss"
+import logo from "../../../../img/Logo.png"
+import { toast, ToastContainer } from 'react-toastify';
+import leftDesign from "../../../../img/walpaper/1.png"
+import 'react-toastify/dist/ReactToastify.css';
+
+// Import Turnstile
+import { Turnstile } from '@marsidev/react-turnstile';
+
+const LoginPage: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // Add state to hold the Cloudflare token
+  const [cfToken, setCfToken] = useState<string | null>(null);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Block submission if CAPTCHA isn't solved
+    if (!cfToken) {
+      toast.error("Please complete the security check first.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(API_ENDPOINTS.LOGIN, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        // Append the cfToken to the backend request payload
+        body: JSON.stringify({ email, password, cfToken }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        console.log("Full Result Data:", result.data);
+
+        const userStatus = result.data?.user?.status;
+        if (userStatus === false) {
+          toast.error("Your account is not activated. Please check your email.");
+          return;
+        }
+
+        const token = result.data?.accessToken;
+        const refreshToken = result.data?.refreshToken;
+
+        if (token) {
+          localStorage.setItem('qr_accessToken', token);
+          
+          if (refreshToken) {
+              localStorage.setItem('qr_refreshToken', refreshToken);
+          }
+
+          if (result.data?.user) {
+            localStorage.setItem('qr_user', JSON.stringify(result.data.user));
+          } else {
+            localStorage.setItem('qr_user', JSON.stringify(result.data));
+          }
+
+          toast.success("Login Successful!");
+          window.location.href = '/';
+        } else {
+          toast.error("Login failed: No token received");
+        }
+      } else {
+        toast.error(result.message || "Invalid credentials");
+      }
+    } catch (error) {
+      console.error("Connection error:", error);
+      toast.error("Check if backend is running and CORS is enabled.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <ToastContainer position="top-right" theme="colored" autoClose={3000} />
+      <section className={styles.whole}>
+        
+        <div className={styles.cardWrapper}>
+          
+          <div className={styles.leftdisplay}>
+            <img src={leftDesign} alt="Design" />
+          </div>
+          
+          <div className={styles.rightdsiplay}>
+            <img src={logo} alt="Bakery Logo" />
+            <h2>Login to your account</h2>
+            <form onSubmit={handleLogin}>
+              <div>
+                <label htmlFor="email">Email</label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="password">Password</label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  placeholder="Enter your Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className={styles.middle}>
+                <div className={styles.remember}>
+                  <input
+                    type="checkbox"
+                    id="remember"
+                    checked={rememberMe}
+                    onChange={() => setRememberMe(!rememberMe)}
+                    className={styles.realCheckbox}
+                  />
+                  <label htmlFor="remember" className={styles.customBox}></label>
+                  <p>Remember Me</p>
+                </div>
+                <div className={styles.forgetpass}>
+                  <p><Link to="/ForgetPassPage">Forget Password?</Link></p>
+                </div>
+              </div>
+
+              {/* Cloudflare CAPTCHA added here */}
+              <div className={styles.captchaContainer}>
+                <Turnstile 
+                  siteKey={CloudFare_Captcha.SITE_KEY}
+                  onSuccess={(token) => setCfToken(token)}
+                  options={{
+                    theme: 'light', // Enforces light theme to match your white background
+                  }}
+                />
+              </div>
+
+              <button type="submit" disabled={loading} className={styles.loginBtn}>
+                {loading ? "Logging in..." : "Login"}
+              </button>
+              <div className={styles.backthome}><Link to="/">Back to Home</Link></div>
+            </form>
+          </div>
+
+        </div>
+      </section>
+    </>
+  );
+};
+
+export default LoginPage;

@@ -1,0 +1,123 @@
+$font-Cursive: 'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', cursive;
+$font-header: 'Amatic SC', cursive;
+
+.topsection {
+    width: 100%;
+    position: relative;
+}
+
+.photoholder {
+    position: relative;
+    overflow: hidden; 
+}
+
+.photo {
+    width: 100%;
+    height: 85vh; 
+    object-fit: cover; 
+    filter: brightness(0.6);
+}
+
+.welcomecontent {
+    position: absolute;       
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    text-align: center;
+    color: #ffffff;           
+    width: 100%;
+    max-width: 600px;
+
+    .logo {
+        padding-top: 80px;
+        height: 250px; 
+        max-width: 100%; 
+        object-fit: contain; 
+    }
+    h1 {
+        font-family: $font-Cursive;
+        font-size: 50px;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+    }
+    p {
+        font-family: $font-header;
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+
+    .paragraph {
+        margin: 15px 0;
+        
+        p {
+            font-size: 14px;
+            margin: 2px 0;
+            opacity: 0.9;
+        }
+    }
+}
+
+.logbutton, .registerbutton{
+    padding: 10px 30px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s;
+    font-family: $font-header;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.logbutton {
+    background-color: #2d6a4f;
+    color: #ffffff;
+    width: 200px;
+    &:hover {
+        transform: scale(1.05);
+        background-color: #1b4332;
+    }
+}
+.registerbutton {
+    background-color: transparent;
+    border: 2px solid #ffffff; 
+    color: #ffffff;
+    width: 200px;
+    &:hover {
+        background-color: #ffffff;
+        color: #000000;
+    }
+}
+
+
+@media (max-width: 768px) {
+    .welcomecontent {
+        width: 100%; 
+        .logo {
+            height: 120px; 
+        }
+
+        h1 {
+            font-size: 25px;
+            margin-bottom: 0px;
+
+        }
+        p {
+            font-size: 10px; 
+            margin-bottom: 10px;
+        }
+        
+        .logbutton, .registerbutton {
+            width: 60%; 
+            margin: 1px 0; 
+            box-sizing: border-box; 
+            padding: 5px 10px;
+            
+        }
+    }
+    
+    .photo {
+        height: 100vh;
+    }
+}
+.loggedInArea{
+    font-family: $font-header;
+}

@@ -1,0 +1,364 @@
+$main-font: 'Amatic SC', cursive;
+$main-color: #48392a;
+$light-main-colour: #5e4934;
+
+.container {
+  padding: 2rem;
+  min-height: 100%;
+  background: #faf7f2;
+  font-family: $main-font;
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 2rem;
+
+  @media (max-width: 480px) {
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .headerPart {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; 
+
+    h1 {
+      font-size: 2rem;
+      color: #2d1b18;
+      margin: 0;
+      font-weight: 700;
+      @media (max-width: 768px) {
+        font-size: 1.5rem;
+      }
+    }
+    p {
+      color: #777;
+      font-size: 1.2rem;
+      margin: 0.25rem 0 0 0;
+      @media (max-width: 480px) {
+        font-size: 14px;    
+      }
+    }
+  }
+
+  .adminBtn {
+    background: $main-color;
+    border: none;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    margin-top: 0;
+    white-space: nowrap;
+
+    &:hover {
+      transform: translateY(-2px);
+      background: $light-main-colour;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      width: 110px;
+      padding: 0.5rem;
+    }
+    @media (max-width: 480px) {
+      width: auto;
+      padding: 12px 16px;   
+      border-radius: 10px;
+    }
+  }
+}
+
+.categorySection {
+  margin-bottom: 4rem;
+}
+
+.categoryTitle {
+  font-size: 2rem;
+  color: #2d1b18;
+  margin-bottom: 1.5rem;
+  border-left: 6px solid #ff6b35;
+  padding-left: 1rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
+}
+
+.grid {
+  display: flex;
+  flex-wrap: nowrap; 
+  overflow-x: auto;  
+  gap: 2rem;
+  padding-bottom: 1.5rem;
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #ff6b35 #faf7f2;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #faf7f2;
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #dcdcdc;
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #ff6b35;
+  }
+
+  @media (max-width: 768px) {
+    gap: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+
+.card {
+  flex: 0 0 auto; 
+  width: 300px;  
+  background: white;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: 0.3s ease;
+  
+  display: flex;
+  flex-direction: column;
+
+  &:hover {
+    transform: translateY(-8px);
+  }
+
+  @media (max-width: 768px) {
+    width: 260px; 
+  }
+}
+
+.imageWrapper {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+  flex-shrink: 0; 
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: 0.4s ease;
+  }
+
+  &:hover img {
+    transform: scale(1.08);
+  }
+}
+
+.outOfStock {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: crimson;
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 30px;
+  font-size: 0.8rem;
+}
+
+.content {
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; 
+  justify-content: space-between; 
+
+  h3 {
+    font-size: 1.3rem;
+    color: #2d1b18;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: #666;
+    line-height: 1.5;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem; 
+  }
+}
+
+.bottompart {
+  display: flex;
+  flex-direction: column;
+  margin-top: auto; 
+}
+
+.bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #ff6b35;
+}
+
+.cartBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #ff6b35;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  transition: 0.3s ease;
+  font-weight: 600;
+
+  img {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background: #e85a2a;
+    transform: scale(1.05);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.deleteBtn {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.7rem;
+  border: none;
+  border-radius: 12px;
+  background: $main-color;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s ease;
+  
+  &:hover {
+    background: $light-main-colour;
+  }
+}
+
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  
+  img { 
+    width: 150px; 
+  }
+
+  h1 {
+    color: #777;
+    font-family: $main-font;
+    margin-top: 1rem;
+  }
+}
+
+.empty {
+  text-align: center;
+  padding: 5rem 0;
+  
+  img {
+    width: 300px;
+  }
+
+  h2 {
+    margin-top: 1rem;
+    color: #666;
+  }
+
+  @media (max-width: 768px) {
+    padding: 2rem 0;
+    img {
+      width: 150px;
+    }
+  }
+}
+/* --- Image Slider Styling --- */
+.imageWrapper {
+  position: relative; /* Ensure this is set so absolute arrows stay inside the image! */
+  overflow: hidden;
+  
+  .sliderBtn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.4);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s;
+    z-index: 2;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    &.left {
+      left: 10px;
+    }
+
+    &.right {
+      right: 10px;
+    }
+  }
+
+  /* The little dots at the bottom to show how many images there are */
+  .dotsContainer {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    z-index: 2;
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      transition: all 0.3s;
+
+      &.active {
+        background: #ffffff;
+        transform: scale(1.2);
+      }
+    }
+  }
+}

@@ -1,0 +1,310 @@
+$font-header: 'Amatic SC', cursive;
+$primary-color: #48292a;
+$hover-color: #633a3b; 
+$border-color: #eee;
+$text-dark: #333;
+$text-muted: #666;
+$shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+
+@mixin header-font {
+  font-family: $font-header;
+}
+
+@mixin focus-state {
+  border-color: $primary-color;
+  box-shadow: 0 0 8px rgba(72, 41, 42, 0.25); 
+}
+
+.whole {
+  display: flex;
+  min-height: 100vh; 
+  align-items: center;
+  justify-content: center;
+  background-color: #f4f7f6;
+  padding: 20px;
+}
+
+/* Wrapper forces left and right to be equal height */
+.cardWrapper {
+  display: flex;
+  align-items: stretch; /* FORCES EQUAL HEIGHTS */
+  width: 90%; 
+  max-width: 1400px;
+  min-height: 600px;
+  box-shadow: $shadow; 
+  border-radius: 20px;
+  background-color: #ffffff;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+}
+
+.leftdisplay {
+  width: 50%;
+  background: linear-gradient(135deg, #bc7e51 0%, #f3c4cd 100%); 
+  border-radius: 20px 0 0 20px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 60px;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+
+  img {
+    width: 80%;
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+}
+
+.rightdsiplay {
+  width: 50%;
+  background-color: #ffffff;
+  border-radius: 0 20px 20px 0;
+  padding: 40px 80px; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    border-radius: 20px;
+    padding: 40px 20px;
+  }
+
+  .backthome {
+    margin-top: 25px;
+    text-align: center;
+    @include header-font;
+    font-size: 1.2rem; 
+
+    a {
+      color: $primary-color; 
+      text-decoration: none;
+      transition: color 0.3s ease;
+      font-weight: bold;
+
+      &:hover {
+        color: $hover-color;
+        text-decoration: underline;
+      }
+    }
+
+    @media (max-width: 768px) {
+      font-size: 1.2rem;
+      margin-top: 15px;
+    }
+  }
+
+  > img {
+    height: 180px;
+    width: 180px;
+    display: flex;
+    align-self: center;
+    object-fit: contain;
+
+    @media (max-width: 768px) {
+      width: 150px;
+      height: auto;
+    }
+  }
+
+  h2 {
+    @include header-font;
+    margin-top: 0px;
+    margin-bottom: 30px;
+    font-size: 2rem;
+    color: $text-dark;
+    
+    @media (max-width: 768px) {
+      font-size: 2rem;
+    }
+  }
+
+  form {
+    div {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #555;
+      @include header-font;
+      font-size: 1rem;
+
+      @media (max-width: 768px) {
+        font-size: 1.1rem;
+      }
+    }
+
+    input {
+      @include header-font;
+      box-sizing: border-box; 
+      width: 100%;
+      padding: 12px 15px;
+      border: 1.5px solid $border-color;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+      transition: all 0.3s ease;
+      
+      &:focus {
+        @include focus-state;
+      }
+    }
+
+    /* --- CAPTCHA Alignment --- */
+    .captchaContainer {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin-top: 5px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      @include header-font;
+      box-sizing: border-box;
+      width: 100%;
+      padding: 14px;
+      background-color: $primary-color;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-top: 10px;
+
+      &:hover:not(:disabled) {
+        background-color: $hover-color;
+      }
+
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .middle {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+
+    div {
+      margin-bottom: 0px !important; 
+    }
+
+    .forgetpass {
+      @include header-font;
+      a {
+        color: $primary-color;
+        text-decoration: none;
+        font-weight: bold;
+        transition: color 0.3s ease;
+
+        &:hover{
+          color: $hover-color;
+          text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+          font-size: 1rem; 
+        }
+      }
+    }
+
+    .remember {
+      @include header-font;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+
+      @media (max-width: 768px) {
+        font-size: 1rem; 
+      }
+
+      .realCheckbox {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 20px;
+        width: 20px;
+        z-index: 2;
+        margin: 0;
+      }
+
+      .customBox {
+        height: 18px;
+        width: 18px;
+        background-color: transparent;
+        border: 2px solid $primary-color; 
+        border-radius: 4px;
+        display: inline-block;
+        position: relative;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
+      }
+
+      .realCheckbox:checked + .customBox {
+        background-color: $primary-color;
+        border-color: $primary-color;
+        &::after {
+          content: '✔';
+          color: white;
+          font-size: 12px;
+          position: absolute;
+          top: -2px;
+          left: 3px;
+        }
+      }
+
+      p {
+        margin: 0;
+        font-size: 1.1rem;
+        cursor: pointer;
+        color: #555;
+      }
+    }
+  }
+
+  .links {
+    margin-top: 20px;
+    text-align: center;
+    @include header-font;
+
+    p {
+      color: $text-muted;
+      margin: 5px 0;
+      font-size: 20px;
+
+      @media (max-width: 768px) {
+        font-size: 1.2rem; 
+      }
+    }
+
+    a {
+      color: $primary-color;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+
+      &:hover { 
+        color: $hover-color;
+        text-decoration: underline; 
+      }
+    }
+  }
+}

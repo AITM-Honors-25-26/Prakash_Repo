@@ -1,0 +1,281 @@
+$mainColour: #48392a;
+$mainfont: 'Amatic SC', cursive;
+$bg-color: #f4f7f6;
+$border-color: #e0e0e0;
+
+.dashboardContainer {
+  font-family: $mainfont;
+  background-color: $bg-color;
+  min-height: 100vh;
+  padding-bottom: 2rem;
+}
+
+// Loading State
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  
+  img {
+    width: 60px;
+    height: auto;
+  }
+}
+
+// Header
+.dashHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 2rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid $border-color;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: $mainColour;
+    margin: 0;
+  }
+
+  .headerRight {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+}
+
+.connectionBadge {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+
+  &.connected {
+    background-color: #28a745;
+    box-shadow: 0 0 8px rgba(40, 167, 69, 0.6);
+  }
+
+  &.disconnected {
+    background-color: #dc3545;
+    box-shadow: 0 0 8px rgba(220, 53, 69, 0.6);
+  }
+}
+
+.refreshBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: transparent;
+  
+  img {
+    width: 20px;
+    height: 20px;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+  
+  &:hover {
+    background-color: #e9ecef;
+    img {
+      transform: rotate(180deg); 
+    }
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.errorBanner {
+  background-color: #ffcccc;
+  color: #cc0000;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 1px solid #cc0000;
+}
+
+// Layout Grid
+.boardGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; // Two equal columns side-by-side
+  gap: 2rem;
+  padding: 2rem;
+  align-items: start; // Prevents columns from stretching to match each other's height
+}
+
+.stationSection {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.stationHeader {
+  padding: 1rem 1.5rem;
+  border-bottom: 2px solid $border-color;
+  
+  h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #333;
+
+    span {
+      font-size: 1.2rem;
+      color: #777;
+    }
+  }
+
+  &.kitchenHeader {
+    background-color: #fff3cd;
+    border-bottom-color: #ffeeba;
+    img {
+      height: 24px; 
+    }
+  }
+  
+  &.serviceHeader {
+    background-color: #d1ecf1;
+    border-bottom-color: #bee5eb;
+    img {
+      height: 24px;
+    }
+  }
+}
+
+// Cards
+.cardContainer {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.emptyMsg {
+  text-align: center;
+  color: #888;
+  font-size: 1.2rem;
+  padding: 2rem 0;
+}
+
+.orderCard {
+  border: 1px solid $border-color;
+  border-radius: 6px;
+  padding: 1rem;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+
+  &.pending { border-left: 5px solid #dc3545; } 
+  &.preparing { border-left: 5px solid #ffc107; } 
+  &.readyCard { border-left: 5px solid #28a745; } 
+}
+
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  border-bottom: 1px dashed #eee;
+  padding-bottom: 0.5rem;
+
+  h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: $mainColour;
+  }
+
+  .timeTag, .readyBadge {
+    font-family: sans-serif;   
+    font-size: 0.85rem;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 12px;
+  }
+
+  .timeTag { background-color: #e9ecef; color: #495057; }
+  .readyBadge { background-color: #28a745; color: white; }
+}
+
+.itemList {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem 0;
+
+  .itemRow {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    margin-bottom: 0.5rem;
+    font-family: sans-serif;
+    font-size: 1rem;
+
+    .qty {
+      font-weight: bold;
+      color: $mainColour;
+      min-width: 25px;
+    }
+
+    .itemDetails {
+      display: flex;
+      flex-direction: column;
+
+      .itemName {
+        margin: 0;
+        font-weight: 500;
+        color: #333;
+      }
+
+      .notes {
+        font-size: 0.85rem;
+        color: #dc3545; 
+        margin-top: 2px;
+      }
+    }
+  }
+}
+
+.cardActions {
+  display: flex;
+  justify-content: stretch;
+
+  button {
+    flex: 1;
+    padding: 0.8rem;
+    font-family: $mainfont;
+    font-size: 1.3rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    color: white;
+
+    &.actionBtnStart {
+      background-color: #ffc107;
+      color: #333;
+      &:hover { background-color: #b29029; }
+    }
+
+    &.actionBtnReady {
+      background-color: #28a745;
+      &:hover { background-color: #135723; }
+    }
+
+    &.actionBtnComplete {
+      background-color: #17a2b8;
+      &:hover { background-color: #0e6673; }
+    }
+  }
+}

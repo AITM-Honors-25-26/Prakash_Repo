@@ -1,0 +1,350 @@
+$main-font: 'Amatic SC', cursive;
+
+$primary: #48392a;
+$primary-dark: #e85c28;
+$bg: #fdf6f0;
+$card-bg: #ffffff;
+$text: #1a1a1a;
+$muted: #888;
+$border: #e8ddd6;
+$danger: #e53e3e;
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  font-family: $main-font;
+  
+}
+
+// ── Header ─────────────────────────────────────────────
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+
+  h1 {
+    margin: 0 0 0.25rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: $text;
+  }
+
+  p {
+    margin: 0;
+    color: $muted;
+    font-size: 0.9rem;
+  }
+}
+
+.backBtn {
+  flex-shrink: 0;
+  margin-top: 0.3rem;
+  background: none;
+  border: 1.5px solid $border;
+  border-radius: 8px;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+  color: $text;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: $main-font;
+
+  &:hover {
+    border-color: $primary;
+    color: $primary;
+    background: #fff5f0;
+  }
+}
+
+// ── Layout ──────────────────────────────────────────────
+.form {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.leftCol,
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+// ── Card ────────────────────────────────────────────────
+.card {
+  background: $card-bg;
+  border: 1.5px solid $border;
+  border-radius: 14px;
+  padding: 1.4rem 1.5rem;
+}
+
+.cardTitle {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: $text;
+}
+
+.cardSub {
+  margin: 0 0 1.2rem;
+  font-size: 0.82rem;
+  color: $muted;
+}
+
+// ── Image Upload ─────────────────────────────────────────
+.imageGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.imageThumb {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1.5px solid $border;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.removeImg {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.55);
+  border: none;
+  color: #fff;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: $danger;
+  }
+}
+
+.uploadBox {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  border: 2px dashed $border;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  font-size: 0.78rem;
+  color: $muted;
+  transition: all 0.2s;
+  background: $bg;
+
+  &:hover {
+    border-color: $primary;
+    color: $primary;
+    background: #fff5f0;
+  }
+}
+
+.uploadIcon {
+  font-size: 1.6rem;
+  line-height: 1;
+  color: inherit;
+}
+
+// ── Toggle ───────────────────────────────────────────────
+.toggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid $border;
+}
+
+.toggleLabel {
+  margin: 0 0 0.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: $text;
+}
+
+.toggleSub {
+  margin: 0;
+  font-size: 0.78rem;
+  color: $muted;
+}
+
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 26px;
+  flex-shrink: 0;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .slider {
+      background: $primary;
+    }
+
+    &:checked + .slider::before {
+      transform: translateX(20px);
+    }
+  }
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  background: #ccc;
+  border-radius: 999px;
+  transition: background 0.25s;
+  cursor: pointer;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    left: 3px;
+    top: 3px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.25s;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+// ── Form Fields ──────────────────────────────────────────
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-bottom: 1.1rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $text;
+  }
+}
+
+.required {
+  color: $primary;
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 1.5px solid $border;
+  border-radius: 9px;
+  font-size: 0.9rem;
+  color: $text;
+  font-family: $main-font;
+  background: $bg;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba($primary, 0.12);
+  }
+
+  &::placeholder {
+    color: #bbb;
+  }
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+}
+
+.select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  padding-right: 2.2rem;
+  cursor: pointer;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+// ── Submit Button ────────────────────────────────────────
+.submitBtn {
+  width: 100%;
+  padding: 0.9rem;
+  background: $primary;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  &:hover:not(:disabled) {
+    background: $primary-dark;
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

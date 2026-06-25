@@ -1,0 +1,100 @@
+import Joi from "joi";
+
+export const RegisterUserDTO = Joi.object({
+  fullName: Joi.string().min(2).max(50).required().messages({
+      "string.base": "Full name must be a text value",
+      "string.empty": "Full name is required",
+      "string.min": "Full name must be at least 2 characters long",
+      "string.max": "Full name must be less than or equal to 50 characters",
+      "any.required": "Full name is required"
+    }),
+  email: Joi.string().email().required().messages({
+      "string.base": "Email must be a text value",
+      "string.empty": "Email is required",
+      "string.email": "Please enter a valid email address",
+      "any.required": "Email is required"
+    }),
+  dob: Joi.date().less('now').required().messages({
+      "date.format":"Date must be in DD-MM-YYYY format",
+      "date.base": "Date of birth must be a valid date",
+      "date.less": "Date of birth cannot be in the future",
+      "any.required": "Date of birth is required"
+    }),
+  password: Joi.string().pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*_.-])[A-Za-z\d!@#$%^&*_.-]{8,25}$/).required().messages({
+      "string.base": "Password must be a text value",
+      "string.empty": "Password is required",
+      "string.pattern.base":
+        "Password must be 8–25 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character",
+      "any.required": "Password is required"
+    }),
+  confirmPassword: Joi.string().valid(Joi.ref("password")).required().messages({
+      "string.empty": "Confirm password is required",
+      "any.only": "Confirm password must match the password",
+      "any.required": "Confirm password is required"
+    }),
+  address: Joi.string().allow(null, "").messages({
+      "string.base": "Address must be a text value"
+    }),
+  role: Joi.string().valid("Admin", "Chef", "Waiter", "employee").insensitive().default("employee").messages({
+      "string.base": "Role must be a text value",
+      "any.only": "Role must be either admin, chef, or waiter"
+    }),
+  phone: Joi.string().min(10).max(20).pattern(/^[0-9]+$/).messages({
+      "string.pattern.base": "Phone number must contain only digits",
+      "string.base": "Phone number must be a text value",
+      "string.min": "Phone number must be at least 10 digits",
+      "string.max": "Phone number must be at most 10 digits"
+    }),
+  gender: Joi.string().valid("Male", "Female", "Other").insensitive().messages({
+      "string.base": "Gender must be a text value",
+      "any.only": "Gender must be male, female, or other"
+    })
+});
+
+export const LoginDTO = Joi.object({
+  email: Joi.string().email().required().messages({
+    "string.base": "Email must be a text value",
+    "string.empty": "Email is required",
+    "string.email": "Please enter a valid email address",
+    "any.required": "Email is required"
+  }),
+  password: Joi.string().required().messages({
+    "string.base": "Password must be a text value",
+    "string.empty": "Password is required",
+    "any.required": "Password is required"
+  })
+});
+
+export const ForgetPasswordRequestDTO = Joi.object({
+  email: Joi.string().email().required().messages({
+    "string.base": "Email must be a text value",
+    "string.empty": "Email is required",
+    "string.email": "Please enter a valid email address",
+    "any.required": "Email is required"
+  })
+});
+
+export const ResetPasswordDTO = Joi.object({
+  token: Joi.string().min(100).max(100).required().messages({
+      "string.base": "Token must be a text value",
+      "string.empty": "Reset token is required",
+      "string.min": "Invalid token. The token must be exactly 100 characters long",
+      "string.max": "Invalid token. The token must be exactly 100 characters long",
+      "any.required": "Reset token is required"
+  }),
+  password: Joi.string()
+    .pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*_.-])[A-Za-z\d!@#$%^&*_.-]{8,25}$/)
+    .required()
+    .messages({
+      "string.base": "Password must be a text value",
+      "string.empty": "Password is required",
+      "string.pattern.base":
+        "Password must be 8–25 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character",
+      "any.required": "Password is required"
+    }),
+  confirmPassword: Joi.string().valid(Joi.ref("password")).required().messages({
+      "string.empty": "Confirm password is required",
+      "any.only": "Confirm password must match the password",
+      "any.required": "Confirm password is required"
+    }),
+});

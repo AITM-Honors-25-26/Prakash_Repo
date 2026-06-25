@@ -1,0 +1,240 @@
+$header_colour: #48392a;
+$font-nav: 'Amatic SC', cursive;
+$light-main-colour: rgb(128, 128, 128);
+
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-family: $font-nav;
+  
+
+  .title {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+
+    h1 { 
+      color: $header_colour;
+      margin-bottom: 0rem; 
+      @media (max-width: 768px) {
+        font-size: 18px;
+      }
+    }
+
+    p {
+      align-items: start;
+      @media (max-width: 768px) {
+        font-size: 10px;
+      }
+    }
+  }
+
+  .addButton {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center; 
+    gap: 6px;                
+    background-color: $header_colour;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    padding: 8px 12px;      
+
+    &:hover {
+      background-color: #218838;
+    }
+  }
+}
+
+.pageContainer {
+  padding: 1rem;
+  max-width: 100%;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); 
+  gap: 2rem;
+}
+
+.profileCard {
+  font-family: $font-nav;
+  border-radius: 10px;
+  background: #fff;
+  display: flex;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+
+  &:hover { transform: translateY(-5px); }
+
+  &.available { border-left: 8px solid #2ecc71; }
+  &.occupied { border-left: 8px solid #e74c3c; }
+  &.reserved { border-left: 8px solid #f1c40f; }
+  &.notavailable { border-left: 8px solid #95a5a6; } 
+
+  .imageSection {
+    flex: 1;
+    background: #faf7f2;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #eee;
+
+    .iconWrapper {
+      width: 80px;
+      height: 80px;
+      background: #d84315;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    
+    .userName {
+      font-size: 1.2rem;
+      margin-top: 0.5rem;
+      color: #2d1b18;
+    }
+    
+    .statusText {
+      font-size: 0.9rem;
+      color: #888;
+      margin: 0;
+    }
+  }
+
+  .infoSection {
+    flex: 2;
+    padding: 2rem;
+
+    h3 {
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      color: $header_colour;
+      border-bottom: 2px solid #faf7f2;
+      padding-bottom: 0.5rem;
+    }
+
+    .infoRow {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+
+      .label {
+        font-weight: 600;
+        color: #888;
+      }
+      .value {
+        color: #2d1b18;
+        font-weight: 500;
+      }
+    }
+
+    .buttonGroup {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+
+      .editButton {
+        font-family: $font-nav;
+        width: 100%;
+        padding: 0.8rem;
+        background: #d84315;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s;
+      
+        &:hover { background: #bf360c; }
+      }
+
+      .deleteButton {
+        background-color: #dc3545;
+        color: white;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:hover {
+          background-color: #c82333;
+        }
+      }
+    }
+  }
+}
+
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  img { width: 150px; }
+  h1{
+    font-family: $font-nav;
+    color: $light-main-colour;
+    
+  }
+}
+
+@media (max-width: 600px) {
+  .profileCard { flex-direction: column; }
+  .grid { grid-template-columns: 1fr; }
+}
+
+.errorContainer {
+  grid-column: 1 / -1; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh; 
+  border-radius: 12px;
+  padding: 3rem;
+  text-align: center;
+  margin-top: 1rem;
+  @media (max-width: 768px) {
+      padding: 0px;
+    }
+
+  img{
+    width: 600px;
+    @media (max-width: 768px) {
+      width: 300px;
+
+    }
+  }
+
+  h2 {
+    font-family: $font-nav;
+    color: $header_colour;
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: #888;
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 1rem;
+    margin: 0;
+  }
+}
