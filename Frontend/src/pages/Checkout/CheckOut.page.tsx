@@ -69,65 +69,89 @@ const CheckoutPage: React.FC = () => {
     return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
-  const handlePlaceOrder = async (e: React.FormEvent) => {
-    e.preventDefault();
+ const handlePlaceOrder = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    if (cartItems.length === 0) {
-      toast.error('Your cart is empty!');
-      return;
-    }
+  if (cartItems.length === 0) {
+    toast.error('Your cart is empty!');
+    return;
+  }
 
-    if (!tableNumber) {
-      toast.error('Table mapping missing! Please rescan your QR code.');
-      return;
-    }
+  setLoading(true);
 
-    setLoading(true);
+  try {
+    // 1. Send the order to your backend to save to MongoDB
+    const orderPayload = {
+      tableNumber,
+      items: cartItems.map(item => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        specialNotes: item.specialNotes || '',
+      })),
+    };
 
-    try {
-      // Build the order payload matching the backend schema
-      const orderPayload = {
-        tableNumber,
-        items: cartItems.map(item => ({
-          name: item.name,
-          quantity: item.quantity,
-          price: item.price,
-          specialNotes: item.specialNotes || '',
-        })),
+    // Ensure your backend returns { orderId: "..." }
+    const response = await axios.post(API_ENDPOINTS.ORDER_ACTION + '/', orderPayload);
+    const orderId = response.data.orderId; 
+
+    if (paymentOption === 'Pay Now') {
+      const totalAmount = calculateTotal().toString();
+      
+      // 2. Fetch the signature from your backend
+      const { data } = await axios.post('/api/payment/esewa/init', { 
+        amount: totalAmount, 
+        transaction_uuid: orderId 
+      });
+
+      // 3. Create the hidden form for eSewa
+      const form = document.createElement("form");
+      form.action = "https://rc-epay.esewa.com.np/api/epay/main/v2/form";
+      form.method = "POST";
+
+      const fields: Record<string, string> = {
+        amount: totalAmount,
+        tax_amount: "0",
+        total_amount: totalAmount,
+        transaction_uuid: orderId,
+        product_code: data.product_code, 
+        signature: data.signature,       // Received from backend
+        success_url: `${window.location.origin}/payment/success`,
+        failure_url: `${window.location.origin}/payment/failure`,
+        signed_field_names: "total_amount,transaction_uuid,product_code"
       };
 
-      // POST to backend — this saves the order AND triggers io.emit('kitchen_new_order')
-      await axios.post(API_ENDPOINTS.ORDER_ACTION + '/', orderPayload);
+      Object.entries(fields).forEach(([key, value]) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = value;
+        form.appendChild(input);
+      });
 
-      // Clear cart after confirmed server response
+      document.body.appendChild(form);
+      form.submit();
+      
+    } else {
+      // 4. Logic for 'Pay Later'
       localStorage.removeItem('bakery_cart');
       window.dispatchEvent(new Event('cartUpdated'));
-
-      if (paymentOption === 'Pay Now') {
-        await MySwal.fire({
-          title: 'Redirecting to Payment Gateway...',
-          text: `Order confirmed for Table ${tableNumber}. Loading online checkout options...`,
-          icon: 'info',
-          confirmButtonColor: '#d84315',
-        });
-      } else {
-        await MySwal.fire({
-          title: 'Order Sent to Kitchen! 🍳',
-          text: `Table ${tableNumber}, your order is being prepared. Pay at the counter when you leave!`,
-          icon: 'success',
-          confirmButtonColor: '#d84315',
-        });
-      }
-
+      
+      await MySwal.fire({
+        title: 'Order Sent to Kitchen! 🍳',
+        text: `Table ${tableNumber}, your order is being prepared. Pay at the counter!`,
+        icon: 'success',
+        confirmButtonColor: '#d84315',
+      });
       navigate('/MenuPage');
-    } catch (error) {
-      console.error('Order placement failed:', error);
-      toast.error('Failed to place order. Please try again.');
-    } finally {
-      setLoading(false);
     }
-  };
-
+  } catch (error) {
+    console.error('Order placement failed:', error);
+    toast.error('Failed to place order. Please try again.');
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <Layout>
       <div className={styles.checkoutContainer}>
