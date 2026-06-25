@@ -7,6 +7,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 import styles from './MenuPage.module.scss';
 import Layout from '../../components/layout/layout';
+import ItemDetailModal from '../../components/ItemDetail/ItemDetailsPage'; // Ensure this path matches where you saved the modal component
 
 import cartwhite from '../../../img/icons/cart.white.png';
 import hot from '../../../img/gif/hot.gif';
@@ -43,12 +44,12 @@ const MenuItemCard: React.FC<{
   const hasMultipleImages = item.images && item.images.length > 1;
 
   const nextImage = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card navigation
+    e.stopPropagation(); 
     setCurrentImageIndex((prev) => (prev + 1) % item.images.length);
   };
 
   const prevImage = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent card navigation
+    e.stopPropagation(); 
     setCurrentImageIndex((prev) => (prev - 1 + item.images.length) % item.images.length);
   };
 
@@ -95,7 +96,7 @@ const MenuItemCard: React.FC<{
             <button
               disabled={!item.isAvailable}
               onClick={(e) => {
-                e.stopPropagation(); // Prevent card navigation
+                e.stopPropagation(); 
                 handleAddToCart(item);
               }}
               className={styles.cartBtn}
@@ -108,7 +109,7 @@ const MenuItemCard: React.FC<{
             <button
               className={styles.deleteBtn}
               onClick={(e) => {
-                e.stopPropagation(); // Prevent card navigation
+                e.stopPropagation(); 
                 handleDelete(item._id);
               }}
             >
@@ -128,6 +129,9 @@ const MenuPage: React.FC = () => {
   const [menuItems, setMenuItems] = useState<BakeryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  
+  // State to control the item detail modal overlay
+  const [selectedItem, setSelectedItem] = useState<BakeryItem | null>(null);
 
   const fetchMenu = useCallback(async (showLoading = true) => {
     try {
@@ -216,7 +220,6 @@ const MenuPage: React.FC = () => {
 
     initializePage();
 
-    // Polling for live menu updates
     const interval = setInterval(() => {
       fetchMenu(false);
     }, 10000);
@@ -224,7 +227,6 @@ const MenuPage: React.FC = () => {
     return () => clearInterval(interval);
   }, [id, fetchMenu, navigate]);
 
-  // Dynamic grouping logic
   const groupedItems = useMemo(() => {
     const grouped = menuItems.reduce((acc, item) => {
       const categoryName = item.category || 'Other'; 
@@ -338,7 +340,7 @@ const MenuPage: React.FC = () => {
                     isAdmin={isAdmin} 
                     handleAddToCart={handleAddToCart}
                     handleDelete={handleDelete}
-                    onClick={() => navigate(`/item/${item._id}`)} 
+                    onClick={() => setSelectedItem(item)} 
                   />
                 ))}
               </div>
@@ -352,6 +354,15 @@ const MenuPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Item Detail Modal Overlay */}
+      {selectedItem && (
+        <ItemDetailModal 
+          item={selectedItem} 
+          onClose={() => setSelectedItem(null)} 
+          onAddToCart={handleAddToCart} 
+        />
+      )}
     </Layout>
   );
 };
