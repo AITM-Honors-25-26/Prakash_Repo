@@ -56,12 +56,16 @@ export const LoginDTO = Joi.object({
     "string.base": "Email must be a text value",
     "string.empty": "Email is required",
     "string.email": "Please enter a valid email address",
-    "any.required": "Email is required"
+    "any.required": "Email is required",
   }),
   password: Joi.string().required().messages({
     "string.base": "Password must be a text value",
     "string.empty": "Password is required",
     "any.required": "Password is required"
+  }),
+  cfToken: Joi.string().required().messages({
+    "string.empty": "Security token is required",
+    "any.required": "Security token is required"
   })
 });
 
