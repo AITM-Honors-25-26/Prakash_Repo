@@ -1,17 +1,16 @@
-// src/queues/email.worker.js
 
 import { Worker } from "bullmq";
 import { redisConnection } from "../config/queue.config.js";
+
+
 import emailSvc from "../services/email.service.js";
 import { AppConfig } from "../config/constants.js";
 
-// ── Job name constants ─────────────────────────────────────
 export const EMAIL_JOBS = {
     ACTIVATION:      "activation-email",
     FORGOT_PASSWORD: "forgot-password-email",
 };
 
-// ── Email templates ────────────────────────────────────────
 const buildEmail = (jobName, data) => {
     switch (jobName) {
 
@@ -58,7 +57,6 @@ const buildEmail = (jobName, data) => {
     }
 };
 
-// ── Worker ─────────────────────────────────────────────────
 const emailWorker = new Worker(
     "email-queue",
     async (job) => {

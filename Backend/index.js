@@ -1,7 +1,7 @@
 import app from "./src/config/express.config.js";
 import http from "http";
 import { Server } from "socket.io";
-import "./queues/email.worker.js";
+import "./src/queues/email.worker.js"
 
 
 const httpServer = http.createServer(app);
@@ -18,14 +18,11 @@ const io = new Server(httpServer, {
   },
 });
 
-// Share io instance with Express so controllers can emit events via req.app.get('io')
 app.set("io", io);
 
-// Socket connection handlers
 io.on("connection", (socket) => {
   console.log("A client connected via WebSocket. ID:", socket.id);
 
-  // Staff/kitchen clients join a shared room to receive all order events
   socket.on("join-room", (room) => {
     socket.join(room);
     console.log(`User ${socket.id} joined room: ${room}`);

@@ -20,7 +20,6 @@ export const menuCreateSchema = Joi.object({
     stock: Joi.number().min(0).optional().empty(''),
     isAvailable: Joi.boolean().optional().empty(''),
     
-    // 🚨 ADD THESE TWO NEW FIELDS 🚨
     email: Joi.string().email().required().messages({
         "string.empty": "Admin email is required"
     }),
