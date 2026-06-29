@@ -49,14 +49,12 @@ export const RegisterUserDTO = Joi.object({
       "string.base": "Gender must be a text value",
       "any.only": "Gender must be male, female, or other"
     }),
-  // ✅ ADDED: Cloudflare Token
   cfToken: Joi.string().required().messages({
       "string.base": "Cloudflare token must be a text value",
       "string.empty": "Cloudflare token is missing",
       "any.required": "Cloudflare token is required to verify you are human"
   })
 });
-
 export const LoginDTO = Joi.object({
   email: Joi.string().email().required().messages({
     "string.base": "Email must be a text value",
@@ -70,7 +68,6 @@ export const LoginDTO = Joi.object({
     "any.required": "Password is required"
   }),
 
-  // ✅ ADDED: Cloudflare Token
   cfToken: Joi.string().required().messages({
       "string.base": "Cloudflare token must be a text value",
       "string.empty": "Cloudflare token is missing",
@@ -85,7 +82,6 @@ export const ForgetPasswordRequestDTO = Joi.object({
     "string.email": "Please enter a valid email address",
     "any.required": "Email is required"
   }),
-  // ✅ ADDED: Cloudflare Token
   cfToken: Joi.string().required().messages({
       "string.base": "Cloudflare token must be a text value",
       "string.empty": "Cloudflare token is missing",
