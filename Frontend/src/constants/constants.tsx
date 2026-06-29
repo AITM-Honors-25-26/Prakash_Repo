@@ -1,4 +1,4 @@
-export const API_BASE_URL = 'http://192.168.1.64:9005/api';
+export const API_BASE_URL = 'http://localhost:9005/api';
 export const API_FRONTEND = 'http://192.168.1.64:5173';
 export const SOCKET_URL = 'http://192.168.1.64:9005';
 
