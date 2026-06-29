@@ -13,4 +13,6 @@ menuRouter.post('/menu/add-item', allowUser([UserRole.ADMIN]), uploader().array(
 menuRouter.get('/menu/list', menuCtrl.getAllMenuItems);
 menuRouter.delete('/menu/:id', allowUser([UserRole.ADMIN]), menuCtrl.deleteMenuItem);
 
+menuRouter.get('/menu/:id', menuCtrl.getSingleMenuItem);
+
 export default menuRouter;

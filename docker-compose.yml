@@ -1,0 +1,51 @@
+# Place this at your project ROOT (same level as Backend/ and Frontend/)
+
+services:
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: nebuds-backend
+    ports:
+      - "9005:9005"
+    env_file:
+      - ./Backend/.env          # your existing .env file
+    depends_on:
+      - redis
+    volumes:
+      - ./Backend:/app          # hot reload — changes reflect instantly
+      - /app/node_modules       # don't overwrite container node_modules
+    networks:
+      - nebuds-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: nebuds-frontend
+    ports:
+      - "5173:5173"
+
+    depends_on:
+      - backend
+    volumes:
+      - ./Frontend:/app         # hot reload
+      - /app/node_modules
+    networks:
+      - nebuds-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine       # lightweight Redis — no install needed
+    container_name: nebuds-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - nebuds-network
+    restart: unless-stopped
+
+networks:
+  nebuds-network:
+    driver: bridge

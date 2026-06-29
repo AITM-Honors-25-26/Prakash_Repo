@@ -1,4 +1,4 @@
-export const API_BASE_URL = 'http://192.168.1.64:9005/api';
+export const API_BASE_URL = 'http://localhost:9005/api';
 export const API_FRONTEND = 'http://192.168.1.64:5173';
 export const SOCKET_URL = 'http://192.168.1.64:9005';
 
@@ -14,6 +14,8 @@ export const API_ENDPOINTS = {
   MENU_ACTION: `${API_BASE_URL}/menu`,
   ADDMENUITEM: `${API_BASE_URL}/menu/add-item`,
   DELETEMENUITEM: `${API_BASE_URL}/menu`,
+
+  GET_MENU_ITEM: `${API_BASE_URL}/menu`,
 
   // Table Routes
   TABLEMANAGEMENT: `${API_BASE_URL}/TableManagement`,
