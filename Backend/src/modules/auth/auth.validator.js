@@ -69,17 +69,12 @@ export const LoginDTO = Joi.object({
     "string.empty": "Password is required",
     "any.required": "Password is required"
   }),
-<<<<<<< HEAD
-  cfToken: Joi.string().required().messages({
-    "string.empty": "Security token is required",
-    "any.required": "Security token is required"
-=======
+
   // ✅ ADDED: Cloudflare Token
   cfToken: Joi.string().required().messages({
       "string.base": "Cloudflare token must be a text value",
       "string.empty": "Cloudflare token is missing",
       "any.required": "Cloudflare token is required to verify you are human"
->>>>>>> 96789d4f0a056241b2019f93fdaab0a269faf000
   })
 });
 
