@@ -51,6 +51,7 @@ const Header: React.FC = () => {
       const handleTableNotFound = () => {
         localStorage.removeItem('bakery_table');
         setActiveTable(null);
+        setMenuOpen(false);
         navigate('/ErrorPage', { 
           state: { 
             title: "Table Not Found", 
@@ -73,6 +74,7 @@ const Header: React.FC = () => {
           else if (tableInDB.status !== 'Available') {
             localStorage.removeItem('bakery_table');
             setActiveTable(null);
+            setMenuOpen(false);
             navigate('/ErrorPage', { 
               state: { 
                 title: "Table Unavailable", 
@@ -95,10 +97,8 @@ const Header: React.FC = () => {
     verifyTable();
   }, [urlTableId, navigate]); 
 
-  // Close the mobile menu whenever the route changes
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [urlTableId]);
+  // Mobile menu closing on navigation is now handled directly at each
+  // navigate()/onClick call site instead of via an effect.
 
   const hasStaffAccess = user && ['Admin', 'Chef', 'Waiter', 'Employee'].includes(user.role);
 
