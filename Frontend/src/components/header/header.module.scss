@@ -19,10 +19,10 @@ $font-nav: 'Amatic SC', cursive;
   min-height: 70px;
 
   @media (max-width: 768px) {
-    padding: 0 15px;
+    padding: 10px 15px;
   }
   @media (max-width: 480px) {
-    padding: 0 10px;
+    padding: 3px 10px;
   }
 
   .logoLink {
@@ -38,12 +38,12 @@ $font-nav: 'Amatic SC', cursive;
     transition: all 0.3s ease;
 
     @media (max-width: 768px) {
-      height: 48px;
-      width: 48px;
+      height: 70px;
+      width: 70px;
     }
     @media (max-width: 480px) {
-      height: 40px;
-      width: 40px;
+      height: 50px;
+      width: 50px;
     }
   }
 
@@ -96,6 +96,11 @@ $font-nav: 'Amatic SC', cursive;
       padding: 0 15px;
     }
 
+    // Hidden on desktop — this block only belongs in the mobile drawer
+    .mobileUserInfo {
+      display: none;
+    }
+
     a {
       font-family: $font-nav;
       text-transform: uppercase;
@@ -125,30 +130,142 @@ $font-nav: 'Amatic SC', cursive;
       top: 0;
       right: 0;
       height: 100vh;
-      width: min(280px, 80vw);
+      width: min(350px, 80vw);
       flex-direction: column;
       align-items: flex-start;
-      gap: 1.5rem;
+      gap: 0.5rem;
       background-color: $bg-color;
-      padding: 90px 24px 24px;
-      box-shadow: -4px 0 16px rgba(0, 0, 0, 0.3);
+      padding: 20px 24px 24px;
+      box-shadow: -4px 0 16px rgba(0, 0, 0, 0.5);
       transform: translateX(100%);
-      transition: transform 0.3s ease;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 1001;
       box-sizing: border-box;
       overflow-y: auto;
 
+      // Close button styling
+      .closeSidebarBtn {
+        align-self: flex-end;
+        background: none;
+        border: none;
+        color: $text-color;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0 0 15px 0;
+        transition: color 0.2s ease;
+        
+        &:hover {
+          color: $hover-color;
+        }
+      }
+
       a {
         font-size: 1.3rem;
         width: 100%;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        
+        &:hover {
+          padding-left: 8px;
+          transition: all 0.2s ease;
+        }
+      }
+
+      .mobileUserInfo {
+        background-color: rgba(255, 255, 255, 0.1); 
+        backdrop-filter: blur(5px);
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        width: 100%;
+        box-sizing: border-box;
+        margin-bottom: 1.5rem;
+        position: relative;
+
+        .profileMobile {
+          width: 55px;
+          height: 55px;
+          border-radius: 50%;
+          object-fit: cover;
+          flex-shrink: 0;
+          border: 2px solid $text-color;
+        }
+
+        .nameAndRole {
+          p {
+            margin: 0;
+            color: $text-color;
+            font-weight: bold;
+            font-family: $font-nav;
+            font-size: 1.3rem;
+            letter-spacing: 1px;
+          }
+
+          small {
+            font-family: sans-serif;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: capitalize;
+          }
+        }
       }
 
       .mobileAuthSection {
         display: block;
         width: 100%;
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        margin-top: auto;
+        padding-top: 1.5rem;
+
+        .tableBadge,
+        .authButtons {
+          width: 100%;
+        }
+
+        .authButtons {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.75rem;
+
+          .signupBtn {
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+          }
+        }
+        
+        .actions {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+          width: 100%;
+
+          a {
+            font-size: 1.3rem !important;
+            border-bottom: none;
+          }
+
+          .logoutBtn {
+            background-color: $hover-color;
+            color: white;
+            border: none;
+            padding: 12px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: $font-nav;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            width: 100%;
+            margin-top: 8px;
+            transition: background-color 0.2s ease;
+
+            &:hover { 
+               background-color: darken(#a01c26, 10%); 
+            }
+          }
+        }
       }
     }
   }
@@ -205,10 +322,29 @@ $font-nav: 'Amatic SC', cursive;
       transition: all 0.3s ease;
       z-index: 1001;
 
-      .userInfo p {
-        margin: 0;
-        font-weight: bold;
-        color: $bg-color;
+      .userInfo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .dropdownProfileImg {
+          width: 42px;
+          height: 42px;
+          border-radius: 50%;
+          object-fit: cover;
+          flex-shrink: 0;
+        }
+
+        p {
+          margin: 0;
+          font-weight: bold;
+          color: $bg-color;
+        }
+
+        .userRole {
+          color: #777;
+          font-size: 0.8rem;
+        }
       }
 
       hr {
@@ -220,7 +356,7 @@ $font-nav: 'Amatic SC', cursive;
       .actions {
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 10px;
 
         a {
           text-decoration: none;
@@ -237,6 +373,7 @@ $font-nav: 'Amatic SC', cursive;
           border-radius: 4px;
           cursor: pointer;
           font-family: inherit;
+          margin-top: 4px;
           &:hover { filter: brightness(0.9); }
         }
       }
@@ -314,74 +451,6 @@ $font-nav: 'Amatic SC', cursive;
       &:hover {
         transform: scale(1.05);
         filter: brightness(1.1);
-      }
-    }
-  }
-
-  // Auth section duplicated inside the mobile drawer
-  .mobileAuthSection {
-    .tableBadge,
-    .authButtons {
-      width: 100%;
-    }
-
-    .authButtons {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.75rem;
-
-      .signupBtn {
-        width: 100%;
-        text-align: center;
-        box-sizing: border-box;
-      }
-    }
-
-    .mobileUserInfo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 1rem;
-
-      .profileMobile {
-        width: 42px;
-        height: 42px;
-        border-radius: 50%;
-        object-fit: cover;
-      }
-
-      p {
-        margin: 0;
-        color: $text-color;
-        font-weight: bold;
-      }
-
-      small {
-        color: rgba(255, 255, 255, 0.7);
-      }
-    }
-
-    .actions {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      width: 100%;
-
-      a {
-        font-size: 1rem !important;
-      }
-
-      .logoutBtn {
-        background-color: $hover-color;
-        color: white;
-        border: none;
-        padding: 8px 14px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-family: inherit;
-        width: fit-content;
-
-        &:hover { filter: brightness(0.9); }
       }
     }
   }
