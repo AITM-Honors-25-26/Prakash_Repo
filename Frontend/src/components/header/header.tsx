@@ -25,6 +25,8 @@ const Header: React.FC = () => {
     localStorage.getItem('bakery_table')
   );
 
+  const [menuOpen, setMenuOpen] = useState(false);
+
   const [user, setUser] = useState<{ 
     name: string; 
     role: string; 
@@ -93,14 +95,17 @@ const Header: React.FC = () => {
     verifyTable();
   }, [urlTableId, navigate]); 
 
+  // Close the mobile menu whenever the route changes
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [urlTableId]);
+
   const hasStaffAccess = user && ['Admin', 'Chef', 'Waiter', 'Employee'].includes(user.role);
 
   const handleLogout = () => {
-    // 2. FIX: Clearing the specific QR project keys on logout
     localStorage.removeItem('qr_accessToken');
     localStorage.removeItem('qr_refreshToken');
     localStorage.removeItem('qr_user');
-    
     localStorage.removeItem('bakery_table'); 
     setUser(null);
     window.location.href = "/";
@@ -108,33 +113,82 @@ const Header: React.FC = () => {
 
   return (
     <header className={styles.header}>
-      <Link to="/">
+      <Link to="/" className={styles.logoLink} onClick={() => setMenuOpen(false)}>
         <img src={logowhite} className={styles.logo} alt="logo" />
       </Link>
-      
-      <nav className={styles.navLinks}>
-        <Link to="/">Home</Link>
-        
-        <Link to={activeTable ? `/MenuPage/${activeTable}` : "/MenuPage"}>
+
+      <button
+        className={`${styles.hamburger} ${menuOpen ? styles.hamburgerOpen : ''}`}
+        onClick={() => setMenuOpen(prev => !prev)}
+        aria-label="Toggle navigation menu"
+        aria-expanded={menuOpen}
+      >
+        <span />
+        <span />
+        <span />
+      </button>
+
+      <nav className={`${styles.navLinks} ${menuOpen ? styles.navLinksOpen : ''}`}>
+        <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
+
+        <Link
+          to={activeTable ? `/MenuPage/${activeTable}` : "/MenuPage"}
+          onClick={() => setMenuOpen(false)}
+        >
           Menu {activeTable && `(Table ${activeTable})`}
         </Link>
-        
-        {/* Dashboard link for Kitchen and Staff */}
+
         {hasStaffAccess && (
-          <Link to="/DashboardPage" className={styles.staffLink}>
+          <Link to="/DashboardPage" className={styles.staffLink} onClick={() => setMenuOpen(false)}>
             Dashboard
           </Link>
         )}
 
         {hasStaffAccess && (
-          <Link to="/TableManagement" className={styles.staffLink}>
+          <Link to="/TableManagement" className={styles.staffLink} onClick={() => setMenuOpen(false)}>
             Tables
           </Link>
         )}
 
-        <Link to="/ContactUsPage">Contact Us</Link>
-        <Link to="/AboutUsPage">About Us</Link>
+        <Link to="/ContactUsPage" onClick={() => setMenuOpen(false)}>Contact Us</Link>
+        <Link to="/AboutUsPage" onClick={() => setMenuOpen(false)}>About Us</Link>
+
+        {/* Auth section duplicated here for mobile drawer */}
+        <div className={styles.mobileAuthSection}>
+          {!user && activeTable && (
+            <div className={styles.tableBadge}>
+              <span>Table {activeTable}</span>
+            </div>
+          )}
+
+          {!user && !activeTable && (
+            <div className={styles.authButtons}>
+              <Link to="/LoginPage" className={styles.loginLink} onClick={() => setMenuOpen(false)}>Login</Link>
+              <Link to="/RegisterPage" className={styles.signupBtn} onClick={() => setMenuOpen(false)}>Register</Link>
+            </div>
+          )}
+
+          {user && (
+            <div className={styles.mobileUserInfo}>
+              <img src={user.image?.url || profile} className={styles.profileMobile} alt="Profile" />
+              <div>
+                <p>{user.name}</p>
+                <small>{user.role}</small>
+              </div>
+            </div>
+          )}
+
+          {user && (
+            <div className={styles.actions}>
+              <Link to="/ProfilePage" onClick={() => setMenuOpen(false)}>Profile</Link>
+              <Link to="/SettingsPage" onClick={() => setMenuOpen(false)}>Settings</Link>
+              <button className={styles.logoutBtn} onClick={handleLogout}>Logout</button>
+            </div>
+          )}
+        </div>
       </nav>
+
+      {menuOpen && <div className={styles.overlay} onClick={() => setMenuOpen(false)} />}
 
       <div className={styles.authSection}>
         {!user && activeTable && (
