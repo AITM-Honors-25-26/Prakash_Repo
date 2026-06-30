@@ -97,9 +97,6 @@ const Header: React.FC = () => {
     verifyTable();
   }, [urlTableId, navigate]); 
 
-  // Mobile menu closing on navigation is now handled directly at each
-  // navigate()/onClick call site instead of via an effect.
-
   const hasStaffAccess = user && ['Admin', 'Chef', 'Waiter', 'Employee'].includes(user.role);
 
   const handleLogout = () => {
@@ -129,6 +126,41 @@ const Header: React.FC = () => {
       </button>
 
       <nav className={`${styles.navLinks} ${menuOpen ? styles.navLinksOpen : ''}`}>
+        
+        
+
+        {user && (
+            <div className={styles.mobileUserInfo}>
+              <img src={user.image?.url || profile} className={styles.profileMobile} alt="Profile" />
+              <div className={styles.nameAndRole}>
+                <p>{user.name}</p>
+                <small>{user.role}</small>
+              </div>
+            </div>
+          )}
+
+          <div className={styles.mobileAuthSection}>
+          {!user && activeTable && (
+            <div className={styles.tableBadge}>
+              <span>Table {activeTable}</span>
+            </div>
+          )}
+
+          {!user && !activeTable && (
+            <div className={styles.authButtons}>
+              <Link to="/LoginPage" className={styles.loginLink} onClick={() => setMenuOpen(false)}>Login</Link>
+              <Link to="/RegisterPage" className={styles.signupBtn} onClick={() => setMenuOpen(false)}>Register</Link>
+            </div>
+          )}
+
+          {user && (
+            <div className={styles.actions}>
+              <Link to="/SettingsPage" onClick={() => setMenuOpen(false)}>Settings</Link>
+              <button className={styles.logoutBtn} onClick={handleLogout}>Logout</button>
+            </div>
+          )}
+        </div>
+          
         <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
 
         <Link
@@ -153,39 +185,7 @@ const Header: React.FC = () => {
         <Link to="/ContactUsPage" onClick={() => setMenuOpen(false)}>Contact Us</Link>
         <Link to="/AboutUsPage" onClick={() => setMenuOpen(false)}>About Us</Link>
 
-        {/* Auth section duplicated here for mobile drawer */}
-        <div className={styles.mobileAuthSection}>
-          {!user && activeTable && (
-            <div className={styles.tableBadge}>
-              <span>Table {activeTable}</span>
-            </div>
-          )}
-
-          {!user && !activeTable && (
-            <div className={styles.authButtons}>
-              <Link to="/LoginPage" className={styles.loginLink} onClick={() => setMenuOpen(false)}>Login</Link>
-              <Link to="/RegisterPage" className={styles.signupBtn} onClick={() => setMenuOpen(false)}>Register</Link>
-            </div>
-          )}
-
-          {user && (
-            <div className={styles.mobileUserInfo}>
-              <img src={user.image?.url || profile} className={styles.profileMobile} alt="Profile" />
-              <div>
-                <p>{user.name}</p>
-                <small>{user.role}</small>
-              </div>
-            </div>
-          )}
-
-          {user && (
-            <div className={styles.actions}>
-              <Link to="/ProfilePage" onClick={() => setMenuOpen(false)}>Profile</Link>
-              <Link to="/SettingsPage" onClick={() => setMenuOpen(false)}>Settings</Link>
-              <button className={styles.logoutBtn} onClick={handleLogout}>Logout</button>
-            </div>
-          )}
-        </div>
+        
       </nav>
 
       {menuOpen && <div className={styles.overlay} onClick={() => setMenuOpen(false)} />}
@@ -206,16 +206,19 @@ const Header: React.FC = () => {
             />
             <div className={styles.DropdownBar}>
               <div className={styles.userInfo}>
-                <p>{user.name}</p>
-                <small className={styles.userRole}>{user.role}</small>
+                <img
+                  src={user.image?.url || profile}
+                  className={styles.dropdownProfileImg}
+                  alt="Profile"
+                />
+                <div>
+                  <p>{user.name}</p>
+                  <small className={styles.userRole}>{user.role}</small>
+                </div>
               </div>
               <hr />
               <div className={styles.actions}>
-                <Link to="/ProfilePage">Profile</Link>
-                <hr />
                 <Link to="/SettingsPage">Settings</Link>
-                <hr />
-                <hr />
                 <button className={styles.logoutBtn} onClick={handleLogout}>
                   Logout
                 </button>
