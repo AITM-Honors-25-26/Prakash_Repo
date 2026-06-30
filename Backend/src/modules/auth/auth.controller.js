@@ -17,7 +17,6 @@ class AuthController {
             userData = await autSvc.userRegisterDataTrans(req);
             const userObj = await autSvc.userStore(userData);
 
-            // ✅ Queue activation email — non-blocking, auto-retries on failure
             await emailQueue.add(EMAIL_JOBS.ACTIVATION, {
                 name:            userObj.name,
                 email:           userObj.email,
