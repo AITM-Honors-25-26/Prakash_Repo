@@ -8,7 +8,7 @@ $font-nav: 'Amatic SC', cursive;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0rem 20px; 
+  padding: 0 20px;
   background-color: $bg-color;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: sticky;
@@ -16,60 +16,84 @@ $font-nav: 'Amatic SC', cursive;
   z-index: 1000;
   width: 100%;
   box-sizing: border-box;
-  flex-wrap: nowrap;
+  min-height: 70px;
 
-  @media (max-width: 1024px) {
-    padding: 0rem 15px;
-  }
   @media (max-width: 768px) {
-    padding: 0rem 10px;
+    padding: 0 15px;
   }
   @media (max-width: 480px) {
-    padding: 0rem 5px;
+    padding: 0 10px;
+  }
+
+  .logoLink {
+    display: flex;
+    align-items: center;
   }
 
   .logo {
-    font-size: 1.5rem;
-    font-weight: 700;
+    height: 60px;
+    width: 60px;
+    object-fit: contain;
     cursor: pointer;
-    height: 100px;
-    width: 100px;
     transition: all 0.3s ease;
-    padding: 0 30px; 
 
-    @media (max-width: 1024px) {
-      width: 80px;
-      height: 80px;
-      padding: 0 20px;
-    }
     @media (max-width: 768px) {
-      width: 60px;
-      height: 60px;
-      padding: 0 10px;
+      height: 48px;
+      width: 48px;
     }
     @media (max-width: 480px) {
-      width: 40px;
       height: 40px;
-      padding: 0 5px;
+      width: 40px;
+    }
+  }
+
+  // Hamburger button — hidden on desktop
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    z-index: 1002;
+
+    span {
+      display: block;
+      width: 26px;
+      height: 3px;
+      background-color: $text-color;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+      display: flex;
+    }
+  }
+
+  .hamburgerOpen {
+    span:nth-child(1) {
+      transform: translateY(8px) rotate(45deg);
+    }
+    span:nth-child(2) {
+      opacity: 0;
+    }
+    span:nth-child(3) {
+      transform: translateY(-8px) rotate(-45deg);
     }
   }
 
   .navLinks {
     display: flex;
-    gap: 2rem;
+    align-items: center;
+    gap: 1.75rem;
     padding: 0 20px;
 
     @media (max-width: 1024px) {
-      gap: 1.5rem;
+      gap: 1.25rem;
       padding: 0 15px;
-    }
-    @media (max-width: 768px) {
-      gap: 10px;
-      padding: 0 10px;
-    }
-    @media (max-width: 480px) {
-      gap: 5px;
-      padding: 0 5px;
     }
 
     a {
@@ -78,56 +102,88 @@ $font-nav: 'Amatic SC', cursive;
       letter-spacing: 1px;
       text-decoration: none;
       color: $text-color;
-      font-size: 1rem;
+      font-size: 1.1rem;
       transition: color 0.2s ease-in-out;
-      padding: 5px 10px; 
+      white-space: nowrap;
 
       &:hover {
         color: $hover-color;
       }
 
       @media (max-width: 1024px) {
-        font-size: 0.85rem;
+        font-size: 1rem;
       }
-      @media (max-width: 768px) {
-        font-size: 0.65rem;
-        padding: 5px;
+    }
+
+    .mobileAuthSection {
+      display: none;
+    }
+
+    // Mobile: turn nav into a slide-in drawer
+    @media (max-width: 768px) {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: min(280px, 80vw);
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+      background-color: $bg-color;
+      padding: 90px 24px 24px;
+      box-shadow: -4px 0 16px rgba(0, 0, 0, 0.3);
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      z-index: 1001;
+      box-sizing: border-box;
+      overflow-y: auto;
+
+      a {
+        font-size: 1.3rem;
+        width: 100%;
       }
-      @media (max-width: 480px) {
-        font-size: 0.5rem;
-        padding: 2px;
+
+      .mobileAuthSection {
+        display: block;
+        width: 100%;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
       }
     }
   }
 
+  .navLinksOpen {
+    transform: translateX(0);
+  }
+
+  .overlay {
+    display: none;
+
+    @media (max-width: 768px) {
+      display: block;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+  }
+
   .profileWrapper {
-    position: relative; 
+    position: relative;
     display: flex;
     align-items: center;
 
     .profile {
       cursor: pointer;
-      height: 50px;
-      width: 50px;
+      height: 46px;
+      width: 46px;
+      border-radius: 50%;
+      object-fit: cover;
       transition: all 0.3s ease;
-      border-radius: 50px;
-      
-      &:hover {
-        background-color: #ffffff;
-        box-shadow: 0 0 10px #fff;
-      }
 
-      @media (max-width: 1024px) {
-        width: 40px; 
-        height: 40px;
-      }
-      @media (max-width: 768px) {
-        width: 35px; 
-        height: 35px;
-      }
-      @media (max-width: 480px) {
-        width: 30px; 
-        height: 30px;
+      &:hover {
+        box-shadow: 0 0 10px #fff;
       }
     }
 
@@ -135,15 +191,16 @@ $font-nav: 'Amatic SC', cursive;
       font-family: $font-nav;
       position: absolute;
       top: 100%;
-      margin-top: 26px; 
-      right: 10px; 
+      margin-top: 14px;
+      right: 0;
       width: 200px;
-      background-color: white; 
-      color: #333; 
+      background-color: white;
+      color: #333;
       padding: 1rem;
       border-radius: 8px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       visibility: hidden;
+      opacity: 0;
       transform: translateY(10px);
       transition: all 0.3s ease;
       z-index: 1001;
@@ -163,7 +220,7 @@ $font-nav: 'Amatic SC', cursive;
       .actions {
         display: flex;
         flex-direction: column;
-        gap: 0px;
+        gap: 6px;
 
         a {
           text-decoration: none;
@@ -176,7 +233,7 @@ $font-nav: 'Amatic SC', cursive;
           background-color: $hover-color;
           color: white;
           border: none;
-          padding: 5px 10px;
+          padding: 6px 10px;
           border-radius: 4px;
           cursor: pointer;
           font-family: inherit;
@@ -184,26 +241,24 @@ $font-nav: 'Amatic SC', cursive;
         }
       }
     }
+
     &:hover .DropdownBar {
       visibility: visible;
       opacity: 1;
       transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      display: none;
     }
   }
 
   .authSection {
     display: flex;
     align-items: center;
-    padding: 0 30px; 
 
-    @media (max-width: 1024px) {
-      padding: 0 20px;
-    }
     @media (max-width: 768px) {
-      padding: 0 10px;
-    }
-    @media (max-width: 480px) {
-      padding: 0 5px;
+      display: none;
     }
 
     .tableBadge {
@@ -228,49 +283,21 @@ $font-nav: 'Amatic SC', cursive;
         background-color: rgba(255, 255, 255, 0.2);
         border-color: rgba(255, 255, 255, 0.4);
       }
-
-      @media (max-width: 1024px) {
-        padding: 5px 14px;
-        span { font-size: 0.85rem; }
-      }
-      @media (max-width: 768px) {
-        padding: 4px 10px;
-        span { font-size: 0.75rem; }
-      }
-      @media (max-width: 480px) {
-        padding: 3px 8px;
-        span { font-size: 0.6rem; }
-      }
     }
   }
 
   .authButtons {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
-
-    @media (max-width: 1024px) {
-      gap: 1rem;
-    }
-    @media (max-width: 768px) {
-      gap: 8px;
-    }
-    @media (max-width: 480px) {
-      gap: 5px;
-    }
+    gap: 1.25rem;
 
     .loginLink {
       text-decoration: none;
       color: $text-color;
       font-family: $font-nav;
-      font-size: 0.9rem;
-      padding: 5px; 
+      font-size: 1rem;
 
       &:hover { color: $hover-color; }
-
-      @media (max-width: 1024px) { font-size: 0.8rem; }
-      @media (max-width: 768px) { font-size: 0.7rem; padding: 2px; }
-      @media (max-width: 480px) { font-size: 0.6rem; }
     }
 
     .signupBtn {
@@ -280,7 +307,7 @@ $font-nav: 'Amatic SC', cursive;
       padding: 8px 18px;
       border-radius: 20px;
       font-family: $font-nav;
-      font-size: 0.9rem;
+      font-size: 1rem;
       font-weight: bold;
       transition: transform 0.2s ease;
 
@@ -288,18 +315,73 @@ $font-nav: 'Amatic SC', cursive;
         transform: scale(1.05);
         filter: brightness(1.1);
       }
+    }
+  }
 
-      @media (max-width: 1024px) {
-        padding: 6px 14px;
-        font-size: 0.8rem;
+  // Auth section duplicated inside the mobile drawer
+  .mobileAuthSection {
+    .tableBadge,
+    .authButtons {
+      width: 100%;
+    }
+
+    .authButtons {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+
+      .signupBtn {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
       }
-      @media (max-width: 768px) {
-        padding: 5px 10px;
-        font-size: 0.7rem;
+    }
+
+    .mobileUserInfo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1rem;
+
+      .profileMobile {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        object-fit: cover;
       }
-      @media (max-width: 480px) {
-        padding: 4px 8px;
-        font-size: 0.6rem;
+
+      p {
+        margin: 0;
+        color: $text-color;
+        font-weight: bold;
+      }
+
+      small {
+        color: rgba(255, 255, 255, 0.7);
+      }
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+
+      a {
+        font-size: 1rem !important;
+      }
+
+      .logoutBtn {
+        background-color: $hover-color;
+        color: white;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: inherit;
+        width: fit-content;
+
+        &:hover { filter: brightness(0.9); }
       }
     }
   }
