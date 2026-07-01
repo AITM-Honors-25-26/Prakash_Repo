@@ -129,7 +129,6 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     margin-bottom: 30px;
     font-size: 2rem;
     color: $text-dark;
-    
     @media (max-width: 768px) {
       font-size: 2rem;
     }
@@ -172,7 +171,6 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       }
     }
 
-    /* --- CAPTCHA Alignment --- */
     .captchaContainer {
       display: flex;
       justify-content: center;
