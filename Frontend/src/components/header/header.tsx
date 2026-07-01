@@ -127,39 +127,21 @@ const Header: React.FC = () => {
 
       <nav className={`${styles.navLinks} ${menuOpen ? styles.navLinksOpen : ''}`}>
         
-        
+        {activeTable && (
+          <div className={styles.sidebarTableBadge}>
+            Table {activeTable}
+          </div>
+        )}
 
         {user && (
-            <div className={styles.mobileUserInfo}>
-              <img src={user.image?.url || profile} className={styles.profileMobile} alt="Profile" />
-              <div className={styles.nameAndRole}>
-                <p>{user.name}</p>
-                <small>{user.role}</small>
-              </div>
+          <div className={styles.mobileUserInfo}>
+            <img src={user.image?.url || profile} className={styles.profileMobile} alt="Profile" />
+            <div className={styles.nameAndRole}>
+              <p>{user.name}</p>
+              <small>{user.role}</small>
             </div>
-          )}
-
-          <div className={styles.mobileAuthSection}>
-          {!user && activeTable && (
-            <div className={styles.tableBadge}>
-              <span>Table {activeTable}</span>
-            </div>
-          )}
-
-          {!user && !activeTable && (
-            <div className={styles.authButtons}>
-              <Link to="/LoginPage" className={styles.loginLink} onClick={() => setMenuOpen(false)}>Login</Link>
-              <Link to="/RegisterPage" className={styles.signupBtn} onClick={() => setMenuOpen(false)}>Register</Link>
-            </div>
-          )}
-
-          {user && (
-            <div className={styles.actions}>
-              <Link to="/SettingsPage" onClick={() => setMenuOpen(false)}>Settings</Link>
-              <button className={styles.logoutBtn} onClick={handleLogout}>Logout</button>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
           
         <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
 
@@ -167,7 +149,7 @@ const Header: React.FC = () => {
           to={activeTable ? `/MenuPage/${activeTable}` : "/MenuPage"}
           onClick={() => setMenuOpen(false)}
         >
-          Menu {activeTable && `(Table ${activeTable})`}
+          Menu
         </Link>
 
         {hasStaffAccess && (
@@ -185,7 +167,21 @@ const Header: React.FC = () => {
         <Link to="/ContactUsPage" onClick={() => setMenuOpen(false)}>Contact Us</Link>
         <Link to="/AboutUsPage" onClick={() => setMenuOpen(false)}>About Us</Link>
 
-        
+        <div className={styles.mobileAuthSection}>
+          {!user && !activeTable && (
+            <div className={styles.authButtons}>
+              <Link to="/LoginPage" className={styles.loginLink} onClick={() => setMenuOpen(false)}>Login</Link>
+              <Link to="/RegisterPage" className={styles.signupBtn} onClick={() => setMenuOpen(false)}>Register</Link>
+            </div>
+          )}
+
+          {user && (
+            <div className={styles.actions}>
+              <Link to="/SettingsPage" onClick={() => setMenuOpen(false)}>Settings</Link>
+              <button className={styles.logoutBtn} onClick={handleLogout}>Logout</button>
+            </div>
+          )}
+        </div>
       </nav>
 
       {menuOpen && <div className={styles.overlay} onClick={() => setMenuOpen(false)} />}
