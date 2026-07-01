@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
@@ -11,7 +11,6 @@ import ItemDetailModal from '../../components/ItemDetail/ItemDetailsPage';
 
 import cartwhite from '../../../img/icons/cart.white.png';
 import hot from '../../../img/gif/hot.gif';
-import LoaderGif from '../../../img/gif/loading.gif'; 
 
 import { API_ENDPOINTS } from '../../constants/constants';
 
@@ -122,6 +121,38 @@ const MenuItemCard: React.FC<{
   );
 };
 
+// Skeleton placeholder card shown while the menu is loading.
+const MenuItemCardSkeleton: React.FC = () => (
+  <div className={`${styles.card} ${styles.skeletonCard}`}>
+    <div className={`${styles.imageWrapper} ${styles.skeletonBlock}`} />
+    <div className={styles.content}>
+      <div>
+        <div className={`${styles.skeletonLine} ${styles.skeletonTitle}`} />
+        <div className={`${styles.skeletonLine} ${styles.skeletonText}`} />
+        <div className={`${styles.skeletonLine} ${styles.skeletonTextShort}`} />
+      </div>
+      <div className={styles.bottompart}>
+        <div className={styles.bottom}>
+          <div className={`${styles.skeletonLine} ${styles.skeletonPrice}`} />
+          <div className={`${styles.skeletonLine} ${styles.skeletonBtn}`} />
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// Skeleton for an entire category row: a title bar plus a few skeleton cards.
+const MenuSkeletonSection: React.FC<{ cardCount?: number }> = ({ cardCount = 4 }) => (
+  <section className={styles.categorySection}>
+    <div className={`${styles.skeletonLine} ${styles.skeletonCategoryTitle}`} />
+    <div className={styles.grid}>
+      {Array.from({ length: cardCount }).map((_, idx) => (
+        <MenuItemCardSkeleton key={idx} />
+      ))}
+    </div>
+  </section>
+);
+
 const MenuPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -129,6 +160,13 @@ const MenuPage: React.FC = () => {
   const [menuItems, setMenuItems] = useState<BakeryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+
+  // Guards against React 18 StrictMode double-invoking this effect in dev,
+  // which would otherwise fire the occupy call twice on the same mount and
+  // have the second call get blocked by the status the first call just set.
+  // Stores the id (not just a boolean) so navigating to a *different* table
+  // still triggers a fresh occupy call.
+  const initializedTableRef = useRef<string | undefined>(undefined);
   
   // State to control the item detail modal overlay
   const [selectedItem, setSelectedItem] = useState<BakeryItem | null>(null);
@@ -186,7 +224,19 @@ const MenuPage: React.FC = () => {
     }
 
     const initializePage = async () => {
+      if (initializedTableRef.current === id) return;
+      initializedTableRef.current = id;
+
       if (id) {
+        // If this exact browser already occupied this exact table earlier
+        // (e.g. this is a reload, not a fresh scan), skip re-calling occupy
+        // altogether - there is nothing to negotiate, we already hold it.
+        const verifiedTable = localStorage.getItem('bakery_table');
+        if (verifiedTable === id) {
+          fetchMenu();
+          return;
+        }
+
         try {
           await axios.put(`${API_ENDPOINTS.TABLE_BASE}/${id}/occupy`);
           localStorage.setItem('bakery_table', id);
@@ -300,9 +350,16 @@ const MenuPage: React.FC = () => {
   if (loading) {
     return (
       <Layout>
-        <div className={styles.loader}>
-          <img src={LoaderGif} alt="Loading..." />
-          <h1>Loading Menu...</h1>
+        <div className={styles.container}>
+          <div className={styles.header}>
+            <div className={styles.headerPart}>
+              <h1>Our Menu</h1>
+              <p>Freshly baked happiness every day</p>
+            </div>
+          </div>
+
+          <MenuSkeletonSection cardCount={4} />
+          <MenuSkeletonSection cardCount={3} />
         </div>
       </Layout>
     );
@@ -355,7 +412,6 @@ const MenuPage: React.FC = () => {
         )}
       </div>
 
-      {/* Item Detail Modal Overlay */}
       {selectedItem && (
         <ItemDetailModal 
           item={selectedItem} 
