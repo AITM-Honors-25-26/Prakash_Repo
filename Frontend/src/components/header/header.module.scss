@@ -8,7 +8,7 @@ $font-nav: 'Amatic SC', cursive;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 40px;
   background-color: $bg-color;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: sticky;
@@ -16,13 +16,16 @@ $font-nav: 'Amatic SC', cursive;
   z-index: 1000;
   width: 100%;
   box-sizing: border-box;
-  min-height: 70px;
+  min-height: 100px;
 
   @media (max-width: 768px) {
     padding: 10px 15px;
+    min-height: 80px;
+
   }
   @media (max-width: 480px) {
     padding: 3px 10px;
+    min-height: 70px;
   }
 
   .logoLink {
@@ -31,15 +34,15 @@ $font-nav: 'Amatic SC', cursive;
   }
 
   .logo {
-    height: 60px;
-    width: 60px;
+    height: 80px;
+    width: 80px;
     object-fit: contain;
     cursor: pointer;
     transition: all 0.3s ease;
 
     @media (max-width: 768px) {
-      height: 70px;
-      width: 70px;
+      height: 80px;
+      width: 80px;
     }
     @media (max-width: 480px) {
       height: 50px;
@@ -47,7 +50,6 @@ $font-nav: 'Amatic SC', cursive;
     }
   }
 
-  // Hamburger button — hidden on desktop
   .hamburger {
     display: none;
     flex-direction: column;
@@ -100,6 +102,9 @@ $font-nav: 'Amatic SC', cursive;
     .mobileUserInfo {
       display: none;
     }
+    .sidebarTableBadge {
+      display: none;
+    }
 
     a {
       font-family: $font-nav;
@@ -143,20 +148,25 @@ $font-nav: 'Amatic SC', cursive;
       box-sizing: border-box;
       overflow-y: auto;
 
-      // Close button styling
-      .closeSidebarBtn {
-        align-self: flex-end;
-        background: none;
-        border: none;
+      // Table Number at the Top of Sidebar
+      .sidebarTableBadge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        background-color: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.3);
         color: $text-color;
-        font-size: 1.5rem;
-        cursor: pointer;
-        padding: 0 0 15px 0;
-        transition: color 0.2s ease;
-        
-        &:hover {
-          color: $hover-color;
-        }
+        padding: 10px;
+        border-radius: 8px;
+        font-family: $font-nav;
+        font-size: 1.4rem;
+        font-weight: bold;
+        letter-spacing: 1px;
+        text-align: center;
+        box-sizing: border-box;
+        margin-bottom: 1rem;
+        margin-top: 1rem; // Pushes it down slightly so it clears the hamburger 'X'
       }
 
       a {
@@ -219,11 +229,6 @@ $font-nav: 'Amatic SC', cursive;
         margin-top: auto;
         padding-top: 1.5rem;
 
-        .tableBadge,
-        .authButtons {
-          width: 100%;
-        }
-
         .authButtons {
           flex-direction: column;
           align-items: flex-start;
@@ -262,7 +267,7 @@ $font-nav: 'Amatic SC', cursive;
             transition: background-color 0.2s ease;
 
             &:hover { 
-               background-color: darken(#a01c26, 10%); 
+               background-color: #38060a; 
             }
           }
         }
@@ -419,6 +424,7 @@ $font-nav: 'Amatic SC', cursive;
       &:hover {
         background-color: rgba(255, 255, 255, 0.2);
         border-color: rgba(255, 255, 255, 0.4);
+        cursor: pointer;
       }
     }
   }
