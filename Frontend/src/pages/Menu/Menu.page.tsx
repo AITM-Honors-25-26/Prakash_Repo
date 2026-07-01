@@ -228,6 +228,15 @@ const MenuPage: React.FC = () => {
       initializedTableRef.current = id;
 
       if (id) {
+        // If this exact browser already occupied this exact table earlier
+        // (e.g. this is a reload, not a fresh scan), skip re-calling occupy
+        // altogether - there is nothing to negotiate, we already hold it.
+        const verifiedTable = localStorage.getItem('bakery_table');
+        if (verifiedTable === id) {
+          fetchMenu();
+          return;
+        }
+
         try {
           await axios.put(`${API_ENDPOINTS.TABLE_BASE}/${id}/occupy`);
           localStorage.setItem('bakery_table', id);
@@ -235,24 +244,15 @@ const MenuPage: React.FC = () => {
         } catch (error) { 
           if (axios.isAxiosError(error)) {
             if (error.response && error.response.status === 409) {
-              const verifiedTable = localStorage.getItem('bakery_table');
-
-              if (verifiedTable === id) {
-                // This browser already occupied this exact table earlier
-                // (e.g. a page refresh) - the 409 just reflects our own
-                // prior claim, not someone else's, so let them straight in.
-                fetchMenu();
-              } else {
-                MySwal.fire({
-                  icon: 'warning',
-                  title: 'Table Occupied',
-                  text: 'This table is currently in use by another customer.',
-                  confirmButtonColor: '#ff6b35',
-                  allowOutsideClick: false 
-                }).then(() => {
-                  navigate('/'); 
-                });
-              }
+              MySwal.fire({
+                icon: 'warning',
+                title: 'Table Occupied',
+                text: 'This table is currently in use by another customer.',
+                confirmButtonColor: '#ff6b35',
+                allowOutsideClick: false 
+              }).then(() => {
+                navigate('/'); 
+              });
             } else {
               toast.error('Unable to verify table status.');
               fetchMenu(); 
