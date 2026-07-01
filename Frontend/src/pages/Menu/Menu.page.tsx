@@ -412,7 +412,6 @@ const MenuPage: React.FC = () => {
         )}
       </div>
 
-      {/* Item Detail Modal Overlay */}
       {selectedItem && (
         <ItemDetailModal 
           item={selectedItem} 
