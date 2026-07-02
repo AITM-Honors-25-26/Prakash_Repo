@@ -16,17 +16,6 @@ import { API_ENDPOINTS } from '../../constants/constants';
 
 const MySwal = withReactContent(Swal);
 
-// Tracks which table ids have already had an occupy request issued during
-// this page session (module scope, not component state) so that any kind
-// of remount - React 18 StrictMode's simulated double-invoke, Vite Fast
-// Refresh, or a genuine re-render - can never fire two competing occupy
-// requests for the same table before the first one has had a chance to
-// write to localStorage. A plain useRef isn't enough here because a *real*
-// remount creates a brand new ref; this Set is shared across all of them
-// for the lifetime of the page (it resets on a full page reload, which is
-// fine - that's exactly when we want to re-check occupy anyway).
-const occupyAttempted = new Set<string>();
-
 interface BakeryItem {
   _id: string;
   name: string;
@@ -195,28 +184,6 @@ const MenuPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (!id) return;
-
-    let hasToasted = false;
-    const checkInterval = setInterval(() => {
-      const verifiedTable = localStorage.getItem('bakery_table');
-      
-      if (verifiedTable === id && !hasToasted) {
-        toast.success(`Serving Table: ${id}`, { autoClose: 3000, toastId: `serving-${id}` });
-        hasToasted = true;
-        clearInterval(checkInterval); 
-      }
-    }, 300);
-
-    const timeout = setTimeout(() => clearInterval(checkInterval), 4000);
-
-    return () => {
-      clearInterval(checkInterval);
-      clearTimeout(timeout);
-    };
-  }, [id]);
-
-  useEffect(() => {
     const storedUser = localStorage.getItem('qr_user');
     if (storedUser) {
       try {
@@ -227,66 +194,7 @@ const MenuPage: React.FC = () => {
       }
     }
 
-    const initializePage = async () => {
-      if (id) {
-        // If this exact browser already occupied this exact table earlier
-        // (e.g. this is a reload, not a fresh scan), skip re-calling occupy
-        // altogether - there is nothing to negotiate, we already hold it.
-        const verifiedTable = localStorage.getItem('bakery_table');
-        console.log('[occupy-debug] id from URL:', id, '| bakery_table in localStorage:', verifiedTable);
-
-        if (verifiedTable === id) {
-          console.log('[occupy-debug] MATCH - skipping occupy call, this browser already owns this table.');
-          fetchMenu();
-          return;
-        }
-
-        // An occupy call for this table has already been fired during this
-        // session (e.g. a remount raced us here first) - don't send a
-        // second competing request, just wait for its result via fetchMenu.
-        if (occupyAttempted.has(id)) {
-          console.log('[occupy-debug] occupyAttempted already has this id - skipping duplicate call.');
-          fetchMenu();
-          return;
-        }
-        occupyAttempted.add(id);
-
-        console.log('[occupy-debug] Firing PUT /table/' + id + '/occupy ...');
-        try {
-          const res = await axios.put(`${API_ENDPOINTS.TABLE_BASE}/${id}/occupy`);
-          console.log('[occupy-debug] occupy SUCCEEDED:', res.status, res.data);
-          localStorage.setItem('bakery_table', id);
-          console.log('[occupy-debug] localStorage.bakery_table set to:', id, '- verifying:', localStorage.getItem('bakery_table'));
-          fetchMenu();
-        } catch (error) { 
-          if (axios.isAxiosError(error)) {
-            console.log('[occupy-debug] occupy FAILED:', error.response?.status, error.response?.data);
-            if (error.response && error.response.status === 409) {
-              MySwal.fire({
-                icon: 'warning',
-                title: 'Table Occupied',
-                text: 'This table is currently in use by another customer.',
-                confirmButtonColor: '#ff6b35',
-                allowOutsideClick: false 
-              }).then(() => {
-                navigate('/'); 
-              });
-            } else {
-              toast.error('Unable to verify table status.');
-              fetchMenu(); 
-            }
-          } else {
-            console.error("An unexpected error occurred:", error);
-            toast.error('An unexpected error occurred.');
-            fetchMenu();
-          }
-        }
-      } else {
-        fetchMenu();
-      }
-    };
-
-    initializePage();
+    fetchMenu();
 
     const interval = setInterval(() => {
       fetchMenu(false);
