@@ -1,4 +1,3 @@
-
 const normalizeUrl = (value?: string) => {
   if (!value) return '';
   return value.trim().replace(/\/$/, '');
@@ -68,7 +67,15 @@ const getLocalNetworkAddress = async () => {
     await new Promise((resolve) => window.setTimeout(resolve, 700));
     pc.close();
 
-    return candidates.find(isPrivateIp) || candidates.find((candidate) => !candidate.startsWith('127.') && !candidate.startsWith('169.254.')) || null;
+    // IMPORTANT: only ever return a *private* LAN IP here.
+    // Modern browsers hide real local IPs behind mDNS (xxxxx.local) candidates,
+    // so the only raw IP left in `candidates` is often the STUN "server
+    // reflexive" candidate - i.e. your PUBLIC/external IP. Falling back to
+    // "any non-loopback IP" (old behavior) would leak that public IP into
+    // the QR code, which is exactly the bug this comment is guarding against.
+    // If no private IP is found, we deliberately return null so callers fall
+    // back to explicit configuration instead of a wrong guess.
+    return candidates.find(isPrivateIp) || null;
   } catch {
     return null;
   }

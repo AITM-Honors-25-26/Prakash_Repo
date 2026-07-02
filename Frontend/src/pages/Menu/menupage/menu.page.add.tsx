@@ -11,7 +11,7 @@ import { API_ENDPOINTS } from '../../../constants/constants';
 
 const MySwal = withReactContent(Swal);
 
-const CATEGORIES = ['Cake', 'Bread', 'Pastries', 'Cookie', 'Cupcake','Donuts', 'Beverage', 'Special'];
+const CATEGORIES = ['Cake', 'Bread', 'Pastries', 'Cookies', 'Cupcake','Donuts', 'Beverage', 'Special'];
 
 interface ImagePreview {
   file: File;
