@@ -1,6 +1,9 @@
-export const API_BASE_URL = 'http://localhost:9005/api';
-export const API_FRONTEND = 'http://192.168.1.64:5173';
-export const SOCKET_URL = 'http://192.168.1.64:9005';
+
+const CURRENT_HOST = window.location.hostname;
+
+export const API_BASE_URL = `http://${CURRENT_HOST}:9005/api`;
+export const API_FRONTEND = `http://${CURRENT_HOST}:5173`;
+export const SOCKET_URL = `http://${CURRENT_HOST}:9005`;
 
 export const API_ENDPOINTS = {
   // Auth Routes
@@ -32,7 +35,7 @@ export const API_ENDPOINTS = {
   TABLENUMBER: `${API_FRONTEND}/MenuPage/:id`,
   TABLE_BASE: `${API_BASE_URL}/table`,
 
-  CONTACTADMIN:`${API_BASE_URL}/conatctAdmin`
+  CONTACTADMIN: `${API_BASE_URL}/conatctAdmin`
 };
 
 export const CATEGORY = {
@@ -51,15 +54,15 @@ export const MAPURL = {
   LOCATION: "https://www.google.com/maps/embed?pb=!1m13!1m8!1m3!1d22901.190745384483!2d85.32925641091472!3d27.733165611841958!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMjfCsDQzJzUxLjMiTiA4NcKwMTknNDYuMSJF!5e1!3m2!1sen!2snp!4v1777114019686!5m2!1sen!2snp"
 };
 
-export const OrderStatus={
-  PENDING:'Pending',
-  PREPARING:'Preparing',
-  READY:'Ready',
-  COMPLETED:'Completed',
-  CANCELLED:'Cancelled'
+export const OrderStatus = {
+  PENDING: 'Pending',
+  PREPARING: 'Preparing',
+  READY: 'Ready',
+  COMPLETED: 'Completed',
+  CANCELLED: 'Cancelled'
 }
 
 export const CloudFare_Captcha = {
-  SITE_KEY:`0x4AAAAAADoOvGKugWkb8Sdj`,
-  SECRET_KEY:`0x4AAAAAADoOvGLSC-y6FaPeGbgwvv4VTww`
+  SITE_KEY: `0x4AAAAAADoOvGKugWkb8Sdj`,
+  SECRET_KEY: `0x4AAAAAADoOvGLSC-y6FaPeGbgwvv4VTww`
 }

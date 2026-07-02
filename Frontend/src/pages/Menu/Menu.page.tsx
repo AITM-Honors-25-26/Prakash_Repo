@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
@@ -15,6 +15,17 @@ import hot from '../../../img/gif/hot.gif';
 import { API_ENDPOINTS } from '../../constants/constants';
 
 const MySwal = withReactContent(Swal);
+
+// Tracks which table ids have already had an occupy request issued during
+// this page session (module scope, not component state) so that any kind
+// of remount - React 18 StrictMode's simulated double-invoke, Vite Fast
+// Refresh, or a genuine re-render - can never fire two competing occupy
+// requests for the same table before the first one has had a chance to
+// write to localStorage. A plain useRef isn't enough here because a *real*
+// remount creates a brand new ref; this Set is shared across all of them
+// for the lifetime of the page (it resets on a full page reload, which is
+// fine - that's exactly when we want to re-check occupy anyway).
+const occupyAttempted = new Set<string>();
 
 interface BakeryItem {
   _id: string;
@@ -160,13 +171,6 @@ const MenuPage: React.FC = () => {
   const [menuItems, setMenuItems] = useState<BakeryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-
-  // Guards against React 18 StrictMode double-invoking this effect in dev,
-  // which would otherwise fire the occupy call twice on the same mount and
-  // have the second call get blocked by the status the first call just set.
-  // Stores the id (not just a boolean) so navigating to a *different* table
-  // still triggers a fresh occupy call.
-  const initializedTableRef = useRef<string | undefined>(undefined);
   
   // State to control the item detail modal overlay
   const [selectedItem, setSelectedItem] = useState<BakeryItem | null>(null);
@@ -224,25 +228,39 @@ const MenuPage: React.FC = () => {
     }
 
     const initializePage = async () => {
-      if (initializedTableRef.current === id) return;
-      initializedTableRef.current = id;
-
       if (id) {
         // If this exact browser already occupied this exact table earlier
         // (e.g. this is a reload, not a fresh scan), skip re-calling occupy
         // altogether - there is nothing to negotiate, we already hold it.
         const verifiedTable = localStorage.getItem('bakery_table');
+        console.log('[occupy-debug] id from URL:', id, '| bakery_table in localStorage:', verifiedTable);
+
         if (verifiedTable === id) {
+          console.log('[occupy-debug] MATCH - skipping occupy call, this browser already owns this table.');
           fetchMenu();
           return;
         }
 
+        // An occupy call for this table has already been fired during this
+        // session (e.g. a remount raced us here first) - don't send a
+        // second competing request, just wait for its result via fetchMenu.
+        if (occupyAttempted.has(id)) {
+          console.log('[occupy-debug] occupyAttempted already has this id - skipping duplicate call.');
+          fetchMenu();
+          return;
+        }
+        occupyAttempted.add(id);
+
+        console.log('[occupy-debug] Firing PUT /table/' + id + '/occupy ...');
         try {
-          await axios.put(`${API_ENDPOINTS.TABLE_BASE}/${id}/occupy`);
+          const res = await axios.put(`${API_ENDPOINTS.TABLE_BASE}/${id}/occupy`);
+          console.log('[occupy-debug] occupy SUCCEEDED:', res.status, res.data);
           localStorage.setItem('bakery_table', id);
+          console.log('[occupy-debug] localStorage.bakery_table set to:', id, '- verifying:', localStorage.getItem('bakery_table'));
           fetchMenu();
         } catch (error) { 
           if (axios.isAxiosError(error)) {
+            console.log('[occupy-debug] occupy FAILED:', error.response?.status, error.response?.data);
             if (error.response && error.response.status === 409) {
               MySwal.fire({
                 icon: 'warning',
@@ -412,6 +430,7 @@ const MenuPage: React.FC = () => {
         )}
       </div>
 
+      {/* Item Detail Modal Overlay */}
       {selectedItem && (
         <ItemDetailModal 
           item={selectedItem} 
