@@ -13,5 +13,6 @@ tableRouter.delete('/table/:id',allowUser([UserRole.ADMIN]),tableCtrl.deleteTabl
 tableRouter.put('/table/:id', allowUser([UserRole.ADMIN]), tableCtrl.updateTable);
 
 tableRouter.put('/table/:id/occupy', tableCtrl.occupyTable);
+tableRouter.put('/table/:id/release', tableCtrl.releaseTable);
 
 export default tableRouter;
