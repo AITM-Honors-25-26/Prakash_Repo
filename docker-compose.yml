@@ -28,8 +28,8 @@ services:
     ports:
       - "5173:5173"
     environment:
-      VITE_PUBLIC_URL: ${VITE_PUBLIC_URL:-http://localhost:5173}
-      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:9005/api}
+      VITE_PUBLIC_URL: ${VITE_PUBLIC_URL:-http://192.168.20.155t:5173}
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://192.168.20.155:9005/api}
     depends_on:
       - backend
     volumes:
