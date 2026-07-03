@@ -71,11 +71,18 @@ class TableController {
     //    atomic findOneAndUpdate, so two guests scanning the same table's QR
     //    at the same moment can't both succeed. If it returns null we only
     //    then look the table up separately to report 404 vs 409 correctly.
+    //  - Now session-aware: the caller sends a `sessionId` (an anonymous id
+    //    the browser keeps in localStorage). If the table is already
+    //    Occupied by that same sessionId, this is just a page refresh/remount
+    //    from the same guest, so it still succeeds with 200. Only a table
+    //    Occupied by a DIFFERENT sessionId (a different device's scan) is a
+    //    real conflict and returns 409.
     occupyTable = async (req, res, next) => {
         try {
             const tableNumber = req.params.id;
+            const sessionId = req.body?.sessionId;
 
-            const occupiedTable = await tableSvc.occupyTableByNumber(tableNumber);
+            const occupiedTable = await tableSvc.occupyTableByNumber(tableNumber, sessionId);
 
             if (occupiedTable) {
                 return res.status(200).json({
@@ -99,6 +106,34 @@ class TableController {
             return res.status(409).json({
                 result: null,
                 message: "This table is already in use.",
+                meta: null
+            });
+        } catch (exception) {
+            next(exception);
+        }
+    }
+
+    // Lets a guest's own session voluntarily free the table it holds
+    // (e.g. after checkout completes). Only succeeds if `sessionId` matches
+    // whoever currently occupies it, so one guest can't release another's table.
+    releaseTable = async (req, res, next) => {
+        try {
+            const tableNumber = req.params.id;
+            const sessionId = req.body?.sessionId;
+
+            const releasedTable = await tableSvc.releaseTableByNumber(tableNumber, sessionId);
+
+            if (!releasedTable) {
+                return res.status(409).json({
+                    result: null,
+                    message: "Unable to release this table.",
+                    meta: null
+                });
+            }
+
+            return res.status(200).json({
+                result: releasedTable,
+                message: "Table released.",
                 meta: null
             });
         } catch (exception) {

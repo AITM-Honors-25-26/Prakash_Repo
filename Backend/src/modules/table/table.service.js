@@ -97,11 +97,54 @@ class TableService {
     // is still Available at the moment the update runs. This closes the race
     // window that a separate "check status, then update" would leave open if
     // two guests scan the same table's QR code at the same time.
-    occupyTableByNumber = async (tableNumber) => {
+    //
+    // `sessionId` is an anonymous id the guest's browser generates and keeps
+    // in localStorage. It lets us tell "the same guest reloading the page"
+    // apart from "a different device scanning the same QR code":
+    //   - Table is Available            -> occupy it, tag it with sessionId.
+    //   - Table is Occupied by this SAME sessionId -> treat as a no-op
+    //     success (this is just a refresh/remount, not a new guest).
+    //   - Table is Occupied by a DIFFERENT sessionId -> real conflict, the
+    //     caller should get a 409 so the frontend can show the error page.
+    occupyTableByNumber = async (tableNumber, sessionId) => {
+        try {
+            const occupied = await Table.findOneAndUpdate(
+                { tableNumber: Number(tableNumber), status: 'Available' },
+                { status: 'Occupied', occupiedBy: sessionId || null },
+                { new: true }
+            );
+
+            if (occupied) {
+                return occupied;
+            }
+
+            // Not Available anymore - only succeed if it's already ours.
+            if (sessionId) {
+                const ownTable = await Table.findOne({
+                    tableNumber: Number(tableNumber),
+                    status: 'Occupied',
+                    occupiedBy: sessionId
+                });
+
+                if (ownTable) {
+                    return ownTable;
+                }
+            }
+
+            return null;
+        } catch (exception) {
+            throw exception;
+        }
+    }
+
+    // Frees a table back to Available, but only if the caller's sessionId is
+    // the one that currently holds it (or no sessionId is enforced by the
+    // caller, e.g. an admin override done elsewhere via updateTableByNumber).
+    releaseTableByNumber = async (tableNumber, sessionId) => {
         try {
             return await Table.findOneAndUpdate(
-                { tableNumber: Number(tableNumber), status: 'Available' },
-                { status: 'Occupied' },
+                { tableNumber: Number(tableNumber), status: 'Occupied', occupiedBy: sessionId },
+                { status: 'Available', occupiedBy: null },
                 { new: true }
             );
         } catch (exception) {
