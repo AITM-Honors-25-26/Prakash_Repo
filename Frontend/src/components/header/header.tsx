@@ -7,6 +7,7 @@ import profile from './../../../img/profile.png';
 import logowhite from './../../../img/log.white.png';
 
 import { API_ENDPOINTS } from '../../constants/constants.js'; 
+import { getSessionId } from '../../utils/session.js';
 
 export interface RestaurantTable {
   _id: string;
@@ -45,56 +46,55 @@ const Header: React.FC = () => {
   });
 
   useEffect(() => {
-    const verifyTable = async () => {
+    const claimTable = async () => {
       if (!urlTableId) return;
 
-      const handleTableNotFound = () => {
+      // Every browser gets one persistent, anonymous id. The backend uses
+      // this to tell "same guest reloading the page" apart from "a
+      // different device scanning this table's QR code" - so a refresh
+      // never gets bounced to the error page, but a real second scan does.
+      const sessionId = getSessionId();
+
+      try {
+        const response = await axios.put(
+          `${API_ENDPOINTS.TABLE_BASE}/${urlTableId}/occupy`,
+          { sessionId }
+        );
+
+        // 200: table is Available -> now occupied by us, or it was already
+        // occupied by this exact session (i.e. this is a refresh).
+        const tableInDB: RestaurantTable = response.data?.result;
+        localStorage.setItem('bakery_table', String(tableInDB?.tableNumber ?? urlTableId));
+        setActiveTable(String(tableInDB?.tableNumber ?? urlTableId));
+      } catch (error) {
         localStorage.removeItem('bakery_table');
         setActiveTable(null);
         setMenuOpen(false);
-        navigate('/ErrorPage', { 
-          state: { 
-            title: "Table Not Found", 
-            message: `Table ${urlTableId} is not recognized. Please scan a valid QR code at your table.` 
-          },
-          replace: true 
-        });
-      };
 
-      try {
-        const response = await axios.get(API_ENDPOINTS.LISTALLTABLE);
-        const data = response.data?.data || response.data?.result || response.data;
-        
-        if (Array.isArray(data)) {
-          const tableInDB = data.find((t: RestaurantTable) => String(t.tableNumber) === String(urlTableId));
-          
-          if (!tableInDB) {
-            handleTableNotFound();
-          } 
-          else if (tableInDB.status !== 'Available') {
-            localStorage.removeItem('bakery_table');
-            setActiveTable(null);
-            setMenuOpen(false);
-            navigate('/ErrorPage', { 
-              state: { 
-                title: "Table Unavailable", 
-                message: `Table ${urlTableId} is currently marked as ${tableInDB.status}. You cannot order from this table.` 
-              },
-              replace: true 
-            });
-          } 
-          else {
-            localStorage.setItem('bakery_table', urlTableId);
-            setActiveTable(urlTableId);
-          }
+        if (axios.isAxiosError(error) && error.response?.status === 409) {
+          // Someone else (a different device/session) already holds this table.
+          navigate('/ErrorPage', {
+            state: {
+              title: "Table Unavailable",
+              message: `Table ${urlTableId} is currently in use by another customer. Please ask staff for help.`
+            },
+            replace: true
+          });
+          return;
         }
-      } catch (error) {
-        console.error("Failed to verify table status", error);
-        handleTableNotFound();
+
+        // 404, or any other failure (network, etc.) - table doesn't exist / can't be verified.
+        navigate('/ErrorPage', {
+          state: {
+            title: "Table Not Found",
+            message: `Table ${urlTableId} is not recognized. Please scan a valid QR code at your table.`
+          },
+          replace: true
+        });
       }
     };
 
-    verifyTable();
+    claimTable();
   }, [urlTableId, navigate]); 
 
   const hasStaffAccess = user && ['Admin', 'Chef', 'Waiter', 'Employee'].includes(user.role);
