@@ -142,7 +142,6 @@ class AuthController {
 
             await autSvc.updateSingleUserByFilter({ email }, updateData);
 
-            // ✅ Queue forgot password email — non-blocking, auto-retries on failure
             await emailQueue.add(EMAIL_JOBS.FORGOT_PASSWORD, {
                 name:       user.fullName || "User",
                 email:      user.email,

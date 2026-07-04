@@ -6,7 +6,6 @@ export const initiateEsewa = async (req, res) => {
         const secretKey = process.env.ESEWA_SECRET_KEY; // Keep this in .env!
         const productCode = process.env.MERCHANT_ID || "EPAYTEST";
         
-        // Data format required by eSewa v2
         const data = `total_amount=${amount},transaction_uuid=${transaction_uuid},product_code=${productCode}`;
         
         const signature = crypto
