@@ -1,5 +1,4 @@
-// Backend/src/modules/contactAdmin/contactAdmin.controller.js
-import emailSvc from '../../services/email.service.js'; // Ensure this relative path matches your folder structure
+import emailSvc from '../../services/email.service.js'; 
 
 const submitContactMessage = async (req, res, next) => {
     try {
@@ -20,7 +19,6 @@ const submitContactMessage = async (req, res, next) => {
             <p style="white-space: pre-wrap;">${message}</p>
         `;
 
-        // 4. Send using your existing EmailService
         await emailSvc.sendEmail({
             to: adminEmail,
             sub: emailSubject,
@@ -33,12 +31,11 @@ const submitContactMessage = async (req, res, next) => {
         });
 
     } catch (error) {
-        // Your emailSvc already logs the error, but we catch it here to prevent the server from crashing
         console.error("Controller Error:", error);
         
         res.status(500).json({ 
             error: "Failed to send the message. Please try again later.",
-            details: error.message // Optional: only include if you want frontend to see the exact error
+            details: error.message 
         });
     }
 };

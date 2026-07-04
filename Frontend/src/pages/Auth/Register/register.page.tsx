@@ -9,29 +9,25 @@ import uploadIcon from "./../../../../img/icons/upload.png"
 import viewPasssword from "../../../../img/icons/ViewPassword.png"
 import hidePassword from "../../../../img/icons/HidePassword.png"
 
-// Import Turnstile CAPTCHA
 import { Turnstile } from '@marsidev/react-turnstile';
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   
-  // States for password visibility
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // State for Cloudflare Token
   const [cfToken, setCfToken] = useState<string | null>(null);
 
-  // State maps exactly to your Mongoose Schema
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
     password: '',
     confirmPassword: '',
     address: '',
-    role: 'Waiter', // Set default to Waiter matching backend Schema
-    gender: 'Male', // Assumes 'Male', 'Female', 'Other' in your Gender enum
+    role: 'Waiter', 
+    gender: 'Male', 
     phone: '',
     dob: '',
   });
@@ -50,24 +46,18 @@ const RegisterPage: React.FC = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 1. Password Match Validation
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match!");
       return;
     }
-
-    // 2. CAPTCHA Validation
     if (!cfToken) {
       toast.error("Please complete the security check first.");
       return;
     }
 
     setLoading(true);
-    
-    // 3. Prepare FormData for file upload
-    const data = new FormData();
+        const data = new FormData();
     Object.entries(formData).forEach(([key, value]) => {
-      // Don't send confirmPassword to the backend schema
       if (key !== 'confirmPassword') {
         data.append(key, value);
       }
@@ -120,7 +110,6 @@ const RegisterPage: React.FC = () => {
             <h2>Register Staff</h2>
             <form onSubmit={handleRegister}>
               
-              {/* Maps to Schema: required, min 2, max 50 */}
               <input 
                 name="fullName" 
                 placeholder="Full Name" 
@@ -130,7 +119,6 @@ const RegisterPage: React.FC = () => {
                 maxLength={50} 
               />
               
-              {/* Maps to Schema: required, unique, lowercase handled by backend */}
               <input 
                 name="email" 
                 type="email" 
@@ -139,7 +127,6 @@ const RegisterPage: React.FC = () => {
                 required 
               />
               
-              {/* Password Field */}
               <div className={styles.passwordContainer}>
                 <input 
                   name="password" 
@@ -158,7 +145,6 @@ const RegisterPage: React.FC = () => {
                 </span>
               </div>
 
-              {/* Confirm Password Field */}
               <div className={styles.passwordContainer}>
                 <input 
                   name="confirmPassword" 
@@ -176,7 +162,6 @@ const RegisterPage: React.FC = () => {
                 </span>
               </div>
 
-              {/* Maps to Schema: address (required) */}
               <input 
                 name="address" 
                 placeholder="Full Address" 
@@ -184,7 +169,6 @@ const RegisterPage: React.FC = () => {
                 required 
               />
               
-              {/* Row for Role and Gender (Enums) */}
               <div className={styles.row}>
                 <select name="role" onChange={handleChange} value={formData.role}>
                   <option value="Waiter">Waiter</option> 
@@ -198,7 +182,6 @@ const RegisterPage: React.FC = () => {
                 </select>
               </div>
               
-              {/* Row for Phone and DOB */}
               <div className={styles.row}>
                 <input 
                   name="phone" 
@@ -215,7 +198,6 @@ const RegisterPage: React.FC = () => {
                 />
               </div>
               
-              {/* Custom File Upload for Schema 'image' */}
               <div className={styles.fileUploadContainer}>
                 <label>Profile Image: </label>
                 
@@ -234,7 +216,6 @@ const RegisterPage: React.FC = () => {
                 />
               </div>
 
-              {/* Cloudflare CAPTCHA */}
               <div className={styles.captchaContainer}>
                 <Turnstile 
                   siteKey={CloudFare_Captcha.SITE_KEY}

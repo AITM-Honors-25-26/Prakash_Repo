@@ -121,7 +121,6 @@ const MenuItemCard: React.FC<{
   );
 };
 
-// Skeleton placeholder card shown while the menu is loading.
 const MenuItemCardSkeleton: React.FC = () => (
   <div className={`${styles.card} ${styles.skeletonCard}`}>
     <div className={`${styles.imageWrapper} ${styles.skeletonBlock}`} />
@@ -141,7 +140,6 @@ const MenuItemCardSkeleton: React.FC = () => (
   </div>
 );
 
-// Skeleton for an entire category row: a title bar plus a few skeleton cards.
 const MenuSkeletonSection: React.FC<{ cardCount?: number }> = ({ cardCount = 4 }) => (
   <section className={styles.categorySection}>
     <div className={`${styles.skeletonLine} ${styles.skeletonCategoryTitle}`} />
@@ -338,7 +336,6 @@ const MenuPage: React.FC = () => {
         )}
       </div>
 
-      {/* Item Detail Modal Overlay */}
       {selectedItem && (
         <ItemDetailModal 
           item={selectedItem} 

@@ -50,8 +50,6 @@ export const updateOrderStatus = async (req, res) => {
   }
 };
 
-// ... existing imports and functions
-
 export const deleteOrder = async (req, res) => {
   try {
     const { id } = req.params;

@@ -16,14 +16,11 @@ const LoginPage: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-
-  // Add state to hold the Cloudflare token
   const [cfToken, setCfToken] = useState<string | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Block submission if CAPTCHA isn't solved
     if (!cfToken) {
       toast.error("Please complete the security check first.");
       return;
@@ -34,7 +31,6 @@ const LoginPage: React.FC = () => {
       const response = await fetch(API_ENDPOINTS.LOGIN, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // Append the cfToken to the backend request payload
         body: JSON.stringify({ email, password, cfToken }),
       });
 
@@ -140,13 +136,12 @@ const LoginPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Cloudflare CAPTCHA added here */}
               <div className={styles.captchaContainer}>
                 <Turnstile 
                   siteKey={CloudFare_Captcha.SITE_KEY}
                   onSuccess={(token) => setCfToken(token)}
                   options={{
-                    theme: 'light', // Enforces light theme to match your white background
+                    theme: 'light', 
                   }}
                 />
               </div>

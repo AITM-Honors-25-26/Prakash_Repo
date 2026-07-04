@@ -1,26 +1,22 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-// Updated to include CloudFare_Captcha
 import { API_ENDPOINTS, CloudFare_Captcha } from '../../../constants/constants';
 import styles from "./forgotPassword.module.scss";
 import logo from "../../../../img/Logo.png";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// Import Turnstile
 import { Turnstile } from '@marsidev/react-turnstile';
 
 const ForgetPassPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   
-  // Add state to hold the Cloudflare token
   const [cfToken, setCfToken] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Block submission if CAPTCHA isn't solved
     if (!cfToken) {
       toast.error("Please complete the security check first.");
       return;
@@ -31,7 +27,6 @@ const ForgetPassPage: React.FC = () => {
       const response = await fetch(API_ENDPOINTS.FORGETPASSWORD, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        // Append the cfToken to the backend request payload
         body: JSON.stringify({ email, cfToken }),
       });
       let result;
@@ -81,7 +76,6 @@ const ForgetPassPage: React.FC = () => {
               />
             </div>
 
-            {/* Cloudflare CAPTCHA added here */}
             <div className={styles.captchaContainer}>
               <Turnstile 
                 siteKey={CloudFare_Captcha.SITE_KEY}

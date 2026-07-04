@@ -78,7 +78,6 @@ const ResetPasswordPage: React.FC = () => {
       <ToastContainer position="top-right" theme="colored" autoClose={3000} />
       <section className={styles.whole}>
         
-        {/* NEW: Wrapper to hold both sides together and force equal height */}
         <div className={styles.cardWrapper}>
           
           <div className={styles.leftdisplay}>

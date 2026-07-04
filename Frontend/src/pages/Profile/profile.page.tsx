@@ -5,7 +5,6 @@ import defaultProfilePic from '../../../img/profile.png';
 
 const Profile: React.FC = () => {
   const [userData] = useState(() => {
-    // 🛑 FIX: Changed 'user' to 'qr_user'
     const savedUser = localStorage.getItem('qr_user');
     
     if (savedUser) {
@@ -40,7 +39,6 @@ const Profile: React.FC = () => {
               alt="Profile" 
               className={styles.profileImage} 
             />
-            {/* NOTE: Make sure your DB returns 'name' or 'fullName'. Adjust below if needed! */}
             <h2 className={styles.userName}>{userData.name || userData.fullName}</h2>
             <p className={styles.userRole}>{userData.role}</p>
           </div>

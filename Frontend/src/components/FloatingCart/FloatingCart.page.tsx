@@ -12,7 +12,6 @@ const FloatingCart: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Initialize the state safely with a lazy function callback
   const [totalItems, setTotalItems] = useState<number>(() => {
     const existingCart = localStorage.getItem('bakery_cart');
     if (existingCart) {

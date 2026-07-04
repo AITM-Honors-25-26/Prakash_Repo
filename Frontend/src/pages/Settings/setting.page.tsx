@@ -5,13 +5,11 @@ import defaultProfile from '../../../img/gif/profile.gif'
 
 const Settings: React.FC = () => {
   const [userData, setUserData] = useState(() => {
-    // 🛑 FIX 1: Read from the new 'qr_user' key
     const saved = localStorage.getItem('qr_user');
     return saved ? JSON.parse(saved) : null;
   });
 
   const [formData, setFormData] = useState({
-    // Safely check for either fullName or name depending on your DB
     fullName: userData?.fullName || userData?.name || '',
     email: userData?.email || '',
     phone: userData?.phone || '',
@@ -39,19 +37,15 @@ const Settings: React.FC = () => {
     const updatedUser = {
       ...userData,
       ...formData,
-      // Ensure the name field gets updated properly if your DB uses 'name'
       name: formData.fullName 
     };
     
-    // 🛑 FIX 2: Save changes to the new 'qr_user' key
     localStorage.setItem('qr_user', JSON.stringify(updatedUser));
     setUserData(updatedUser);
     alert('Profile Updated Successfully');
     
-    // Note: You will eventually want to send an API request here to update the backend too!
   };
 
-  // 🛑 FIX 3: Added a working logout function for your bottom button
   const handleLogout = () => {
     localStorage.removeItem('qr_accessToken');
     localStorage.removeItem('qr_refreshToken');
@@ -86,7 +80,7 @@ const Settings: React.FC = () => {
             <div className={styles.imageSection}>
               <img
                 src={
-                  userData?.image?.url || defaultProfile // Removed the curly braces around defaultProfile
+                  userData?.image?.url || defaultProfile 
                 }
                 alt="profile"
               />
@@ -191,7 +185,6 @@ const Settings: React.FC = () => {
           </form>
         </section>
         
-        {/* Wired up the logout function here! */}
         <button className={styles.logoutBtn} onClick={handleLogout}>
           Logout
         </button>

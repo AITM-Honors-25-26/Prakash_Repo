@@ -62,21 +62,6 @@ class TableController {
         }
     }
 
-    // FIXED:
-    //  - QR codes encode the table's `tableNumber`, not its Mongo `_id`,
-    //    so the lookup/update now goes through the *Number service methods.
-    //  - Status values are capitalized in the schema ('Available' / 'Occupied'),
-    //    so comparisons now match that casing.
-    //  - occupyTableByNumber performs the Available -> Occupied flip as a single
-    //    atomic findOneAndUpdate, so two guests scanning the same table's QR
-    //    at the same moment can't both succeed. If it returns null we only
-    //    then look the table up separately to report 404 vs 409 correctly.
-    //  - Now session-aware: the caller sends a `sessionId` (an anonymous id
-    //    the browser keeps in localStorage). If the table is already
-    //    Occupied by that same sessionId, this is just a page refresh/remount
-    //    from the same guest, so it still succeeds with 200. Only a table
-    //    Occupied by a DIFFERENT sessionId (a different device's scan) is a
-    //    real conflict and returns 409.
     occupyTable = async (req, res, next) => {
         try {
             const tableNumber = req.params.id;
@@ -113,9 +98,6 @@ class TableController {
         }
     }
 
-    // Lets a guest's own session voluntarily free the table it holds
-    // (e.g. after checkout completes). Only succeeds if `sessionId` matches
-    // whoever currently occupies it, so one guest can't release another's table.
     releaseTable = async (req, res, next) => {
         try {
             const tableNumber = req.params.id;

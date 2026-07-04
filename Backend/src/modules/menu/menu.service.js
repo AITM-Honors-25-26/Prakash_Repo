@@ -7,9 +7,7 @@ class MenuService {
             let data = { ...req.body };
             data.images = []; 
             
-            // 1. CHANGED: Check for req.files (plural) instead of req.file
             if (req.files && req.files.length > 0) {
-                // 2. CHANGED: Loop through every image that was uploaded
                 for (const file of req.files) {
                     const upload = await cloudianarySvc.fileUpload(file.path, 'bakery/');
                     data.images.push({
