@@ -4,9 +4,9 @@ import QRCode from "qrcode";
 /**
  * Generate QR Code
  *
- * @param {string} data - Text/URL/data to encode
- * @param {object} options - Optional QR settings
- * @returns {Promise<string>} Base64 QR image
+ * @param {string} data 
+ * @param {object} options
+ * @returns {Promise<string>} 
  */
 
 export async function generateQR(data, options = {}) {

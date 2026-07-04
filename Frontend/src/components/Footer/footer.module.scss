@@ -1,8 +1,8 @@
 $font-header: 'Amatic SC', cursive;
 
 .footer {
-    min-height: 400px;      /* FIX: Allows the footer to stretch down for the CAPTCHA */
-    padding-bottom: 30px;   /* FIX: Gives the Send button breathing room at the bottom */
+    min-height: 400px;      
+    padding-bottom: 30px;   
     background-color: #48392a;
     margin-top: 10px;
     border-radius: 10px 10px 0px 0px;
@@ -11,7 +11,7 @@ $font-header: 'Amatic SC', cursive;
 
     @media (max-width: 768px) {
         display: block;
-        height: auto;       /* FIX: Prevents overlapping on mobile screens */
+        height: auto;      
         padding: 0px 0px 20px 0px;
     }
 

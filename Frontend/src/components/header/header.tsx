@@ -48,11 +48,6 @@ const Header: React.FC = () => {
   useEffect(() => {
     const claimTable = async () => {
       if (!urlTableId) return;
-
-      // Every browser gets one persistent, anonymous id. The backend uses
-      // this to tell "same guest reloading the page" apart from "a
-      // different device scanning this table's QR code" - so a refresh
-      // never gets bounced to the error page, but a real second scan does.
       const sessionId = getSessionId();
 
       try {
@@ -60,9 +55,6 @@ const Header: React.FC = () => {
           `${API_ENDPOINTS.TABLE_BASE}/${urlTableId}/occupy`,
           { sessionId }
         );
-
-        // 200: table is Available -> now occupied by us, or it was already
-        // occupied by this exact session (i.e. this is a refresh).
         const tableInDB: RestaurantTable = response.data?.result;
         localStorage.setItem('bakery_table', String(tableInDB?.tableNumber ?? urlTableId));
         setActiveTable(String(tableInDB?.tableNumber ?? urlTableId));
@@ -72,7 +64,6 @@ const Header: React.FC = () => {
         setMenuOpen(false);
 
         if (axios.isAxiosError(error) && error.response?.status === 409) {
-          // Someone else (a different device/session) already holds this table.
           navigate('/ErrorPage', {
             state: {
               title: "Table Unavailable",
@@ -83,7 +74,6 @@ const Header: React.FC = () => {
           return;
         }
 
-        // 404, or any other failure (network, etc.) - table doesn't exist / can't be verified.
         navigate('/ErrorPage', {
           state: {
             title: "Table Not Found",

@@ -5,7 +5,6 @@ import fs from "node:fs";
 class CloudianaryService {
     constructor() {
         try {
-            // Hardcoded keys as per your previous request
             cloudinary.config({
                 cloud_name:CloudinaryConfig.cloud_name,
                 api_key:CloudinaryConfig.api_key,
@@ -40,7 +39,6 @@ class CloudianaryService {
                 fs.unlinkSync(filepath);
             }
         } catch (err) {
-            // This throws if the file exists but can't be deleted (permissions, etc.)
             throw {
                 code: 500,
                 status: "LOCAL_FILE_DELETE_ERROR",
@@ -54,12 +52,10 @@ class CloudianaryService {
         let uploadResponse;
 
         try {
-            // 1. Attempt the upload
             uploadResponse = await cloudinary.uploader.upload(filepath, {
                 unique_filename: true,
                 folder: "prakash_project/" + dir,
             });
-            // 2. Success: Delete local file and return URL
             this.removeLocalFile(filepath);
 
             return {
@@ -70,7 +66,6 @@ class CloudianaryService {
             try {
                 this.removeLocalFile(filepath);
             } catch (deleteError) {
-                // Throw combined error if both upload AND delete fail
                 throw {
                     code: 500,
                     status: "UPLOAD_AND_DELETE_FAILED",

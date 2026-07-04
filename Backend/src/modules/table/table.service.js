@@ -1,11 +1,9 @@
 import { Table } from "../tablemodel/table.model.js";
-
 class TableService {
     transformTableData = async (req) => {
         try {
             let data = { ...req.body };
 
-            // Convert string inputs to Numbers to match our Table schema
             if (data.tableNumber) data.tableNumber = Number(data.tableNumber);
             if (data.capacity) data.capacity = Number(data.capacity);
 
@@ -98,7 +96,6 @@ class TableService {
                 return occupied;
             }
 
-            // Not Available anymore - only succeed if it's already ours.
             if (sessionId) {
                 const ownTable = await Table.findOne({
                     tableNumber: Number(tableNumber),
@@ -116,10 +113,6 @@ class TableService {
             throw exception;
         }
     }
-
-    // Frees a table back to Available, but only if the caller's sessionId is
-    // the one that currently holds it (or no sessionId is enforced by the
-    // caller, e.g. an admin override done elsewhere via updateTableByNumber).
     releaseTableByNumber = async (tableNumber, sessionId) => {
         try {
             return await Table.findOneAndUpdate(

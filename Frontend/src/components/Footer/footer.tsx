@@ -7,7 +7,6 @@ import instagram from '../../../img/logos/instagarm.png';
 import gmail from '../../../img/logos/gmail.png';
 import { API_ENDPOINTS, CloudFare_Captcha } from '../../constants/constants';
 
-// 1. Import toast from react-toastify
 import { toast } from 'react-toastify'; 
 
 // 2. Import the Turnstile component
@@ -24,7 +23,6 @@ const Footer: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); 
 
-    // 4. Block submission if the CAPTCHA isn't solved
     if (!cfToken) {
       toast.error("Please complete the security check first.");
       return;
@@ -38,7 +36,6 @@ const Footer: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        // 5. Send the token to the backend along with the email and message
         body: JSON.stringify({ email, message, cfToken }),
       });
 
@@ -46,8 +43,6 @@ const Footer: React.FC = () => {
         toast.success('Thank you! Your message has been sent.');
         setEmail('');
         setMessage('');
-        // Note: Turnstile automatically resets itself after a certain period, 
-        // but the user will need to reload or re-verify if they want to send a SECOND message immediately.
       } else {
         toast.error('Failed to send message. Please try again later.');
       }
