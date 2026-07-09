@@ -30,7 +30,7 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [connected, setConnected] = useState<boolean>(false);
-  const [userRole, setUserRole] = useState<string>(''); 
+  const [userRole, setUserRole] = useState<string>('');
 
   const socketRef = useRef<Socket | null>(null);
 
@@ -39,7 +39,7 @@ const Dashboard: React.FC = () => {
     if (storedUser) {
       try {
         const parsed = JSON.parse(storedUser);
-        setUserRole(parsed.role?.toLowerCase() || ''); 
+        setUserRole(parsed.role?.toLowerCase() || '');
       } catch (error) {
         console.error("Failed to parse user role", error);
       }
@@ -78,7 +78,7 @@ const Dashboard: React.FC = () => {
     });
 
     socketRef.current = socket;
-    
+
     socket.on('connect', () => {
       console.log('Dashboard connected to socket. ID:', socket.id);
       setConnected(true);
@@ -134,7 +134,7 @@ const Dashboard: React.FC = () => {
           order._id === orderId ? { ...order, status: nextStatus } : order
         )
       );
-      
+
       await axios.patch(
         `${API_ENDPOINTS.ORDER_ACTION}/${orderId}/status`,
         { status: nextStatus },
@@ -151,11 +151,11 @@ const Dashboard: React.FC = () => {
   const deleteCompletedOrder = async (orderId: string) => {
     try {
       setOrders(prev => prev.filter(order => order._id !== orderId));
-      
+
       await axios.delete(`${API_ENDPOINTS.ORDER_ACTION}/${orderId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('qr_accessToken')}` },
       });
-      
+
     } catch (err) {
       console.error('Failed to delete order:', err);
       fetchOrders();
@@ -171,7 +171,7 @@ const Dashboard: React.FC = () => {
     return (
       <Layout>
         <div className={styles.loading}>
-          <img src={loadinggif} alt="Loading" /> 
+          <img src={loadinggif} alt="Loading" />
         </div>
       </Layout>
     );
@@ -205,9 +205,9 @@ const Dashboard: React.FC = () => {
             </button>
           </div>
         </header>
-        
+
         {error && <div className={styles.errorBanner}>{error}</div>}
-        
+
         <div className={styles.boardGrid}>
           {showKitchen && (
             <section className={styles.stationSection}>

@@ -37,20 +37,20 @@ const Settings: React.FC = () => {
     const updatedUser = {
       ...userData,
       ...formData,
-      name: formData.fullName 
+      name: formData.fullName
     };
-    
+
     localStorage.setItem('qr_user', JSON.stringify(updatedUser));
     setUserData(updatedUser);
     alert('Profile Updated Successfully');
-    
+
   };
 
   const handleLogout = () => {
     localStorage.removeItem('qr_accessToken');
     localStorage.removeItem('qr_refreshToken');
     localStorage.removeItem('qr_user');
-    localStorage.removeItem('bakery_table'); 
+    localStorage.removeItem('bakery_table');
     window.location.href = "/";
   };
 
@@ -80,7 +80,7 @@ const Settings: React.FC = () => {
             <div className={styles.imageSection}>
               <img
                 src={
-                  userData?.image?.url || defaultProfile 
+                  userData?.image?.url || defaultProfile
                 }
                 alt="profile"
               />
@@ -184,7 +184,7 @@ const Settings: React.FC = () => {
             </button>
           </form>
         </section>
-        
+
         <button className={styles.logoutBtn} onClick={handleLogout}>
           Logout
         </button>

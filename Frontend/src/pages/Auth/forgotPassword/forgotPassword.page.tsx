@@ -11,7 +11,7 @@ import { Turnstile } from '@marsidev/react-turnstile';
 const ForgetPassPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const [cfToken, setCfToken] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,7 +37,7 @@ const ForgetPassPage: React.FC = () => {
       }
       if (response.ok) {
         toast.success(result.message || "Password reset link sent! Please check your email.");
-        setEmail(''); 
+        setEmail('');
       } else {
         toast.error(result.message || "Failed to process request. Please check the email and try again.");
       }
@@ -77,11 +77,11 @@ const ForgetPassPage: React.FC = () => {
             </div>
 
             <div className={styles.captchaContainer}>
-              <Turnstile 
+              <Turnstile
                 siteKey={CloudFare_Captcha.SITE_KEY}
                 onSuccess={(token) => setCfToken(token)}
                 options={{
-                  theme: 'light', 
+                  theme: 'light',
                 }}
               />
             </div>
@@ -91,7 +91,7 @@ const ForgetPassPage: React.FC = () => {
             </button>
           </form>
           <div className={styles.links}>
-            <p><Link to="/LoginPage">Back to Login</Link></p> 
+            <p><Link to="/LoginPage">Back to Login</Link></p>
           </div>
         </div>
       </section>

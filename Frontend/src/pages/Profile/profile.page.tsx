@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import Layout from '../../components/layout/layout'; 
+import Layout from '../../components/layout/layout';
 import styles from './profilePage.module.scss';
 import defaultProfilePic from '../../../img/profile.png';
 
 const Profile: React.FC = () => {
   const [userData] = useState(() => {
     const savedUser = localStorage.getItem('qr_user');
-    
+
     if (savedUser) {
       try {
         return JSON.parse(savedUser);
@@ -34,10 +34,10 @@ const Profile: React.FC = () => {
       <div className={styles.pageContainer}>
         <div className={styles.profileCard}>
           <div className={styles.imageSection}>
-            <img 
-              src={userData.image?.url || defaultProfilePic} 
-              alt="Profile" 
-              className={styles.profileImage} 
+            <img
+              src={userData.image?.url || defaultProfilePic}
+              alt="Profile"
+              className={styles.profileImage}
             />
             <h2 className={styles.userName}>{userData.name || userData.fullName}</h2>
             <p className={styles.userRole}>{userData.role}</p>
@@ -60,12 +60,12 @@ const Profile: React.FC = () => {
             <div className={styles.infoRow}>
                 <span className={styles.label}>Date of Birth:</span>
                 <span className={styles.value}>
-                  {userData.dob 
-                    ? new Date(userData.dob).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      }) 
+                  {userData.dob
+                    ? new Date(userData.dob).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })
                     : 'Not provided'}
                 </span>
             </div>

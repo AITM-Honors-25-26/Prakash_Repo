@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 import styles from './ErrorPage.module.scss';
 import wrongGif from '../../../img/gif/wrong.gif'
 
-
 const ErrorPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const errorType = searchParams.get('type');

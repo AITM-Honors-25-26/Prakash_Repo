@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect } from 'react';
 import { Link, useMatch, useNavigate } from 'react-router-dom';
-import axios from 'axios'; 
+import axios from 'axios';
 
 import styles from './header.module.scss';
 import profile from './../../../img/profile.png';
 import logowhite from './../../../img/log.white.png';
 
-import { API_ENDPOINTS } from '../../constants/constants.js'; 
+import { API_ENDPOINTS } from '../../constants/constants.js';
 import { getSessionId } from '../../utils/session.js';
 
 export interface RestaurantTable {
@@ -28,9 +28,9 @@ const Header: React.FC = () => {
 
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const [user, setUser] = useState<{ 
-    name: string; 
-    role: string; 
+  const [user, setUser] = useState<{
+    name: string;
+    role: string;
     image?: { url: string }
   } | null>(() => {
     const savedUser = localStorage.getItem('qr_user');
@@ -85,7 +85,7 @@ const Header: React.FC = () => {
     };
 
     claimTable();
-  }, [urlTableId, navigate]); 
+  }, [urlTableId, navigate]);
 
   const hasStaffAccess = user && ['Admin', 'Chef', 'Waiter', 'Employee'].includes(user.role);
 
@@ -93,7 +93,7 @@ const Header: React.FC = () => {
     localStorage.removeItem('qr_accessToken');
     localStorage.removeItem('qr_refreshToken');
     localStorage.removeItem('qr_user');
-    localStorage.removeItem('bakery_table'); 
+    localStorage.removeItem('bakery_table');
     setUser(null);
     window.location.href = "/";
   };
@@ -116,7 +116,7 @@ const Header: React.FC = () => {
       </button>
 
       <nav className={`${styles.navLinks} ${menuOpen ? styles.navLinksOpen : ''}`}>
-        
+
         {activeTable && (
           <div className={styles.sidebarTableBadge}>
             Table {activeTable}
@@ -132,7 +132,7 @@ const Header: React.FC = () => {
             </div>
           </div>
         )}
-          
+
         <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
 
         <Link
@@ -185,10 +185,10 @@ const Header: React.FC = () => {
 
         {user ? (
           <div className={styles.profileWrapper}>
-            <img 
-              src={user.image?.url || profile} 
-              className={styles.profile} 
-              alt="Profile" 
+            <img
+              src={user.image?.url || profile}
+              className={styles.profile}
+              alt="Profile"
             />
             <div className={styles.DropdownBar}>
               <div className={styles.userInfo}>

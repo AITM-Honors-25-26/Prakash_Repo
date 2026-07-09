@@ -67,14 +67,6 @@ const getLocalNetworkAddress = async () => {
     await new Promise((resolve) => window.setTimeout(resolve, 700));
     pc.close();
 
-    // IMPORTANT: only ever return a *private* LAN IP here.
-    // Modern browsers hide real local IPs behind mDNS (xxxxx.local) candidates,
-    // so the only raw IP left in `candidates` is often the STUN "server
-    // reflexive" candidate - i.e. your PUBLIC/external IP. Falling back to
-    // "any non-loopback IP" (old behavior) would leak that public IP into
-    // the QR code, which is exactly the bug this comment is guarding against.
-    // If no private IP is found, we deliberately return null so callers fall
-    // back to explicit configuration instead of a wrong guess.
     return candidates.find(isPrivateIp) || null;
   } catch {
     return null;
@@ -140,13 +132,12 @@ export const getApiBaseUrl = async () => {
 };
 
 export const API_ENDPOINTS = {
-  // Auth Routes
+
   LOGIN: `${API_BASE_URL}/auth/login`,
   REGISTER: `${API_BASE_URL}/auth/register`,
   FORGETPASSWORD: `${API_BASE_URL}/auth/forgot_password`,
   RESETPASSWORD: `${API_BASE_URL}/auth/reset-password`,
 
-  // Menu Routes
   LISTALLITEMS: `${API_BASE_URL}/menu/list`,
   MENU_ACTION: `${API_BASE_URL}/menu`,
   ADDMENUITEM: `${API_BASE_URL}/menu/add-item`,
@@ -154,7 +145,6 @@ export const API_ENDPOINTS = {
 
   GET_MENU_ITEM: `${API_BASE_URL}/menu`,
 
-  // Table Routes
   TABLEMANAGEMENT: `${API_BASE_URL}/TableManagement`,
   LISTALLTABLE: `${API_BASE_URL}/table/list`,
   ADDTABLE: `${API_BASE_URL}/table/add`,
@@ -165,7 +155,6 @@ export const API_ENDPOINTS = {
   UPDATEORDERSTATUS: `${API_BASE_URL}/order/status`,
   ORDER_ACTION: `${API_BASE_URL}/order`,
 
-  // Frontend Navigation Links
   TABLENUMBER: `${API_FRONTEND}/MenuPage/:id`,
   TABLE_BASE: `${API_BASE_URL}/table`,
 

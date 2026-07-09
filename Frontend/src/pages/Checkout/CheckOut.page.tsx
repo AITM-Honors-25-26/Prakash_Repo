@@ -69,89 +69,87 @@ const CheckoutPage: React.FC = () => {
     return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
- const handlePlaceOrder = async (e: React.FormEvent) => {
-  e.preventDefault();
+  const handlePlaceOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  if (cartItems.length === 0) {
-    toast.error('Your cart is empty!');
-    return;
-  }
+    if (cartItems.length === 0) {
+      toast.error('Your cart is empty!');
+      return;
+    }
 
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    // 1. Send the order to your backend to save to MongoDB
-    const orderPayload = {
-      tableNumber,
-      items: cartItems.map(item => ({
-        name: item.name,
-        quantity: item.quantity,
-        price: item.price,
-        specialNotes: item.specialNotes || '',
-      })),
-    };
+    try {
 
-    // Ensure your backend returns { orderId: "..." }
-    const response = await axios.post(API_ENDPOINTS.ORDER_ACTION + '/', orderPayload);
-    const orderId = response.data.orderId; 
-
-    if (paymentOption === 'Pay Now') {
-      const totalAmount = calculateTotal().toString();
-      
-      // 2. Fetch the signature from your backend
-      const { data } = await axios.post('/api/payment/esewa/init', { 
-        amount: totalAmount, 
-        transaction_uuid: orderId 
-      });
-
-      // 3. Create the hidden form for eSewa
-      const form = document.createElement("form");
-      form.action = "https://rc-epay.esewa.com.np/api/epay/main/v2/form";
-      form.method = "POST";
-
-      const fields: Record<string, string> = {
-        amount: totalAmount,
-        tax_amount: "0",
-        total_amount: totalAmount,
-        transaction_uuid: orderId,
-        product_code: data.product_code, 
-        signature: data.signature,       // Received from backend
-        success_url: `${window.location.origin}/payment/success`,
-        failure_url: `${window.location.origin}/payment/failure`,
-        signed_field_names: "total_amount,transaction_uuid,product_code"
+      const orderPayload = {
+        tableNumber,
+        items: cartItems.map(item => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+          specialNotes: item.specialNotes || '',
+        })),
       };
 
-      Object.entries(fields).forEach(([key, value]) => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = key;
-        input.value = value;
-        form.appendChild(input);
-      });
+      const response = await axios.post(API_ENDPOINTS.ORDER_ACTION + '/', orderPayload);
+      const orderId = response.data.orderId;
 
-      document.body.appendChild(form);
-      form.submit();
-      
-    } else {
-      // 4. Logic for 'Pay Later'
-      localStorage.removeItem('bakery_cart');
-      window.dispatchEvent(new Event('cartUpdated'));
-      
-      await MySwal.fire({
-        title: 'Order Sent to Kitchen! 🍳',
-        text: `Table ${tableNumber}, your order is being prepared. Pay at the counter!`,
-        icon: 'success',
-        confirmButtonColor: '#d84315',
-      });
-      navigate('/MenuPage');
+      if (paymentOption === 'Pay Now') {
+        const totalAmount = calculateTotal().toString();
+
+        const { data } = await axios.post('/api/payment/esewa/init', {
+          amount: totalAmount,
+          transaction_uuid: orderId
+        });
+
+        const form = document.createElement("form");
+        form.action = "https://rc-epay.esewa.com.np/api/epay/main/v2/form";
+        form.method = "POST";
+
+        const fields: Record<string, string> = {
+          amount: totalAmount,
+          tax_amount: "0",
+          total_amount: totalAmount,
+          transaction_uuid: orderId,
+          product_code: data.product_code,
+          signature: data.signature,
+          success_url: `${window.location.origin}/payment/success`,
+          failure_url: `${window.location.origin}/payment/failure`,
+          signed_field_names: "total_amount,transaction_uuid,product_code"
+        };
+
+        Object.entries(fields).forEach(([key, value]) => {
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = key;
+          input.value = value;
+          form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+
+      } else {
+
+        localStorage.removeItem('bakery_cart');
+        window.dispatchEvent(new Event('cartUpdated'));
+
+        await MySwal.fire({
+          title: 'Order Sent to Kitchen! 🍳',
+          text: `Table ${tableNumber}, your order is being prepared. Pay at the counter!`,
+          icon: 'success',
+          confirmButtonColor: '#d84315',
+        });
+        navigate('/MenuPage');
+      }
+    } catch (error) {
+      console.error('Order placement failed:', error);
+      toast.error('Failed to place order. Please try again.');
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('Order placement failed:', error);
-    toast.error('Failed to place order. Please try again.');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
+
   return (
     <Layout>
       <div className={styles.checkoutContainer}>
@@ -176,8 +174,9 @@ const CheckoutPage: React.FC = () => {
               <div className={styles.itemsList}>
                 {cartItems.map((item) => (
                   <div key={item._id} className={styles.cartItemRow}>
+                    {/* FIXED: Completed the URL and added the closing quote here */}
                     <img
-                      src={item.images?.[0]?.url || 'https://via.placeholder.com/100'}
+                      src={item.images?.[0]?.url || 'https://via.placeholder.com/150'}
                       alt={item.name}
                       className={styles.itemImage}
                     />
