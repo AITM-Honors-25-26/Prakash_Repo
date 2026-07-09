@@ -24,7 +24,7 @@ const ItemDetailModal: React.FC<ItemDetailModalProps> = ({ item, onClose, onAddT
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-        
+
         <button className={styles.closeBtn} onClick={onClose} aria-label="Close modal">
           &times;
         </button>
@@ -40,13 +40,13 @@ const ItemDetailModal: React.FC<ItemDetailModalProps> = ({ item, onClose, onAddT
               <div className={styles.divider}></div>
               <p className={styles.desc}>{item.description}</p>
             </div>
-            
-            <button 
-              className={styles.addBtn} 
+
+            <button
+              className={styles.addBtn}
               disabled={!item.isAvailable}
               onClick={() => {
                 onAddToCart(item);
-                onClose(); 
+                onClose();
               }}
             >
               {item.isAvailable ? 'Add to Cart' : 'Out of Stock'}

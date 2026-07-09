@@ -14,7 +14,7 @@ import { Turnstile } from '@marsidev/react-turnstile';
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -26,8 +26,8 @@ const RegisterPage: React.FC = () => {
     password: '',
     confirmPassword: '',
     address: '',
-    role: 'Waiter', 
-    gender: 'Male', 
+    role: 'Waiter',
+    gender: 'Male',
     phone: '',
     dob: '',
   });
@@ -62,12 +62,12 @@ const RegisterPage: React.FC = () => {
         data.append(key, value);
       }
     });
-    
+
     if (image) {
       data.append('image', image);
     }
     data.append('cfToken', cfToken);
-    
+
     try {
       const response = await fetch(API_ENDPOINTS.REGISTER, {
         method: 'POST',
@@ -75,7 +75,7 @@ const RegisterPage: React.FC = () => {
       });
 
       const result = await response.json();
-      
+
       if (response.ok) {
         toast.success("Registration Successful!");
         navigate('/LoginPage');
@@ -98,10 +98,10 @@ const RegisterPage: React.FC = () => {
   return (
     <>
       <ToastContainer position="top-right" theme="colored" autoClose={3000} />
-          
+
       <section className={styles.whole}>
         <div className={styles.cardWrapper}>
-          
+
           <div className={styles.leftside}>
             <img src={walpaper2} alt="Wallpaper" />
           </div>
@@ -109,115 +109,115 @@ const RegisterPage: React.FC = () => {
           <div className={styles.rightside}>
             <h2>Register Staff</h2>
             <form onSubmit={handleRegister}>
-              
-              <input 
-                name="fullName" 
-                placeholder="Full Name" 
-                onChange={handleChange} 
-                required 
-                minLength={2} 
-                maxLength={50} 
+
+              <input
+                name="fullName"
+                placeholder="Full Name"
+                onChange={handleChange}
+                required
+                minLength={2}
+                maxLength={50}
               />
-              
-              <input 
-                name="email" 
-                type="email" 
-                placeholder="Email Address" 
-                onChange={handleChange} 
-                required 
+
+              <input
+                name="email"
+                type="email"
+                placeholder="Email Address"
+                onChange={handleChange}
+                required
               />
-              
+
               <div className={styles.passwordContainer}>
-                <input 
-                  name="password" 
-                  type={showPassword ? "text" : "password"} 
-                  placeholder="Password" 
-                  onChange={handleChange} 
-                  required 
+                <input
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
+                  onChange={handleChange}
+                  required
                   minLength={6}
                 />
                 <span className={styles.eyeIcon} onClick={() => setShowPassword(!showPassword)}>
-                  <img 
-                    src={showPassword ? hidePassword : viewPasssword} 
-                    alt={showPassword ? "Hide Password" : "Show Password"} 
+                  <img
+                    src={showPassword ? hidePassword : viewPasssword}
+                    alt={showPassword ? "Hide Password" : "Show Password"}
                     className={styles.passwordIconImg}
                   />
                 </span>
               </div>
 
               <div className={styles.passwordContainer}>
-                <input 
-                  name="confirmPassword" 
-                  type={showConfirmPassword ? "text" : "password"} 
-                  placeholder="Confirm Password" 
-                  onChange={handleChange} 
-                  required 
+                <input
+                  name="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Confirm Password"
+                  onChange={handleChange}
+                  required
                 />
                 <span className={styles.eyeIcon} onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                  <img 
-                    src={showConfirmPassword ? hidePassword : viewPasssword} 
-                    alt={showConfirmPassword ? "Hide Password" : "Show Password"} 
+                  <img
+                    src={showConfirmPassword ? hidePassword : viewPasssword}
+                    alt={showConfirmPassword ? "Hide Password" : "Show Password"}
                     className={styles.passwordIconImg}
                   />
                 </span>
               </div>
 
-              <input 
-                name="address" 
-                placeholder="Full Address" 
-                onChange={handleChange} 
-                required 
+              <input
+                name="address"
+                placeholder="Full Address"
+                onChange={handleChange}
+                required
               />
-              
+
               <div className={styles.row}>
                 <select name="role" onChange={handleChange} value={formData.role}>
-                  <option value="Waiter">Waiter</option> 
+                  <option value="Waiter">Waiter</option>
                   <option value="Chef">Chef</option>
                 </select>
-                
+
                 <select name="gender" onChange={handleChange} value={formData.gender}>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                   <option value="Other">Other</option>
                 </select>
               </div>
-              
+
               <div className={styles.row}>
-                <input 
-                  name="phone" 
+                <input
+                  name="phone"
                   type="tel"
-                  placeholder="Phone Number" 
-                  onChange={handleChange} 
-                  required 
+                  placeholder="Phone Number"
+                  onChange={handleChange}
+                  required
                 />
-                <input 
-                  name="dob" 
-                  type="date" 
-                  onChange={handleChange} 
-                  required 
+                <input
+                  name="dob"
+                  type="date"
+                  onChange={handleChange}
+                  required
                 />
               </div>
-              
+
               <div className={styles.fileUploadContainer}>
                 <label>Profile Image: </label>
-                
+
                 <label htmlFor="profile-upload" className={styles.customFileUpload}>
                   <img src={uploadIcon} alt="Upload Icon" className={styles.uploadIconImg} />
                   <span>{image ? image.name : "Click here to upload..."}</span>
                 </label>
 
-                <input 
-                  id="profile-upload" 
-                  type="file" 
-                  accept="image/*" 
-                  onChange={handleFileChange} 
+                <input
+                  id="profile-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
                   className={styles.hiddenFileInput}
-                  required 
+                  required
                 />
               </div>
 
               <div className={styles.captchaContainer}>
-                <Turnstile 
+                <Turnstile
                   siteKey={CloudFare_Captcha.SITE_KEY}
                   onSuccess={(token) => setCfToken(token)}
                   options={{
@@ -230,7 +230,7 @@ const RegisterPage: React.FC = () => {
                 {loading ? "Registering..." : "Create Account"}
               </button>
             </form>
-            
+
             <div className={styles.links}>
               <p>Already have an account? <Link to="/LoginPage">Login</Link></p>
             </div>

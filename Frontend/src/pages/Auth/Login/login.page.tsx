@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-// Updated to import CloudFare_Captcha alongside API_ENDPOINTS
+
 import { API_ENDPOINTS, CloudFare_Captcha } from '../../../constants/constants';
 import styles from "./loginpage.module.scss"
 import logo from "../../../../img/Logo.png"
@@ -8,7 +8,6 @@ import { toast, ToastContainer } from 'react-toastify';
 import leftDesign from "../../../../img/walpaper/1.png"
 import 'react-toastify/dist/ReactToastify.css';
 
-// Import Turnstile
 import { Turnstile } from '@marsidev/react-turnstile';
 
 const LoginPage: React.FC = () => {
@@ -50,7 +49,7 @@ const LoginPage: React.FC = () => {
 
         if (token) {
           localStorage.setItem('qr_accessToken', token);
-          
+
           if (refreshToken) {
               localStorage.setItem('qr_refreshToken', refreshToken);
           }
@@ -81,13 +80,13 @@ const LoginPage: React.FC = () => {
     <>
       <ToastContainer position="top-right" theme="colored" autoClose={3000} />
       <section className={styles.whole}>
-        
+
         <div className={styles.cardWrapper}>
-          
+
           <div className={styles.leftdisplay}>
             <img src={leftDesign} alt="Design" />
           </div>
-          
+
           <div className={styles.rightdsiplay}>
             <img src={logo} alt="Bakery Logo" />
             <h2>Login to your account</h2>
@@ -137,11 +136,11 @@ const LoginPage: React.FC = () => {
               </div>
 
               <div className={styles.captchaContainer}>
-                <Turnstile 
+                <Turnstile
                   siteKey={CloudFare_Captcha.SITE_KEY}
                   onSuccess={(token) => setCfToken(token)}
                   options={{
-                    theme: 'light', 
+                    theme: 'light',
                   }}
                 />
               </div>

@@ -80,7 +80,7 @@ const CheckoutPage: React.FC = () => {
   setLoading(true);
 
   try {
-    // 1. Send the order to your backend to save to MongoDB
+
     const orderPayload = {
       tableNumber,
       items: cartItems.map(item => ({
@@ -91,20 +91,17 @@ const CheckoutPage: React.FC = () => {
       })),
     };
 
-    // Ensure your backend returns { orderId: "..." }
     const response = await axios.post(API_ENDPOINTS.ORDER_ACTION + '/', orderPayload);
-    const orderId = response.data.orderId; 
+    const orderId = response.data.orderId;
 
     if (paymentOption === 'Pay Now') {
       const totalAmount = calculateTotal().toString();
-      
-      // 2. Fetch the signature from your backend
-      const { data } = await axios.post('/api/payment/esewa/init', { 
-        amount: totalAmount, 
-        transaction_uuid: orderId 
+
+      const { data } = await axios.post('/api/payment/esewa/init', {
+        amount: totalAmount,
+        transaction_uuid: orderId
       });
 
-      // 3. Create the hidden form for eSewa
       const form = document.createElement("form");
       form.action = "https://rc-epay.esewa.com.np/api/epay/main/v2/form";
       form.method = "POST";
@@ -114,8 +111,8 @@ const CheckoutPage: React.FC = () => {
         tax_amount: "0",
         total_amount: totalAmount,
         transaction_uuid: orderId,
-        product_code: data.product_code, 
-        signature: data.signature,       // Received from backend
+        product_code: data.product_code,
+        signature: data.signature,
         success_url: `${window.location.origin}/payment/success`,
         failure_url: `${window.location.origin}/payment/failure`,
         signed_field_names: "total_amount,transaction_uuid,product_code"
@@ -131,12 +128,12 @@ const CheckoutPage: React.FC = () => {
 
       document.body.appendChild(form);
       form.submit();
-      
+
     } else {
-      // 4. Logic for 'Pay Later'
+
       localStorage.removeItem('bakery_cart');
       window.dispatchEvent(new Event('cartUpdated'));
-      
+
       await MySwal.fire({
         title: 'Order Sent to Kitchen! 🍳',
         text: `Table ${tableNumber}, your order is being prepared. Pay at the counter!`,
@@ -177,7 +174,7 @@ const CheckoutPage: React.FC = () => {
                 {cartItems.map((item) => (
                   <div key={item._id} className={styles.cartItemRow}>
                     <img
-                      src={item.images?.[0]?.url || 'https://via.placeholder.com/100'}
+                      src={item.images?.[0]?.url || 'https:
                       alt={item.name}
                       className={styles.itemImage}
                     />

@@ -8,31 +8,31 @@ $font-header: 'Amatic SC', cursive;
 
 .photoholder {
     position: relative;
-    overflow: hidden; 
+    overflow: hidden;
 }
 
 .photo {
     width: 100%;
-    height: 85vh; 
-    object-fit: cover; 
+    height: 85vh;
+    object-fit: cover;
     filter: brightness(0.6);
 }
 
 .welcomecontent {
-    position: absolute;       
+    position: absolute;
     top: 45%;
     left: 50%;
-    transform: translate(-50%, -50%); 
+    transform: translate(-50%, -50%);
     text-align: center;
-    color: #ffffff;           
+    color: #ffffff;
     width: 100%;
     max-width: 600px;
 
     .logo {
         padding-top: 80px;
-        height: 250px; 
-        max-width: 100%; 
-        object-fit: contain; 
+        height: 250px;
+        max-width: 100%;
+        object-fit: contain;
     }
     h1 {
         font-family: $font-Cursive;
@@ -47,7 +47,7 @@ $font-header: 'Amatic SC', cursive;
 
     .paragraph {
         margin: 15px 0;
-        
+
         p {
             font-size: 14px;
             margin: 2px 0;
@@ -78,7 +78,7 @@ $font-header: 'Amatic SC', cursive;
 }
 .registerbutton {
     background-color: transparent;
-    border: 2px solid #ffffff; 
+    border: 2px solid #ffffff;
     color: #ffffff;
     width: 200px;
     &:hover {
@@ -87,12 +87,11 @@ $font-header: 'Amatic SC', cursive;
     }
 }
 
-
 @media (max-width: 768px) {
     .welcomecontent {
-        width: 100%; 
+        width: 100%;
         .logo {
-            height: 120px; 
+            height: 120px;
         }
 
         h1 {
@@ -101,19 +100,19 @@ $font-header: 'Amatic SC', cursive;
 
         }
         p {
-            font-size: 10px; 
+            font-size: 10px;
             margin-bottom: 10px;
         }
-        
+
         .logbutton, .registerbutton {
-            width: 60%; 
-            margin: 1px 0; 
-            box-sizing: border-box; 
+            width: 60%;
+            margin: 1px 0;
+            box-sizing: border-box;
             padding: 5px 10px;
-            
+
         }
     }
-    
+
     .photo {
         height: 100vh;
     }

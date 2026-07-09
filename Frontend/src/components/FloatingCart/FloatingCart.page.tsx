@@ -34,7 +34,7 @@ const FloatingCart: React.FC = () => {
 
   useEffect(() => {
     window.addEventListener('cartUpdated', calculateTotalItems);
-    
+
     return () => {
       window.removeEventListener('cartUpdated', calculateTotalItems);
     };

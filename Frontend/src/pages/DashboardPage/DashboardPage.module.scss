@@ -16,7 +16,7 @@ $border-color: #e0e0e0;
   justify-content: center;
   align-items: center;
   min-height: 50vh;
-  
+
   img {
     width: 60px;
     height: auto;
@@ -75,21 +75,21 @@ $border-color: #e0e0e0;
   cursor: pointer;
   transition: all 0.2s ease;
   background-color: transparent;
-  
+
   img {
     width: 20px;
     height: 20px;
     display: block;
     transition: transform 0.4s ease;
   }
-  
+
   &:hover {
     background-color: #e9ecef;
     img {
-      transform: rotate(180deg); 
+      transform: rotate(180deg);
     }
   }
-  
+
   &:active {
     transform: scale(0.95);
   }
@@ -123,7 +123,7 @@ $border-color: #e0e0e0;
 .stationHeader {
   padding: 1rem 1.5rem;
   border-bottom: 2px solid $border-color;
-  
+
   h2 {
     margin: 0;
     font-size: 1.8rem;
@@ -142,10 +142,10 @@ $border-color: #e0e0e0;
     background-color: #fff3cd;
     border-bottom-color: #ffeeba;
     img {
-      height: 24px; 
+      height: 24px;
     }
   }
-  
+
   &.serviceHeader {
     background-color: #d1ecf1;
     border-bottom-color: #bee5eb;
@@ -177,9 +177,9 @@ $border-color: #e0e0e0;
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 
-  &.pending { border-left: 5px solid #dc3545; } 
-  &.preparing { border-left: 5px solid #ffc107; } 
-  &.readyCard { border-left: 5px solid #28a745; } 
+  &.pending { border-left: 5px solid #dc3545; }
+  &.preparing { border-left: 5px solid #ffc107; }
+  &.readyCard { border-left: 5px solid #28a745; }
 }
 
 .cardTop {
@@ -197,7 +197,7 @@ $border-color: #e0e0e0;
   }
 
   .timeTag, .readyBadge {
-    font-family: sans-serif;   
+    font-family: sans-serif;
     font-size: 0.85rem;
     font-weight: bold;
     padding: 3px 8px;
@@ -239,7 +239,7 @@ $border-color: #e0e0e0;
 
       .notes {
         font-size: 0.85rem;
-        color: #dc3545; 
+        color: #dc3545;
         margin-top: 2px;
       }
     }

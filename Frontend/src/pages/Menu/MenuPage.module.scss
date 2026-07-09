@@ -7,7 +7,7 @@ $light-main-colour: #5e4934;
   min-height: 100%;
   background: #faf7f2;
   font-family: $main-font;
-  
+
   @media (max-width: 768px) {
     padding: 1rem;
   }
@@ -28,7 +28,7 @@ $light-main-colour: #5e4934;
   .headerPart {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; 
+    align-items: flex-start;
 
     h1 {
       font-size: 2rem;
@@ -44,7 +44,7 @@ $light-main-colour: #5e4934;
       font-size: 1.2rem;
       margin: 0.25rem 0 0 0;
       @media (max-width: 480px) {
-        font-size: 14px;    
+        font-size: 14px;
       }
     }
   }
@@ -77,7 +77,7 @@ $light-main-colour: #5e4934;
     }
     @media (max-width: 480px) {
       width: auto;
-      padding: 12px 16px;   
+      padding: 12px 16px;
       border-radius: 10px;
     }
   }
@@ -101,8 +101,8 @@ $light-main-colour: #5e4934;
 
 .grid {
   display: flex;
-  flex-wrap: nowrap; 
-  overflow-x: auto;  
+  flex-wrap: nowrap;
+  overflow-x: auto;
   gap: 1.5rem;
   padding-bottom: 1.5rem;
   scroll-behavior: smooth;
@@ -132,14 +132,14 @@ $light-main-colour: #5e4934;
 
 // Card size reduced from 300px/250px image to a more compact 230px/170px.
 .card {
-  flex: 0 0 auto; 
-  width: 230px;  
+  flex: 0 0 auto;
+  width: 230px;
   background: white;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   transition: 0.3s ease;
-  
+
   display: flex;
   flex-direction: column;
 
@@ -148,7 +148,7 @@ $light-main-colour: #5e4934;
   }
 
   @media (max-width: 768px) {
-    width: 190px; 
+    width: 190px;
   }
 }
 
@@ -156,7 +156,7 @@ $light-main-colour: #5e4934;
   position: relative;
   height: 170px;
   overflow: hidden;
-  flex-shrink: 0; 
+  flex-shrink: 0;
 
   img {
     width: 100%;
@@ -239,8 +239,8 @@ $light-main-colour: #5e4934;
   padding: 0.9rem;
   display: flex;
   flex-direction: column;
-  flex-grow: 1; 
-  justify-content: space-between; 
+  flex-grow: 1;
+  justify-content: space-between;
 
   h3 {
     font-size: 1.15rem;
@@ -263,7 +263,7 @@ $light-main-colour: #5e4934;
 .bottompart {
   display: flex;
   flex-direction: column;
-  margin-top: auto; 
+  margin-top: auto;
 }
 
 .bottom {
@@ -319,7 +319,7 @@ $light-main-colour: #5e4934;
   cursor: pointer;
   transition: 0.3s ease;
   font-size: 0.85rem;
-  
+
   &:hover {
     background: $light-main-colour;
   }
@@ -328,7 +328,7 @@ $light-main-colour: #5e4934;
 .empty {
   text-align: center;
   padding: 5rem 0;
-  
+
   img {
     width: 300px;
   }
@@ -345,8 +345,6 @@ $light-main-colour: #5e4934;
     }
   }
 }
-
-/* --- Skeleton Loading Styles --- */
 
 @keyframes skeletonPulse {
   0% {

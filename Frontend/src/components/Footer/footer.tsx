@@ -7,21 +7,19 @@ import instagram from '../../../img/logos/instagarm.png';
 import gmail from '../../../img/logos/gmail.png';
 import { API_ENDPOINTS, CloudFare_Captcha } from '../../constants/constants';
 
-import { toast } from 'react-toastify'; 
+import { toast } from 'react-toastify';
 
-// 2. Import the Turnstile component
 import { Turnstile } from '@marsidev/react-turnstile';
 
 const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  
-  // 3. Add state to hold the Cloudflare token
+
   const [cfToken, setCfToken] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
     if (!cfToken) {
       toast.error("Please complete the security check first.");
@@ -29,7 +27,7 @@ const Footer: React.FC = () => {
     }
 
     setIsLoading(true);
-    
+
     try {
       const response = await fetch(API_ENDPOINTS.CONTACTADMIN, {
         method: 'POST',
@@ -59,8 +57,8 @@ const Footer: React.FC = () => {
       <div className={styles.leftdiv}>
         <img src={logWhite} alt="Melina's Bakery Logo" />
         <h5>
-          Nestled in the heart of Nepal, Melina’s Bakery is a cozy spot filled with the aroma of freshly baked breads and 
-          handmade pastries. Whether you’re starting your day with a warm cup of tea or stopping by for a sweet treat, it’s 
+          Nestled in the heart of Nepal, Melina’s Bakery is a cozy spot filled with the aroma of freshly baked breads and
+          handmade pastries. Whether you’re starting your day with a warm cup of tea or stopping by for a sweet treat, it’s
           a little place of comfort for everyone.
         </h5>
         <div className={styles.logs}>
@@ -70,7 +68,7 @@ const Footer: React.FC = () => {
           <img src={gmail} className={styles.imglogo} alt="Gmail Logo" />
         </div>
       </div>
-      
+
       <div className={styles.middlleftediv}>
       </div>
 
@@ -107,7 +105,7 @@ const Footer: React.FC = () => {
           />
 
           <div style={{ marginBottom: '10px' }}>
-            <Turnstile 
+            <Turnstile
               siteKey= {CloudFare_Captcha.SITE_KEY}
               onSuccess={(token) => setCfToken(token)}
             />

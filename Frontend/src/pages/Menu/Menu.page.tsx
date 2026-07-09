@@ -7,7 +7,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 
 import styles from './MenuPage.module.scss';
 import Layout from '../../components/layout/layout';
-import ItemDetailModal from '../../components/ItemDetail/ItemDetailsPage'; 
+import ItemDetailModal from '../../components/ItemDetail/ItemDetailsPage';
 
 import cartwhite from '../../../img/icons/cart.white.png';
 import hot from '../../../img/gif/hot.gif';
@@ -43,12 +43,12 @@ const MenuItemCard: React.FC<{
   const hasMultipleImages = item.images && item.images.length > 1;
 
   const nextImage = (e: React.MouseEvent) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     setCurrentImageIndex((prev) => (prev + 1) % item.images.length);
   };
 
   const prevImage = (e: React.MouseEvent) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     setCurrentImageIndex((prev) => (prev - 1 + item.images.length) % item.images.length);
   };
 
@@ -59,7 +59,7 @@ const MenuItemCard: React.FC<{
           src={item.images?.[currentImageIndex]?.url || 'https://via.placeholder.com/500'}
           alt={`${item.name} - ${currentImageIndex + 1}`}
         />
-        
+
         {hasMultipleImages && (
           <>
             <button className={`${styles.sliderBtn} ${styles.left}`} onClick={prevImage}>
@@ -70,8 +70,8 @@ const MenuItemCard: React.FC<{
             </button>
             <div className={styles.dotsContainer}>
               {item.images.map((_, idx) => (
-                <span 
-                  key={idx} 
+                <span
+                  key={idx}
                   className={`${styles.dot} ${idx === currentImageIndex ? styles.active : ''}`}
                 />
               ))}
@@ -83,7 +83,7 @@ const MenuItemCard: React.FC<{
           <span className={styles.outOfStock}>Unavailable</span>
         )}
       </div>
-      
+
       <div className={styles.content}>
         <div>
           <h3>{item.name}</h3>
@@ -95,7 +95,7 @@ const MenuItemCard: React.FC<{
             <button
               disabled={!item.isAvailable}
               onClick={(e) => {
-                e.stopPropagation(); 
+                e.stopPropagation();
                 handleAddToCart(item);
               }}
               className={styles.cartBtn}
@@ -108,7 +108,7 @@ const MenuItemCard: React.FC<{
             <button
               className={styles.deleteBtn}
               onClick={(e) => {
-                e.stopPropagation(); 
+                e.stopPropagation();
                 handleDelete(item._id);
               }}
             >
@@ -158,8 +158,7 @@ const MenuPage: React.FC = () => {
   const [menuItems, setMenuItems] = useState<BakeryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  
-  // State to control the item detail modal overlay
+
   const [selectedItem, setSelectedItem] = useState<BakeryItem | null>(null);
 
   const fetchMenu = useCallback(async (showLoading = true) => {
@@ -203,7 +202,7 @@ const MenuPage: React.FC = () => {
 
   const groupedItems = useMemo(() => {
     const grouped = menuItems.reduce((acc, item) => {
-      const categoryName = item.category || 'Other'; 
+      const categoryName = item.category || 'Other';
       if (!acc[categoryName]) {
         acc[categoryName] = [];
       }
@@ -298,7 +297,7 @@ const MenuPage: React.FC = () => {
             <p>Freshly baked happiness every day</p>
           </div>
           {isAdmin && (
-            <button 
+            <button
               className={styles.adminBtn}
               onClick={() => navigate('/Menu/Add')}
             >
@@ -306,22 +305,22 @@ const MenuPage: React.FC = () => {
             </button>
           )}
         </div>
-        
+
         {groupedItems.map(({ category, items }) => {
           if (items.length === 0) return null;
 
           return (
             <section key={category} className={styles.categorySection}>
-              <h2 className={styles.categoryTitle}>{category}</h2> 
+              <h2 className={styles.categoryTitle}>{category}</h2>
               <div className={styles.grid}>
                 {items.map((item) => (
-                  <MenuItemCard 
-                    key={item._id} 
-                    item={item} 
-                    isAdmin={isAdmin} 
+                  <MenuItemCard
+                    key={item._id}
+                    item={item}
+                    isAdmin={isAdmin}
                     handleAddToCart={handleAddToCart}
                     handleDelete={handleDelete}
-                    onClick={() => setSelectedItem(item)} 
+                    onClick={() => setSelectedItem(item)}
                   />
                 ))}
               </div>
@@ -337,10 +336,10 @@ const MenuPage: React.FC = () => {
       </div>
 
       {selectedItem && (
-        <ItemDetailModal 
-          item={selectedItem} 
-          onClose={() => setSelectedItem(null)} 
-          onAddToCart={handleAddToCart} 
+        <ItemDetailModal
+          item={selectedItem}
+          onClose={() => setSelectedItem(null)}
+          onAddToCart={handleAddToCart}
         />
       )}
     </Layout>

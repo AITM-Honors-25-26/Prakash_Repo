@@ -9,12 +9,11 @@ import Layout from '../../components/layout/layout.js';
 import styles from './TableManagementPage.module.scss';
 import LoaderGif from './../../../img/gif/loading.gif';
 import { API_ENDPOINTS } from '../../constants/constants.js';
-import { generateTableQR } from './qr-generator.ts'; 
+import { generateTableQR } from './qr-generator.ts';
 import empty from "../../../img/gif/empty.gif"
 
 const MySwal = withReactContent(Swal);
 
-// --- Types ---
 export interface RestaurantTable {
   _id: string;
   tableNumber: number;
@@ -34,7 +33,7 @@ const TableManagement: React.FC = () => {
     localStorage.removeItem('qr_refreshToken');
     localStorage.removeItem('qr_user');
     toast.error("Session expired. Please log in again.");
-    navigate('/LoginPage'); 
+    navigate('/LoginPage');
   }, [navigate]);
 
   const getAuthHeader = useCallback(() => {
@@ -307,9 +306,9 @@ const TableManagement: React.FC = () => {
                   </div>
                   <div className={styles.buttonGroup}>
                     <button className={styles.editButton} onClick={() => handleEditTable(table)}>Manage</button>
-                    
-                    <button 
-                      className={styles.qrButton} 
+
+                    <button
+                      className={styles.qrButton}
                       style={{ backgroundColor: '#4a3f35', color: 'white', padding: '8px 12px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
                       onClick={() => handleViewQR(table)}
                     >

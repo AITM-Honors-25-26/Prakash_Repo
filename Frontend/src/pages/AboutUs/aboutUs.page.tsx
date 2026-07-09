@@ -6,70 +6,75 @@ import bakeryHero from '../../../img/bakery photo.png';
 const AboutUsPage: React.FC = () => {
   return (
     <Layout>
-      <div className={styles.aboutPage}>
-        {/* Full-width Hero Section matching the homepage vibe */}
-        <section 
-          className={styles.heroSection} 
-          style={{ backgroundImage: `url(${bakeryHero})` }}
-        >
-          <div className={styles.heroOverlay}>
-            <h1>Baked with Love</h1>
-            <p>From our oven to your table, handcrafted treats made with organic ingredients and a dash of magic.</p>
-          </div>
-        </section>
-
-        {/* Main content overlapping the hero section */}
-        <section className={styles.mainContent}>
-          <div className={styles.contentWrapper}>
+      <div className={styles.aboutContainer}>
+        
+        {/* Top Section mimicking the modern editorial layout */}
+        <section className={styles.topGrid}>
+          
+          <div className={styles.leftColumn}>
+            <h1 className={styles.hugeHeading}>ABOUT<br/>US</h1>
             
-            <div className={styles.storyGrid}>
-              <div className={styles.imageWrapper}>
-                 {/* You can change this to a picture of the bakery interior or the owner later! */}
-                 <img src={bakeryHero} alt="Melina's Bakery Fresh Bread" />
-              </div>
-              <div className={styles.textBlock}>
-                <h2>Our Sweet Journey</h2>
-                <p>
-                  Melina’s Bakery started in a small home kitchen with a single whisk and a 
-                  passion for perfect crusts. Today, we remain committed to the 
-                  art of slow-baking. We believe that the best bread takes time, 
-                  and the best memories are made over a slice of cake.
-                </p>
-                <div className={styles.signature}>- Melina</div>
-              </div>
-            </div>
-
-            <div className={styles.statsGrid}>
-              <div className={styles.statCard}>
-                <span className={styles.icon}>🌾</span>
-                <h3>Organic Flour</h3>
-                <p>Sourced from local sustainable farms.</p>
-              </div>
-              <div className={styles.statCard}>
-                <span className={styles.icon}>⏰</span>
-                <h3>24h Fermentation</h3>
-                <p>For that perfect sourdough tang.</p>
-              </div>
-              <div className={styles.statCard}>
-                <span className={styles.icon}>☕</span>
-                <h3>Fresh Coffee</h3>
-                <p>The perfect partner for your pastry.</p>
-              </div>
-            </div>
-
-            <div className={styles.valuesSection}>
-              <div className={styles.valueCard}>
-                <h3>Our Promise</h3>
-                <p>No preservatives. No artificial flavors. Just honest, real food that makes you smile.</p>
-              </div>
-              <div className={styles.valueCard}>
-                <h3>Community</h3>
-                <p>We’re more than a shop. We are a gathering place for the Baluwatar community.</p>
-              </div>
-            </div>
-
+            <h3 className={styles.subHeading}>Artisan Breads & Pastries</h3>
+            <p className={styles.bodyText}>
+              Baked with Love: Designs featuring clean ingredients, natural palettes, and high-quality local produce.
+            </p>
           </div>
+
+          <div className={styles.rightColumn}>
+            <img src={bakeryHero} alt="Bakery Interior" className={styles.mainImage} />
+            
+            <div className={styles.sideImages}>
+              <img src={bakeryHero} alt="Fresh Bread" className={styles.smallImage} />
+              <div className={styles.philosophyBox}>
+                <h3>Our Philosophy</h3>
+                <p>
+                  At Melina's Bakery, we believe in creating delicious, handcrafted treats that reflect our clients' tastes and lifestyles.
+                </p>
+              </div>
+            </div>
+          </div>
+          
         </section>
+
+        {/* Meet the Team section mimicking the curved 'Meet the Principals' box */}
+        <section className={styles.teamSection}>
+          
+          {/* Overlapping White Title Area */}
+          <div className={styles.teamTitleBox}>
+            <div className={styles.meetThe}>MEET THE</div>
+            <div className={styles.principals}>BAKERS</div>
+          </div>
+
+          <div className={styles.teamCenterText}>
+            <div className={styles.smallGallery}>
+              {/* Small decorative images in the center */}
+              <img src={bakeryHero} alt="Pastry detail 1" />
+              <img src={bakeryHero} alt="Pastry detail 2" />
+              <img src={bakeryHero} alt="Pastry detail 3" />
+            </div>
+            <p>
+              As head baker and licensed pastry chef, the founder oversees the day-to-day operations of Melina's Bakery and the design and manufacture of our award-winning cakes and pastries.
+            </p>
+          </div>
+
+          {/* Person 1 */}
+          <div className={styles.teamMember}>
+            {/* NOTE: For best results, use an image of the person with a transparent background here! */}
+            <img src={bakeryHero} alt="Melina" />
+            <h4>Melina</h4>
+            <span>FOUNDER AND HEAD BAKER</span>
+          </div>
+
+          {/* Person 2 */}
+          <div className={styles.teamMember}>
+             {/* NOTE: For best results, use an image of the person with a transparent background here! */}
+            <img src={bakeryHero} alt="David" />
+            <h4>David</h4>
+            <span>CO-FOUNDER AND MANAGER</span>
+          </div>
+
+        </section>
+        
       </div>
     </Layout>
   );
