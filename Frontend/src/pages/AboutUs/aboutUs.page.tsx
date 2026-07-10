@@ -59,7 +59,6 @@ const AboutUsPage: React.FC = () => {
 
           {/* Person 1 */}
           <div className={styles.teamMember}>
-            {/* NOTE: For best results, use an image of the person with a transparent background here! */}
             <img src={bakeryHero} alt="Melina" />
             <h4>Melina</h4>
             <span>FOUNDER AND HEAD BAKER</span>
@@ -67,7 +66,6 @@ const AboutUsPage: React.FC = () => {
 
           {/* Person 2 */}
           <div className={styles.teamMember}>
-             {/* NOTE: For best results, use an image of the person with a transparent background here! */}
             <img src={bakeryHero} alt="David" />
             <h4>David</h4>
             <span>CO-FOUNDER AND MANAGER</span>
