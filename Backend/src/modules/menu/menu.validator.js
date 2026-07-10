@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { Category } from "../../config/constants.js"; 
+import { Category } from "../../config/constants.js";
 
 const validCategories = Object.values(Category);
 
@@ -19,7 +19,7 @@ export const menuCreateSchema = Joi.object({
     }),
     stock: Joi.number().min(0).optional().empty(''),
     isAvailable: Joi.boolean().optional().empty(''),
-    
+
     email: Joi.string().email().required().messages({
         "string.empty": "Admin email is required"
     }),

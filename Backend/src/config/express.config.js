@@ -12,17 +12,14 @@ app.use(cors({
     credentials: true
 }));
 
-//parces 
-//for json data
 app.use(express.json())
-//for X-www-form-urlencoded data
+
 app.use(express.urlencoded({
   extended:false
 }))
-// for cookie data(npm install cookoe-parser)
+
 app.use(cookieParser ())
 
-//check health
 app.use("/health", (req, res) => {
   res.json({
     data: "health",
@@ -51,12 +48,12 @@ app.use((error, req, res, next) => {
   let errorDetail = error.error || null;
 
   if (error.name === "MongoServerError") {
-  statusCode = 422; 
+  statusCode = 422;
   status = "DATABASE_ERROR";
 
   if (error.code === 11000) {
-    const key = Object.keys(error.keyPattern)[0]; 
-    statusCode = 422; 
+    const key = Object.keys(error.keyPattern)[0];
+    statusCode = 422;
     errorDetail = {
       [key]: `${key} has already been used`
     };
@@ -65,7 +62,6 @@ app.use((error, req, res, next) => {
   }
 }
 
-  // Multer errors
   if (error instanceof multer.MulterError) {
     statusCode = 400;
 

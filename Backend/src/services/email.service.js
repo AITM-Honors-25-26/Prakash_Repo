@@ -21,7 +21,7 @@ class EmailService{
             throw exception
         }
     }
-    
+
     sendEmail = async({
         to,sub, message
     })=>{

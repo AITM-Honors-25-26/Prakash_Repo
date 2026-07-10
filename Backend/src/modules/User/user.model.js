@@ -15,19 +15,19 @@ const UserSchema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, "Email is required"],
-        unique: true, 
+        unique: true,
         lowercase: true,
         trim: true
     },
     password: {
         type: String,
         required: [true, "Password is mandatory"],
-        select: false 
+        select: false
     },
     role: {
         type: String,
         enum: Object.values(UserRole),
-        default: UserRole.WAITER 
+        default: UserRole.WAITER
     },
     gender: {
         type: String,
@@ -61,7 +61,7 @@ const UserSchema = new mongoose.Schema({
         type: Date
     }
 }, {
-    timestamps: true, 
+    timestamps: true,
     autoCreate: true,
     autoIndex: true
 });

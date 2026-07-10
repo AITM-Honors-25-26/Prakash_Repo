@@ -3,7 +3,6 @@ import http from "http";
 import { Server } from "socket.io";
 import "./src/queues/email.worker.js"
 
-
 const httpServer = http.createServer(app);
 
 const io = new Server(httpServer, {
@@ -29,7 +28,6 @@ io.on("connection", (socket) => {
   });
 });
 
-// Start server last
 httpServer.listen(9005, "0.0.0.0", (err) => {
   if (!err) {
     console.log("Server is running on port: 9005");

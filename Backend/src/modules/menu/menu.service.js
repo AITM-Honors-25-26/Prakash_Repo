@@ -5,8 +5,8 @@ class MenuService {
     transformMenuData = async (req) => {
         try {
             let data = { ...req.body };
-            data.images = []; 
-            
+            data.images = [];
+
             if (req.files && req.files.length > 0) {
                 for (const file of req.files) {
                     const upload = await cloudianarySvc.fileUpload(file.path, 'bakery/');
@@ -16,11 +16,11 @@ class MenuService {
                     });
                 }
             }
-            
+
             if (data.price) data.price = Number(data.price);
             if (data.stock) data.stock = Number(data.stock);
             data.isAvailable = String(data.isAvailable) === 'true';
-            
+
             return data;
         } catch (exception) {
             throw exception;
@@ -50,7 +50,7 @@ class MenuService {
         if (item.images && item.images.length > 0) {
             for (const img of item.images) {
                 if (img.public_id) {
-                    await cloudianarySvc.deleteFile(img.public_id); 
+                    await cloudianarySvc.deleteFile(img.public_id);
                 }
             }
         }

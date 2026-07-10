@@ -3,11 +3,11 @@ import crypto from 'crypto';
 export const initiateEsewa = async (req, res) => {
     try {
         const { amount, transaction_uuid } = req.body;
-        const secretKey = process.env.ESEWA_SECRET_KEY; // Keep this in .env!
+        const secretKey = process.env.ESEWA_SECRET_KEY;
         const productCode = process.env.MERCHANT_ID || "EPAYTEST";
-        
+
         const data = `total_amount=${amount},transaction_uuid=${transaction_uuid},product_code=${productCode}`;
-        
+
         const signature = crypto
             .createHmac("sha256", secretKey)
             .update(data)

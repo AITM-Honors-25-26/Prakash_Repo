@@ -1,7 +1,7 @@
 import express from 'express';
 import { createOrder, getKitchenOrders, updateOrderStatus, deleteOrder } from './order.controller.js';
 import { validateCreateOrder, validateUpdateStatus } from './order.validator.js';
-import allowUser from '../../middleware/auth.middelware.js'; 
+import allowUser from '../../middleware/auth.middelware.js';
 import { UserRole } from '../../config/constants.js';
 
 const orderRouter = express.Router();
