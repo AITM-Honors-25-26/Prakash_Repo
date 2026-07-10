@@ -10,7 +10,7 @@ class MenuController {
                 meta: null
             });
         } catch (exception) {
-            next(exception); 
+            next(exception);
         }
     }
     getAllMenuItems = async (req, res, next) => {
@@ -30,7 +30,7 @@ class MenuController {
         try {
             const id = req.params.id;
             const item = await menuSvc.getItemById(id);
-            
+
             if (!item) {
                 return next({
                     code: 404,
@@ -39,7 +39,7 @@ class MenuController {
             }
 
             res.json({
-                data: item, // Matches your frontend expectation
+                data: item,
                 message: "Item details fetched successfully",
                 meta: null
             });
@@ -47,12 +47,12 @@ class MenuController {
             next(exception);
         }
     }
-    
+
     deleteMenuItem = async (req, res, next) => {
         try {
             const id = req.params.id;
             const deletedResponse = await menuSvc.deleteItemById(id);
-            
+
             res.json({
                 result: deletedResponse,
                 message: "Bakery item and associated images deleted successfully.",

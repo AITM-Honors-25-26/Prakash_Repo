@@ -1,6 +1,5 @@
-import Order from '../ordermodel/order.model.js'; 
+import Order from '../ordermodel/order.model.js';
 import { OrderStatus } from '../../config/constants.js';
-
 
 export const createOrder = async (orderData) => {
   const { tableNumber, items } = orderData;
@@ -19,13 +18,11 @@ export const createOrder = async (orderData) => {
   return await newOrder.save();
 };
 
-
 export const getOrdersForKitchen = async () => {
   return await Order.find({
     status: { $nin: [OrderStatus.COMPLETED, OrderStatus.CANCELLED] }
-  }).sort({ createdAt: 1 }); 
+  }).sort({ createdAt: 1 });
 };
-
 
 export const updateStatus = async (orderId, newStatus) => {
   return await Order.findByIdAndUpdate(

@@ -31,7 +31,7 @@ class AuthService{
         }catch(exception){
             throw(exception)
         }
-    }  
+    }
     publicUserProfile = (userObj)=>{
         return{
             name:userObj.fullName,
@@ -48,7 +48,7 @@ class AuthService{
     }
     getSingleUserByFilter= async (filter, selectFields)=>{
         try{
-            
+
             const user = await UserModel.findOne(filter).select(selectFields);
             return user
         }catch(exception){
@@ -63,7 +63,6 @@ class AuthService{
             throw exception
         }
     }
-    
 
     notifyActivationEmail = async ({name, email, activationToken})=>{
         try{
@@ -82,7 +81,7 @@ class AuthService{
                         <p style="margin-top: 25px;">Please click the button below to activate your account and get started:</p>
 
                         <div style="text-align: center; margin: 30px 0;">
-                            <a href="${activationUrl}" 
+                            <a href="${activationUrl}"
                                style="background-color: #27ae60; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
                                Activate My Account
                             </a>
@@ -113,7 +112,7 @@ class AuthService{
     try {
 
         let resetUrl = `${AppConfig.backend_Url}/auth/verify-token/${resetToken}`;
-        
+
         let msg = `
         <div style="background-color: #f4f4f4; padding: 20px; font-family: 'Segoe UI', Helvetica, Arial, sans-serif;">
             <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border: 1px solid #e0e0e0;">
@@ -128,7 +127,7 @@ class AuthService{
                     <p style="margin-top: 25px;">Please click the button below to securely reset your password. This link will expire soon.</p>
 
                     <div style="text-align: center; margin: 30px 0;">
-                        <a href="${resetUrl}" 
+                        <a href="${resetUrl}"
                            style="background-color: #e74c3c; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
                            Reset Password
                         </a>
@@ -148,7 +147,7 @@ class AuthService{
                 </div>
             </div>
         </div>`;
-        
+
         return await emailSvc.sendEmail({
             to: email,
             sub: "Reset Your Password - Restaurant Management System",
@@ -158,7 +157,6 @@ class AuthService{
         throw exception;
     }
 }
-    
 
 }
 const autSvc = new AuthService

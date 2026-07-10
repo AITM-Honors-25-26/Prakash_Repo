@@ -77,7 +77,6 @@ class TableController {
                 });
             }
 
-            // Atomic update didn't match - find out why, purely for the error message.
             const existingTable = await tableSvc.getTableByNumber(tableNumber);
 
             if (!existingTable) {

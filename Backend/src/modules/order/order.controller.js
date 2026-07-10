@@ -34,7 +34,7 @@ export const updateOrderStatus = async (req, res) => {
     const { status } = req.body;
 
     const updatedOrder = await OrderService.updateStatus(id, status);
-    
+
     if (!updatedOrder) {
       return res.status(404).json({ success: false, message: 'Order not found.' });
     }
@@ -53,16 +53,16 @@ export const updateOrderStatus = async (req, res) => {
 export const deleteOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const deletedOrder = await OrderService.deleteOrder(id);
-    
+
     if (!deletedOrder) {
       return res.status(404).json({ success: false, message: 'Order not found.' });
     }
 
     const io = req.app.get('io');
     if (io) {
-      io.emit('order_status_updated', { _id: id, status: 'Completed' }); 
+      io.emit('order_status_updated', { _id: id, status: 'Completed' });
     }
 
     return res.status(200).json({ success: true, message: 'Order permanently deleted' });
