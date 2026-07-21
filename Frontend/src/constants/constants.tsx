@@ -38,7 +38,11 @@ const getCurrentOrigin = () => {
   return 'http://localhost:5173';
 };
 
+// UPDATED: Dynamically grab the hostname from the browser so network IPs don't fail CORS
 const getCurrentApiOrigin = () => {
+  if (typeof window !== 'undefined') {
+    return `${window.location.protocol}//${window.location.hostname}:9005`;
+  }
   return 'http://localhost:9005';
 };
 
@@ -169,7 +173,10 @@ export const API_ENDPOINTS = {
   TABLENUMBER: `${API_FRONTEND}/MenuPage/:id`,
   TABLE_BASE: `${API_BASE_URL}/table`,
 
-  CONTACTADMIN: `${API_BASE_URL}/conatctAdmin`
+  CONTACTADMIN: `${API_BASE_URL}/conatctAdmin`,
+
+  // Payment Routes
+  ESEWA_INIT: `${API_BASE_URL}/payment/esewa/init`
 };
 
 export const CATEGORY = {
@@ -194,9 +201,9 @@ export const OrderStatus = {
   READY: 'Ready',
   COMPLETED: 'Completed',
   CANCELLED: 'Cancelled'
-}
+};
 
 export const CloudFare_Captcha = {
   SITE_KEY: `0x4AAAAAADoOvGKugWkb8Sdj`,
   SECRET_KEY: `0x4AAAAAADoOvGLSC-y6FaPeGbgwvv4VTww`
-}
+};

@@ -77,7 +77,6 @@ class TableService {
         }
     }
 
-    // Atomic update by tableNumber, used by the QR occupy flow.
     updateTableByNumber = async (tableNumber, data) => {
         try {
             const updated = await Table.findOneAndUpdate(

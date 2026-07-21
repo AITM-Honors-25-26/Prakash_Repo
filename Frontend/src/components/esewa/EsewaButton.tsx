@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../../constants/constants';
 
 // Define the interface for the props to ensure type safety
 interface EsewaButtonProps {
@@ -13,7 +14,7 @@ const EsewaButton: React.FC<EsewaButtonProps> = ({ amount, orderId }) => {
     try {
       // 1. Get the signature from your backend with explicit types
       const { data } = await axios.post<{ signature: string, product_code: string }>(
-        '/api/payment/esewa/init', 
+        API_ENDPOINTS.ESEWA_INIT, 
         { amount, transaction_uuid: orderId }
       );
 

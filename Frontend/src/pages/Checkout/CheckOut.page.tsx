@@ -91,15 +91,15 @@ const CheckoutPage: React.FC = () => {
       })),
     };
 
-    // Ensure your backend returns { orderId: "..." }
+    // Backend wraps the created order as { success, data: order }
     const response = await axios.post(API_ENDPOINTS.ORDER_ACTION + '/', orderPayload);
-    const orderId = response.data.orderId; 
+    const orderId = response.data.data._id;
 
     if (paymentOption === 'Pay Now') {
       const totalAmount = calculateTotal().toString();
       
       // 2. Fetch the signature from your backend
-      const { data } = await axios.post('/api/payment/esewa/init', { 
+      const { data } = await axios.post(API_ENDPOINTS.ESEWA_INIT, { 
         amount: totalAmount, 
         transaction_uuid: orderId 
       });

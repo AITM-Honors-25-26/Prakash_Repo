@@ -7,7 +7,7 @@ import "./db.config.js"
 const app = express();
 
 app.use(cors({
-    origin: '*' ,
+    origin: true, // reflect request origin (works from any LAN IP/host, unlike '*' which browsers reject when credentials:true)
     methods:['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     credentials: true
 }));
