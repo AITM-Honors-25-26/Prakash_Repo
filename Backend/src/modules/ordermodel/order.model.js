@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { OrderStatus } from '../../config/constants.js';
+import { OrderStatus, PaymentStatus } from '../../config/constants.js';
 
 const OrderSchema = new mongoose.Schema({
   tableNumber: {
@@ -11,6 +11,25 @@ const OrderSchema = new mongoose.Schema({
     type: String,
     enum: Object.values(OrderStatus),
     default: OrderStatus.PENDING
+  },
+
+  // Separate from `status` above - `status` is the kitchen prep state,
+  // this is whether the eSewa QR payment has actually gone through.
+  paymentStatus: {
+    type: String,
+    enum: Object.values(PaymentStatus),
+    default: PaymentStatus.UNPAID
+  },
+
+  paymentMethod: {
+    type: String,
+    enum: ['Counter', 'Esewa'],
+    default: 'Counter'
+  },
+
+  esewaTransactionCode: {
+    type: String,
+    default: null
   },
 
   items: [
