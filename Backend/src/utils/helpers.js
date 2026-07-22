@@ -2,7 +2,7 @@ export const randomStringGenerator = (length = 100, type = "string") => {
     let chars = "0123456789";
     if (type === "string") {
         chars += "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    } 
+    }
     else if (type === "special") {
         chars += "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*(_)-+{}";
     }

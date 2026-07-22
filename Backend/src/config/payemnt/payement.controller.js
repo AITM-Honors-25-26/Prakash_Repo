@@ -15,6 +15,7 @@ const buildSignature = (secretKey, { total_amount, transaction_uuid, product_cod
 export const initiateEsewa = async (req, res) => {
     try {
         const { amount, transaction_uuid } = req.body;
+<<<<<<< HEAD
         const secretKey = process.env.ESEWA_SECRET_KEY; // Keep this in .env!
 
         if (!secretKey) {
@@ -31,6 +32,19 @@ export const initiateEsewa = async (req, res) => {
         });
 
         res.json({ signature, product_code: PRODUCT_CODE });
+=======
+        const secretKey = process.env.ESEWA_SECRET_KEY;
+        const productCode = process.env.MERCHANT_ID || "EPAYTEST";
+
+        const data = `total_amount=${amount},transaction_uuid=${transaction_uuid},product_code=${productCode}`;
+
+        const signature = crypto
+            .createHmac("sha256", secretKey)
+            .update(data)
+            .digest("base64");
+
+        res.json({ signature, product_code: productCode });
+>>>>>>> 23318921c6430eb322650d1bcc7d6e871301336b
     } catch (error) {
         res.status(500).json({ error: "Signature generation failed" });
     }

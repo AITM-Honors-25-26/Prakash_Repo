@@ -1,199 +1,258 @@
-// Variables (Matching your bakery aesthetic)
-$font-header: 'Amatic SC', cursive;
-$font-body: 'Arial', sans-serif;
-$main-Colour: #48392a;       // Deep warm brown
-$secondary-Colour: #5c4033;  // Rich espresso brown
-$accent-cream: #faf9f6;      // Soft bakery cream
-$green: #2d6a4f;             // Sage green for accents
-$border-colour: #e0dcd5;
-
-// Breakpoints
-$breakpoint-md: 768px;
-$breakpoint-lg: 1024px;
+// Modern, sleek variables mapped to match the uploaded reference image
+$font-heading: 'Outfit', -apple-system, sans-serif;
+$font-body: 'Outfit', -apple-system, sans-serif;
+$dark-text: #111111;
+$light-text: #666666;
+$bg-color: #ffffff;
+$card-bg: #e6e2db; // The soft warm grey/tan for the team section
 
 .aboutContainer {
-  width: 100%;
-  max-width: 1100px;
+  font-family: $font-body;
+  background: $bg-color;
+  color: $dark-text;
+  padding-bottom: 120px;
+  overflow: hidden;
+}
+
+// --- TOP SECTION ---
+.topGrid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 60px;
+  max-width: 1300px;
   margin: 0 auto;
-  padding: 40px 20px;
-  box-sizing: border-box;
-  color: $main-Colour;
+  padding: 80px 40px;
 
-  // Hero Section (Baked with Love)
-  .whole {
-    text-align: center;
-    margin-bottom: 60px;
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 60px 20px;
+  }
+}
 
-    h1 {
-      font-family: $font-header;
-      font-size: 64px;
-      margin-bottom: 10px;
-      letter-spacing: 2px;
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 
-      @media (max-width: $breakpoint-md) {
-        font-size: 45px;
-      }
-    }
-
-    p {
-      font-family: $font-body;
-      font-size: 1.2rem;
-      color: $secondary-Colour;
-      max-width: 600px;
-      margin: 0 auto;
-      line-height: 1.6;
-
-      @media (max-width: $breakpoint-md) {
-        font-size: 1rem;
-      }
-    }
+  .hugeHeading {
+    font-family: $font-heading;
+    font-size: clamp(5rem, 10vw, 8.5rem);
+    line-height: 0.85;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin: 0 0 60px 0;
+    letter-spacing: -3px;
+    color: $dark-text;
   }
 
-  // Split Grid (Image left, text right)
-  .contentGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 50px;
-    align-items: center;
-    margin-bottom: 80px;
+  .subHeading {
+    font-weight: 700;
+    font-size: 1rem;
+    margin: 0 0 10px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
 
-    @media (max-width: $breakpoint-md) {
-      grid-template-columns: 1fr;
-      gap: 30px;
-    }
+  .bodyText {
+    color: $light-text;
+    font-size: 1rem;
+    line-height: 1.6;
+    max-width: 320px;
+    margin: 0;
+  }
+}
 
-    .imageWrapper {
+.rightColumn {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+
+  .mainImage {
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    object-fit: cover;
+    border-radius: 24px;
+  }
+
+  .sideImages {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    .smallImage {
       width: 100%;
-      height: 400px;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba($main-Colour, 0.1);
-
-      @media (max-width: $breakpoint-md) {
-        height: 280px;
-      }
-
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-
-        &:hover {
-          transform: scale(1.03); // Soft zoom on hover
-        }
-      }
+      height: 180px;
+      object-fit: cover;
+      border-radius: 24px;
     }
 
-    .textBlock {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-
-      h2 {
-        font-family: $font-header;
-        font-size: 48px;
-        margin: 0;
-
-        @media (max-width: $breakpoint-md) {
-          font-size: 36px;
-        }
-      }
-
-      p {
-        font-family: $font-body;
-        font-size: 1.05rem;
-        line-height: 1.7;
-        color: $secondary-Colour;
-        margin: 0;
-      }
-
-      .signature {
-        font-family: $font-header;
-        font-size: 32px;
-        color: $green;
-        align-self: flex-start;
-        margin-top: 10px;
-      }
-    }
-  }
-
-  // Stats Grid (3 columns: Flour, Fermentation, Coffee)
-  .statsGrid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-    margin-bottom: 80px;
-
-    @media (max-width: $breakpoint-md) {
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
-
-    .statCard {
-      background-color: $accent-cream;
-      border: 1px solid $border-colour;
-      border-radius: 12px;
-      padding: 30px;
-      text-align: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-
-      &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba($main-Colour, 0.05);
-      }
-
-      .icon {
-        display: inline-block;
-        font-size: 40px;
-        margin-bottom: 15px;
-      }
+    .philosophyBox {
+      margin-top: 10px;
 
       h3 {
-        font-family: $font-header;
-        font-size: 32px;
-        margin: 0 0 10px 0;
+        font-family: $font-heading;
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin: 0 0 12px 0;
+        color: $dark-text;
       }
-
+      
       p {
-        font-family: $font-body;
+        color: $light-text;
         font-size: 0.95rem;
-        color: $secondary-Colour;
-        margin: 0;
         line-height: 1.5;
+        margin: 0;
       }
     }
   }
+}
 
-  // Values Section (2 columns side-by-side at the bottom)
-  .valuesSection {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
+// --- TEAM SECTION ---
+.teamSection {
+  max-width: 1200px;
+  margin: 100px auto 0;
+  background: $card-bg;
+  border-radius: 40px;
+  padding: 140px 80px 0 80px;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end; // Keeps portraits anchored to the bottom
 
-    @media (max-width: $breakpoint-md) {
-      grid-template-columns: 1fr;
+  @media (max-width: 900px) {
+    flex-direction: column;
+    align-items: center;
+    padding: 160px 30px 40px;
+    margin: 100px 20px 0;
+    gap: 50px;
+    border-radius: 30px;
+  }
+}
+
+.teamTitleBox {
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.meetThe {
+  background: #ffffff;
+  padding: 12px 50px;
+  border-radius: 30px 30px 0 0; 
+  font-family: $font-heading;
+  font-weight: 800;
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: -10px; // Pulls it down slightly to overlap the bigger box cleanly
+  z-index: 2;
+}
+
+.principals {
+  background: #ffffff;
+  padding: 15px 70px;
+  border-radius: 40px;
+  font-family: $font-heading;
+  font-weight: 900;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  z-index: 3;
+  white-space: nowrap;
+}
+
+.teamCenterText {
+  position: absolute;
+  top: 170px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+
+  @media (max-width: 900px) {
+    position: relative;
+    top: 0;
+    left: 0;
+    transform: none;
+    margin-bottom: 20px;
+  }
+
+  .smallGallery {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    
+    img {
+      width: 80px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 30px; // Pill shape to match the image exactly
+      opacity: 0.9;
     }
+  }
 
-    .valueCard {
-      border-left: 4px solid $green; // Nice structural accent line
-      background-color: #fff;
-      padding: 10px 0 10px 25px;
+  p {
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: $dark-text;
+    font-weight: 500;
+  }
+}
 
-      h3 {
-        font-family: $font-header;
-        font-size: 36px;
-        margin: 0 0 10px 0;
-        color: $main-Colour;
-      }
+.teamMember {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  z-index: 5;
+  width: 35%;
+  
+  @media (max-width: 900px) {
+    width: 100%;
+    max-width: 350px;
+    align-items: center;
+    text-align: center;
+  }
 
-      p {
-        font-family: $font-body;
-        font-size: 1rem;
-        line-height: 1.6;
-        color: $secondary-Colour;
-        margin: 0;
-      }
-    }
+  img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    // We add a drop shadow so even regular rectangular images pop, 
+    // but transparent background images (like in the photo) will look flawless here.
+    filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
+    border-radius: 20px 20px 0 0; 
+  }
+
+  h4 {
+    font-family: $font-heading;
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 20px 0 4px 0;
+    color: $dark-text;
+  }
+
+  span {
+    color: $light-text;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
   }
 }

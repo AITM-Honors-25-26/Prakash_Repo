@@ -2,15 +2,15 @@ import mongoose from "mongoose";
 import { OrderStatus, PaymentStatus } from '../../config/constants.js';
 
 const OrderSchema = new mongoose.Schema({
-  tableNumber: { 
-    type: String, 
-    required: true 
+  tableNumber: {
+    type: String,
+    required: true
   },
 
-  status: { 
-    type: String, 
-    enum: Object.values(OrderStatus), 
-    default: OrderStatus.PENDING 
+  status: {
+    type: String,
+    enum: Object.values(OrderStatus),
+    default: OrderStatus.PENDING
   },
 
   // Separate from `status` above - `status` is the kitchen prep state,
@@ -37,7 +37,7 @@ const OrderSchema = new mongoose.Schema({
       name: { type: String, required: true },
       quantity: { type: Number, required: true, min: 1 },
       price: { type: Number, required: true },
-      specialNotes: { type: String, default: "" } 
+      specialNotes: { type: String, default: "" }
     }
   ],
 

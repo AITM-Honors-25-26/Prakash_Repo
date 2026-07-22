@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect } from 'react';
 import { Link, useMatch, useNavigate } from 'react-router-dom';
-import axios from 'axios'; 
+import axios from 'axios';
 
 import styles from './header.module.scss';
 import profile from './../../../img/profile.png';
 import logowhite from './../../../img/log.white.png';
 
-import { API_ENDPOINTS } from '../../constants/constants.js'; 
+import { API_ENDPOINTS } from '../../constants/constants.js';
+import { getSessionId } from '../../utils/session.js';
 
 export interface RestaurantTable {
   _id: string;
@@ -27,9 +28,9 @@ const Header: React.FC = () => {
 
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const [user, setUser] = useState<{ 
-    name: string; 
-    role: string; 
+  const [user, setUser] = useState<{
+    name: string;
+    role: string;
     image?: { url: string }
   } | null>(() => {
     const savedUser = localStorage.getItem('qr_user');
@@ -45,57 +46,46 @@ const Header: React.FC = () => {
   });
 
   useEffect(() => {
-    const verifyTable = async () => {
+    const claimTable = async () => {
       if (!urlTableId) return;
+      const sessionId = getSessionId();
 
-      const handleTableNotFound = () => {
+      try {
+        const response = await axios.put(
+          `${API_ENDPOINTS.TABLE_BASE}/${urlTableId}/occupy`,
+          { sessionId }
+        );
+        const tableInDB: RestaurantTable = response.data?.result;
+        localStorage.setItem('bakery_table', String(tableInDB?.tableNumber ?? urlTableId));
+        setActiveTable(String(tableInDB?.tableNumber ?? urlTableId));
+      } catch (error) {
         localStorage.removeItem('bakery_table');
         setActiveTable(null);
         setMenuOpen(false);
-        navigate('/ErrorPage', { 
-          state: { 
-            title: "Table Not Found", 
-            message: `Table ${urlTableId} is not recognized. Please scan a valid QR code at your table.` 
-          },
-          replace: true 
-        });
-      };
 
-      try {
-        const response = await axios.get(API_ENDPOINTS.LISTALLTABLE);
-        const data = response.data?.data || response.data?.result || response.data;
-        
-        if (Array.isArray(data)) {
-          const tableInDB = data.find((t: RestaurantTable) => String(t.tableNumber) === String(urlTableId));
-          
-          if (!tableInDB) {
-            handleTableNotFound();
-          } 
-          else if (tableInDB.status !== 'Available') {
-            localStorage.removeItem('bakery_table');
-            setActiveTable(null);
-            setMenuOpen(false);
-            navigate('/ErrorPage', { 
-              state: { 
-                title: "Table Unavailable", 
-                message: `Table ${urlTableId} is currently marked as ${tableInDB.status}. You cannot order from this table.` 
-              },
-              replace: true 
-            });
-          } 
-          else {
-            localStorage.setItem('bakery_table', urlTableId);
-            setActiveTable(urlTableId);
-          }
+        if (axios.isAxiosError(error) && error.response?.status === 409) {
+          navigate('/ErrorPage', {
+            state: {
+              title: "Table Unavailable",
+              message: `Table ${urlTableId} is currently in use by another customer. Please ask staff for help.`
+            },
+            replace: true
+          });
+          return;
         }
-      } catch (error) {
-        console.error("Failed to verify table status", error);
-        handleTableNotFound();
+
+        navigate('/ErrorPage', {
+          state: {
+            title: "Table Not Found",
+            message: `Table ${urlTableId} is not recognized. Please scan a valid QR code at your table.`
+          },
+          replace: true
+        });
       }
     };
 
-    verifyTable();
-  }, [urlTableId, navigate]); 
+    claimTable();
+  }, [urlTableId, navigate]);
 
   const hasStaffAccess = user && ['Admin', 'Chef', 'Waiter', 'Employee'].includes(user.role);
 
@@ -103,7 +93,7 @@ const Header: React.FC = () => {
     localStorage.removeItem('qr_accessToken');
     localStorage.removeItem('qr_refreshToken');
     localStorage.removeItem('qr_user');
-    localStorage.removeItem('bakery_table'); 
+    localStorage.removeItem('bakery_table');
     setUser(null);
     window.location.href = "/";
   };
@@ -126,7 +116,7 @@ const Header: React.FC = () => {
       </button>
 
       <nav className={`${styles.navLinks} ${menuOpen ? styles.navLinksOpen : ''}`}>
-        
+
         {activeTable && (
           <div className={styles.sidebarTableBadge}>
             Table {activeTable}
@@ -142,7 +132,7 @@ const Header: React.FC = () => {
             </div>
           </div>
         )}
-          
+
         <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
 
         <Link
@@ -195,10 +185,10 @@ const Header: React.FC = () => {
 
         {user ? (
           <div className={styles.profileWrapper}>
-            <img 
-              src={user.image?.url || profile} 
-              className={styles.profile} 
-              alt="Profile" 
+            <img
+              src={user.image?.url || profile}
+              className={styles.profile}
+              alt="Profile"
             />
             <div className={styles.DropdownBar}>
               <div className={styles.userInfo}>

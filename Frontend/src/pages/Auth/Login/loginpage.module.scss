@@ -1,6 +1,6 @@
 $font-header: 'Amatic SC', cursive;
 $primary-color: #48292a;
-$hover-color: #633a3b; 
+$hover-color: #633a3b;
 $border-color: #eee;
 $text-dark: #333;
 $text-muted: #666;
@@ -12,26 +12,25 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 
 @mixin focus-state {
   border-color: $primary-color;
-  box-shadow: 0 0 8px rgba(72, 41, 42, 0.25); 
+  box-shadow: 0 0 8px rgba(72, 41, 42, 0.25);
 }
 
 .whole {
   display: flex;
-  min-height: 100vh; 
+  min-height: 100vh;
   align-items: center;
   justify-content: center;
   background-color: #f4f7f6;
   padding: 20px;
 }
 
-/* Wrapper forces left and right to be equal height */
 .cardWrapper {
   display: flex;
-  align-items: stretch; 
-  width: 90%; 
+  align-items: stretch;
+  width: 90%;
   max-width: 1400px;
   min-height: 600px;
-  box-shadow: $shadow; 
+  box-shadow: $shadow;
   border-radius: 20px;
   background-color: #ffffff;
 
@@ -41,13 +40,13 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   @media (max-width: 480px) {
     width: 100%;
   }
-  
+
 }
 
 .leftdisplay {
   width: 50%;
-  background: linear-gradient(135deg, #bc7e51 0%, #f3c4cd 100%); 
-  border-radius: 20px 0 0 20px; 
+  background: linear-gradient(135deg, #bc7e51 0%, #f3c4cd 100%);
+  border-radius: 20px 0 0 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -70,27 +69,25 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   width: 50%;
   background-color: #ffffff;
   border-radius: 0 20px 20px 0;
-  padding: 40px 80px; 
+  padding: 40px 80px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  
+
   @media (max-width: 768px) {
     width: 100%;
     border-radius: 20px;
     padding: 40px 20px;
   }
 
-  
-
   .backthome {
     margin-top: 25px;
     text-align: center;
     @include header-font;
-    font-size: 1.2rem; 
+    font-size: 1.2rem;
 
     a {
-      color: $primary-color; 
+      color: $primary-color;
       text-decoration: none;
       transition: color 0.3s ease;
       font-weight: bold;
@@ -157,7 +154,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 
     input {
       @include header-font;
-      box-sizing: border-box; 
+      box-sizing: border-box;
       width: 100%;
       padding: 12px 15px;
       border: 1.5px solid $border-color;
@@ -165,7 +162,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       font-size: 16px;
       outline: none;
       transition: all 0.3s ease;
-      
+
       &:focus {
         @include focus-state;
       }
@@ -213,7 +210,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     margin-bottom: 15px;
 
     div {
-      margin-bottom: 0px !important; 
+      margin-bottom: 0px !important;
     }
 
     .forgetpass {
@@ -230,7 +227,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
 
         @media (max-width: 768px) {
-          font-size: 1rem; 
+          font-size: 1rem;
         }
       }
     }
@@ -243,7 +240,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       position: relative;
 
       @media (max-width: 768px) {
-        font-size: 1rem; 
+        font-size: 1rem;
       }
 
       .realCheckbox {
@@ -260,7 +257,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         height: 18px;
         width: 18px;
         background-color: transparent;
-        border: 2px solid $primary-color; 
+        border: 2px solid $primary-color;
         border-radius: 4px;
         display: inline-block;
         position: relative;
@@ -301,7 +298,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       font-size: 20px;
 
       @media (max-width: 768px) {
-        font-size: 1.2rem; 
+        font-size: 1.2rem;
       }
     }
 
@@ -311,9 +308,9 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       font-weight: bold;
       transition: color 0.3s ease;
 
-      &:hover { 
+      &:hover {
         color: $hover-color;
-        text-decoration: underline; 
+        text-decoration: underline;
       }
     }
   }

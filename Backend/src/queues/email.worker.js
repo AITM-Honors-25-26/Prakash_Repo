@@ -1,7 +1,5 @@
-
 import { Worker } from "bullmq";
 import { redisConnection } from "../config/queue.config.js";
-
 
 import emailSvc from "../services/email.service.js";
 import { AppConfig } from "../config/constants.js";

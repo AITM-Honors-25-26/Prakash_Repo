@@ -62,20 +62,12 @@ class TableController {
         }
     }
 
-    // FIXED:
-    //  - QR codes encode the table's `tableNumber`, not its Mongo `_id`,
-    //    so the lookup/update now goes through the *Number service methods.
-    //  - Status values are capitalized in the schema ('Available' / 'Occupied'),
-    //    so comparisons now match that casing.
-    //  - occupyTableByNumber performs the Available -> Occupied flip as a single
-    //    atomic findOneAndUpdate, so two guests scanning the same table's QR
-    //    at the same moment can't both succeed. If it returns null we only
-    //    then look the table up separately to report 404 vs 409 correctly.
     occupyTable = async (req, res, next) => {
         try {
             const tableNumber = req.params.id;
+            const sessionId = req.body?.sessionId;
 
-            const occupiedTable = await tableSvc.occupyTableByNumber(tableNumber);
+            const occupiedTable = await tableSvc.occupyTableByNumber(tableNumber, sessionId);
 
             if (occupiedTable) {
                 return res.status(200).json({
@@ -85,7 +77,6 @@ class TableController {
                 });
             }
 
-            // Atomic update didn't match - find out why, purely for the error message.
             const existingTable = await tableSvc.getTableByNumber(tableNumber);
 
             if (!existingTable) {
@@ -99,6 +90,31 @@ class TableController {
             return res.status(409).json({
                 result: null,
                 message: "This table is already in use.",
+                meta: null
+            });
+        } catch (exception) {
+            next(exception);
+        }
+    }
+
+    releaseTable = async (req, res, next) => {
+        try {
+            const tableNumber = req.params.id;
+            const sessionId = req.body?.sessionId;
+
+            const releasedTable = await tableSvc.releaseTableByNumber(tableNumber, sessionId);
+
+            if (!releasedTable) {
+                return res.status(409).json({
+                    result: null,
+                    message: "Unable to release this table.",
+                    meta: null
+                });
+            }
+
+            return res.status(200).json({
+                result: releasedTable,
+                message: "Table released.",
                 meta: null
             });
         } catch (exception) {

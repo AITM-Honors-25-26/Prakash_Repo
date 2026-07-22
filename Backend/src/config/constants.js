@@ -1,10 +1,9 @@
-// constants.js
 import { config } from 'dotenv';
-config(); 
+config();
 const CloudinaryConfig = {
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,   
-    api_key: process.env.CLOUDINARY_API_KEY,         
-    api_secret: process.env.CLOUDINARY_API_SECRET    
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
 };
 export default CloudinaryConfig;
 export const DBConfig = {
@@ -34,10 +33,10 @@ export const Category = {
   SPECIAL: 'Special'
 };
 export const OrderStatus = {
-    PENDING: 'Pending',       
-    PREPARING: 'Preparing',            
-    COMPLETED: 'Ready',   
-    CANCELLED: 'Cancelled'  
+    PENDING: 'Pending',
+    PREPARING: 'Preparing',
+    COMPLETED: 'Ready',
+    CANCELLED: 'Cancelled'
 };
 
 // Tracks whether the bill has actually been settled, independent of the
@@ -54,7 +53,7 @@ export const TableStatus = {
     RESERVED: 'Reserved',
     NOTAVAILABLE: 'NotAvailable'
 };
-export const AppConfig = {   
+export const AppConfig = {
     frontend_Url: process.env.FRONTEND_URL,
     backend_Url: process.env.BACKEND_URL,
     jwtSecret: process.env.JWT_SECRET

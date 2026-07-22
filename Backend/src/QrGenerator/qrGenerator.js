@@ -1,13 +1,4 @@
-
 import QRCode from "qrcode";
-
-/**
- * Generate QR Code
- *
- * @param {string} data - Text/URL/data to encode
- * @param {object} options - Optional QR settings
- * @returns {Promise<string>} Base64 QR image
- */
 
 export async function generateQR(data, options = {}) {
   try {

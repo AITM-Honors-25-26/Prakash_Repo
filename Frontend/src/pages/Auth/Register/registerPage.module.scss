@@ -19,18 +19,17 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   display: flex;
   min-height: 100vh;
   justify-content: center;
-  align-items: center; 
+  align-items: center;
   background-color: #f5f5f5;
   padding: 20px;
 }
 
-/* The wrapper that forces both sides to be equal height */
 .cardWrapper {
   display: flex;
-  width: 100%; 
+  width: 100%;
   max-width: 1400px;
   min-height: 600px;
-  box-shadow: $shadow; 
+  box-shadow: $shadow;
   border-radius: 20px;
   background-color: #ffffff;
 
@@ -40,7 +39,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 .leftside {
-  width: 50%; 
+  width: 50%;
   background-color: #e19a87;
   border-radius: 20px 0 0 20px;
   display: flex;
@@ -50,7 +49,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 
   @media (max-width: 768px) {
-    display: none; 
+    display: none;
   }
 
   img {
@@ -60,7 +59,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 .rightside {
-  width: 50%; 
+  width: 50%;
   background-color: #ffffff;
   border-radius: 0 20px 20px 0;
   display: flex;
@@ -70,7 +69,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 
   @media (max-width: 768px) {
     width: 100%;
-    border-radius: 20px; 
+    border-radius: 20px;
     padding: 40px 20px;
   }
 
@@ -88,7 +87,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 
   input, select {
     @include header-font;
-    box-sizing: border-box; 
+    box-sizing: border-box;
     width: 100%;
     padding: 10px 15px;
     border: 1.5px solid $border-color;
@@ -103,7 +102,6 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
   }
 
-  /* Password Container */
   .passwordContainer {
     position: relative;
     width: 100%;
@@ -111,14 +109,14 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 
     input {
       box-sizing: border-box;
-      width: 100%; 
-      padding-right: 40px; 
+      width: 100%;
+      padding-right: 40px;
     }
 
     .eyeIcon {
       position: absolute;
       right: 15px;
-      top: 22px; 
+      top: 22px;
       transform: translateY(-50%);
       cursor: pointer;
       display: flex;
@@ -139,7 +137,6 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
   }
 
-  /* Row container for side-by-side fields */
   .row {
     display: flex;
     gap: 15px;
@@ -147,17 +144,16 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
 
     select, input {
-      flex: 1; 
+      flex: 1;
       width: 100%;
     }
 
     @media (max-width: 768px) {
       flex-direction: column;
-      gap: 0; 
+      gap: 0;
     }
   }
 
-  /* --- CUSTOM FILE UPLOAD STYLES --- */
   .fileUploadContainer {
     display: flex;
     flex-direction: column;
@@ -190,7 +186,7 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
 
     &:hover {
-      background-color: rgba(79, 172, 254, 0.05); 
+      background-color: rgba(79, 172, 254, 0.05);
       border-color: $hover-blue;
     }
 
@@ -199,16 +195,14 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       height: 24px;
       object-fit: contain;
     }
-    
+
     span {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
   }
-  /* --------------------------------- */
 
-  /* CAPTCHA Container Styles */
   .captchaContainer {
     display: flex;
     justify-content: center;
@@ -231,12 +225,12 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: background 0.3s ease;
     margin-top: 5px;
-    
+
     &:hover:not(:disabled) {
       background-color: $hover-blue;
     }
-    
-    &:disabled { 
+
+    &:disabled {
       background-color: #ccc;
       cursor: not-allowed;
     }
@@ -246,18 +240,18 @@ $shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     @include header-font;
     margin-top: 20px;
     text-align: center;
-    
+
     p {
       color: $text-muted;
       margin: 5px 0;
       font-size: 20px;
     }
-    
+
     a {
       color: $primary-blue;
       text-decoration: none;
       font-weight: 600;
-      
+
       &:hover {
         text-decoration: underline;
       }

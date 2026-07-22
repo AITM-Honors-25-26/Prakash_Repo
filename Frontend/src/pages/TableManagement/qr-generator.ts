@@ -1,11 +1,6 @@
 import QRCode from 'qrcode';
 import { getFrontendBaseUrl } from '../../constants/constants';
 
-/**
- * Generates a QR code image string.
- * @param {string} id - The unique Table ID or Number.
- * @returns {Promise<string>} - Base64 Data URL of the QR code.
- */
 export const generateTableQR = async (id: string): Promise<string> => {
   try {
     const frontendBaseUrl = await getFrontendBaseUrl();

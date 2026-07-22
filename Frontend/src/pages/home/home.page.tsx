@@ -7,8 +7,8 @@ import styles from './homepage.module.scss';
 
 const Homepage: React.FC = () => {
   const [userData] = useState(() => {
-    const userString = localStorage.getItem('qr_user'); 
-    
+    const userString = localStorage.getItem('qr_user');
+
     if (userString) {
       try {
         return JSON.parse(userString);
@@ -19,8 +19,8 @@ const Homepage: React.FC = () => {
     }
     return null;
   });
-  
-  const isLoggedIn = !!userData; 
+
+  const isLoggedIn = !!userData;
   const userName = userData?.name || '';
 
   return (
@@ -31,7 +31,7 @@ const Homepage: React.FC = () => {
         </div>
         <div className={styles.welcomecontent}>
           <img src={logowhite} className={styles.logo} alt="Flower Bakery Logo" />
-          
+
           {isLoggedIn ? (
             <div className={styles.loggedInArea}>
               <h1>Hello, {userName}!</h1>

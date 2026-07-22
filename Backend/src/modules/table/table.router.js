@@ -1,6 +1,6 @@
 import { Router } from "express";
 import tableCtrl from "./table.controller.js";
-import { tableCreateSchema } from "./table.validator.js"; 
+import { tableCreateSchema } from "./table.validator.js";
 import { bodyValidator } from "../../middleware/request.validator.js";
 import allowUser from "../../middleware/auth.middelware.js";
 import { UserRole } from "../../config/constants.js";
@@ -13,5 +13,6 @@ tableRouter.delete('/table/:id',allowUser([UserRole.ADMIN]),tableCtrl.deleteTabl
 tableRouter.put('/table/:id', allowUser([UserRole.ADMIN]), tableCtrl.updateTable);
 
 tableRouter.put('/table/:id/occupy', tableCtrl.occupyTable);
+tableRouter.put('/table/:id/release', tableCtrl.releaseTable);
 
 export default tableRouter;

@@ -16,17 +16,17 @@ const ResetPasswordPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const turnstileRef = useRef<TurnstileInstance>(null);
-  
+
   const token = searchParams.get('token');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!token) {
       toast.error("Invalid or missing reset token. Please request a new link.");
       return;
     }
-    
+
     if (password !== confirmPassword) {
       toast.error("Passwords do not match. Please try again.");
       return;
@@ -38,14 +38,14 @@ const ResetPasswordPage: React.FC = () => {
     }
 
     setLoading(true);
-    
+
     try {
       const response = await fetch(API_ENDPOINTS.RESETPASSWORD, {
-        method: 'PATCH', 
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, password, captchaToken }),
       });
-      
+
       let result;
       try {
         result = await response.json();
@@ -77,19 +77,18 @@ const ResetPasswordPage: React.FC = () => {
     <>
       <ToastContainer position="top-right" theme="colored" autoClose={3000} />
       <section className={styles.whole}>
-        
-        {/* NEW: Wrapper to hold both sides together and force equal height */}
+
         <div className={styles.cardWrapper}>
-          
+
           <div className={styles.leftdisplay}>
             <img src={logo} alt="Company Logo" />
           </div>
-          
+
           <div className={styles.rightdsiplay}>
             <img src={logo} className={styles.smallLogo} alt="Company Logo" />
             <h2>Create New Password</h2>
             <p>Please enter your new password below.</p>
-            
+
             <form onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="password">New Password</label>
@@ -103,7 +102,7 @@ const ResetPasswordPage: React.FC = () => {
                   minLength={6}
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="confirmPassword">Confirm Password</label>
                 <input
@@ -124,7 +123,7 @@ const ResetPasswordPage: React.FC = () => {
                   onError={() => setCaptchaToken(null)}
                   onExpire={() => setCaptchaToken(null)}
                   options={{
-                    theme: 'light', 
+                    theme: 'light',
                   }}
                 />
               </div>
@@ -133,9 +132,9 @@ const ResetPasswordPage: React.FC = () => {
                 {loading ? "Resetting..." : "Reset Password"}
               </button>
             </form>
-            
+
             <div className={styles.links}>
-              <p><Link to="/LoginPage">Back to Login</Link></p> 
+              <p><Link to="/LoginPage">Back to Login</Link></p>
             </div>
           </div>
         </div>

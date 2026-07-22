@@ -9,12 +9,11 @@ import Layout from '../../components/layout/layout.js';
 import styles from './TableManagementPage.module.scss';
 import LoaderGif from './../../../img/gif/loading.gif';
 import { API_ENDPOINTS } from '../../constants/constants.js';
-import { generateTableQR } from './qr-generator.ts'; 
+import { generateTableQR } from './qr-generator.ts';
 import empty from "../../../img/gif/empty.gif"
 
 const MySwal = withReactContent(Swal);
 
-// --- Types ---
 export interface RestaurantTable {
   _id: string;
   tableNumber: number;
@@ -29,18 +28,15 @@ const TableManagement: React.FC = () => {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  // --- Auth & Session Helpers ---
   const handleSessionExpired = useCallback(() => {
-    // 🛑 FIX 1: Clear the specific QR project keys
     localStorage.removeItem('qr_accessToken');
     localStorage.removeItem('qr_refreshToken');
     localStorage.removeItem('qr_user');
     toast.error("Session expired. Please log in again.");
-    navigate('/LoginPage'); // Made sure this matches your route name exactly
+    navigate('/LoginPage');
   }, [navigate]);
 
   const getAuthHeader = useCallback(() => {
-    // 🛑 FIX 2: Look for the specific QR access token
     const token = localStorage.getItem('qr_accessToken');
     if (!token) {
       handleSessionExpired();
@@ -54,7 +50,6 @@ const TableManagement: React.FC = () => {
     };
   }, [handleSessionExpired]);
 
-  // --- Data Fetching ---
   const fetchTables = useCallback(async (showLoading = true) => {
     if (showLoading) setIsLoading(true);
     try {
@@ -74,7 +69,6 @@ const TableManagement: React.FC = () => {
   }, [handleSessionExpired]);
 
   useEffect(() => {
-    // 🛑 FIX 3: Look for the specific QR user to check for Admin status
     const storedUser = localStorage.getItem('qr_user');
     if (storedUser) {
       try {
@@ -89,9 +83,7 @@ const TableManagement: React.FC = () => {
     return () => clearInterval(interval);
   }, [fetchTables]);
 
-  // --- Reusable Authorized Action Logic ---
   const requestPasswordConfirm = async (actionTitle: string) => {
-    // 🛑 FIX 4: Ensure password confirmation uses the correct user email
     const storedUser = localStorage.getItem('qr_user');
     if (!storedUser) return null;
     const { email } = JSON.parse(storedUser);
@@ -108,7 +100,6 @@ const TableManagement: React.FC = () => {
     return password ? { password, email } : null;
   };
 
-  // --- QR Logic ---
   const handleViewQR = async (table: RestaurantTable) => {
     try {
       const qrImage = await generateTableQR(String(table.tableNumber));
@@ -136,7 +127,6 @@ const TableManagement: React.FC = () => {
     }
   };
 
-  // --- Action Handlers ---
   const handleAddTable = async () => {
     const { value: formValues } = await MySwal.fire({
       title: 'Create New Table',
@@ -316,9 +306,9 @@ const TableManagement: React.FC = () => {
                   </div>
                   <div className={styles.buttonGroup}>
                     <button className={styles.editButton} onClick={() => handleEditTable(table)}>Manage</button>
-                    
-                    <button 
-                      className={styles.qrButton} 
+
+                    <button
+                      className={styles.qrButton}
                       style={{ backgroundColor: '#4a3f35', color: 'white', padding: '8px 12px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
                       onClick={() => handleViewQR(table)}
                     >

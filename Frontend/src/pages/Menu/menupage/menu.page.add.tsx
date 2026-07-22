@@ -107,7 +107,7 @@ const CreateMenuItemPage: React.FC = () => {
       input: 'password',
       inputPlaceholder: 'Enter password',
       showCancelButton: true,
-      confirmButtonColor: '#ff6b35', 
+      confirmButtonColor: '#ff6b35',
     });
 
     if (!password) {
@@ -126,7 +126,7 @@ const CreateMenuItemPage: React.FC = () => {
       formData.append('stock', form.stock || '0');
       formData.append('isAvailable', String(form.isAvailable));
       images.forEach((img) => formData.append('images', img.file));
-      
+
       formData.append('email', parsedUser.email);
       formData.append('password', password);
 
@@ -140,17 +140,17 @@ const CreateMenuItemPage: React.FC = () => {
       navigate('/MenuPage');
     } catch (error: unknown) {
       console.error(error);
-      
+
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.message || 'Failed to create item');
-      } 
+      }
       else if (error instanceof Error) {
         toast.error(error.message);
-      } 
+      }
       else {
         toast.error('An unexpected error occurred');
       }
-      
+
     } finally {
       setLoading(false);
     }

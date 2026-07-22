@@ -30,33 +30,27 @@ const Dashboard: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [connected, setConnected] = useState<boolean>(false);
-  const [userRole, setUserRole] = useState<string>(''); 
+  const [userRole, setUserRole] = useState<string>('');
 
   const socketRef = useRef<Socket | null>(null);
 
-  // Safely extract the role from the 'qr_user' object in localStorage on mount
   useEffect(() => {
-    // 🛑 FIX 1: Look for 'qr_user' instead of 'user'
     const storedUser = localStorage.getItem('qr_user');
     if (storedUser) {
       try {
         const parsed = JSON.parse(storedUser);
-        // Convert to lowercase to ensure 'Admin', 'ADMIN', or 'admin' all match safely
-        setUserRole(parsed.role?.toLowerCase() || ''); 
+        setUserRole(parsed.role?.toLowerCase() || '');
       } catch (error) {
         console.error("Failed to parse user role", error);
       }
     }
   }, []);
 
-  // Determine what this user is allowed to see
   const showKitchen = userRole === 'admin' || userRole === 'chef';
   const showService = userRole === 'admin' || userRole === 'waiter';
 
-  // Initial fetch — load all active orders when dashboard first opens
   const fetchOrders = async () => {
     try {
-      // 🛑 FIX 2: Look for 'qr_accessToken' instead of 'token'
       const response = await axios.get(`${API_ENDPOINTS.ORDER_ACTION}/kitchen`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('qr_accessToken')}` },
       });
@@ -74,7 +68,6 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  // Socket setup
   useEffect(() => {
     fetchOrders();
 
@@ -85,7 +78,7 @@ const Dashboard: React.FC = () => {
     });
 
     socketRef.current = socket;
-    
+
     socket.on('connect', () => {
       console.log('Dashboard connected to socket. ID:', socket.id);
       setConnected(true);
@@ -103,7 +96,6 @@ const Dashboard: React.FC = () => {
       setConnected(false);
     });
 
-    // A customer just placed an order — add it to the top of the queue
     socket.on('kitchen_new_order', (newOrder: Order) => {
       console.log('New order received:', newOrder);
       setOrders(prev => {
@@ -114,7 +106,6 @@ const Dashboard: React.FC = () => {
       setError(null);
     });
 
-    // Chef or waiter changed an order's status
     socket.on('order_status_updated', (updatedOrder: Order) => {
       console.log('Order status updated:', updatedOrder);
       setOrders(prev => {
@@ -133,20 +124,17 @@ const Dashboard: React.FC = () => {
     };
   }, []);
 
-  // Update status (Start Cooking, Mark Ready)
   const updateOrderStatus = async (
     orderId: string,
     nextStatus: 'Preparing' | 'Ready'
   ) => {
     try {
-      // Optimistic UI Update
       setOrders(prev =>
         prev.map(order =>
           order._id === orderId ? { ...order, status: nextStatus } : order
         )
       );
-      
-      // 🛑 FIX 3: Look for 'qr_accessToken' instead of 'token'
+
       await axios.patch(
         `${API_ENDPOINTS.ORDER_ACTION}/${orderId}/status`,
         { status: nextStatus },
@@ -156,29 +144,24 @@ const Dashboard: React.FC = () => {
       );
     } catch (err) {
       console.error('Failed to update order status:', err);
-      // Rollback optimistic update by re-fetching
       fetchOrders();
     }
   };
 
-  // Permanently delete order when served
   const deleteCompletedOrder = async (orderId: string) => {
     try {
-      // Optimistic UI Update: Instantly remove it from screen
       setOrders(prev => prev.filter(order => order._id !== orderId));
-      
-      // 🛑 FIX 4: Look for 'qr_accessToken' instead of 'token'
+
       await axios.delete(`${API_ENDPOINTS.ORDER_ACTION}/${orderId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('qr_accessToken')}` },
       });
-      
+
     } catch (err) {
       console.error('Failed to delete order:', err);
-      fetchOrders(); // Bring it back if the server fails
+      fetchOrders();
     }
   };
 
-  // Filter orders for the different columns
   const kitchenOrders = orders.filter(
     o => o.status === 'Pending' || o.status === 'Preparing'
   );
@@ -188,13 +171,12 @@ const Dashboard: React.FC = () => {
     return (
       <Layout>
         <div className={styles.loading}>
-          <img src={loadinggif} alt="Loading" /> 
+          <img src={loadinggif} alt="Loading" />
         </div>
       </Layout>
     );
   }
 
-  // Security Fallback: Block UI entirely if role is completely invalid/missing
   if (!showKitchen && !showService) {
     return (
       <Layout>
@@ -210,7 +192,6 @@ const Dashboard: React.FC = () => {
     <Layout>
       <div className={styles.dashboardContainer}>
         <header className={styles.dashHeader}>
-          {/* Dynamically show the role in the title so you know it worked! */}
           <h1>Live Staff Dashboard ({userRole.toUpperCase()})</h1>
           <div className={styles.headerRight}>
             <span
@@ -224,13 +205,10 @@ const Dashboard: React.FC = () => {
             </button>
           </div>
         </header>
-        
+
         {error && <div className={styles.errorBanner}>{error}</div>}
-        
+
         <div className={styles.boardGrid}>
-          
-          {/* --- KITCHEN STATION --- */}
-          {/* This wrapper hides the section completely if showKitchen is false */}
           {showKitchen && (
             <section className={styles.stationSection}>
               <div className={`${styles.stationHeader} ${styles.kitchenHeader}`}>

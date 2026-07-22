@@ -2,19 +2,22 @@ import React from 'react';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../../constants/constants';
 
-// Define the interface for the props to ensure type safety
 interface EsewaButtonProps {
   amount: string;
   orderId: string;
 }
 
 const EsewaButton: React.FC<EsewaButtonProps> = ({ amount, orderId }) => {
-  
+
   const handlePay = async (): Promise<void> => {
     try {
-      // 1. Get the signature from your backend with explicit types
+
       const { data } = await axios.post<{ signature: string, product_code: string }>(
+<<<<<<< HEAD
         API_ENDPOINTS.ESEWA_INIT, 
+=======
+        '/api/payment/esewa/init',
+>>>>>>> 23318921c6430eb322650d1bcc7d6e871301336b
         { amount, transaction_uuid: orderId }
       );
 
@@ -34,7 +37,6 @@ const EsewaButton: React.FC<EsewaButtonProps> = ({ amount, orderId }) => {
         signed_field_names: "total_amount,transaction_uuid,product_code"
       };
 
-      // 3. Append inputs to form
       Object.entries(fields).forEach(([key, value]) => {
         const input = document.createElement("input");
         input.type = "hidden";
@@ -51,8 +53,8 @@ const EsewaButton: React.FC<EsewaButtonProps> = ({ amount, orderId }) => {
   };
 
   return (
-    <button 
-      onClick={handlePay} 
+    <button
+      onClick={handlePay}
       className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
     >
       Pay with eSewa

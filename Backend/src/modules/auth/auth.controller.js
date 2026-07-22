@@ -1,5 +1,3 @@
-// src/modules/auth/auth.controller.js
-
 import autSvc from "./auth.service.js";
 import cloudianarySvc from "../../services/cloudinary.service.js";
 import bcrypt from "bcryptjs";
@@ -137,12 +135,11 @@ class AuthController {
 
             const updateData = {
                 forgotPasswordToken: randomStringGenerator(100),
-                expireToken: new Date(Date.now() + 60 * 60 * 1000), // 1 hour
+                expireToken: new Date(Date.now() + 60 * 60 * 1000),
             };
 
             await autSvc.updateSingleUserByFilter({ email }, updateData);
 
-            // ✅ Queue forgot password email — non-blocking, auto-retries on failure
             await emailQueue.add(EMAIL_JOBS.FORGOT_PASSWORD, {
                 name:       user.fullName || "User",
                 email:      user.email,

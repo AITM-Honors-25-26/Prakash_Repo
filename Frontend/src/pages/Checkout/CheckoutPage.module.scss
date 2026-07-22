@@ -13,10 +13,10 @@ $green: #7ed957;
   .headerSection {
     text-align: center;
     margin-bottom: 15px;
-    flex-shrink: 0; 
+    flex-shrink: 0;
     h1 {
       font-size: 2.5rem;
-      color: $mainColour; 
+      color: $mainColour;
       margin-bottom: 0px;
       @media (max-width: 768px) {
       font-size: 1.5rem;
@@ -53,10 +53,10 @@ $green: #7ed957;
       border-radius: 25px;
       font-size: 1rem;
       font-weight: bold;
-      
+
       cursor: pointer;
       transition: background 0.2s;
-      
+
       &:hover {
         background-color: #491e11;
       }
@@ -69,7 +69,7 @@ $green: #7ed957;
     border-radius: 12px;
     box-sizing: border-box;
     display: grid;
-    grid-template-columns: 60% 38.5%; 
+    grid-template-columns: 60% 38.5%;
     justify-content: center;
     flex-grow: 1;
     margin-bottom: 15px;
@@ -79,31 +79,30 @@ $green: #7ed957;
     @media (max-width: 768px) {
       display:flex ;
       flex-direction: column;
-      overflow-y: auto; 
+      overflow-y: auto;
       height: auto;
       padding: 0px;
     }
   }
 
   .formSection, .summarySection {
-    background: #faf7f2; 
+    background: #faf7f2;
     padding: 25px;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    
+
     height: 100%;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
-    min-height: 0; 
+    min-height: 0;
 
     @media (max-width: 768px) {
       padding: 5px 15px;
       margin-bottom: 10px;
 
       }
-      
-  
+
     h2 {
       font-size: 2rem;
       margin-bottom: 20px;
@@ -136,7 +135,7 @@ $green: #7ed957;
         font-weight: bold;
         cursor: pointer;
 
-        margin-top: auto; 
+        margin-top: auto;
         flex-shrink: 0;
         transition: opacity 0.2s;
 
@@ -146,7 +145,7 @@ $green: #7ed957;
         }
       }
       .radioGroupContainer{
-        
+
         display: flex;
         flex-direction: column;
         gap: 15px;
@@ -173,7 +172,7 @@ $green: #7ed957;
           background: #fff5f2;
 
           &:hover {
-            background: #fff5f2; 
+            background: #fff5f2;
           }
         }
       }
@@ -205,12 +204,12 @@ $green: #7ed957;
         @media (max-width: 768px) {
         font-size: 0.6rem;
         }
-      } 
+      }
     }
   }
   .itemsList {
     flex-grow: 1;
-    overflow-y: auto; 
+    overflow-y: auto;
     margin-bottom: 15px;
     padding-right: 8px;
     @media (max-width: 768px) {
@@ -239,7 +238,7 @@ $green: #7ed957;
       }
       .itemInfo {
         flex-grow: 1;
-        
+
         h3 {
           font-size: 2rem;
           margin:0 0 4px 0;
@@ -265,7 +264,7 @@ $green: #7ed957;
           .itemCount{
             font-size: 20px;
             @media (max-width: 768px) {
-              font-size: 15px;            
+              font-size: 15px;
           }
           }
 
@@ -283,10 +282,10 @@ $green: #7ed957;
           }
           }
         }
-        
+
       }
-    } 
-      
+    }
+
   }
   .totalRow {
     display: flex;
@@ -296,8 +295,8 @@ $green: #7ed957;
     border-top: 2px dashed #ccc;
     font-size: 1.3rem;
     font-weight: bold;
-    
-    flex-shrink: 0; 
+
+    flex-shrink: 0;
 
     .totalPrice {
       color: $green;
@@ -306,9 +305,9 @@ $green: #7ed957;
       @media (max-width: 768px) {
             font-size: 1.1rem;
           }
-      
+
     }
-  } 
+  }
   .itemRightSide {
     display: flex;
     flex-direction: column;
