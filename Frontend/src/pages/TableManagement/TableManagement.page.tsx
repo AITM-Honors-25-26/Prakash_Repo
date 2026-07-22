@@ -10,7 +10,11 @@ import styles from './TableManagementPage.module.scss';
 import LoaderGif from './../../../img/gif/loading.gif';
 import { API_ENDPOINTS } from '../../constants/constants.js';
 import { generateTableQR } from './qr-generator.ts';
-import empty from "../../../img/gif/empty.gif"
+import empty from '../../../img/gif/empty.gif';
+
+import TableFormModal from '../../components/TableModel/TableFormModal.tsx';
+import type { TableFormValues } from '../../components/TableModel/TableFormModal.tsx';
+import PasswordConfirmModal from '../../components/PasswordConfirmation/PasswordConfirmModal.tsx';
 
 const MySwal = withReactContent(Swal);
 
@@ -26,13 +30,24 @@ const TableManagement: React.FC = () => {
   const [tables, setTables] = useState<RestaurantTable[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [userEmail, setUserEmail] = useState<string>('');
   const navigate = useNavigate();
+
+  // Add/Edit table modal state
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [formMode, setFormMode] = useState<'add' | 'edit'>('add');
+  const [editingTable, setEditingTable] = useState<RestaurantTable | null>(null);
+  const [isFormSubmitting, setIsFormSubmitting] = useState(false);
+
+  // Delete confirmation modal state
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [isDeleteSubmitting, setIsDeleteSubmitting] = useState(false);
 
   const handleSessionExpired = useCallback(() => {
     localStorage.removeItem('qr_accessToken');
     localStorage.removeItem('qr_refreshToken');
     localStorage.removeItem('qr_user');
-    toast.error("Session expired. Please log in again.");
+    toast.error('Session expired. Please log in again.');
     navigate('/LoginPage');
   }, [navigate]);
 
@@ -44,9 +59,9 @@ const TableManagement: React.FC = () => {
     }
     return {
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
     };
   }, [handleSessionExpired]);
 
@@ -57,11 +72,11 @@ const TableManagement: React.FC = () => {
       const data = response.data?.data || response.data?.result || response.data;
       if (Array.isArray(data)) setTables(data);
     } catch (error: unknown) {
-      console.error("Fetch Error:", error);
+      console.error('Fetch Error:', error);
       if (axios.isAxiosError(error) && error.response?.status === 401) {
         handleSessionExpired();
       } else {
-        toast.error("Failed to load floor plan.");
+        toast.error('Failed to load floor plan.');
       }
     } finally {
       setIsLoading(false);
@@ -74,31 +89,15 @@ const TableManagement: React.FC = () => {
       try {
         const userData = JSON.parse(storedUser);
         setIsAdmin(userData.role === 'Admin');
+        setUserEmail(userData.email || '');
       } catch (e) {
-        console.error("User Parse Error", e);
+        console.error('User Parse Error', e);
       }
     }
     fetchTables();
     const interval = setInterval(() => fetchTables(false), 5000);
     return () => clearInterval(interval);
   }, [fetchTables]);
-
-  const requestPasswordConfirm = async (actionTitle: string) => {
-    const storedUser = localStorage.getItem('qr_user');
-    if (!storedUser) return null;
-    const { email } = JSON.parse(storedUser);
-
-    const { value: password } = await MySwal.fire({
-      title: 'Security Verification',
-      text: `Confirm password for ${email} to ${actionTitle}`,
-      input: 'password',
-      inputPlaceholder: 'Password',
-      showCancelButton: true,
-      confirmButtonColor: '#d84315',
-      inputValidator: (val) => !val && 'Password is required!'
-    });
-    return password ? { password, email } : null;
-  };
 
   const handleViewQR = async (table: RestaurantTable) => {
     try {
@@ -119,141 +118,95 @@ const TableManagement: React.FC = () => {
           link.href = qrImage;
           link.download = `Table-${table.tableNumber}-QR.png`;
           link.click();
-          toast.success("Downloading QR Code...");
+          toast.success('Downloading QR Code...');
         }
       });
-    } catch  {
-      toast.error("Could not generate QR code");
+    } catch {
+      toast.error('Could not generate QR code');
     }
   };
 
-  const handleAddTable = async () => {
-    const { value: formValues } = await MySwal.fire({
-      title: 'Create New Table',
-      background: '#faf7f2',
-      color: '#2d1b18',
-      html: (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '10px' }}>
-          <input id="swal-number" type="number" className="swal2-input" placeholder="Table Number" style={{ margin: '0' }} />
-          <input id="swal-capacity" type="number" className="swal2-input" placeholder="Capacity (Guests)" style={{ margin: '0' }} />
-          <select id="swal-location" className="swal2-input" style={{ margin: '0' }}>
-            <option value="" disabled selected hidden>Location</option>
-            <option value="Indoor">Indoor</option>
-            <option value="Outdoor">Outdoor</option>
-            <option value="Window">Window</option>
-            <option value="Balcony">Balcony</option>
-          </select>
-          <select id="swal-status" className="swal2-input" style={{ margin: '0' }}>
-            <option value="" disabled selected hidden>Status</option>
-            <option value="Available">Available</option>
-            <option value="Occupied">Occupied</option>
-            <option value="Reserved">Reserved</option>
-            <option value="NotAvailable">Not Available</option>
-          </select>
-        </div>
-      ),
-      showCancelButton: true,
-      confirmButtonText: 'Continue',
-      confirmButtonColor: '#d84315',
-      preConfirm: () => {
-        const tableNumber = (document.getElementById('swal-number') as HTMLInputElement).value;
-        const capacity = (document.getElementById('swal-capacity') as HTMLInputElement).value;
-        const location = (document.getElementById('swal-location') as HTMLSelectElement).value;
-        const status = (document.getElementById('swal-status') as HTMLSelectElement).value;
+  // ----- Add / Edit table -----
 
-        const missing = [];
-        if (!tableNumber) missing.push("Table Number");
-        if (!capacity) missing.push("Capacity");
-        if (!location) missing.push("Location");
-        if (!status) missing.push("Status");
-
-        if (missing.length > 0) {
-          Swal.showValidationMessage(`Missing: ${missing.join(', ')}`);
-          return false;
-        }
-        return { tableNumber: Number(tableNumber), capacity: Number(capacity), location, status };
-      }
-    });
-
-    if (formValues) {
-      const auth = await requestPasswordConfirm('create table');
-      if (!auth) return;
-
-      const config = getAuthHeader();
-      if (!config) return;
-
-      try {
-        await axios.post(API_ENDPOINTS.ADDTABLE, { ...formValues, ...auth }, config);
-        toast.success(`Table ${formValues.tableNumber} added successfully!`);
-        fetchTables(false);
-      } catch (error: unknown) {
-        if (axios.isAxiosError(error)) {
-          toast.error(error.response?.data?.message || "Verify your credentials.");
-        }
-      }
-    }
+  const openAddModal = () => {
+    setFormMode('add');
+    setEditingTable(null);
+    setIsFormOpen(true);
   };
 
-  const handleEditTable = async (table: RestaurantTable) => {
-    const { value: formValues } = await MySwal.fire({
-      title: `Manage Table ${table.tableNumber}`,
-      background: '#faf7f2',
-      html: (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <input id="swal-number" type="number" className="swal2-input" defaultValue={table.tableNumber} />
-          <input id="swal-capacity" type="number" className="swal2-input" defaultValue={table.capacity} />
-          <select id="swal-location" className="swal2-input" defaultValue={table.location}>
-            <option value="Indoor">Indoor</option>
-            <option value="Outdoor">Outdoor</option>
-            <option value="Window">Window</option>
-            <option value="Balcony">Balcony</option>
-          </select>
-          <select id="swal-status" className="swal2-input" defaultValue={table.status}>
-            <option value="Available">Available</option>
-            <option value="Occupied">Occupied</option>
-            <option value="Reserved">Reserved</option>
-            <option value="NotAvailable">Not Available</option>
-          </select>
-        </div>
-      ),
-      showCancelButton: true,
-      confirmButtonText: 'Update Changes',
-      confirmButtonColor: '#d84315',
-      preConfirm: () => ({
-        tableNumber: Number((document.getElementById('swal-number') as HTMLInputElement).value),
-        capacity: Number((document.getElementById('swal-capacity') as HTMLInputElement).value),
-        location: (document.getElementById('swal-location') as HTMLSelectElement).value,
-        status: (document.getElementById('swal-status') as HTMLSelectElement).value,
-      })
-    });
-
-    if (formValues) {
-      const config = getAuthHeader();
-      if (!config) return;
-
-      try {
-        await axios.put(`${API_ENDPOINTS.UPDATETABLE}/${table._id}`, formValues, config);
-        setTables((prev) => prev.map((t) => t._id === table._id ? { ...t, ...formValues } : t));
-        toast.success("Table updated successfully!");
-      } catch {
-        toast.error("Update failed.");
-      }
-    }
+  const openEditModal = (table: RestaurantTable) => {
+    setFormMode('edit');
+    setEditingTable(table);
+    setIsFormOpen(true);
   };
 
-  const handleDeleteTable = async (id: string) => {
-    const auth = await requestPasswordConfirm('delete this table');
-    if (!auth) return;
+  const closeFormModal = () => {
+    if (isFormSubmitting) return;
+    setIsFormOpen(false);
+    setEditingTable(null);
+  };
 
+  const handleFormSubmit = async (values: TableFormValues, password?: string) => {
     const config = getAuthHeader();
     if (!config) return;
 
+    setIsFormSubmitting(true);
     try {
-      await axios.delete(`${API_ENDPOINTS.DELETETABLE}/${id}`, { ...config, data: auth });
-      toast.success("Table removed.");
-      setTables((prev) => prev.filter((t) => t._id !== id));
-    } catch {
-      toast.error("Deletion failed.");
+      if (formMode === 'add') {
+        await axios.post(API_ENDPOINTS.ADDTABLE, { ...values, password, email: userEmail }, config);
+        toast.success(`Table ${values.tableNumber} added successfully!`);
+        fetchTables(false);
+      } else if (editingTable) {
+        await axios.put(`${API_ENDPOINTS.UPDATETABLE}/${editingTable._id}`, values, config);
+        setTables((prev) => prev.map((t) => (t._id === editingTable._id ? { ...t, ...values } : t)));
+        toast.success('Table updated successfully!');
+      }
+      setIsFormOpen(false);
+      setEditingTable(null);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || 'Something went wrong. Please try again.');
+      } else {
+        toast.error('Something went wrong. Please try again.');
+      }
+    } finally {
+      setIsFormSubmitting(false);
+    }
+  };
+
+  // ----- Delete table -----
+
+  const requestDelete = (id: string) => {
+    setPendingDeleteId(id);
+  };
+
+  const cancelDelete = () => {
+    if (isDeleteSubmitting) return;
+    setPendingDeleteId(null);
+  };
+
+  const confirmDelete = async (password: string) => {
+    if (!pendingDeleteId) return;
+    const config = getAuthHeader();
+    if (!config) return;
+
+    setIsDeleteSubmitting(true);
+    try {
+      await axios.delete(`${API_ENDPOINTS.DELETETABLE}/${pendingDeleteId}`, {
+        ...config,
+        data: { password, email: userEmail },
+      });
+      toast.success('Table removed.');
+      setTables((prev) => prev.filter((t) => t._id !== pendingDeleteId));
+      setPendingDeleteId(null);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || 'Deletion failed. Check your password and try again.');
+      } else {
+        toast.error('Deletion failed.');
+      }
+    } finally {
+      setIsDeleteSubmitting(false);
     }
   };
 
@@ -274,10 +227,12 @@ const TableManagement: React.FC = () => {
         <header className={styles.pageHeader}>
           <div className={styles.title}>
             <h1>Dining Area Management</h1>
-            <p>Active Layout: <strong>{tables.length} Tables</strong></p>
+            <p>
+              Active Layout: <strong>{tables.length} Tables</strong>
+            </p>
           </div>
           {isAdmin && (
-            <button className={styles.addButton} onClick={handleAddTable}>
+            <button className={styles.addButton} onClick={openAddModal}>
               <span>+</span> Add Table
             </button>
           )}
@@ -305,18 +260,18 @@ const TableManagement: React.FC = () => {
                     <span className={styles.value}>{table.location}</span>
                   </div>
                   <div className={styles.buttonGroup}>
-                    <button className={styles.editButton} onClick={() => handleEditTable(table)}>Manage</button>
+                    <button className={styles.editButton} onClick={() => openEditModal(table)}>
+                      Manage
+                    </button>
 
-                    <button
-                      className={styles.qrButton}
-                      style={{ backgroundColor: '#4a3f35', color: 'white', padding: '8px 12px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-                      onClick={() => handleViewQR(table)}
-                    >
+                    <button className={styles.qrButton} onClick={() => handleViewQR(table)}>
                       QR Code
                     </button>
 
                     {isAdmin && (
-                      <button className={styles.deleteButton} onClick={() => handleDeleteTable(table._id)}>Delete</button>
+                      <button className={styles.deleteButton} onClick={() => requestDelete(table._id)}>
+                        Delete
+                      </button>
                     )}
                   </div>
                 </div>
@@ -330,6 +285,39 @@ const TableManagement: React.FC = () => {
           )}
         </div>
       </div>
+
+      {isFormOpen && (
+        <TableFormModal
+          key={editingTable?._id ?? 'new'}
+          mode={formMode}
+          initialValues={
+            editingTable
+              ? {
+                  tableNumber: editingTable.tableNumber,
+                  capacity: editingTable.capacity,
+                  location: editingTable.location,
+                  status: editingTable.status,
+                }
+              : undefined
+          }
+          requirePassword={formMode === 'add'}
+          userEmail={userEmail}
+          isSubmitting={isFormSubmitting}
+          onClose={closeFormModal}
+          onSubmit={handleFormSubmit}
+        />
+      )}
+
+      {pendingDeleteId && (
+        <PasswordConfirmModal
+          key={pendingDeleteId}
+          title="Security Verification"
+          message={`Confirm your password${userEmail ? ` for ${userEmail}` : ''} to delete this table.`}
+          isSubmitting={isDeleteSubmitting}
+          onCancel={cancelDelete}
+          onConfirm={confirmDelete}
+        />
+      )}
     </Layout>
   );
 };

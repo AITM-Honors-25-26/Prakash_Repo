@@ -13,11 +13,7 @@ const EsewaButton: React.FC<EsewaButtonProps> = ({ amount, orderId }) => {
     try {
 
       const { data } = await axios.post<{ signature: string, product_code: string }>(
-<<<<<<< HEAD
-        API_ENDPOINTS.ESEWA_INIT, 
-=======
-        '/api/payment/esewa/init',
->>>>>>> 23318921c6430eb322650d1bcc7d6e871301336b
+        API_ENDPOINTS.ESEWA_INIT,
         { amount, transaction_uuid: orderId }
       );
 
