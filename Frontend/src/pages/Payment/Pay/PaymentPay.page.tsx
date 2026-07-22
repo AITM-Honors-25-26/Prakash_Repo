@@ -12,10 +12,7 @@ const PaymentPay: React.FC = () => {
   const [error, setError] = useState<string>('');
 
   useEffect(() => {
-    if (!orderId) {
-      setError('Missing order reference.');
-      return;
-    }
+    if (!orderId) return;
 
     const payNow = async () => {
       try {
@@ -69,10 +66,12 @@ const PaymentPay: React.FC = () => {
     payNow();
   }, [orderId]);
 
+  const displayError = error || (!orderId ? 'Missing order reference.' : '');
+
   return (
     <div className={styles.payContainer}>
-      {error ? (
-        <p className={styles.errorText}>{error}</p>
+      {displayError ? (
+        <p className={styles.errorText}>{displayError}</p>
       ) : (
         <>
           <div className={styles.spinner} />
