@@ -3,7 +3,10 @@ import { generateQR } from '../../QrGenerator/qrGenerator.js';
 import { AppConfig, PaymentStatus } from '../constants.js';
 import * as OrderService from '../../modules/order/order.service.js';
 
-const PRODUCT_CODE = 'EPAYTEST';
+// Falls back to eSewa's public sandbox code when MERCHANT_ID isn't set, so
+// the app still works out of the box in dev - set MERCHANT_ID in .env to
+// switch to your real eSewa merchant code for production.
+const DEFAULT_PRODUCT_CODE = 'EPAYTEST';
 
 const buildSignature = (secretKey, { total_amount, transaction_uuid, product_code }) => {
   const data = `total_amount=${total_amount},transaction_uuid=${transaction_uuid},product_code=${product_code}`;
@@ -15,8 +18,8 @@ const buildSignature = (secretKey, { total_amount, transaction_uuid, product_cod
 export const initiateEsewa = async (req, res) => {
     try {
         const { amount, transaction_uuid } = req.body;
-<<<<<<< HEAD
         const secretKey = process.env.ESEWA_SECRET_KEY; // Keep this in .env!
+        const productCode = process.env.MERCHANT_ID || DEFAULT_PRODUCT_CODE;
 
         if (!secretKey) {
             return res.status(500).json({ error: "ESEWA_SECRET_KEY is not set in the backend .env file" });
@@ -28,23 +31,10 @@ export const initiateEsewa = async (req, res) => {
         const signature = buildSignature(secretKey, {
             total_amount: amount,
             transaction_uuid,
-            product_code: PRODUCT_CODE,
+            product_code: productCode,
         });
 
-        res.json({ signature, product_code: PRODUCT_CODE });
-=======
-        const secretKey = process.env.ESEWA_SECRET_KEY;
-        const productCode = process.env.MERCHANT_ID || "EPAYTEST";
-
-        const data = `total_amount=${amount},transaction_uuid=${transaction_uuid},product_code=${productCode}`;
-
-        const signature = crypto
-            .createHmac("sha256", secretKey)
-            .update(data)
-            .digest("base64");
-
         res.json({ signature, product_code: productCode });
->>>>>>> 23318921c6430eb322650d1bcc7d6e871301336b
     } catch (error) {
         res.status(500).json({ error: "Signature generation failed" });
     }
