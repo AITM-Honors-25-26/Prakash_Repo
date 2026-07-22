@@ -15,6 +15,32 @@ export const createOrder = async (req, res) => {
   }
 };
 
+// Public/unauthenticated on purpose - the checkout page polls this from the
+// customer's own device (no login) while the eSewa QR modal is open.
+export const getOrderStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const order = await OrderService.getOrderById(id);
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found.' });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        _id: order._id,
+        status: order.status,
+        paymentStatus: order.paymentStatus,
+        totalPrice: order.totalPrice,
+        tableNumber: order.tableNumber,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 export const getKitchenOrders = async (req, res) => {
   try {
     const activeOrders = await OrderService.getOrdersForKitchen();

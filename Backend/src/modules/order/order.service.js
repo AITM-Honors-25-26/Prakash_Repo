@@ -38,3 +38,17 @@ export const updateStatus = async (orderId, newStatus) => {
 export const deleteOrder = async (orderId) => {
   return await Order.findByIdAndDelete(orderId);
 };
+
+export const getOrderById = async (orderId) => {
+  return await Order.findById(orderId);
+};
+
+// Used by the eSewa QR flow: init sets it to Pending while the customer is
+// scanning/paying, the success/failure callback flips it to Paid/Failed.
+export const setPaymentStatus = async (orderId, paymentStatus, extra = {}) => {
+  return await Order.findByIdAndUpdate(
+    orderId,
+    { paymentStatus, ...extra },
+    { new: true, runValidators: true }
+  );
+};
