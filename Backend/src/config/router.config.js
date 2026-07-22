@@ -4,6 +4,7 @@ import menuRouter from "../modules/menu/menu.router.js";
 import tableRouter from "../modules/table/table.router.js";
 import orderRouter from "../modules/order/order.routes.js";
 import contactAdminRouter from "../modules/contactAdmin/contactAdmin.router.js";
+import paymentRouter from "./payemnt/payment.router.js";
 
 const router = Router();
 
@@ -12,5 +13,6 @@ router.use(menuRouter);
 router.use(tableRouter);
 router.use(orderRouter);
 router.use(contactAdminRouter)
+router.use(paymentRouter)
 
 export default router;

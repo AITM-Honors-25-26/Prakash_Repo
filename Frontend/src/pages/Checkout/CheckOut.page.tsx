@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
@@ -23,12 +23,23 @@ interface CartItem {
   specialNotes?: string;
 }
 
+const POLL_INTERVAL_MS = 4000;
+const POLL_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
+
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [tableNumber, setTableNumber] = useState<string>('');
   const [paymentOption, setPaymentOption] = useState<string>('Pay Later');
+
+  // eSewa QR modal state
+  const [qrModalOpen, setQrModalOpen] = useState<boolean>(false);
+  const [qrImage, setQrImage] = useState<string>('');
+  const [checkingPayment, setCheckingPayment] = useState<boolean>(false);
+
+  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const existingCart = localStorage.getItem('bakery_cart');
@@ -42,7 +53,24 @@ const CheckoutPage: React.FC = () => {
     } else {
       toast.warn('No table detected. Please rescan your table QR code.');
     }
+
+    return () => {
+      stopPolling();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const stopPolling = () => {
+    if (pollIntervalRef.current) {
+      clearInterval(pollIntervalRef.current);
+      pollIntervalRef.current = null;
+    }
+    if (pollTimeoutRef.current) {
+      clearTimeout(pollTimeoutRef.current);
+      pollTimeoutRef.current = null;
+    }
+    setCheckingPayment(false);
+  };
 
   const updateQuantity = (id: string, amount: number) => {
     const updatedCart = cartItems.map(item => {
@@ -67,6 +95,68 @@ const CheckoutPage: React.FC = () => {
 
   const calculateTotal = () => {
     return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+  };
+
+ const startQrPayment = async (orderId: string, totalAmount: string) => {
+    try {
+      const { data } = await axios.post(API_ENDPOINTS.ESEWA_QR, {
+        amount: totalAmount,
+        transaction_uuid: orderId,
+      });
+
+      setQrImage(data.data.qrImage);
+      setQrModalOpen(true);
+      beginPolling(orderId);
+    } catch (error) {
+      console.error('QR generation failed:', error);
+      toast.error('Could not generate payment QR. Please try again.');
+    }
+  };
+
+  const beginPolling = (orderId: string) => {
+    setCheckingPayment(true);
+
+    pollIntervalRef.current = setInterval(async () => {
+      try {
+        const { data } = await axios.get(`${API_ENDPOINTS.ORDER_STATUS}/${orderId}/status`);
+        const paymentStatus = data.data.paymentStatus;
+
+        if (paymentStatus === 'Paid') {
+          stopPolling();
+          setQrModalOpen(false);
+          localStorage.removeItem('bakery_cart');
+          window.dispatchEvent(new Event('cartUpdated'));
+
+          await MySwal.fire({
+            title: 'Payment Received! 🎉',
+            text: `Table ${tableNumber}, your order is confirmed and heading to the kitchen.`,
+            icon: 'success',
+            confirmButtonColor: '#d84315',
+          });
+          navigate('/MenuPage');
+        } else if (paymentStatus === 'Failed') {
+          stopPolling();
+          setQrModalOpen(false);
+          toast.error('Payment failed or was cancelled. Please try again.');
+        }
+        // 'Pending' / 'Unpaid' -> keep polling
+      } catch (error) {
+        console.error('Payment status check failed:', error);
+      }
+    }, POLL_INTERVAL_MS);
+
+    pollTimeoutRef.current = setTimeout(() => {
+      stopPolling();
+      toast.warn('Payment session timed out. Please try again.');
+      setQrModalOpen(false);
+    }, POLL_TIMEOUT_MS);
+  };
+
+  const handleCancelQr = () => {
+    stopPolling();
+    setQrModalOpen(false);
+    setQrImage('');
+    toast.info('Payment cancelled. You can try again anytime.');
   };
 
  const handlePlaceOrder = async (e: React.FormEvent) => {
@@ -97,41 +187,7 @@ const CheckoutPage: React.FC = () => {
 
     if (paymentOption === 'Pay Now') {
       const totalAmount = calculateTotal().toString();
-      
-      // 2. Fetch the signature from your backend
-      const { data } = await axios.post(API_ENDPOINTS.ESEWA_INIT, { 
-        amount: totalAmount, 
-        transaction_uuid: orderId 
-      });
-
-      // 3. Create the hidden form for eSewa
-      const form = document.createElement("form");
-      form.action = "https://rc-epay.esewa.com.np/api/epay/main/v2/form";
-      form.method = "POST";
-
-      const fields: Record<string, string> = {
-        amount: totalAmount,
-        tax_amount: "0",
-        total_amount: totalAmount,
-        transaction_uuid: orderId,
-        product_code: data.product_code, 
-        signature: data.signature,       // Received from backend
-        success_url: `${window.location.origin}/payment/success`,
-        failure_url: `${window.location.origin}/payment/failure`,
-        signed_field_names: "total_amount,transaction_uuid,product_code"
-      };
-
-      Object.entries(fields).forEach(([key, value]) => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = key;
-        input.value = value;
-        form.appendChild(input);
-      });
-
-      document.body.appendChild(form);
-      form.submit();
-      
+      await startQrPayment(orderId, totalAmount);
     } else {
       // 4. Logic for 'Pay Later'
       localStorage.removeItem('bakery_cart');
@@ -254,7 +310,7 @@ const CheckoutPage: React.FC = () => {
                     <div className={styles.labelTextWrapper}>
                       <strong className={styles.optionTitle}>Pay Now (Online Payment)</strong>
                       <span className={styles.optionDescription}>
-                        Pay right now using your phone via cards or digital wallets.
+                        Scan a QR code with your phone's banking app to pay instantly.
                       </span>
                     </div>
                   </label>
@@ -267,6 +323,35 @@ const CheckoutPage: React.FC = () => {
               </form>
             </div>
 
+          </div>
+        )}
+
+        {qrModalOpen && (
+          <div className={styles.qrModalOverlay}>
+            <div className={styles.qrModalBox}>
+              <h2>Scan to Pay</h2>
+              <p>Rs. {calculateTotal().toLocaleString()} &middot; Table {tableNumber}</p>
+
+              {qrImage ? (
+                <img src={qrImage} alt="Payment QR Code" className={styles.qrImage} />
+              ) : (
+                <div className={styles.qrLoading}>Generating QR...</div>
+              )}
+
+              <p className={styles.qrHint}>
+                Open your banking app, scan the code, and complete the payment.
+              </p>
+
+              {checkingPayment && (
+                <p className={styles.qrStatus}>
+                  <span className={styles.spinner} /> Waiting for payment confirmation...
+                </p>
+              )}
+
+              <button className={styles.qrCancelBtn} onClick={handleCancelQr}>
+                Cancel
+              </button>
+            </div>
           </div>
         )}
       </div>

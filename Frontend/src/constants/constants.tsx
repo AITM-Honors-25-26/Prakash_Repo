@@ -176,7 +176,11 @@ export const API_ENDPOINTS = {
   CONTACTADMIN: `${API_BASE_URL}/conatctAdmin`,
 
   // Payment Routes
-  ESEWA_INIT: `${API_BASE_URL}/payment/esewa/init`
+  ESEWA_INIT: `${API_BASE_URL}/payment/esewa/init`,
+  ESEWA_QR: `${API_BASE_URL}/payment/esewa/qr`,
+
+  // Public polling endpoint - GET `${ORDER_STATUS}/${orderId}`
+  ORDER_STATUS: `${API_BASE_URL}/order`
 };
 
 export const CATEGORY = {

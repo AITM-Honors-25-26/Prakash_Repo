@@ -39,6 +39,15 @@ export const OrderStatus = {
     COMPLETED: 'Ready',   
     CANCELLED: 'Cancelled'  
 };
+
+// Tracks whether the bill has actually been settled, independent of the
+// kitchen prep status above (an order can be "Preparing" while still Unpaid).
+export const PaymentStatus = {
+    UNPAID: 'Unpaid',
+    PENDING: 'Pending',
+    PAID: 'Paid',
+    FAILED: 'Failed'
+};
 export const TableStatus = {
     AVAILABLE: 'Available',
     OCCUPIED: 'Occupied',
