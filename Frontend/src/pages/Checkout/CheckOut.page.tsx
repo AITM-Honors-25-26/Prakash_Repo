@@ -97,8 +97,7 @@ const CheckoutPage: React.FC = () => {
     return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
-<<<<<<< HEAD
- const startQrPayment = async (orderId: string, totalAmount: string) => {
+  const startQrPayment = async (orderId: string, totalAmount: string) => {
     try {
       const { data } = await axios.post(API_ENDPOINTS.ESEWA_QR, {
         amount: totalAmount,
@@ -160,12 +159,8 @@ const CheckoutPage: React.FC = () => {
     toast.info('Payment cancelled. You can try again anytime.');
   };
 
- const handlePlaceOrder = async (e: React.FormEvent) => {
-  e.preventDefault();
-=======
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
->>>>>>> 23318921c6430eb322650d1bcc7d6e871301336b
 
     if (cartItems.length === 0) {
       toast.error('Your cart is empty!');
@@ -175,28 +170,6 @@ const CheckoutPage: React.FC = () => {
     setLoading(true);
 
     try {
-
-<<<<<<< HEAD
-    // Backend wraps the created order as { success, data: order }
-    const response = await axios.post(API_ENDPOINTS.ORDER_ACTION + '/', orderPayload);
-    const orderId = response.data.data._id;
-
-    if (paymentOption === 'Pay Now') {
-      const totalAmount = calculateTotal().toString();
-      await startQrPayment(orderId, totalAmount);
-    } else {
-      // 4. Logic for 'Pay Later'
-      localStorage.removeItem('bakery_cart');
-      window.dispatchEvent(new Event('cartUpdated'));
-      
-      await MySwal.fire({
-        title: 'Order Sent to Kitchen! 🍳',
-        text: `Table ${tableNumber}, your order is being prepared. Pay at the counter!`,
-        icon: 'success',
-        confirmButtonColor: '#d84315',
-      });
-      navigate('/MenuPage');
-=======
       const orderPayload = {
         tableNumber,
         items: cartItems.map(item => ({
@@ -207,46 +180,15 @@ const CheckoutPage: React.FC = () => {
         })),
       };
 
+      // Backend wraps the created order as { success, data: order }
       const response = await axios.post(API_ENDPOINTS.ORDER_ACTION + '/', orderPayload);
-      const orderId = response.data.orderId;
+      const orderId = response.data.data._id;
 
       if (paymentOption === 'Pay Now') {
         const totalAmount = calculateTotal().toString();
-
-        const { data } = await axios.post('/api/payment/esewa/init', {
-          amount: totalAmount,
-          transaction_uuid: orderId
-        });
-
-        const form = document.createElement("form");
-        form.action = "https://rc-epay.esewa.com.np/api/epay/main/v2/form";
-        form.method = "POST";
-
-        const fields: Record<string, string> = {
-          amount: totalAmount,
-          tax_amount: "0",
-          total_amount: totalAmount,
-          transaction_uuid: orderId,
-          product_code: data.product_code,
-          signature: data.signature,
-          success_url: `${window.location.origin}/payment/success`,
-          failure_url: `${window.location.origin}/payment/failure`,
-          signed_field_names: "total_amount,transaction_uuid,product_code"
-        };
-
-        Object.entries(fields).forEach(([key, value]) => {
-          const input = document.createElement("input");
-          input.type = "hidden";
-          input.name = key;
-          input.value = value;
-          form.appendChild(input);
-        });
-
-        document.body.appendChild(form);
-        form.submit();
-
+        await startQrPayment(orderId, totalAmount);
       } else {
-
+        // 'Pay Later'
         localStorage.removeItem('bakery_cart');
         window.dispatchEvent(new Event('cartUpdated'));
 
@@ -263,7 +205,6 @@ const CheckoutPage: React.FC = () => {
       toast.error('Failed to place order. Please try again.');
     } finally {
       setLoading(false);
->>>>>>> 23318921c6430eb322650d1bcc7d6e871301336b
     }
   };
 
@@ -291,7 +232,6 @@ const CheckoutPage: React.FC = () => {
               <div className={styles.itemsList}>
                 {cartItems.map((item) => (
                   <div key={item._id} className={styles.cartItemRow}>
-                    {/* FIXED: Completed the URL and added the closing quote here */}
                     <img
                       src={item.images?.[0]?.url || 'https://via.placeholder.com/150'}
                       alt={item.name}
