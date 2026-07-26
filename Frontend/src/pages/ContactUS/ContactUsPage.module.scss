@@ -14,19 +14,19 @@ $text-muted: #666;
     min-height: 80vh;
 
     @media (max-width: 768px) {
-        padding: 40px 16px;
+        padding: 30px 16px;
     }
 
     @media (max-width: 480px) {
-        padding: 30px 12px;
+        padding: 20px 12px;
     }
 
     .textHeader {
         text-align: center;
         margin-bottom: 50px;
 
-        @media (max-width: 768px) {
-            margin-bottom: 30px;
+        @media (max-width: 480px) {
+            margin-bottom: 20px;
         }
 
         h1 {
@@ -35,12 +35,8 @@ $text-muted: #666;
             margin: 0;
             color: $text-dark;
 
-            @media (max-width: 768px) {
-                font-size: 2.6rem;
-            }
-
             @media (max-width: 480px) {
-                font-size: 2.2rem;
+                font-size: 2rem;
             }
         }
 
@@ -51,7 +47,8 @@ $text-muted: #666;
             font-size: 1rem;
 
             @media (max-width: 480px) {
-                font-size: 0.85rem;
+                font-size: 0.8rem;
+                margin-top: 6px;
                 padding: 0 10px;
             }
         }
@@ -65,8 +62,8 @@ $text-muted: #666;
         width: 100%;
         max-width: 1200px;
 
-        @media (max-width: 768px) {
-            gap: 20px;
+        @media (max-width: 480px) {
+            gap: 12px;
         }
 
         .infoCard {
@@ -83,13 +80,12 @@ $text-muted: #666;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
 
-            // On mobile, cards go full-width and shrink height since
-            // content no longer needs to fill a tall fixed box.
-            @media (max-width: 768px) {
+            // Mobile: compact horizontal-ish card, no wasted vertical space.
+            @media (max-width: 480px) {
                 width: 100%;
-                max-width: 400px;
                 height: auto;
-                padding: 25px 20px;
+                padding: 16px 20px;
+                border-radius: 14px;
             }
 
             .iconCircle {
@@ -108,12 +104,12 @@ $text-muted: #666;
                 }
 
                 @media (max-width: 480px) {
-                    width: 60px;
-                    height: 60px;
-                    margin-bottom: 14px;
+                    width: 44px;
+                    height: 44px;
+                    margin-bottom: 8px;
 
                     img {
-                        height: 26px;
+                        height: 20px;
                     }
                 }
             }
@@ -125,8 +121,8 @@ $text-muted: #666;
                 color: $text-dark;
 
                 @media (max-width: 480px) {
-                    font-size: 1.7rem;
-                    margin-bottom: 10px;
+                    font-size: 1.3rem;
+                    margin-bottom: 4px;
                 }
             }
 
@@ -136,7 +132,8 @@ $text-muted: #666;
                 font-size: 1.1rem;
 
                 @media (max-width: 480px) {
-                    font-size: 0.9rem;
+                    font-size: 0.8rem;
+                    margin: 1px 0;
                 }
             }
 
@@ -146,6 +143,11 @@ $text-muted: #666;
                 margin-top: 5px;
                 word-break: break-word;
                 text-align: center;
+
+                @media (max-width: 480px) {
+                    font-size: 0.85rem;
+                    margin-top: 3px;
+                }
             }
 
             .link {
@@ -164,9 +166,9 @@ $text-muted: #666;
                 }
 
                 @media (max-width: 480px) {
-                    margin-top: 16px;
-                    padding: 7px 18px;
-                    font-size: 0.9rem;
+                    margin-top: 10px;
+                    padding: 5px 16px;
+                    font-size: 0.8rem;
                 }
             }
 
@@ -176,8 +178,6 @@ $text-muted: #666;
                 border-color: $primary-blue;
             }
 
-            // Disable the lift-on-hover on touch devices; it just adds
-            // a jarring jump on tap and serves no purpose without a mouse.
             @media (max-width: 768px) {
                 &:hover {
                     transform: none;
@@ -197,8 +197,9 @@ $text-muted: #666;
             }
 
             @media (max-width: 480px) {
+                margin-top: 1rem;
                 iframe {
-                    height: 300px;
+                    height: 260px;
                 }
             }
         }
