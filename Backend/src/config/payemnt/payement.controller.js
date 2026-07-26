@@ -136,7 +136,6 @@ export const esewaFailure = async (req, res) => {
             await OrderService.setPaymentStatus(transaction_uuid, PaymentStatus.FAILED);
         }
     } catch (error) {
-        // swallow - we're redirecting either way
     }
     return res.redirect(`${frontendUrl}/payment/failure`);
 };
