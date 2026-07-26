@@ -13,21 +13,47 @@ $text-muted: #666;
     background-color: #f8f9fa;
     min-height: 80vh;
 
+    @media (max-width: 768px) {
+        padding: 40px 16px;
+    }
+
+    @media (max-width: 480px) {
+        padding: 30px 12px;
+    }
+
     .textHeader {
         text-align: center;
         margin-bottom: 50px;
+
+        @media (max-width: 768px) {
+            margin-bottom: 30px;
+        }
 
         h1 {
             font-family: $font-header;
             font-size: 4rem;
             margin: 0;
             color: $text-dark;
+
+            @media (max-width: 768px) {
+                font-size: 2.6rem;
+            }
+
+            @media (max-width: 480px) {
+                font-size: 2.2rem;
+            }
         }
 
         h3 {
             font-weight: 400;
             color: $text-muted;
             margin-top: 10px;
+            font-size: 1rem;
+
+            @media (max-width: 480px) {
+                font-size: 0.85rem;
+                padding: 0 10px;
+            }
         }
     }
 
@@ -38,6 +64,10 @@ $text-muted: #666;
         gap: 30px;
         width: 100%;
         max-width: 1200px;
+
+        @media (max-width: 768px) {
+            gap: 20px;
+        }
 
         .infoCard {
             background-color: $card-bg;
@@ -53,6 +83,15 @@ $text-muted: #666;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
 
+            // On mobile, cards go full-width and shrink height since
+            // content no longer needs to fill a tall fixed box.
+            @media (max-width: 768px) {
+                width: 100%;
+                max-width: 400px;
+                height: auto;
+                padding: 25px 20px;
+            }
+
             .iconCircle {
                 width: 80px;
                 height: 80px;
@@ -67,6 +106,16 @@ $text-muted: #666;
                     height: 35px;
                     width: auto;
                 }
+
+                @media (max-width: 480px) {
+                    width: 60px;
+                    height: 60px;
+                    margin-bottom: 14px;
+
+                    img {
+                        height: 26px;
+                    }
+                }
             }
 
             h3 {
@@ -74,18 +123,29 @@ $text-muted: #666;
                 font-size: 2.2rem;
                 margin-bottom: 15px;
                 color: $text-dark;
+
+                @media (max-width: 480px) {
+                    font-size: 1.7rem;
+                    margin-bottom: 10px;
+                }
             }
 
             p {
                 margin: 2px 0;
                 color: $text-muted;
                 font-size: 1.1rem;
+
+                @media (max-width: 480px) {
+                    font-size: 0.9rem;
+                }
             }
 
             .highlight {
                 font-weight: 700;
                 color: $text-dark;
                 margin-top: 5px;
+                word-break: break-word;
+                text-align: center;
             }
 
             .link {
@@ -102,6 +162,12 @@ $text-muted: #666;
                     background-color: $primary-blue;
                     color: white;
                 }
+
+                @media (max-width: 480px) {
+                    margin-top: 16px;
+                    padding: 7px 18px;
+                    font-size: 0.9rem;
+                }
             }
 
             &:hover {
@@ -109,7 +175,16 @@ $text-muted: #666;
                 box-shadow: 0 20px 30px rgba(0, 0, 0, 0.08);
                 border-color: $primary-blue;
             }
+
+            // Disable the lift-on-hover on touch devices; it just adds
+            // a jarring jump on tap and serves no purpose without a mouse.
+            @media (max-width: 768px) {
+                &:hover {
+                    transform: none;
+                }
+            }
         }
+
         .mapdisplay {
             width: 100%;
             margin-top: 2rem;
@@ -119,6 +194,12 @@ $text-muted: #666;
 
             iframe {
               display: block;
+            }
+
+            @media (max-width: 480px) {
+                iframe {
+                    height: 300px;
+                }
             }
         }
     }
