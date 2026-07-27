@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import { API_ENDPOINTS } from '../../constants/constants';
+import { API_ENDPOINTS, API_BASE_URL } from '../../constants/constants';
 
 interface EsewaButtonProps {
   amount: string;
@@ -28,8 +28,8 @@ const EsewaButton: React.FC<EsewaButtonProps> = ({ amount, orderId }) => {
         transaction_uuid: orderId,
         product_code: data.product_code,
         signature: data.signature,
-        success_url: `${window.location.origin}/payment/success`,
-        failure_url: `${window.location.origin}/payment/failure`,
+        success_url: `${API_BASE_URL}/payment/esewa/success`,
+        failure_url: `${API_BASE_URL}/payment/esewa/failure`,
         signed_field_names: "total_amount,transaction_uuid,product_code"
       };
 
