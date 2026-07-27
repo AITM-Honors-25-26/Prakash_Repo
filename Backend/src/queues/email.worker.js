@@ -15,7 +15,7 @@ const buildEmail = (jobName, data) => {
         case EMAIL_JOBS.ACTIVATION:
             return {
                 to:      data.email,
-                sub:     "Activate Your Nebuds Bliss Account",
+                sub:     "Activate Your Account",
                 message: `
                     <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto">
                         <h2>Hi ${data.name},</h2>
@@ -34,7 +34,7 @@ const buildEmail = (jobName, data) => {
         case EMAIL_JOBS.FORGOT_PASSWORD:
             return {
                 to:      data.email,
-                sub:     "Reset Your Nebuds Bliss Password",
+                sub:     "Reset Your Password",
                 message: `
                     <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto">
                         <h2>Hi ${data.name},</h2>

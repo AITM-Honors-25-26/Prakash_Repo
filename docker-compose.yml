@@ -10,12 +10,12 @@ services:
     ports:
       - "9005:9005"
     env_file:
-      - ./Backend/.env          # your existing .env file
+      - ./Backend/.env
     depends_on:
       - redis
     volumes:
-      - ./Backend:/app          # hot reload — changes reflect instantly
-      - /app/node_modules       # don't overwrite container node_modules
+      - ./Backend:/app
+      - /app/node_modules
     networks:
       - nebuds-network
     restart: unless-stopped
@@ -28,19 +28,19 @@ services:
     ports:
       - "5173:5173"
     environment:
-      VITE_PUBLIC_URL: ${VITE_PUBLIC_URL:-http://192.168.20.155t:5173}
-      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://192.168.20.155:9005/api}
+      VITE_PUBLIC_URL: ${VITE_PUBLIC_URL:-http://localhost:5173}
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:9005/api}
     depends_on:
       - backend
     volumes:
-      - ./Frontend:/app         # hot reload
+      - ./Frontend:/app
       - /app/node_modules
     networks:
       - nebuds-network
     restart: unless-stopped
 
   redis:
-    image: redis:7-alpine       # lightweight Redis — no install needed
+    image: redis:7-alpine
     container_name: nebuds-redis
     ports:
       - "6379:6379"
