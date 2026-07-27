@@ -13,8 +13,6 @@ const OrderSchema = new mongoose.Schema({
     default: OrderStatus.PENDING
   },
 
-  // Separate from `status` above - `status` is the kitchen prep state,
-  // this is whether the eSewa QR payment has actually gone through.
   paymentStatus: {
     type: String,
     enum: Object.values(PaymentStatus),
