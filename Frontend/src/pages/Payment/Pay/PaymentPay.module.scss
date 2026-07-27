@@ -1,0 +1,33 @@
+.payContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  font-family: 'Amatic SC', cursive;
+  font-size: 1.5rem;
+  color: #48392a;
+  text-align: center;
+  padding: 20px;
+}
+
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 4px solid #e0dcd5;
+  border-top-color: #48392a;
+  border-radius: 50%;
+  animation: paySpin 0.8s linear infinite;
+}
+
+.errorText {
+  color: #d84315;
+  font-size: 1.3rem;
+}
+
+@keyframes paySpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
