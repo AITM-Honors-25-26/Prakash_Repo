@@ -85,8 +85,14 @@ $light-main-colour: rgb(128, 128, 128);
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  /* Increased minimum width from 320px to 420px for desktop */
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
   gap: 2rem;
+
+  /* Added tablet breakpoint to step down the size smoothly */
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  }
 
   @media (max-width: 768px) {
     gap: 1.25rem;
@@ -127,7 +133,7 @@ $light-main-colour: rgb(128, 128, 128);
   .imageSection {
     flex: 1;
     background: #faf7f2;
-    padding: 2rem;
+    padding: 1.5rem; /* Reduced from 2rem for better space management */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -163,6 +169,7 @@ $light-main-colour: rgb(128, 128, 128);
       font-size: 1.2rem;
       margin-top: 0.5rem;
       color: #2d1b18;
+      text-align: center;
     }
 
     .statusText {
@@ -174,7 +181,7 @@ $light-main-colour: rgb(128, 128, 128);
 
   .infoSection {
     flex: 2;
-    padding: 2rem;
+    padding: 1.5rem; /* Reduced from 2rem to prevent text cutoff */
     min-width: 0;
 
     @media (max-width: 600px) {
@@ -182,11 +189,14 @@ $light-main-colour: rgb(128, 128, 128);
     }
 
     h3 {
-      margin-bottom: 1.5rem;
-      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+      font-size: 1.4rem; /* Scaled down slightly to fit smaller containers */
       color: $header_colour;
       border-bottom: 2px solid #faf7f2;
       padding-bottom: 0.5rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis; /* Prevents "Configuration" from overflowing */
     }
 
     .infoRow {
@@ -214,12 +224,13 @@ $light-main-colour: rgb(128, 128, 128);
 
       button {
         flex: 1 1 auto;
-        min-width: 90px;
+        min-width: 80px; /* Reduced slightly to allow side-by-side alignment */
+        font-size: 0.9rem; /* Adjusted for better fit */
       }
 
       .editButton {
         font-family: $font-nav;
-        padding: 0.8rem;
+        padding: 0.6rem;
         background: #d84315;
         color: white;
         border: none;
@@ -236,7 +247,7 @@ $light-main-colour: rgb(128, 128, 128);
       .qrButton {
         background-color: #4a3f35;
         color: white;
-        padding: 0.8rem;
+        padding: 0.6rem;
         border: none;
         border-radius: 8px;
         cursor: pointer;
@@ -251,7 +262,7 @@ $light-main-colour: rgb(128, 128, 128);
       .deleteButton {
         background-color: #dc3545;
         color: white;
-        padding: 0.8rem;
+        padding: 0.6rem;
         border: none;
         border-radius: 8px;
         cursor: pointer;
