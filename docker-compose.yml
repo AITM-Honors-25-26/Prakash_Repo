@@ -1,5 +1,3 @@
-# Place this at your project ROOT (same level as Backend/ and Frontend/)
-
 services:
 
   backend:
