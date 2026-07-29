@@ -5,6 +5,8 @@ $bg-soft: #faf7f2;
 $text-dark: #2d1b18;
 $border: rgba(0, 0, 0, 0.1);
 $error: #dc3545;
+$font-Cursive:  'Amatic SC', cursive;
+$font-header: 'Amatic SC', cursive;
 
 .overlay {
   position: fixed;
@@ -15,13 +17,16 @@ $error: #dc3545;
   justify-content: center;
   padding: 16px;
   z-index: 1000;
+  box-sizing: border-box;
 }
 
 .modal {
+  box-sizing: border-box; /* Forces padding to stay within max-width */
   width: 100%;
   max-width: 480px;
   max-height: 90vh;
   overflow-y: auto;
+  overflow-x: hidden; /* Prevents any accidental horizontal scrolling */
   background: $bg-soft;
   border-radius: 12px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
@@ -44,11 +49,12 @@ $error: #dc3545;
   h2 {
     margin: 0;
     color: $header-colour;
-    font-size: 1.3rem;
-    line-height: 1.3;
+    font-family: $font-header;
+    font-size: 2rem; /* Increased for Amatic SC readability */
+    line-height: 1.2;
 
     @media (max-width: 480px) {
-      font-size: 1.1rem;
+      font-size: 1.6rem;
     }
   }
 }
@@ -91,13 +97,16 @@ $error: #dc3545;
   gap: 6px;
 
   label {
-    font-size: 0.85rem;
+    font-family: $font-Cursive;
+    font-size: 1.1rem; /* Slightly larger for cursive readability */
     font-weight: 600;
     color: $text-dark;
   }
 
   input,
   select {
+    box-sizing: border-box; /* Keeps inputs strictly within their grid columns */
+    font-family: system-ui, -apple-system, sans-serif; /* Keep standard font for inputs for clarity */
     font-size: 1rem;
     padding: 10px 12px;
     border: 1px solid $border;
@@ -118,7 +127,8 @@ $error: #dc3545;
 }
 
 .errorText {
-  font-size: 0.78rem;
+  font-family: $font-Cursive;
+  font-size: 1rem;
   color: $error;
 }
 
@@ -135,6 +145,9 @@ $error: #dc3545;
 
 .cancelButton,
 .confirmButton {
+  box-sizing: border-box;
+  font-family: $font-Cursive;
+  font-size: 1.2rem; /* Slightly larger for cursive buttons */
   padding: 10px 20px;
   border-radius: 8px;
   border: none;
