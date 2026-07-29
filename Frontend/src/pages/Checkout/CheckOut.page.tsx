@@ -9,6 +9,9 @@ import Layout from '../../components/layout/layout';
 import emptyCart from '../../../img/gif/emptycart.gif';
 import { API_ENDPOINTS } from '../../constants/constants';
 
+// NEW: Import getSessionId so we can send it to the backend
+import { getSessionId } from '../../utils/session'; 
+
 const MySwal = withReactContent(Swal);
 
 interface CartItem {
@@ -170,8 +173,13 @@ const CheckoutPage: React.FC = () => {
     setLoading(true);
 
     try {
+      // NEW: Grab the auth token if the user is logged in
+      const token = localStorage.getItem('qr_accessToken');
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
       const orderPayload = {
         tableNumber,
+        sessionId: getSessionId(), // NEW: Attach the sessionId to the order
         items: cartItems.map(item => ({
           name: item.name,
           quantity: item.quantity,
@@ -180,8 +188,8 @@ const CheckoutPage: React.FC = () => {
         })),
       };
 
-      // Backend wraps the created order as { success, data: order }
-      const response = await axios.post(API_ENDPOINTS.ORDER_ACTION + '/', orderPayload);
+      // NEW: Attach the headers to the request so the backend knows who the user is
+      const response = await axios.post(API_ENDPOINTS.ORDER_ACTION + '/', orderPayload, { headers });
       const orderId = response.data.data._id;
 
       if (paymentOption === 'Pay Now') {

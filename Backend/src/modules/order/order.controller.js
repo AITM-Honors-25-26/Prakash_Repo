@@ -1,4 +1,5 @@
 import * as OrderService from './order.service.js';
+import jwt from 'jsonwebtoken';
 
 export const createOrder = async (req, res) => {
   try {
@@ -15,8 +16,45 @@ export const createOrder = async (req, res) => {
   }
 };
 
-// Public/unauthenticated on purpose - the checkout page polls this from the
-// customer's own device (no login) while the eSewa QR modal is open.
+// NEW: Fetch orders for a specific user or guest session
+export const getUserOrders = async (req, res) => {
+  try {
+    const { tableNumber, sessionId } = req.query;
+    let query = {};
+
+    // 1. Try to identify by token if the user is logged in
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      try {
+        // Tokens are signed with { sub: user._id, type: "access" } in auth.controller.js,
+        // so the user id lives on `sub`, not `id` or `_id`.
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        query.userId = decoded.sub;
+      } catch (err) {
+        console.log("Guest access or invalid token.");
+      }
+    }
+
+    // 2. Fall back to guest tracking (tableNumber & sessionId)
+    if (!query.userId) {
+      if (sessionId) query.sessionId = sessionId;
+      if (tableNumber) query.tableNumber = tableNumber;
+    }
+
+    // 3. Prevent fetching ALL orders if no params are passed
+    if (Object.keys(query).length === 0) {
+      return res.status(400).json({ success: false, message: 'Missing user or table identification.' });
+    }
+
+    const orders = await OrderService.getUserOrders(query);
+    
+    return res.status(200).json({ success: true, data: orders });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 export const getOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;

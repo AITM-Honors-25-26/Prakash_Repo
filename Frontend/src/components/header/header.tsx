@@ -115,6 +115,7 @@ const Header: React.FC = () => {
         <span />
       </button>
 
+      {/* This nav block handles BOTH the desktop navbar and mobile sidebar */}
       <nav className={`${styles.navLinks} ${menuOpen ? styles.navLinksOpen : ''}`}>
 
         {activeTable && (
@@ -140,6 +141,11 @@ const Header: React.FC = () => {
           onClick={() => setMenuOpen(false)}
         >
           Menu
+        </Link>
+
+        {/* NEW: My Orders Link for Tracking */}
+        <Link to="/MyOrders" onClick={() => setMenuOpen(false)}>
+          My Orders
         </Link>
 
         {hasStaffAccess && (
@@ -204,6 +210,8 @@ const Header: React.FC = () => {
               </div>
               <hr />
               <div className={styles.actions}>
+                {/* NEW: Added to Desktop Dropdown for logged-in users */}
+                <Link to="/MyOrders">My Orders</Link>
                 <Link to="/SettingsPage">Settings</Link>
                 <button className={styles.logoutBtn} onClick={handleLogout}>
                   Logout
