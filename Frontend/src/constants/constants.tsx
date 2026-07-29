@@ -158,6 +158,9 @@ export const API_ENDPOINTS = {
   LISTALLORDERS: `${API_BASE_URL}/order/list`,
   UPDATEORDERSTATUS: `${API_BASE_URL}/order/status`,
   ORDER_ACTION: `${API_BASE_URL}/order`,
+  
+  // NEW ROUTE ADDED HERE:
+  GET_USER_ORDERS: `${API_BASE_URL}/order/user`,
 
   TABLENUMBER: `${API_FRONTEND}/MenuPage/:id`,
   TABLE_BASE: `${API_BASE_URL}/table`,
@@ -168,7 +171,6 @@ export const API_ENDPOINTS = {
   ESEWA_INIT: `${API_BASE_URL}/payment/esewa/init`,
   ESEWA_QR: `${API_BASE_URL}/payment/esewa/qr`,
 
-  // Public polling endpoint - GET `${ORDER_STATUS}/${orderId}`
   ORDER_STATUS: `${API_BASE_URL}/order`
 };
 
