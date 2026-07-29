@@ -17,7 +17,7 @@ interface Order {
   _id: string;
   tableNumber?: string;
   items: OrderItem[];
-  totalAmount: number;
+  totalPrice: number;
   status: 'Pending' | 'Preparing' | 'Ready' | 'Served';
   createdAt: string;
 }
@@ -138,7 +138,7 @@ const MyOrders: React.FC = () => {
 
                 <div className={styles.cardFooter}>
                   <span className={styles.totalLabel}>Total Amount:</span>
-                  <span className={styles.totalValue}>Rs. {order.totalAmount}</span>
+                  <span className={styles.totalValue}>Rs. {order.totalPrice}</span>
                 </div>
               </div>
             ))}

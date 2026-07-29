@@ -27,9 +27,10 @@ export const getUserOrders = async (req, res) => {
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.split(' ')[1];
       try {
-        // Decode token to get user ID (ensure process.env.ACCESS_TOKEN_SECRET matches your actual env variable)
-        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET || process.env.JWT_SECRET); 
-        query.userId = decoded.id || decoded._id; 
+        // Tokens are signed with { sub: user._id, type: "access" } in auth.controller.js,
+        // so the user id lives on `sub`, not `id` or `_id`.
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        query.userId = decoded.sub;
       } catch (err) {
         console.log("Guest access or invalid token.");
       }
