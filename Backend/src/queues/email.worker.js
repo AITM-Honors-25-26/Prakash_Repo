@@ -19,7 +19,7 @@ const buildEmail = (jobName, data) => {
                 message: `
                     <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto">
                         <h2>Hi ${data.name},</h2>
-                        <p>Thank you for registering with <strong>Nebuds Bliss</strong>!</p>
+                        <p>Thank you for registering with <strong>Melina's Bakery</strong>!</p>
                         <p>Please click the button below to activate your account:</p>
                         <a href="${AppConfig.backend_Url}/auth/activate/${data.activationToken}"
                            style="display:inline-block;background:#000;color:#fff;padding:12px 24px;
