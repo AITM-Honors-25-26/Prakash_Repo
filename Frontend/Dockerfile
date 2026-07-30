@@ -6,8 +6,8 @@ FROM node:22-alpine
 WORKDIR /app
 
 # Install dependencies first (layer cache)
-COPY package.json package-lock.json ./
-RUN npm install
+COPY package.json yarn.lock ./
+RUN yarn install
 
 # Copy source
 COPY . .

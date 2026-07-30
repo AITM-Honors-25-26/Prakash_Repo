@@ -7,6 +7,7 @@ import { AppConfig } from "../config/constants.js";
 export const EMAIL_JOBS = {
     ACTIVATION:      "activation-email",
     FORGOT_PASSWORD: "forgot-password-email",
+    STAFF_WELCOME:   "staff-welcome-email",
 };
 
 const buildEmail = (jobName, data) => {
@@ -46,6 +47,22 @@ const buildEmail = (jobName, data) => {
                             Reset Password
                         </a>
                         <p>If you didn't request this, you can safely ignore this email.</p>
+                    </div>
+                `,
+            };
+
+        case EMAIL_JOBS.STAFF_WELCOME:
+            return {
+                to:      data.email,
+                sub:     "Your Staff Account Has Been Created",
+                message: `
+                    <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto">
+                        <h2>Hi ${data.name},</h2>
+                        <p>An administrator has created a staff account for you at <strong>Melina's Bakery</strong> with the role of <strong>${data.role}</strong>.</p>
+                        <p>You can log in using:</p>
+                        <p><strong>Email:</strong> ${data.email}<br/>
+                           <strong>Temporary Password:</strong> ${data.tempPassword}</p>
+                        <p>Please log in and change your password from your profile settings as soon as possible.</p>
                     </div>
                 `,
             };

@@ -11,6 +11,10 @@ export const validateCreateOrder = (req, res, next) => {
     return res.status(400).json({ success: false, message: 'Order must contain at least one item.' });
   }
 
+  if (req.body.discountCode !== undefined && req.body.discountCode !== null && typeof req.body.discountCode !== 'string') {
+    return res.status(400).json({ success: false, message: 'Discount code must be a valid text value.' });
+  }
+
   for (const item of items) {
     if (!item.name || typeof item.name !== 'string') {
       return res.status(400).json({ success: false, message: 'Each item must have a valid name.' });

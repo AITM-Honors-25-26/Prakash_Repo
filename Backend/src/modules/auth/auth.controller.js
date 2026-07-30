@@ -110,6 +110,107 @@ class AuthController {
         }
     }
 
+    // --- Staff Account Management (Admin only) -----------------------------
+    listStaff = async (req, res, next) => {
+        try {
+            const users = await autSvc.listAllUsers();
+            res.json({
+                data: users.map((user) => autSvc.publicUserProfile(user)),
+                message: "Staff accounts fetched successfully",
+                status: "STAFF_LIST_SUCCESS",
+                option: null,
+            });
+        } catch (exception) {
+            next(exception);
+        }
+    }
+
+    createStaff = async (req, res, next) => {
+        let userData;
+        try {
+            userData = { ...req.body };
+            if (req.file) {
+                const upload = await cloudianarySvc.fileUpload(req.file.path, 'user/');
+                userData.image = {
+                    url: upload.url,
+                    optmizedUrl: upload.secure_url || upload.url
+                };
+                userData.image_id = upload.public_id;
+            }
+
+            const userObj = await autSvc.createStaffAccount(userData);
+
+            await emailQueue.add(EMAIL_JOBS.STAFF_WELCOME, {
+                name: userObj.fullName,
+                email: userObj.email,
+                role: userObj.role,
+                tempPassword: req.body.password,
+            });
+
+            res.status(201).json({
+                data: { user: autSvc.publicUserProfile(userObj) },
+                message: "Staff account created successfully",
+                status: "STAFF_CREATE_SUCCESS",
+                option: null,
+            });
+        } catch (exception) {
+            if (userData && userData.image_id) {
+                await cloudianarySvc.deleteFile(userData.image_id);
+            }
+            next(exception);
+        }
+    }
+
+    updateStaff = async (req, res, next) => {
+        try {
+            const { id } = req.params;
+            const allowedFields = ['fullName', 'role', 'phone', 'address', 'gender', 'dob', 'status'];
+            const updateData = {};
+            allowedFields.forEach((field) => {
+                if (req.body[field] !== undefined) updateData[field] = req.body[field];
+            });
+
+            const updated = await autSvc.updateUserById(id, updateData);
+            if (!updated) {
+                return next({ code: 404, message: "Staff member not found", status: "USER_NOT_FOUND" });
+            }
+
+            res.json({
+                data: { user: autSvc.publicUserProfile(updated) },
+                message: "Staff account updated successfully",
+                status: "STAFF_UPDATE_SUCCESS",
+                option: null,
+            });
+        } catch (exception) {
+            next(exception);
+        }
+    }
+
+    deleteStaff = async (req, res, next) => {
+        try {
+            const { id } = req.params;
+
+            if (String(req.authUser?._id) === String(id)) {
+                return next({ code: 400, message: "You cannot delete your own account", status: "SELF_DELETE_FORBIDDEN" });
+            }
+
+            const deleted = await autSvc.deleteUserById(id);
+            if (!deleted) {
+                return next({ code: 404, message: "Staff member not found", status: "USER_NOT_FOUND" });
+            }
+
+            res.json({
+                data: null,
+                message: "Staff account removed successfully",
+                status: "STAFF_DELETE_SUCCESS",
+                option: null,
+            });
+        } catch (exception) {
+            next(exception);
+        }
+    }
+    // -------------------------------------------------------------------------
+
     getMyProfile = async (req, res, next) => {
         res.json({
             data: req.authUser,

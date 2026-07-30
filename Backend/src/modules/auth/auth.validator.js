@@ -55,6 +55,52 @@ export const RegisterUserDTO = Joi.object({
       "any.required": "Cloudflare token is required to verify you are human"
   })
 });
+// Used by the Admin's Staff Account Management screen - creates a staff
+// account directly (no captcha/self-registration flow, account is active
+// immediately since an admin has already vetted the person).
+export const CreateStaffDTO = Joi.object({
+  fullName: Joi.string().min(2).max(50).required().messages({
+      "string.empty": "Full name is required"
+    }),
+  email: Joi.string().email().required().messages({
+      "string.empty": "Email is required",
+      "string.email": "Please enter a valid email address"
+    }),
+  dob: Joi.date().less('now').required().messages({
+      "date.base": "Date of birth must be a valid date",
+      "date.less": "Date of birth cannot be in the future",
+      "any.required": "Date of birth is required"
+    }),
+  password: Joi.string().pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*_.-])[A-Za-z\d!@#$%^&*_.-]{8,25}$/).required().messages({
+      "string.pattern.base":
+        "Password must be 8–25 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character",
+      "any.required": "Password is required"
+    }),
+  phone: Joi.string().min(10).max(20).pattern(/^[0-9]+$/).required().messages({
+      "string.pattern.base": "Phone number must contain only digits",
+      "any.required": "Phone number is required"
+    }),
+  address: Joi.string().required().messages({
+      "string.empty": "Address is required"
+    }),
+  gender: Joi.string().valid("Male", "Female", "Other").insensitive().required().messages({
+      "any.only": "Gender must be male, female, or other"
+    }),
+  role: Joi.string().valid("Admin", "Chef", "Waiter", "Reception", "Employee").insensitive().required().messages({
+      "any.only": "Role must be one of Admin, Chef, Waiter, Reception, or Employee"
+    }),
+});
+
+export const UpdateStaffDTO = Joi.object({
+  fullName: Joi.string().min(2).max(50),
+  role: Joi.string().valid("Admin", "Chef", "Waiter", "Reception", "Employee").insensitive(),
+  phone: Joi.string().min(10).max(20).pattern(/^[0-9]+$/),
+  address: Joi.string(),
+  gender: Joi.string().valid("Male", "Female", "Other").insensitive(),
+  dob: Joi.date().less('now'),
+  status: Joi.boolean(),
+}).min(1);
+
 export const LoginDTO = Joi.object({
   email: Joi.string().email().required().messages({
     "string.base": "Email must be a text value",

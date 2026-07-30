@@ -1,10 +1,12 @@
+# Place this at your project ROOT (same level as Backend/ and Frontend/)
+
 services:
 
   backend:
     build:
       context: ./Backend
       dockerfile: Dockerfile
-    container_name: MelinasBakery-backend
+    container_name: nebuds-backend
     ports:
       - "9005:9005"
     env_file:
@@ -15,14 +17,14 @@ services:
       - ./Backend:/app
       - /app/node_modules
     networks:
-      - melinasbakery-network
+      - nebuds-network
     restart: unless-stopped
 
   frontend:
     build:
       context: ./Frontend
       dockerfile: Dockerfile
-    container_name: MelinasBakery-frontend
+    container_name: nebuds-frontend
     ports:
       - "5173:5173"
     environment:
@@ -34,18 +36,18 @@ services:
       - ./Frontend:/app
       - /app/node_modules
     networks:
-      - melinasbakery-network
+      - nebuds-network
     restart: unless-stopped
 
   redis:
     image: redis:7-alpine
-    container_name: MelinasBakery
+    container_name: nebuds-redis
     ports:
       - "6379:6379"
     networks:
-      - melinasbakery-network
+      - nebuds-network
     restart: unless-stopped
 
 networks:
-  melinasbakery-network:
+  nebuds-network:
     driver: bridge
