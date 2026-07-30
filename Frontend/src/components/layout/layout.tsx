@@ -4,6 +4,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Footer from '../Footer/footer';
 import FloatingCart from '../FloatingCart/FloatingCart.page';
+import FloatingOrderTracker from '../FloatingOrderTracker/FloatingOrderTracker';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -17,6 +18,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       </main>
       <ToastContainer position="top-right" autoClose={3000} />
       <FloatingCart />
+      <FloatingOrderTracker />
       <Footer />
     </div>
   );

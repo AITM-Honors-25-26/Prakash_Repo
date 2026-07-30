@@ -32,8 +32,21 @@ const OrderSchema = new mongoose.Schema({
 
   items: [
     {
+      // Reference back to the Bakery item, when available, so kitchen/staff
+      // views and reporting can look up the original item if needed.
+      itemId: { type: mongoose.Schema.Types.ObjectId, ref: "Bakery", default: null },
       name: { type: String, required: true },
       quantity: { type: Number, required: true, min: 1 },
+
+      // Order Customization: unit price already includes any selected
+      // add-ons (basePrice + sum of selectedAddOns), so existing totals math
+      // (price * quantity) keeps working unchanged.
+      basePrice: { type: Number, default: null },
+      selectedAddOns: [{
+        name: { type: String },
+        price: { type: Number, default: 0 }
+      }],
+
       price: { type: Number, required: true },
       specialNotes: { type: String, default: "" }
     }

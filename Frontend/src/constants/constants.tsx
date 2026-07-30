@@ -158,9 +158,6 @@ export const API_ENDPOINTS = {
   LISTALLORDERS: `${API_BASE_URL}/order/list`,
   UPDATEORDERSTATUS: `${API_BASE_URL}/order/status`,
   ORDER_ACTION: `${API_BASE_URL}/order`,
-  
-  // NEW ROUTE ADDED HERE:
-  GET_USER_ORDERS: `${API_BASE_URL}/order/user`,
 
   TABLENUMBER: `${API_FRONTEND}/MenuPage/:id`,
   TABLE_BASE: `${API_BASE_URL}/table`,
@@ -172,7 +169,20 @@ export const API_ENDPOINTS = {
   ESEWA_QR: `${API_BASE_URL}/payment/esewa/qr`,
 
   // Public polling endpoint - GET `${ORDER_STATUS}/${orderId}`
-  ORDER_STATUS: `${API_BASE_URL}/order`
+  ORDER_STATUS: `${API_BASE_URL}/order`,
+
+  // Staff Account Management (Admin only)
+  STAFF_LIST: `${API_BASE_URL}/auth/staff`,
+  STAFF_ACTION: `${API_BASE_URL}/auth/staff`,
+
+  // Analytics & Reporting (Admin only)
+  ANALYTICS_OVERVIEW: `${API_BASE_URL}/analytics/overview`,
+  ANALYTICS_SALES_TREND: `${API_BASE_URL}/analytics/sales-trend`,
+  ANALYTICS_TOP_ITEMS: `${API_BASE_URL}/analytics/top-items`,
+
+  // Tax & Discount Configuration
+  BILLING_SETTINGS: `${API_BASE_URL}/settings/billing`,
+  BILLING_PREVIEW: `${API_BASE_URL}/settings/billing/preview`
 };
 
 export const CATEGORY = {

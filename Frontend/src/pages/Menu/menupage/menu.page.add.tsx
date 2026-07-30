@@ -18,6 +18,11 @@ interface ImagePreview {
   previewUrl: string;
 }
 
+interface AddOn {
+  name: string;
+  price: string;
+}
+
 const CreateMenuItemPage: React.FC = () => {
   const navigate = useNavigate();
 
@@ -49,7 +54,20 @@ const CreateMenuItemPage: React.FC = () => {
   });
 
   const [images, setImages] = useState<ImagePreview[]>([]);
+  const [addOns, setAddOns] = useState<AddOn[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const addAddOnRow = () => {
+    setAddOns((prev) => [...prev, { name: '', price: '' }]);
+  };
+
+  const updateAddOnRow = (index: number, field: keyof AddOn, value: string) => {
+    setAddOns((prev) => prev.map((row, i) => (i === index ? { ...row, [field]: value } : row)));
+  };
+
+  const removeAddOnRow = (index: number) => {
+    setAddOns((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -97,6 +115,17 @@ const CreateMenuItemPage: React.FC = () => {
       return;
     }
 
+    const cleanedAddOns = addOns
+      .map((row) => ({ name: row.name.trim(), price: row.price }))
+      .filter((row) => row.name);
+
+    for (const row of cleanedAddOns) {
+      if (row.price === '' || Number(row.price) < 0 || Number.isNaN(Number(row.price))) {
+        toast.error(`Enter a valid price for the "${row.name}" add-on.`);
+        return;
+      }
+    }
+
     const storedUser = localStorage.getItem('qr_user');
     if (!storedUser) return;
     const parsedUser = JSON.parse(storedUser);
@@ -125,6 +154,10 @@ const CreateMenuItemPage: React.FC = () => {
       formData.append('category', form.category);
       formData.append('stock', form.stock || '0');
       formData.append('isAvailable', String(form.isAvailable));
+      formData.append(
+        'addOns',
+        JSON.stringify(cleanedAddOns.map((row) => ({ name: row.name, price: Number(row.price) })))
+      );
       images.forEach((img) => formData.append('images', img.file));
 
       formData.append('email', parsedUser.email);
@@ -238,6 +271,51 @@ const CreateMenuItemPage: React.FC = () => {
                   <span className={styles.slider} />
                 </label>
               </div>
+            </div>
+
+            <div className={styles.card}>
+              <h2 className={styles.cardTitle}>Order Customization</h2>
+              <p className={styles.cardSub}>
+                Optional extras customers can add on for an additional charge (e.g. "Extra Cheese", +Rs. 50).
+              </p>
+
+              {addOns.map((row, index) => (
+                <div key={index} className={styles.row}>
+                  <div className={styles.field}>
+                    <label>Add-on Name</label>
+                    <input
+                      type="text"
+                      value={row.name}
+                      onChange={(e) => updateAddOnRow(index, 'name', e.target.value)}
+                      placeholder="e.g. Extra Cheese"
+                      className={styles.input}
+                    />
+                  </div>
+                  <div className={styles.field}>
+                    <label>Price (Rs.)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={row.price}
+                      onChange={(e) => updateAddOnRow(index, 'price', e.target.value)}
+                      placeholder="e.g. 50"
+                      className={styles.input}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    className={styles.removeImg}
+                    onClick={() => removeAddOnRow(index)}
+                    aria-label="Remove add-on"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+
+              <button type="button" className={styles.backBtn} onClick={addAddOnRow}>
+                ＋ Add Extra Option
+              </button>
             </div>
           </div>
 
