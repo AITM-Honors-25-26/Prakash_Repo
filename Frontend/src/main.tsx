@@ -16,7 +16,9 @@ import CheckoutPage from "./pages/Checkout/CheckOut.page";
 import ErrorPage from "./pages/ErrorPage/ErrorPage";
 import Dashboard from "./pages/DashboardPage/Dashboard.Page";
 import CreateMenuItemPage from "./pages/Menu/menupage/menu.page.add";
-import MyOrders from "./pages/OrderPage/Order.page";
+import StaffManagement from "./pages/StaffManagement/StaffManagement.page";
+import Analytics from "./pages/Analytics/Analytics.page";
+import BillingSettings from "./pages/BillingSettings/BillingSettings.page";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -38,8 +40,9 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/CheckoutPage" element={<CheckoutPage />}  />
         <Route path="/ErrorPage" element={<ErrorPage />} />
         <Route  path="/DashboardPage" element={<Dashboard />}/>
-        <Route  path="/MyOrders" element={<MyOrders />}/>
-
+        <Route path="/StaffManagement" element={<StaffManagement />} />
+        <Route path="/Analytics" element={<Analytics />} />
+        <Route path="/BillingSettings" element={<BillingSettings />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

@@ -9,9 +9,6 @@ import Layout from '../../components/layout/layout';
 import emptyCart from '../../../img/gif/emptycart.gif';
 import { API_ENDPOINTS } from '../../constants/constants';
 
-// NEW: Import getSessionId so we can send it to the backend
-import { getSessionId } from '../../utils/session'; 
-
 const MySwal = withReactContent(Swal);
 
 interface CartItem {
@@ -26,6 +23,19 @@ interface CartItem {
   specialNotes?: string;
 }
 
+interface BillTotals {
+  subtotal: number;
+  discountCode: string | null;
+  discountAmount: number;
+  discountApplied: boolean;
+  discountRejectedReason: string | null;
+  taxRate: number;
+  taxAmount: number;
+  serviceChargeRate: number;
+  serviceChargeAmount: number;
+  totalPrice: number;
+}
+
 const POLL_INTERVAL_MS = 4000;
 const POLL_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
 
@@ -35,6 +45,13 @@ const CheckoutPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [tableNumber, setTableNumber] = useState<string>('');
   const [paymentOption, setPaymentOption] = useState<string>('Pay Later');
+
+  // Tax & Discount Configuration - live preview from the backend so the
+  // customer sees the exact same bill the server will charge.
+  const [discountCodeInput, setDiscountCodeInput] = useState<string>('');
+  const [appliedDiscountCode, setAppliedDiscountCode] = useState<string>('');
+  const [billTotals, setBillTotals] = useState<BillTotals | null>(null);
+  const [totalsLoading, setTotalsLoading] = useState<boolean>(false);
 
   // eSewa QR modal state
   const [qrModalOpen, setQrModalOpen] = useState<boolean>(false);
@@ -99,6 +116,70 @@ const CheckoutPage: React.FC = () => {
   const calculateTotal = () => {
     return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
   };
+
+  // Live bill preview - recalculated by the server (Tax & Discount
+  // Configuration) whenever the cart or the applied discount code changes.
+  useEffect(() => {
+    const subtotal = calculateTotal();
+
+    if (cartItems.length === 0) {
+      setBillTotals(null);
+      return;
+    }
+
+    let cancelled = false;
+    setTotalsLoading(true);
+
+    axios
+      .post(API_ENDPOINTS.BILLING_PREVIEW, {
+        subtotal,
+        discountCode: appliedDiscountCode || undefined,
+      })
+      .then(({ data }) => {
+        if (!cancelled) setBillTotals(data.data);
+      })
+      .catch((error) => {
+        console.error('Failed to calculate totals:', error);
+        if (!cancelled) {
+          setBillTotals({
+            subtotal,
+            discountCode: null,
+            discountAmount: 0,
+            discountApplied: false,
+            discountRejectedReason: null,
+            taxRate: 0,
+            taxAmount: 0,
+            serviceChargeRate: 0,
+            serviceChargeAmount: 0,
+            totalPrice: subtotal,
+          });
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setTotalsLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cartItems, appliedDiscountCode]);
+
+  const handleApplyDiscount = () => {
+    const code = discountCodeInput.trim().toUpperCase();
+    if (!code) {
+      toast.error('Enter a discount code first.');
+      return;
+    }
+    setAppliedDiscountCode(code);
+  };
+
+  const handleRemoveDiscount = () => {
+    setAppliedDiscountCode('');
+    setDiscountCodeInput('');
+  };
+
+  const grandTotal = billTotals ? billTotals.totalPrice : calculateTotal();
 
   const startQrPayment = async (orderId: string, totalAmount: string) => {
     try {
@@ -173,27 +254,24 @@ const CheckoutPage: React.FC = () => {
     setLoading(true);
 
     try {
-      // NEW: Grab the auth token if the user is logged in
-      const token = localStorage.getItem('qr_accessToken');
-      const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
       const orderPayload = {
         tableNumber,
-        sessionId: getSessionId(), // NEW: Attach the sessionId to the order
         items: cartItems.map(item => ({
           name: item.name,
           quantity: item.quantity,
           price: item.price,
           specialNotes: item.specialNotes || '',
         })),
+        discountCode: appliedDiscountCode || undefined,
       };
 
-      // NEW: Attach the headers to the request so the backend knows who the user is
-      const response = await axios.post(API_ENDPOINTS.ORDER_ACTION + '/', orderPayload, { headers });
+      // Backend wraps the created order as { success, data: order }
+      const response = await axios.post(API_ENDPOINTS.ORDER_ACTION + '/', orderPayload);
       const orderId = response.data.data._id;
+      const orderTotal = response.data.data.totalPrice ?? grandTotal;
 
       if (paymentOption === 'Pay Now') {
-        const totalAmount = calculateTotal().toString();
+        const totalAmount = orderTotal.toString();
         await startQrPayment(orderId, totalAmount);
       } else {
         // 'Pay Later'
@@ -270,9 +348,66 @@ const CheckoutPage: React.FC = () => {
                 ))}
               </div>
 
+              <div className={styles.discountRow}>
+                {appliedDiscountCode ? (
+                  <>
+                    <span className={styles.discountApplied}>
+                      Code <strong>{appliedDiscountCode}</strong> applied
+                    </span>
+                    <button type="button" className={styles.discountRemoveBtn} onClick={handleRemoveDiscount}>
+                      Remove
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <input
+                      type="text"
+                      placeholder="Discount code"
+                      value={discountCodeInput}
+                      onChange={(e) => setDiscountCodeInput(e.target.value)}
+                      className={styles.discountInput}
+                    />
+                    <button type="button" className={styles.discountApplyBtn} onClick={handleApplyDiscount}>
+                      Apply
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {billTotals?.discountRejectedReason && (
+                <p className={styles.discountHint}>{billTotals.discountRejectedReason}</p>
+              )}
+
+              <div className={styles.billBreakdown}>
+                <div className={styles.billRow}>
+                  <span>Subtotal</span>
+                  <span>Rs. {calculateTotal().toLocaleString()}</span>
+                </div>
+                {billTotals && billTotals.discountAmount > 0 && (
+                  <div className={styles.billRow}>
+                    <span>Discount</span>
+                    <span>- Rs. {billTotals.discountAmount.toLocaleString()}</span>
+                  </div>
+                )}
+                {billTotals && billTotals.taxAmount > 0 && (
+                  <div className={styles.billRow}>
+                    <span>Tax ({billTotals.taxRate}%)</span>
+                    <span>Rs. {billTotals.taxAmount.toLocaleString()}</span>
+                  </div>
+                )}
+                {billTotals && billTotals.serviceChargeAmount > 0 && (
+                  <div className={styles.billRow}>
+                    <span>Service Charge ({billTotals.serviceChargeRate}%)</span>
+                    <span>Rs. {billTotals.serviceChargeAmount.toLocaleString()}</span>
+                  </div>
+                )}
+              </div>
+
               <div className={styles.totalRow}>
                 <span>Grand Total:</span>
-                <span className={styles.totalPrice}>Rs. {calculateTotal().toLocaleString()}</span>
+                <span className={styles.totalPrice}>
+                  {totalsLoading ? 'Calculating…' : `Rs. ${grandTotal.toLocaleString()}`}
+                </span>
               </div>
             </div>
 
@@ -324,8 +459,8 @@ const CheckoutPage: React.FC = () => {
                   </label>
                 </div>
 
-                <button type="submit" className={styles.submitBtn} disabled={loading}>
-                  {loading ? 'Placing Order...' : `Confirm Order (Rs. ${calculateTotal().toLocaleString()})`}
+                <button type="submit" className={styles.submitBtn} disabled={loading || totalsLoading}>
+                  {loading ? 'Placing Order...' : `Confirm Order (Rs. ${grandTotal.toLocaleString()})`}
                 </button>
 
               </form>
@@ -338,7 +473,7 @@ const CheckoutPage: React.FC = () => {
           <div className={styles.qrModalOverlay}>
             <div className={styles.qrModalBox}>
               <h2>Scan to Pay</h2>
-              <p>Rs. {calculateTotal().toLocaleString()} &middot; Table {tableNumber}</p>
+              <p>Rs. {grandTotal.toLocaleString()} &middot; Table {tableNumber}</p>
 
               {qrImage ? (
                 <img src={qrImage} alt="Payment QR Code" className={styles.qrImage} />

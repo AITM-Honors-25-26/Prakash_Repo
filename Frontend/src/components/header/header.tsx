@@ -115,7 +115,6 @@ const Header: React.FC = () => {
         <span />
       </button>
 
-      {/* This nav block handles BOTH the desktop navbar and mobile sidebar */}
       <nav className={`${styles.navLinks} ${menuOpen ? styles.navLinksOpen : ''}`}>
 
         {activeTable && (
@@ -143,11 +142,6 @@ const Header: React.FC = () => {
           Menu
         </Link>
 
-        {/* NEW: My Orders Link for Tracking */}
-        <Link to="/MyOrders" onClick={() => setMenuOpen(false)}>
-          My Orders
-        </Link>
-
         {hasStaffAccess && (
           <Link to="/DashboardPage" className={styles.staffLink} onClick={() => setMenuOpen(false)}>
             Dashboard
@@ -157,6 +151,24 @@ const Header: React.FC = () => {
         {hasStaffAccess && (
           <Link to="/TableManagement" className={styles.staffLink} onClick={() => setMenuOpen(false)}>
             Tables
+          </Link>
+        )}
+
+        {user?.role === 'Admin' && (
+          <Link to="/StaffManagement" className={styles.staffLink} onClick={() => setMenuOpen(false)}>
+            Staff
+          </Link>
+        )}
+
+        {user?.role === 'Admin' && (
+          <Link to="/Analytics" className={styles.staffLink} onClick={() => setMenuOpen(false)}>
+            Analytics
+          </Link>
+        )}
+
+        {user?.role === 'Admin' && (
+          <Link to="/BillingSettings" className={styles.staffLink} onClick={() => setMenuOpen(false)}>
+            Billing Setup
           </Link>
         )}
 
@@ -210,8 +222,6 @@ const Header: React.FC = () => {
               </div>
               <hr />
               <div className={styles.actions}>
-                {/* NEW: Added to Desktop Dropdown for logged-in users */}
-                <Link to="/MyOrders">My Orders</Link>
                 <Link to="/SettingsPage">Settings</Link>
                 <button className={styles.logoutBtn} onClick={handleLogout}>
                   Logout

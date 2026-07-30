@@ -1,0 +1,66 @@
+import mongoose from "mongoose";
+
+const DiscountRuleSchema = new mongoose.Schema({
+    code: {
+        type: String,
+        required: [true, "Discount code is required"],
+        uppercase: true,
+        trim: true
+    },
+    label: {
+        type: String,
+        trim: true,
+        default: ""
+    },
+    type: {
+        type: String,
+        enum: ['PERCENTAGE', 'FLAT'],
+        default: 'PERCENTAGE'
+    },
+    value: {
+        type: Number,
+        required: [true, "Discount value is required"],
+        min: 0
+    },
+    minOrderAmount: {
+        type: Number,
+        default: 0,
+        min: 0
+    },
+    isActive: {
+        type: Boolean,
+        default: true
+    },
+    expiresAt: {
+        type: Date,
+        default: null
+    }
+}, { timestamps: true });
+
+// Single source of truth for restaurant-wide tax, service charge, and promo
+// codes. We intentionally keep this as a singleton document (findOne / lazily
+// created) rather than a per-item setting, since the requirement is a global
+// configurable rate the Admin can tune from the Billing Settings screen.
+const BillingSettingsSchema = new mongoose.Schema({
+    taxRate: {
+        type: Number,
+        default: 13, // Nepal VAT default, editable by Admin
+        min: 0,
+        max: 100
+    },
+    serviceChargeRate: {
+        type: Number,
+        default: 0,
+        min: 0,
+        max: 100
+    },
+    discounts: [DiscountRuleSchema],
+    updatedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: null
+    }
+}, { timestamps: true });
+
+const BillingSettingsModel = mongoose.model("BillingSettings", BillingSettingsSchema);
+export default BillingSettingsModel;

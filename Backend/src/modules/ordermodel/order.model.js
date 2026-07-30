@@ -39,6 +39,39 @@ const OrderSchema = new mongoose.Schema({
     }
   ],
 
+  // Bill breakdown - computed server-side (see settings.service.js) from the
+  // restaurant's Tax & Discount Configuration at the time the order was
+  // placed, so historical orders keep the rate that actually applied to them.
+  subtotal: {
+    type: Number,
+    default: 0
+  },
+  discountCode: {
+    type: String,
+    default: null
+  },
+  discountAmount: {
+    type: Number,
+    default: 0
+  },
+  taxRate: {
+    type: Number,
+    default: 0
+  },
+  taxAmount: {
+    type: Number,
+    default: 0
+  },
+  serviceChargeRate: {
+    type: Number,
+    default: 0
+  },
+  serviceChargeAmount: {
+    type: Number,
+    default: 0
+  },
+
+  // Grand total actually charged (subtotal - discount + tax + service charge).
   totalPrice: {
     type: Number,
     required: true,

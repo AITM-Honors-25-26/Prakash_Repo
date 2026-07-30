@@ -287,6 +287,85 @@ $green: #7ed957;
     }
 
   }
+  .discountRow {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding-top: 12px;
+    flex-shrink: 0;
+
+    .discountInput {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+    }
+
+    .discountApplyBtn {
+      background: $mainColour;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 16px;
+      font-family: $mainfont;
+      font-size: 1.1rem;
+      cursor: pointer;
+      white-space: nowrap;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+
+    .discountApplied {
+      flex: 1;
+      color: #2e7d32;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 0.95rem;
+    }
+
+    .discountRemoveBtn {
+      background: transparent;
+      border: 1px solid #dc3545;
+      color: #dc3545;
+      border-radius: 6px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 0.85rem;
+
+      &:hover {
+        background: #dc3545;
+        color: #fff;
+      }
+    }
+  }
+
+  .discountHint {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-size: 0.85rem;
+    color: #b45309;
+    margin: 6px 0 0;
+    flex-shrink: 0;
+  }
+
+  .billBreakdown {
+    padding-top: 12px;
+    flex-shrink: 0;
+
+    .billRow {
+      display: flex;
+      justify-content: space-between;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 0.95rem;
+      color: #555;
+      padding: 4px 0;
+    }
+  }
+
   .totalRow {
     display: flex;
     justify-content: space-between;

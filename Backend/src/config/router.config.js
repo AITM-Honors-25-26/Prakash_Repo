@@ -5,6 +5,8 @@ import tableRouter from "../modules/table/table.router.js";
 import orderRouter from "../modules/order/order.routes.js";
 import contactAdminRouter from "../modules/contactAdmin/contactAdmin.router.js";
 import paymentRouter from "./payemnt/payment.router.js";
+import settingsRouter from "../modules/settings/settings.router.js";
+import analyticsRouter from "../modules/analytics/analytics.router.js";
 
 const router = Router();
 
@@ -14,5 +16,7 @@ router.use(tableRouter);
 router.use(orderRouter);
 router.use(contactAdminRouter)
 router.use(paymentRouter)
+router.use(settingsRouter)
+router.use(analyticsRouter)
 
 export default router;

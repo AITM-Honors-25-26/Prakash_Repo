@@ -46,6 +46,75 @@ class AuthService{
             dob:userObj.dob,
         };
     }
+    // --- Staff Account Management (Admin only) -----------------------------
+    listAllUsers = async (filter = {}) => {
+        try {
+            return await UserModel.find(filter).sort({ createdAt: -1 });
+        } catch (exception) {
+            throw exception;
+        }
+    }
+    createStaffAccount = async (data) => {
+        try {
+            data.password = bcrypt.hashSync(data.password, 12);
+            // Admin-created accounts skip the email-activation step entirely
+            // since the Admin has already verified the person is staff.
+            data.status = true;
+            data.activationToken = null;
+            const userObj = new UserModel(data);
+            return await userObj.save();
+        } catch (exception) {
+            throw exception;
+        }
+    }
+    updateUserById = async (id, updateData) => {
+        try {
+            return await UserModel.findByIdAndUpdate(id, { $set: updateData }, { new: true, runValidators: true });
+        } catch (exception) {
+            throw exception;
+        }
+    }
+    deleteUserById = async (id) => {
+        try {
+            return await UserModel.findByIdAndDelete(id);
+        } catch (exception) {
+            throw exception;
+        }
+    }
+    notifyStaffWelcome = async ({ name, email, role, tempPassword }) => {
+        try {
+            let msg = `
+            <div style="background-color:#f4f4f4;padding:20px;font-family:'Segoe UI',Helvetica,Arial,sans-serif;">
+                <div style="max-width:600px;margin:0 auto;background-color:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,0.1);border:1px solid #e0e0e0;">
+                    <div style="background-color:#2c3e50;padding:20px;text-align:center;">
+                        <h2 style="color:#ffffff;margin:0;font-size:24px;">Resturent Management System</h2>
+                    </div>
+                    <div style="padding:30px;color:#333333;line-height:1.6;">
+                        <p style="font-size:18px;margin-top:0;">Hi <strong>${name}</strong>,</p>
+                        <p>An administrator has created a staff account for you with the role of <strong>${role}</strong>.</p>
+                        <p>You can log in using: <br/>
+                           <span style="color:#2c3e50;font-weight:bold;">Email: ${email}</span><br/>
+                           <span style="color:#2c3e50;font-weight:bold;">Temporary Password: ${tempPassword}</span>
+                        </p>
+                        <p style="margin-top:25px;">Please log in and change your password from your profile settings as soon as possible.</p>
+                    </div>
+                    <div style="background-color:#f9f9f9;padding:20px;text-align:center;font-size:13px;color:#95a5a6;border-top:1px solid #eeeeee;">
+                        <p style="margin:0;">Regards, <br/> <strong>Team Support</strong></p>
+                        <p style="margin-top:10px;font-style:italic;">Note: This is an automated email. Please do not reply.</p>
+                    </div>
+                </div>
+            </div>`;
+            return await emailSvc.sendEmail({
+                to: email,
+                sub: "Your Staff Account Has Been Created",
+                message: msg
+            });
+        } catch (exception) {
+            throw exception;
+        }
+    }
+    // -------------------------------------------------------------------------
+
     getSingleUserByFilter= async (filter, selectFields)=>{
         try{
 
