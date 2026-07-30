@@ -1,31 +1,29 @@
 import Order from '../ordermodel/order.model.js';
 import { OrderStatus } from '../../config/constants.js';
-import settingsSvc from '../settings/settings.service.js';
 
 export const createOrder = async (orderData) => {
-  const { tableNumber, items, discountCode } = orderData;
+  // UPDATED: Now destructuring userId and sessionId
+  const { tableNumber, items, userId, sessionId } = orderData;
 
-  const subtotal = items.reduce((total, item) => {
+  const totalPrice = items.reduce((total, item) => {
     return total + (item.price * item.quantity);
   }, 0);
-
-  const totals = await settingsSvc.calculateOrderTotals(subtotal, discountCode);
 
   const newOrder = new Order({
     tableNumber,
     items,
-    subtotal: totals.subtotal,
-    discountCode: totals.discountCode,
-    discountAmount: totals.discountAmount,
-    taxRate: totals.taxRate,
-    taxAmount: totals.taxAmount,
-    serviceChargeRate: totals.serviceChargeRate,
-    serviceChargeAmount: totals.serviceChargeAmount,
-    totalPrice: totals.totalPrice,
+    totalPrice,
+    userId,        // NEW
+    sessionId,     // NEW
     status: OrderStatus.PENDING
   });
 
   return await newOrder.save();
+};
+
+// NEW: Database query to find user/session orders
+export const getUserOrders = async (query) => {
+  return await Order.find(query).sort({ createdAt: -1 }); // Newest orders first
 };
 
 export const getOrdersForKitchen = async () => {
@@ -50,8 +48,6 @@ export const getOrderById = async (orderId) => {
   return await Order.findById(orderId);
 };
 
-// Used by the eSewa QR flow: init sets it to Pending while the customer is
-// scanning/paying, the success/failure callback flips it to Paid/Failed.
 export const setPaymentStatus = async (orderId, paymentStatus, extra = {}) => {
   return await Order.findByIdAndUpdate(
     orderId,
