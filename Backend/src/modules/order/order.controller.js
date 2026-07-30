@@ -16,7 +16,8 @@ export const createOrder = async (req, res) => {
 };
 
 // Public/unauthenticated on purpose - the checkout page polls this from the
-// customer's own device (no login) while the eSewa QR modal is open.
+// customer's own device (no login) while the eSewa QR modal is open, and the
+// Order Tracking page uses it to render the live status + itemized bill.
 export const getOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -32,8 +33,18 @@ export const getOrderStatus = async (req, res) => {
         _id: order._id,
         status: order.status,
         paymentStatus: order.paymentStatus,
-        totalPrice: order.totalPrice,
+        paymentMethod: order.paymentMethod,
         tableNumber: order.tableNumber,
+        items: order.items,
+        subtotal: order.subtotal,
+        discountCode: order.discountCode,
+        discountAmount: order.discountAmount,
+        taxRate: order.taxRate,
+        taxAmount: order.taxAmount,
+        serviceChargeRate: order.serviceChargeRate,
+        serviceChargeAmount: order.serviceChargeAmount,
+        totalPrice: order.totalPrice,
+        createdAt: order.createdAt,
       },
     });
   } catch (error) {

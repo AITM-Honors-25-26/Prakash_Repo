@@ -1,0 +1,350 @@
+$header_colour: #48392a;
+$font-nav: 'Amatic SC', cursive;
+$green: #7ed957;
+$accent: #d84315;
+
+.pageContainer {
+  padding: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+  }
+}
+
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  text-align: center;
+
+  img {
+    width: 150px;
+    max-width: 40vw;
+  }
+  h1 {
+    font-family: $font-nav;
+    color: $header_colour;
+  }
+}
+
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+  font-family: $font-nav;
+
+  h1 {
+    color: $header_colour;
+    margin: 0;
+    font-size: 2.2rem;
+  }
+  p {
+    margin: 0;
+    color: #888;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+}
+
+.liveBadge {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &.live {
+    background: #e8f9ee;
+    color: #1e8e4a;
+  }
+  &.offline {
+    background: #fdf1e8;
+    color: #b45309;
+  }
+}
+
+.cancelledBanner {
+  background: #fdecea;
+  border: 1px solid #f5c2c0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+
+  h2 {
+    color: #c0392b;
+    font-family: $font-nav;
+    margin: 0 0 6px;
+  }
+  p {
+    color: #7a2e26;
+    margin: 0;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+}
+
+.stepper {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  background: #faf7f2;
+  border-radius: 12px;
+  padding: 1.5rem 1rem;
+
+  @media (max-width: 600px) {
+    padding: 1rem 0.5rem;
+  }
+}
+
+.step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  text-align: center;
+
+  .stepCircle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #ddd;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-bottom: 8px;
+    z-index: 2;
+    transition: background-color 0.3s;
+  }
+
+  .stepText {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-width: 140px;
+
+    strong {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 0.85rem;
+      color: #888;
+    }
+    span {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 0.75rem;
+      color: #666;
+    }
+
+    @media (max-width: 600px) {
+      strong { font-size: 0.7rem; }
+      span { display: none; }
+    }
+  }
+
+  .stepLine {
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    width: 100%;
+    height: 3px;
+    background: #ddd;
+    z-index: 1;
+  }
+
+  &.done {
+    .stepCircle {
+      background: $green;
+    }
+    .stepText strong {
+      color: $header_colour;
+    }
+    .stepLine {
+      background: $green;
+    }
+  }
+
+  &.active {
+    .stepCircle {
+      background: $accent;
+    }
+    .stepText strong {
+      color: $accent;
+    }
+  }
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+
+  h2 {
+    font-family: $font-nav;
+    color: $header_colour;
+    font-size: 1.6rem;
+    margin: 0 0 1rem;
+    border-bottom: 2px solid #f0ece5;
+    padding-bottom: 8px;
+  }
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.itemRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-family: system-ui, -apple-system, sans-serif;
+
+  .itemInfo {
+    strong {
+      color: #333;
+      font-size: 0.95rem;
+    }
+  }
+
+  .itemAmount {
+    white-space: nowrap;
+    font-weight: 600;
+    color: $header_colour;
+  }
+}
+
+.addOnTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+
+  .addOnTag {
+    font-size: 0.7rem;
+    background: #fff3ee;
+    color: $accent;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+}
+
+.itemNotes {
+  font-size: 0.8rem;
+  color: #888;
+  font-style: italic;
+  margin: 4px 0 0;
+}
+
+.billRow {
+  display: flex;
+  justify-content: space-between;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+  padding: 4px 0;
+}
+
+.billTotalRow {
+  display: flex;
+  justify-content: space-between;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: bold;
+  font-size: 1.15rem;
+  color: $header_colour;
+  border-top: 2px dashed #eee;
+  margin-top: 8px;
+  padding-top: 10px;
+}
+
+.paymentStatus {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.paymentBadge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #f0ece5;
+  color: #888;
+
+  &.paid {
+    background: #e8f9ee;
+    color: #1e8e4a;
+  }
+  &.pending {
+    background: #fdf1e8;
+    color: #b45309;
+  }
+}
+
+.actionsRow {
+  display: flex;
+  justify-content: center;
+}
+
+.primaryBtn,
+.secondaryBtn {
+  font-family: $font-nav;
+  font-size: 1.3rem;
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.primaryBtn {
+  background: $header_colour;
+  color: #fff;
+}
+
+.secondaryBtn {
+  background: #fff;
+  color: $header_colour;
+  border: 2px solid $header_colour;
+}
+
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  text-align: center;
+  gap: 1rem;
+
+  h2 {
+    font-family: $font-nav;
+    color: $header_colour;
+  }
+}

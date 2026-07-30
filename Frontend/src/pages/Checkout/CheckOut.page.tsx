@@ -11,16 +11,24 @@ import { API_ENDPOINTS } from '../../constants/constants';
 
 const MySwal = withReactContent(Swal);
 
+interface AddOnOption {
+  name: string;
+  price: number;
+}
+
 interface CartItem {
   _id: string;
+  cartLineId: string;
   name: string;
   description: string;
   price: number;
+  unitPrice: number;
   images: { url: string; public_id: string }[];
   category: string;
   stock: number;
   quantity: number;
-  specialNotes?: string;
+  selectedAddOns: AddOnOption[];
+  specialNotes: string;
 }
 
 interface BillTotals {
@@ -92,9 +100,9 @@ const CheckoutPage: React.FC = () => {
     setCheckingPayment(false);
   };
 
-  const updateQuantity = (id: string, amount: number) => {
+  const updateQuantity = (lineId: string, amount: number) => {
     const updatedCart = cartItems.map(item => {
-      if (item._id === id) {
+      if (item.cartLineId === lineId) {
         const newQty = item.quantity + amount;
         return { ...item, quantity: newQty < 1 ? 1 : newQty };
       }
@@ -105,16 +113,26 @@ const CheckoutPage: React.FC = () => {
     window.dispatchEvent(new Event('cartUpdated'));
   };
 
-  const removeItem = (id: string) => {
-    const updatedCart = cartItems.filter(item => item._id !== id);
+  const removeItem = (lineId: string) => {
+    const updatedCart = cartItems.filter(item => item.cartLineId !== lineId);
     setCartItems(updatedCart);
     localStorage.setItem('bakery_cart', JSON.stringify(updatedCart));
     window.dispatchEvent(new Event('cartUpdated'));
     toast.info('Item removed from cart.');
   };
 
+  // Order Customization - lets the customer tweak special instructions for
+  // an item that's already in the cart, right up until they place the order.
+  const updateSpecialNotes = (lineId: string, notes: string) => {
+    const updatedCart = cartItems.map(item =>
+      item.cartLineId === lineId ? { ...item, specialNotes: notes } : item
+    );
+    setCartItems(updatedCart);
+    localStorage.setItem('bakery_cart', JSON.stringify(updatedCart));
+  };
+
   const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    return cartItems.reduce((total, item) => total + item.unitPrice * item.quantity, 0);
   };
 
   // Live bill preview - recalculated by the server (Tax & Discount
@@ -181,6 +199,17 @@ const CheckoutPage: React.FC = () => {
 
   const grandTotal = billTotals ? billTotals.totalPrice : calculateTotal();
 
+  // Order Tracking - remembered across navigation (and even a page refresh)
+  // so the floating "Track Order" pill can bring the customer straight back,
+  // e.g. after they browse the menu for more items or return to the home page.
+  const rememberActiveOrder = (orderId: string) => {
+    localStorage.setItem(
+      'bakery_active_order',
+      JSON.stringify({ orderId, tableNumber, createdAt: Date.now() })
+    );
+    window.dispatchEvent(new Event('activeOrderUpdated'));
+  };
+
   const startQrPayment = async (orderId: string, totalAmount: string) => {
     try {
       const { data } = await axios.post(API_ENDPOINTS.ESEWA_QR, {
@@ -210,6 +239,7 @@ const CheckoutPage: React.FC = () => {
           setQrModalOpen(false);
           localStorage.removeItem('bakery_cart');
           window.dispatchEvent(new Event('cartUpdated'));
+          rememberActiveOrder(orderId);
 
           await MySwal.fire({
             title: 'Payment Received! 🎉',
@@ -217,7 +247,7 @@ const CheckoutPage: React.FC = () => {
             icon: 'success',
             confirmButtonColor: '#d84315',
           });
-          navigate('/MenuPage');
+          navigate(`/OrderTracking/${orderId}`);
         } else if (paymentStatus === 'Failed') {
           stopPolling();
           setQrModalOpen(false);
@@ -257,9 +287,12 @@ const CheckoutPage: React.FC = () => {
       const orderPayload = {
         tableNumber,
         items: cartItems.map(item => ({
+          itemId: item._id,
           name: item.name,
           quantity: item.quantity,
-          price: item.price,
+          price: item.unitPrice,
+          basePrice: item.price,
+          selectedAddOns: item.selectedAddOns,
           specialNotes: item.specialNotes || '',
         })),
         discountCode: appliedDiscountCode || undefined,
@@ -277,6 +310,7 @@ const CheckoutPage: React.FC = () => {
         // 'Pay Later'
         localStorage.removeItem('bakery_cart');
         window.dispatchEvent(new Event('cartUpdated'));
+        rememberActiveOrder(orderId);
 
         await MySwal.fire({
           title: 'Order Sent to Kitchen! 🍳',
@@ -284,7 +318,7 @@ const CheckoutPage: React.FC = () => {
           icon: 'success',
           confirmButtonColor: '#d84315',
         });
-        navigate('/MenuPage');
+        navigate(`/OrderTracking/${orderId}`);
       }
     } catch (error) {
       console.error('Order placement failed:', error);
@@ -317,7 +351,7 @@ const CheckoutPage: React.FC = () => {
               <h2>Summary</h2>
               <div className={styles.itemsList}>
                 {cartItems.map((item) => (
-                  <div key={item._id} className={styles.cartItemRow}>
+                  <div key={item.cartLineId} className={styles.cartItemRow}>
                     <img
                       src={item.images?.[0]?.url || 'https://via.placeholder.com/150'}
                       alt={item.name}
@@ -325,21 +359,40 @@ const CheckoutPage: React.FC = () => {
                     />
                     <div className={styles.itemInfo}>
                       <h3>{item.name}</h3>
-                      <p className={styles.itemPrice}>Rs. {item.price.toLocaleString()}</p>
+                      <p className={styles.itemPrice}>Rs. {item.unitPrice.toLocaleString()}</p>
+
+                      {item.selectedAddOns.length > 0 && (
+                        <div className={styles.addOnTags}>
+                          {item.selectedAddOns.map((addOn) => (
+                            <span key={addOn.name} className={styles.addOnTag}>
+                              + {addOn.name}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      <textarea
+                        className={styles.notesEdit}
+                        placeholder="Add special instructions..."
+                        value={item.specialNotes}
+                        onChange={(e) => updateSpecialNotes(item.cartLineId, e.target.value)}
+                        rows={1}
+                        maxLength={200}
+                      />
 
                       <div className={styles.quantityControls}>
-                        <button type="button" onClick={() => updateQuantity(item._id, -1)}>-</button>
+                        <button type="button" onClick={() => updateQuantity(item.cartLineId, -1)}>-</button>
                         <span className={styles.itemCount}>{item.quantity}</span>
-                        <button type="button" onClick={() => updateQuantity(item._id, 1)}>+</button>
+                        <button type="button" onClick={() => updateQuantity(item.cartLineId, 1)}>+</button>
                       </div>
                     </div>
                     <div className={styles.itemRightSide}>
                       <span className={styles.subtotal}>
-                        Rs. {(item.price * item.quantity).toLocaleString()}
+                        Rs. {(item.unitPrice * item.quantity).toLocaleString()}
                       </span>
                       <button
                         className={styles.deleteBtn}
-                        onClick={() => removeItem(item._id)}
+                        onClick={() => removeItem(item.cartLineId)}
                       >
                         Delete
                       </button>

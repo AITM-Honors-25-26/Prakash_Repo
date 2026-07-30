@@ -25,6 +25,19 @@ export const validateCreateOrder = (req, res, next) => {
     if (!item.price || typeof item.price !== 'number' || item.price < 0) {
       return res.status(400).json({ success: false, message: 'Each item must have a valid positive price.' });
     }
+    if (item.specialNotes !== undefined && typeof item.specialNotes !== 'string') {
+      return res.status(400).json({ success: false, message: 'Special instructions must be a valid text value.' });
+    }
+    if (item.selectedAddOns !== undefined) {
+      if (!Array.isArray(item.selectedAddOns)) {
+        return res.status(400).json({ success: false, message: 'Selected add-ons must be a list.' });
+      }
+      for (const addOn of item.selectedAddOns) {
+        if (!addOn || typeof addOn.name !== 'string' || typeof addOn.price !== 'number' || addOn.price < 0) {
+          return res.status(400).json({ success: false, message: 'Each selected add-on must have a valid name and price.' });
+        }
+      }
+    }
   }
 
   next();

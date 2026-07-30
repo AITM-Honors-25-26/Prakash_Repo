@@ -21,6 +21,24 @@ class MenuService {
             if (data.stock) data.stock = Number(data.stock);
             data.isAvailable = String(data.isAvailable) === 'true';
 
+            // Order Customization: parse the admin-configured add-ons list
+            // (arrives as a JSON string over multipart/form-data).
+            if (typeof data.addOns === 'string') {
+                try {
+                    const parsed = JSON.parse(data.addOns);
+                    data.addOns = Array.isArray(parsed)
+                        ? parsed
+                            .filter((addOn) => addOn && typeof addOn.name === 'string' && addOn.name.trim())
+                            .map((addOn) => ({
+                                name: addOn.name.trim(),
+                                price: Math.max(Number(addOn.price) || 0, 0)
+                            }))
+                        : [];
+                } catch {
+                    data.addOns = [];
+                }
+            }
+
             return data;
         } catch (exception) {
             throw exception;

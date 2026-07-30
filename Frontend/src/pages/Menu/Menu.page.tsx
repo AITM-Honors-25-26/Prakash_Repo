@@ -8,6 +8,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import styles from './MenuPage.module.scss';
 import Layout from '../../components/layout/layout';
 import ItemDetailModal from '../../components/ItemDetail/ItemDetailsPage';
+import type { CartCustomization } from '../../components/ItemDetail/ItemDetailsPage';
 
 import cartwhite from '../../../img/icons/cart.white.png';
 import hot from '../../../img/gif/hot.gif';
@@ -15,6 +16,11 @@ import hot from '../../../img/gif/hot.gif';
 import { API_ENDPOINTS } from '../../constants/constants';
 
 const MySwal = withReactContent(Swal);
+
+interface AddOnOption {
+  name: string;
+  price: number;
+}
 
 interface BakeryItem {
   _id: string;
@@ -25,10 +31,15 @@ interface BakeryItem {
   category: string;
   stock: number;
   isAvailable: boolean;
+  addOns?: AddOnOption[];
 }
 
-interface CartItem extends BakeryItem {
+export interface CartItem extends BakeryItem {
+  cartLineId: string;
   quantity: number;
+  unitPrice: number;
+  selectedAddOns: AddOnOption[];
+  specialNotes: string;
 }
 
 const MenuItemCard: React.FC<{
@@ -216,19 +227,46 @@ const MenuPage: React.FC = () => {
     }));
   }, [menuItems]);
 
-  const handleAddToCart = (item: BakeryItem) => {
+  // Order Customization: two items count as "the same cart line" only if
+  // they share the item id AND the exact same selected add-ons AND the same
+  // special instructions - otherwise a customized item gets its own line.
+  const buildCartLineId = (
+    itemId: string,
+    selectedAddOns: AddOnOption[],
+    specialNotes: string
+  ) => {
+    const addOnKey = [...selectedAddOns]
+      .map((addOn) => addOn.name)
+      .sort()
+      .join('|');
+    return `${itemId}::${addOnKey}::${specialNotes.trim().toLowerCase()}`;
+  };
+
+  const addToCart = (
+    item: BakeryItem,
+    customization: CartCustomization = { quantity: 1, selectedAddOns: [], specialNotes: '' }
+  ) => {
     try {
       const existingCart = localStorage.getItem('bakery_cart');
       const cart: CartItem[] = existingCart ? JSON.parse(existingCart) : [];
 
-      const existingItem = cart.find(
-        (cartItem: CartItem) => cartItem._id === item._id
-      );
+      const { quantity, selectedAddOns, specialNotes } = customization;
+      const cartLineId = buildCartLineId(item._id, selectedAddOns, specialNotes);
+      const unitPrice = item.price + selectedAddOns.reduce((sum, addOn) => sum + addOn.price, 0);
 
-      if (existingItem) {
-        existingItem.quantity += 1;
+      const existingLine = cart.find((line) => line.cartLineId === cartLineId);
+
+      if (existingLine) {
+        existingLine.quantity += quantity;
       } else {
-        cart.push({ ...item, quantity: 1 });
+        cart.push({
+          ...item,
+          cartLineId,
+          quantity,
+          unitPrice,
+          selectedAddOns,
+          specialNotes,
+        });
       }
 
       localStorage.setItem('bakery_cart', JSON.stringify(cart));
@@ -238,6 +276,16 @@ const MenuPage: React.FC = () => {
       console.error(error);
       toast.error('Unable to add item');
     }
+  };
+
+  // Quick "Add" button on the card - default quantity of 1, no customization.
+  const handleAddToCart = (item: BakeryItem) => {
+    addToCart(item);
+  };
+
+  // Full customization flow from the item detail modal.
+  const handleAddToCartWithCustomization = (item: BakeryItem, customization: CartCustomization) => {
+    addToCart(item, customization);
   };
 
   const handleDelete = async (itemId: string) => {
@@ -339,7 +387,7 @@ const MenuPage: React.FC = () => {
         <ItemDetailModal
           item={selectedItem}
           onClose={() => setSelectedItem(null)}
-          onAddToCart={handleAddToCart}
+          onAddToCart={handleAddToCartWithCustomization}
         />
       )}
     </Layout>

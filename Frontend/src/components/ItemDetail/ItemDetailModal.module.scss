@@ -70,6 +70,130 @@
     flex-direction: column;
     justify-content: space-between;
     overflow-y: auto; // Allows scrolling if text is long
+    gap: 1rem;
+  }
+
+  .customizeBlock {
+    margin-top: 1.25rem;
+  }
+
+  .customizeLabel {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+
+  .quantityStepper {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 6px 14px;
+
+    button {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid #ff6b35;
+      background: #fff;
+      color: #ff6b35;
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+
+      &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      &:hover:not(:disabled) {
+        background: #fff3ee;
+      }
+    }
+
+    span {
+      min-width: 20px;
+      text-align: center;
+      font-weight: 600;
+    }
+  }
+
+  .addOnsList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .addOnRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #333;
+
+    &:hover {
+      background: #fafafa;
+    }
+
+    .addOnCheck {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      input {
+        width: 16px;
+        height: 16px;
+        accent-color: #ff6b35;
+      }
+    }
+
+    .addOnPrice {
+      color: #ff6b35;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+  }
+
+  .notesInput {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    resize: vertical;
+
+    &:focus {
+      outline: none;
+      border-color: #ff6b35;
+    }
+  }
+
+  .footerSection {
+    margin-top: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .lineTotal {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 10px;
+
+    strong {
+      font-size: 1.2rem;
+      color: #1a1a1a;
+    }
   }
 
   .textDetails {
