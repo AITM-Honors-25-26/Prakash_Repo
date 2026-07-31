@@ -4,11 +4,19 @@ import { menuCreateSchema } from "./menu.validator.js";
 import { bodyValidator } from "../../middleware/request.validator.js";
 import { uploader } from "../../middleware/file-handeling.middleware.js";
 import allowUser from "../../middleware/auth.middelware.js";
+import { requestTimeout } from "../../middleware/requestTimeout.middleware.js";
 import { UserRole } from "../../config/constants.js";
 
 const menuRouter = Router();
 
-menuRouter.post('/menu/add-item', allowUser([UserRole.ADMIN]), uploader().array('images', 4), bodyValidator(menuCreateSchema), menuCtrl.createBakeryItem);
+menuRouter.post(
+    '/menu/add-item',
+    allowUser([UserRole.ADMIN]),
+    requestTimeout(30000), // abort + rollback if this takes longer than 30s
+    uploader().array('images', 4),
+    bodyValidator(menuCreateSchema),
+    menuCtrl.createBakeryItem
+);
 menuRouter.get('/menu/list', menuCtrl.getAllMenuItems);
 menuRouter.delete('/menu/:id', allowUser([UserRole.ADMIN]), menuCtrl.deleteMenuItem);
 
