@@ -4,6 +4,7 @@ import router from "./router.config.js";
 import cookieParser from "cookie-parser";
 import cors from 'cors';
 import "./db.config.js"
+import "../queues/email.worker.js"; // starts the BullMQ worker so queued emails actually get processed
 const app = express();
 
 app.use(cors({

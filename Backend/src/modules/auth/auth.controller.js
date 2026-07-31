@@ -16,7 +16,7 @@ class AuthController {
             const userObj = await autSvc.userStore(userData);
 
             await emailQueue.add(EMAIL_JOBS.ACTIVATION, {
-                name:            userObj.name,
+                name:            userObj.fullName,
                 email:           userObj.email,
                 activationToken: userObj.activationToken,
             });

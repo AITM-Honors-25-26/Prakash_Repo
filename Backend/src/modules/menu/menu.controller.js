@@ -3,13 +3,20 @@ class MenuController {
     createBakeryItem = async (req, res, next) => {
         try {
             const data = await menuSvc.transformMenuData(req);
-            const savedItem = await menuSvc.storeMenuItem(data);
+            const savedItem = await menuSvc.storeMenuItem(data, req);
+
+            // The requestTimeout middleware may have already sent a 408 and
+            // run cleanup while the above was still in flight — don't try
+            // to send a second response.
+            if (res.headersSent) return;
+
             res.status(201).json({
                 result: savedItem,
                 message: "Bakery item added successfully!",
                 meta: null
             });
         } catch (exception) {
+            if (res.headersSent) return;
             next(exception);
         }
     }

@@ -9,11 +9,20 @@ class MenuService {
 
             if (req.files && req.files.length > 0) {
                 for (const file of req.files) {
+                    // If a previous iteration already blew past the timeout,
+                    // stop uploading further files instead of piling on more
+                    // work that will just get deleted anyway.
+                    if (req.hasTimedOut && req.hasTimedOut()) break;
+
                     const upload = await cloudianarySvc.fileUpload(file.path, 'bakery/');
                     data.images.push({
                         url: upload.secure_url || upload.url,
                         public_id: upload.public_id
                     });
+
+                    if (req.registerCleanup) {
+                        req.registerCleanup(() => cloudianarySvc.deleteFile(upload.public_id));
+                    }
                 }
             }
 
@@ -44,10 +53,22 @@ class MenuService {
             throw exception;
         }
     }
-    storeMenuItem = async (data) => {
+    storeMenuItem = async (data, req) => {
         try {
+            if (req && req.hasTimedOut && req.hasTimedOut()) {
+                // The request already timed out while uploads were running;
+                // don't bother writing a DB row nobody will get a response for.
+                return null;
+            }
+
             const itemObj = new Bakery(data);
-            return await itemObj.save();
+            const saved = await itemObj.save();
+
+            if (req && req.registerCleanup) {
+                req.registerCleanup(() => Bakery.findByIdAndDelete(saved._id));
+            }
+
+            return saved;
         } catch (exception) {
             throw exception;
         }
