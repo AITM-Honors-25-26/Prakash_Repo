@@ -159,6 +159,9 @@ export const API_ENDPOINTS = {
   UPDATEORDERSTATUS: `${API_BASE_URL}/order/status`,
   ORDER_ACTION: `${API_BASE_URL}/order`,
 
+  // Table Overview - all active orders for one table (GET .../:tableNumber/active)
+  ORDER_BY_TABLE: `${API_BASE_URL}/order/table`,
+
   TABLENUMBER: `${API_FRONTEND}/MenuPage/:id`,
   TABLE_BASE: `${API_BASE_URL}/table`,
 

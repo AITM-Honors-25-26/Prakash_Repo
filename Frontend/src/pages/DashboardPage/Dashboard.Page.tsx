@@ -119,6 +119,15 @@ const Dashboard: React.FC = () => {
       });
     });
 
+    // Order Customization - the customer can edit items while an order is
+    // still Pending; keep the kitchen board's item list/total in sync.
+    socket.on('order_items_updated', (updatedOrder: Order) => {
+      console.log('Order items updated:', updatedOrder);
+      setOrders(prev =>
+        prev.map(o => (o._id === updatedOrder._id ? updatedOrder : o))
+      );
+    });
+
     return () => {
       socket.disconnect();
     };
@@ -166,6 +175,29 @@ const Dashboard: React.FC = () => {
     o => o.status === 'Pending' || o.status === 'Preparing'
   );
   const serviceOrders = orders.filter(o => o.status === 'Ready');
+
+  // Table Overview - a table often has more than one active order at once
+  // (e.g. "Order More Items" while the first is still Pending), so group by
+  // table instead of showing them as scattered, unrelated cards.
+  const groupOrdersByTable = (list: Order[]): [string, Order[]][] => {
+    const groups = new Map<string, Order[]>();
+    list.forEach(order => {
+      const key = String(order.tableNumber);
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key)!.push(order);
+    });
+
+    groups.forEach(group =>
+      group.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+    );
+
+    return Array.from(groups.entries()).sort(
+      (a, b) => new Date(a[1][0].createdAt).getTime() - new Date(b[1][0].createdAt).getTime()
+    );
+  };
+
+  const kitchenTableGroups = groupOrdersByTable(kitchenOrders);
+  const serviceTableGroups = groupOrdersByTable(serviceOrders);
 
   if (loading && orders.length === 0) {
     return (
@@ -215,55 +247,65 @@ const Dashboard: React.FC = () => {
                 <h2><img src={kitchen} alt="" /> Kitchen Queue <span>({kitchenOrders.length})</span></h2>
               </div>
               <div className={styles.cardContainer}>
-                {kitchenOrders.length === 0 ? (
+                {kitchenTableGroups.length === 0 ? (
                   <p className={styles.emptyMsg}>No meals to prepare right now.</p>
                 ) : (
-                  kitchenOrders.map(order => (
-                    <div
-                      key={order._id}
-                      className={`${styles.orderCard} ${styles[order.status.toLowerCase()]}`}
-                    >
-                      <div className={styles.cardTop}>
-                        <h3>Table {order.tableNumber}</h3>
-                        <span className={styles.timeTag}>
-                          {new Date(order.createdAt).toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </span>
-                      </div>
-
-                      <ul className={styles.itemList}>
-                        {order.items.map((item, index) => (
-                          <li key={item._id || index} className={styles.itemRow}>
-                            <span className={styles.qty}>{item.quantity}x</span>
-                            <div className={styles.itemDetails}>
-                              <p className={styles.itemName}>{item.name}</p>
-                              {item.specialNotes && (
-                                <span className={styles.notes}>📝 {item.specialNotes}</span>
-                              )}
-                            </div>
-                          </li>
-                        ))}
-                      </ul>
-
-                      <div className={styles.cardActions}>
-                        {order.status === 'Pending' ? (
-                          <button
-                            onClick={() => updateOrderStatus(order._id, 'Preparing')}
-                            className={styles.actionBtnStart}
-                          >
-                            Start Cooking
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => updateOrderStatus(order._id, 'Ready')}
-                            className={styles.actionBtnReady}
-                          >
-                            Mark Ready 🎉
-                          </button>
+                  kitchenTableGroups.map(([tableNumber, tableOrders]) => (
+                    <div key={tableNumber} className={styles.tableGroup}>
+                      <div className={styles.tableGroupHeader}>
+                        <h3>Table {tableNumber}</h3>
+                        {tableOrders.length > 1 && (
+                          <span className={styles.orderCountTag}>{tableOrders.length} active orders</span>
                         )}
                       </div>
+
+                      {tableOrders.map(order => (
+                        <div
+                          key={order._id}
+                          className={`${styles.orderCard} ${styles[order.status.toLowerCase()]}`}
+                        >
+                          <div className={styles.cardTop}>
+                            <span className={styles.timeTag}>
+                              {new Date(order.createdAt).toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </span>
+                          </div>
+
+                          <ul className={styles.itemList}>
+                            {order.items.map((item, index) => (
+                              <li key={item._id || index} className={styles.itemRow}>
+                                <span className={styles.qty}>{item.quantity}x</span>
+                                <div className={styles.itemDetails}>
+                                  <p className={styles.itemName}>{item.name}</p>
+                                  {item.specialNotes && (
+                                    <span className={styles.notes}>📝 {item.specialNotes}</span>
+                                  )}
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+
+                          <div className={styles.cardActions}>
+                            {order.status === 'Pending' ? (
+                              <button
+                                onClick={() => updateOrderStatus(order._id, 'Preparing')}
+                                className={styles.actionBtnStart}
+                              >
+                                Start Cooking
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => updateOrderStatus(order._id, 'Ready')}
+                                className={styles.actionBtnReady}
+                              >
+                                Mark Ready 🎉
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   ))
                 )}
@@ -276,36 +318,46 @@ const Dashboard: React.FC = () => {
                 <h2><img src={service} alt="" /> Service & Delivery <span>({serviceOrders.length})</span></h2>
               </div>
               <div className={styles.cardContainer}>
-                {serviceOrders.length === 0 ? (
+                {serviceTableGroups.length === 0 ? (
                   <p className={styles.emptyMsg}>No orders waiting to go out.</p>
                 ) : (
-                  serviceOrders.map(order => (
-                    <div
-                      key={order._id}
-                      className={`${styles.orderCard} ${styles.readyCard}`}
-                    >
-                      <div className={styles.cardTop}>
-                        <h3>Table {order.tableNumber}</h3>
-                        <span className={styles.readyBadge}>Ready to Serve</span>
+                  serviceTableGroups.map(([tableNumber, tableOrders]) => (
+                    <div key={tableNumber} className={styles.tableGroup}>
+                      <div className={styles.tableGroupHeader}>
+                        <h3>Table {tableNumber}</h3>
+                        {tableOrders.length > 1 && (
+                          <span className={styles.orderCountTag}>{tableOrders.length} ready orders</span>
+                        )}
                       </div>
 
-                      <ul className={styles.itemList}>
-                        {order.items.map((item, index) => (
-                          <li key={item._id || index} className={styles.itemRow}>
-                            <span className={styles.qty}>{item.quantity}x</span>
-                            <span className={styles.itemName}>{item.name}</span>
-                          </li>
-                        ))}
-                      </ul>
-
-                      <div className={styles.cardActions}>
-                        <button
-                          onClick={() => deleteCompletedOrder(order._id)}
-                          className={styles.actionBtnComplete}
+                      {tableOrders.map(order => (
+                        <div
+                          key={order._id}
+                          className={`${styles.orderCard} ${styles.readyCard}`}
                         >
-                          Served & Completed ✓
-                        </button>
-                      </div>
+                          <div className={styles.cardTop}>
+                            <span className={styles.readyBadge}>Ready to Serve</span>
+                          </div>
+
+                          <ul className={styles.itemList}>
+                            {order.items.map((item, index) => (
+                              <li key={item._id || index} className={styles.itemRow}>
+                                <span className={styles.qty}>{item.quantity}x</span>
+                                <span className={styles.itemName}>{item.name}</span>
+                              </li>
+                            ))}
+                          </ul>
+
+                          <div className={styles.cardActions}>
+                            <button
+                              onClick={() => deleteCompletedOrder(order._id)}
+                              className={styles.actionBtnComplete}
+                            >
+                              Served & Completed ✓
+                            </button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   ))
                 )}

@@ -76,8 +76,34 @@ const OrderTrackingPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [liveConnected, setLiveConnected] = useState(false);
 
+  // Order Customization - the customer can only edit items while the order
+  // is still Pending. draftItems holds the in-progress edit; it's discarded
+  // (or re-seeded) whenever we leave edit mode or a fresh order comes in.
+  const [isEditing, setIsEditing] = useState(false);
+  const [draftItems, setDraftItems] = useState<OrderItem[]>([]);
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
+  const [cancelling, setCancelling] = useState(false);
+
+  // Table Overview - other still-active orders placed for this same table
+  // (e.g. via "Order More Items" earlier), shown read-only alongside the
+  // order this page was opened for.
+  const [tableOrders, setTableOrders] = useState<TrackedOrder[]>([]);
+  const tableNumberRef = useRef<string | null>(null);
+
   const socketRef = useRef<Socket | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const fetchTableOrders = useCallback(async (tableNumber: string) => {
+    try {
+      const { data } = await axios.get(`${API_ENDPOINTS.ORDER_BY_TABLE}/${tableNumber}/active`);
+      if (Array.isArray(data.data)) {
+        setTableOrders(data.data.filter((o: TrackedOrder) => o._id !== orderId));
+      }
+    } catch (err) {
+      console.error('Failed to fetch table orders:', err);
+    }
+  }, [orderId]);
 
   const fetchOrder = useCallback(async (showLoading = false) => {
     if (!orderId) return;
@@ -86,6 +112,14 @@ const OrderTrackingPage: React.FC = () => {
       const { data } = await axios.get(`${API_ENDPOINTS.ORDER_STATUS}/${orderId}/status`);
       setOrder(data.data);
       setError(null);
+      tableNumberRef.current = data.data.tableNumber;
+      fetchTableOrders(data.data.tableNumber);
+
+      // Order Customization - if the kitchen started preparing while the
+      // customer was mid-edit, kick them out of edit mode immediately.
+      if (data.data.status !== 'Pending') {
+        setIsEditing(false);
+      }
 
       if (data.data.status === 'Cancelled') {
         clearActiveOrder(orderId);
@@ -101,7 +135,7 @@ const OrderTrackingPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [orderId]);
+  }, [orderId, fetchTableOrders]);
 
   useEffect(() => {
     fetchOrder(true);
@@ -119,13 +153,38 @@ const OrderTrackingPage: React.FC = () => {
     socket.on('disconnect', () => setLiveConnected(false));
     socket.on('connect_error', () => setLiveConnected(false));
 
-    socket.on('order_status_updated', (updatedOrder: { _id: string; status: string }) => {
+    socket.on('order_status_updated', (updatedOrder: TrackedOrder) => {
       if (updatedOrder._id === orderId) {
         if (updatedOrder.status === 'Completed') {
           toast.success('Your order has been served. Enjoy your meal!');
           clearActiveOrder(orderId as string);
         }
+        if (updatedOrder.status !== 'Pending') {
+          // Order Customization - lock out editing the instant the kitchen
+          // starts, rather than waiting for the next poll.
+          setIsEditing(false);
+        }
         fetchOrder(false);
+      } else if (tableNumberRef.current && updatedOrder.tableNumber === tableNumberRef.current) {
+        // Table Overview - a sibling order at the same table changed status.
+        fetchTableOrders(tableNumberRef.current);
+      }
+    });
+
+    socket.on('order_items_updated', (updatedOrder: TrackedOrder) => {
+      if (updatedOrder._id === orderId) {
+        setOrder(updatedOrder);
+      } else if (tableNumberRef.current && updatedOrder.tableNumber === tableNumberRef.current) {
+        fetchTableOrders(tableNumberRef.current);
+      }
+    });
+
+    // Table Overview - another order just got placed for this table (e.g.
+    // "Order More Items" from this same device, or another device at the
+    // table), so refresh the sibling list.
+    socket.on('kitchen_new_order', (newOrder: TrackedOrder) => {
+      if (newOrder._id !== orderId && tableNumberRef.current && newOrder.tableNumber === tableNumberRef.current) {
+        fetchTableOrders(tableNumberRef.current);
       }
     });
 
@@ -136,7 +195,94 @@ const OrderTrackingPage: React.FC = () => {
       if (pollRef.current) clearInterval(pollRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orderId, fetchOrder]);
+  }, [orderId, fetchOrder, fetchTableOrders]);
+
+  // Order Customization - enter/exit edit mode, seeding the draft from the
+  // last-known-good order each time editing starts.
+  const startEditing = () => {
+    if (!order) return;
+    setDraftItems(order.items.map((item) => ({ ...item })));
+    setEditError(null);
+    setIsEditing(true);
+  };
+
+  const cancelEditing = () => {
+    setIsEditing(false);
+    setEditError(null);
+  };
+
+  const changeDraftQuantity = (index: number, amount: number) => {
+    setDraftItems((prev) =>
+      prev.map((item, i) =>
+        i === index ? { ...item, quantity: Math.max(1, item.quantity + amount) } : item
+      )
+    );
+  };
+
+  const removeDraftItem = (index: number) => {
+    setDraftItems((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const changeDraftNotes = (index: number, notes: string) => {
+    setDraftItems((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, specialNotes: notes } : item))
+    );
+  };
+
+  const saveEdit = async () => {
+    if (!orderId) return;
+
+    if (draftItems.length === 0) {
+      setEditError('An order needs at least one item. Use "Cancel Order" instead if you want to cancel the whole thing.');
+      return;
+    }
+
+    setSavingEdit(true);
+    setEditError(null);
+    try {
+      const { data } = await axios.patch(`${API_ENDPOINTS.ORDER_STATUS}/${orderId}/items`, {
+        items: draftItems,
+      });
+      setOrder(data.data);
+      setIsEditing(false);
+      toast.success('Your order has been updated.');
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.status === 409) {
+        setEditError(err.response.data?.message || 'This order has already started preparing and can no longer be modified.');
+        fetchOrder(false);
+      } else {
+        setEditError('Could not save your changes. Please try again.');
+      }
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  // Order Customization - full cancellation, same Pending-only rule as
+  // editing. A confirm() dialog is enough here since it's a destructive,
+  // one-shot action rather than something needing a form.
+  const cancelOrder = async () => {
+    if (!orderId) return;
+    if (!window.confirm('Cancel this entire order? This cannot be undone.')) return;
+
+    setCancelling(true);
+    try {
+      const { data } = await axios.patch(`${API_ENDPOINTS.ORDER_STATUS}/${orderId}/cancel`);
+      setOrder(data.data);
+      setIsEditing(false);
+      clearActiveOrder(orderId);
+      toast.info('Your order has been cancelled.');
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response?.status === 409) {
+        toast.error(err.response.data?.message || 'This order has already started preparing and can no longer be cancelled.');
+        fetchOrder(false);
+      } else {
+        toast.error('Could not cancel your order. Please try again.');
+      }
+    } finally {
+      setCancelling(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -207,31 +353,124 @@ const OrderTrackingPage: React.FC = () => {
           </div>
         )}
 
-        <div className={styles.detailsGrid}>
-          <section className={styles.card}>
-            <h2>Your Items</h2>
-            <div className={styles.itemsList}>
-              {order.items.map((item, idx) => (
-                <div key={idx} className={styles.itemRow}>
-                  <div className={styles.itemInfo}>
-                    <strong>{item.quantity}× {item.name}</strong>
-                    {item.selectedAddOns && item.selectedAddOns.length > 0 && (
-                      <div className={styles.addOnTags}>
-                        {item.selectedAddOns.map((addOn) => (
-                          <span key={addOn.name} className={styles.addOnTag}>+ {addOn.name}</span>
-                        ))}
-                      </div>
-                    )}
-                    {item.specialNotes && (
-                      <p className={styles.itemNotes}>"{item.specialNotes}"</p>
-                    )}
+        {tableOrders.length > 0 && (
+          <section className={styles.otherOrdersSection}>
+            <h2>Other Orders at This Table</h2>
+            <div className={styles.otherOrdersList}>
+              {tableOrders.map((o) => (
+                <div key={o._id} className={styles.otherOrderCard}>
+                  <div className={styles.otherOrderHeader}>
+                    <span>Order #{o._id.slice(-6).toUpperCase()}</span>
+                    <span className={`${styles.statusPill} ${styles[o.status.toLowerCase()] || ''}`}>
+                      {o.status}
+                    </span>
                   </div>
-                  <span className={styles.itemAmount}>
-                    Rs. {(item.price * item.quantity).toLocaleString()}
-                  </span>
+                  <ul className={styles.otherOrderItems}>
+                    {o.items.map((item, idx) => (
+                      <li key={idx}>{item.quantity}× {item.name}</li>
+                    ))}
+                  </ul>
+                  <div className={styles.otherOrderTotal}>Rs. {o.totalPrice.toLocaleString()}</div>
                 </div>
               ))}
             </div>
+          </section>
+        )}
+
+        <div className={styles.detailsGrid}>
+          <section className={styles.card}>
+            <div className={styles.itemsHeaderRow}>
+              <h2>Your Items</h2>
+              {order.status === 'Pending' && !isEditing && (
+                <div className={styles.headerActions}>
+                  <button className={styles.editToggleBtn} onClick={startEditing} disabled={cancelling}>
+                    Edit Order
+                  </button>
+                  <button className={styles.cancelOrderBtn} onClick={cancelOrder} disabled={cancelling}>
+                    {cancelling ? 'Cancelling...' : 'Cancel Order'}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {!isEditing ? (
+              <div className={styles.itemsList}>
+                {order.items.map((item, idx) => (
+                  <div key={idx} className={styles.itemRow}>
+                    <div className={styles.itemInfo}>
+                      <strong>{item.quantity}× {item.name}</strong>
+                      {item.selectedAddOns && item.selectedAddOns.length > 0 && (
+                        <div className={styles.addOnTags}>
+                          {item.selectedAddOns.map((addOn) => (
+                            <span key={addOn.name} className={styles.addOnTag}>+ {addOn.name}</span>
+                          ))}
+                        </div>
+                      )}
+                      {item.specialNotes && (
+                        <p className={styles.itemNotes}>"{item.specialNotes}"</p>
+                      )}
+                    </div>
+                    <span className={styles.itemAmount}>
+                      Rs. {(item.price * item.quantity).toLocaleString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className={styles.itemsList}>
+                <p className={styles.editHint}>You can adjust quantities, notes, or remove items until the kitchen starts preparing your order.</p>
+                {draftItems.map((item, idx) => (
+                  <div key={idx} className={styles.itemRowEdit}>
+                    <div className={styles.itemInfo}>
+                      <strong>{item.name}</strong>
+                      {item.selectedAddOns && item.selectedAddOns.length > 0 && (
+                        <div className={styles.addOnTags}>
+                          {item.selectedAddOns.map((addOn) => (
+                            <span key={addOn.name} className={styles.addOnTag}>+ {addOn.name}</span>
+                          ))}
+                        </div>
+                      )}
+                      <div className={styles.quantityStepperSmall}>
+                        <button type="button" onClick={() => changeDraftQuantity(idx, -1)} disabled={item.quantity <= 1}>−</button>
+                        <span>{item.quantity}</span>
+                        <button type="button" onClick={() => changeDraftQuantity(idx, 1)}>+</button>
+                      </div>
+                      <textarea
+                        className={styles.notesInputSmall}
+                        value={item.specialNotes || ''}
+                        onChange={(e) => changeDraftNotes(idx, e.target.value)}
+                        placeholder="Special instructions..."
+                        maxLength={200}
+                        rows={1}
+                      />
+                    </div>
+                    <div className={styles.itemEditActions}>
+                      <span className={styles.itemAmount}>
+                        Rs. {(item.price * item.quantity).toLocaleString()}
+                      </span>
+                      <button
+                        type="button"
+                        className={styles.removeItemBtn}
+                        onClick={() => removeDraftItem(idx)}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                {editError && <p className={styles.editErrorMsg}>{editError}</p>}
+
+                <div className={styles.editActionsRow}>
+                  <button className={styles.secondaryBtn} onClick={cancelEditing} disabled={savingEdit}>
+                    Cancel
+                  </button>
+                  <button className={styles.primaryBtn} onClick={saveEdit} disabled={savingEdit}>
+                    {savingEdit ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </div>
+            )}
           </section>
 
           <section className={styles.card}>

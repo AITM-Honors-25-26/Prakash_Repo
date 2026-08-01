@@ -17,7 +17,7 @@ class AuthController {
             console.log("i am here in autcontroller")
 
             await emailQueue.add(EMAIL_JOBS.ACTIVATION, {
-                name:            userObj.fullName,
+                fullName:        userObj.fullName, // Changed from name to fullName
                 email:           userObj.email,
                 activationToken: userObj.activationToken,
             });
@@ -142,9 +142,9 @@ class AuthController {
             const userObj = await autSvc.createStaffAccount(userData);
 
             await emailQueue.add(EMAIL_JOBS.STAFF_WELCOME, {
-                name: userObj.fullName,
-                email: userObj.email,
-                role: userObj.role,
+                fullName:     userObj.fullName, // Changed from name to fullName
+                email:        userObj.email,
+                role:         userObj.role,
                 tempPassword: req.body.password,
             });
 
@@ -243,7 +243,7 @@ class AuthController {
             await autSvc.updateSingleUserByFilter({ email }, updateData);
 
             await emailQueue.add(EMAIL_JOBS.FORGOT_PASSWORD, {
-                name:       user.fullName || "User",
+                fullName:   user.fullName || "User", // Changed from name to fullName
                 email:      user.email,
                 resetToken: updateData.forgotPasswordToken,
             });

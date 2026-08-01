@@ -12,7 +12,6 @@ export const EMAIL_JOBS = {
 
 const buildEmail = (jobName, data) => {
     switch (jobName) {
-
         case EMAIL_JOBS.ACTIVATION:
             console.log("i am here")
             return {
@@ -76,20 +75,21 @@ const buildEmail = (jobName, data) => {
 const emailWorker = new Worker(
     "email-queue",
     async (job) => {
-        console.log(`[EmailWorker] Processing: ${job.fullName}`, job.data);
-        const payload = buildEmail(job.fullName, job.data);
+        // Changed job.fullName to job.name here
+        console.log(`[EmailWorker] Processing: ${job.name}`, job.data);
+        const payload = buildEmail(job.name, job.data);
         await emailSvc.sendEmail(payload);
-        console.log(`[EmailWorker] ✅ Sent: ${job.fullName} → ${job.data.email}`);
+        console.log(`[EmailWorker] ✅ Sent: ${job.name} → ${job.data.email}`);
     },
     { connection: redisConnection }
 );
 
 emailWorker.on("completed", (job) => {
-    console.log(`[EmailWorker] ✅ Done: ${job.fullName} (id: ${job.id})`);
+    console.log(`[EmailWorker] ✅ Done: ${job.name} (id: ${job.id})`);
 });
 
 emailWorker.on("failed", (job, err) => {
-    console.error(`[EmailWorker] ❌ Failed: ${job.fullName} (id: ${job.id}) — ${err.message}`);
+    console.error(`[EmailWorker] ❌ Failed: ${job.name} (id: ${job.id}) — ${err.message}`);
 });
 
 export default emailWorker;
