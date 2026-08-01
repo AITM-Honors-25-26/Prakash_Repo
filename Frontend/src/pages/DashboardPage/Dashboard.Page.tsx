@@ -119,6 +119,15 @@ const Dashboard: React.FC = () => {
       });
     });
 
+    // Order Customization - the customer can edit items while an order is
+    // still Pending; keep the kitchen board's item list/total in sync.
+    socket.on('order_items_updated', (updatedOrder: Order) => {
+      console.log('Order items updated:', updatedOrder);
+      setOrders(prev =>
+        prev.map(o => (o._id === updatedOrder._id ? updatedOrder : o))
+      );
+    });
+
     return () => {
       socket.disconnect();
     };

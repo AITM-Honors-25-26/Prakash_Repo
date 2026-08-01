@@ -87,6 +87,47 @@ export const updateOrderStatus = async (req, res) => {
   }
 };
 
+// Order Customization - lets the customer (or staff) edit an order's items,
+// but only while it's still Pending (see OrderService.updateOrderItems).
+export const updateOrderItems = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { items, discountCode } = req.body;
+
+    const updatedOrder = await OrderService.updateOrderItems(id, { items, discountCode });
+
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('order_items_updated', updatedOrder);
+    }
+
+    return res.status(200).json({ success: true, data: updatedOrder });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ success: false, message: error.message });
+  }
+};
+
+// Order Customization - lets the customer cancel their own order while it's
+// still Pending (see OrderService.cancelOrder for the status guard).
+export const cancelOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const cancelledOrder = await OrderService.cancelOrder(id);
+
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('order_status_updated', cancelledOrder);
+    }
+
+    return res.status(200).json({ success: true, data: cancelledOrder });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ success: false, message: error.message });
+  }
+};
+
 export const deleteOrder = async (req, res) => {
   try {
     const { id } = req.params;
