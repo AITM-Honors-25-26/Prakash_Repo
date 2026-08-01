@@ -85,8 +85,25 @@ const OrderTrackingPage: React.FC = () => {
   const [editError, setEditError] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
 
+  // Table Overview - other still-active orders placed for this same table
+  // (e.g. via "Order More Items" earlier), shown read-only alongside the
+  // order this page was opened for.
+  const [tableOrders, setTableOrders] = useState<TrackedOrder[]>([]);
+  const tableNumberRef = useRef<string | null>(null);
+
   const socketRef = useRef<Socket | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const fetchTableOrders = useCallback(async (tableNumber: string) => {
+    try {
+      const { data } = await axios.get(`${API_ENDPOINTS.ORDER_BY_TABLE}/${tableNumber}/active`);
+      if (Array.isArray(data.data)) {
+        setTableOrders(data.data.filter((o: TrackedOrder) => o._id !== orderId));
+      }
+    } catch (err) {
+      console.error('Failed to fetch table orders:', err);
+    }
+  }, [orderId]);
 
   const fetchOrder = useCallback(async (showLoading = false) => {
     if (!orderId) return;
@@ -95,6 +112,8 @@ const OrderTrackingPage: React.FC = () => {
       const { data } = await axios.get(`${API_ENDPOINTS.ORDER_STATUS}/${orderId}/status`);
       setOrder(data.data);
       setError(null);
+      tableNumberRef.current = data.data.tableNumber;
+      fetchTableOrders(data.data.tableNumber);
 
       // Order Customization - if the kitchen started preparing while the
       // customer was mid-edit, kick them out of edit mode immediately.
@@ -116,7 +135,7 @@ const OrderTrackingPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [orderId]);
+  }, [orderId, fetchTableOrders]);
 
   useEffect(() => {
     fetchOrder(true);
@@ -134,7 +153,7 @@ const OrderTrackingPage: React.FC = () => {
     socket.on('disconnect', () => setLiveConnected(false));
     socket.on('connect_error', () => setLiveConnected(false));
 
-    socket.on('order_status_updated', (updatedOrder: { _id: string; status: string }) => {
+    socket.on('order_status_updated', (updatedOrder: TrackedOrder) => {
       if (updatedOrder._id === orderId) {
         if (updatedOrder.status === 'Completed') {
           toast.success('Your order has been served. Enjoy your meal!');
@@ -146,12 +165,26 @@ const OrderTrackingPage: React.FC = () => {
           setIsEditing(false);
         }
         fetchOrder(false);
+      } else if (tableNumberRef.current && updatedOrder.tableNumber === tableNumberRef.current) {
+        // Table Overview - a sibling order at the same table changed status.
+        fetchTableOrders(tableNumberRef.current);
       }
     });
 
     socket.on('order_items_updated', (updatedOrder: TrackedOrder) => {
       if (updatedOrder._id === orderId) {
         setOrder(updatedOrder);
+      } else if (tableNumberRef.current && updatedOrder.tableNumber === tableNumberRef.current) {
+        fetchTableOrders(tableNumberRef.current);
+      }
+    });
+
+    // Table Overview - another order just got placed for this table (e.g.
+    // "Order More Items" from this same device, or another device at the
+    // table), so refresh the sibling list.
+    socket.on('kitchen_new_order', (newOrder: TrackedOrder) => {
+      if (newOrder._id !== orderId && tableNumberRef.current && newOrder.tableNumber === tableNumberRef.current) {
+        fetchTableOrders(tableNumberRef.current);
       }
     });
 
@@ -162,7 +195,7 @@ const OrderTrackingPage: React.FC = () => {
       if (pollRef.current) clearInterval(pollRef.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orderId, fetchOrder]);
+  }, [orderId, fetchOrder, fetchTableOrders]);
 
   // Order Customization - enter/exit edit mode, seeding the draft from the
   // last-known-good order each time editing starts.
@@ -318,6 +351,30 @@ const OrderTrackingPage: React.FC = () => {
               );
             })}
           </div>
+        )}
+
+        {tableOrders.length > 0 && (
+          <section className={styles.otherOrdersSection}>
+            <h2>Other Orders at This Table</h2>
+            <div className={styles.otherOrdersList}>
+              {tableOrders.map((o) => (
+                <div key={o._id} className={styles.otherOrderCard}>
+                  <div className={styles.otherOrderHeader}>
+                    <span>Order #{o._id.slice(-6).toUpperCase()}</span>
+                    <span className={`${styles.statusPill} ${styles[o.status.toLowerCase()] || ''}`}>
+                      {o.status}
+                    </span>
+                  </div>
+                  <ul className={styles.otherOrderItems}>
+                    {o.items.map((item, idx) => (
+                      <li key={idx}>{item.quantity}× {item.name}</li>
+                    ))}
+                  </ul>
+                  <div className={styles.otherOrderTotal}>Rs. {o.totalPrice.toLocaleString()}</div>
+                </div>
+              ))}
+            </div>
+          </section>
         )}
 
         <div className={styles.detailsGrid}>

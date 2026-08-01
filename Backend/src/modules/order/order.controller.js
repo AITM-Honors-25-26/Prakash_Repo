@@ -1,5 +1,25 @@
 import * as OrderService from './order.service.js';
 
+// Shared by getOrderStatus and getOrdersByTable - trims an order down to the
+// fields safe to expose on an unauthenticated customer-facing endpoint.
+const toPublicOrder = (order) => ({
+  _id: order._id,
+  status: order.status,
+  paymentStatus: order.paymentStatus,
+  paymentMethod: order.paymentMethod,
+  tableNumber: order.tableNumber,
+  items: order.items,
+  subtotal: order.subtotal,
+  discountCode: order.discountCode,
+  discountAmount: order.discountAmount,
+  taxRate: order.taxRate,
+  taxAmount: order.taxAmount,
+  serviceChargeRate: order.serviceChargeRate,
+  serviceChargeAmount: order.serviceChargeAmount,
+  totalPrice: order.totalPrice,
+  createdAt: order.createdAt,
+});
+
 export const createOrder = async (req, res) => {
   try {
     const newOrder = await OrderService.createOrder(req.body);
@@ -27,26 +47,22 @@ export const getOrderStatus = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Order not found.' });
     }
 
-    return res.status(200).json({
-      success: true,
-      data: {
-        _id: order._id,
-        status: order.status,
-        paymentStatus: order.paymentStatus,
-        paymentMethod: order.paymentMethod,
-        tableNumber: order.tableNumber,
-        items: order.items,
-        subtotal: order.subtotal,
-        discountCode: order.discountCode,
-        discountAmount: order.discountAmount,
-        taxRate: order.taxRate,
-        taxAmount: order.taxAmount,
-        serviceChargeRate: order.serviceChargeRate,
-        serviceChargeAmount: order.serviceChargeAmount,
-        totalPrice: order.totalPrice,
-        createdAt: order.createdAt,
-      },
-    });
+    return res.status(200).json({ success: true, data: toPublicOrder(order) });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Table Overview - Order Customization's "Order More Items" flow can leave a
+// table with several active orders at once; this lets the Order Tracking
+// page show the customer their whole tab, not just the order they just
+// placed. Public/unauthenticated, same reasoning as getOrderStatus above.
+export const getOrdersByTable = async (req, res) => {
+  try {
+    const { tableNumber } = req.params;
+    const orders = await OrderService.getActiveOrdersForTable(tableNumber);
+
+    return res.status(200).json({ success: true, data: orders.map(toPublicOrder) });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }

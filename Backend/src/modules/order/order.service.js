@@ -34,6 +34,18 @@ export const getOrdersForKitchen = async () => {
   }).sort({ createdAt: 1 });
 };
 
+// Table Overview - every still-active order for one table (a table often
+// places more than one order in a sitting, e.g. via "Order More Items").
+// Used by: the customer's Order Tracking page (to show their whole tab, not
+// just the last order placed) and available for the kitchen/waiter board to
+// group by table too.
+export const getActiveOrdersForTable = async (tableNumber) => {
+  return await Order.find({
+    tableNumber,
+    status: { $nin: [OrderStatus.COMPLETED, OrderStatus.CANCELLED] }
+  }).sort({ createdAt: 1 });
+};
+
 // Order Customization after placement - the customer (or staff) may only
 // change items while the kitchen hasn't started on the order yet. Once it's
 // Preparing/Ready/Cancelled, this throws so the controller can return 409.

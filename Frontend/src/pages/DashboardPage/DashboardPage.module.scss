@@ -170,6 +170,38 @@ $border-color: #e0e0e0;
   padding: 2rem 0;
 }
 
+.tableGroup {
+  border: 1px solid $border-color;
+  border-radius: 8px;
+  padding: 1rem;
+  background-color: #fafafa;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tableGroupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  h3 {
+    margin: 0;
+    font-size: 1.6rem;
+    color: $mainColour;
+  }
+}
+
+.orderCountTag {
+  font-family: sans-serif;
+  font-size: 0.8rem;
+  font-weight: bold;
+  background-color: #ffe8a3;
+  color: #7a5b00;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
 .orderCard {
   border: 1px solid $border-color;
   border-radius: 6px;
