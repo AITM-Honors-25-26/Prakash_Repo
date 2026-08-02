@@ -128,6 +128,12 @@ $font-nav: 'Amatic SC', cursive;
       }
     }
 
+    .activeLink {
+      color: $hover-color;
+      font-weight: 700;
+      text-decoration: underline;
+    }
+
     .mobileAuthSection {
       display: none;
     }
