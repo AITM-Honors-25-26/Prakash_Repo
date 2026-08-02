@@ -1,4 +1,6 @@
 import React from "react";
+import "sweetalert2/dist/sweetalert2.min.css";
+import "./pages/main.css";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/home/home.page";

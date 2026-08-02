@@ -1,1 +1,29 @@
 @import "tailwindcss";
+
+/* Global SweetAlert2 font overrides for admin verification and password prompts */
+.swal2-popup,
+.swal2-popup *,
+.swal2-title,
+.swal2-html-container,
+.swal2-content,
+.swal2-actions button,
+.swal2-styled,
+.swal2-input,
+.swal2-select {
+  font-family: 'Amatic SC', cursive !important;
+}
+
+.swal2-input,
+.swal2-select {
+  font-size: 1rem !important;
+}
+
+.swal2-input::placeholder,
+.swal2-select::placeholder {
+  font-family: 'Amatic SC', cursive !important;
+}
+
+.swal2-actions .swal2-confirm,
+.swal2-actions .swal2-cancel {
+  min-width: 80px;
+}
