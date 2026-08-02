@@ -8,7 +8,6 @@ import emailQueue from "../../queues/email.queue.js";
 import { EMAIL_JOBS } from "../../queues/email.worker.js";
 
 class AuthController {
-
     registerUser = async (req, res, next) => {
         let userData;
         try {
@@ -17,7 +16,7 @@ class AuthController {
             console.log("i am here in autcontroller")
 
             await emailQueue.add(EMAIL_JOBS.ACTIVATION, {
-                fullName:        userObj.fullName, // Changed from name to fullName
+                fullName:        userObj.fullName, 
                 email:           userObj.email,
                 activationToken: userObj.activationToken,
             });
@@ -37,7 +36,6 @@ class AuthController {
             next(exception);
         }
     }
-
     activateUser = async (req, res, next) => {
         try {
             let token = req.params.token || null;
@@ -72,7 +70,6 @@ class AuthController {
             next(exception);
         }
     }
-
     loginUser = async (req, res, next) => {
         try {
             const { email, password } = req.body;
@@ -110,8 +107,6 @@ class AuthController {
             next(exception);
         }
     }
-
-    // --- Staff Account Management (Admin only) -----------------------------
     listStaff = async (req, res, next) => {
         try {
             const users = await autSvc.listAllUsers();
@@ -142,7 +137,7 @@ class AuthController {
             const userObj = await autSvc.createStaffAccount(userData);
 
             await emailQueue.add(EMAIL_JOBS.STAFF_WELCOME, {
-                fullName:     userObj.fullName, // Changed from name to fullName
+                fullName:     userObj.fullName,
                 email:        userObj.email,
                 role:         userObj.role,
                 tempPassword: req.body.password,
@@ -161,7 +156,6 @@ class AuthController {
             next(exception);
         }
     }
-
     updateStaff = async (req, res, next) => {
         try {
             const { id } = req.params;
@@ -175,7 +169,6 @@ class AuthController {
             if (!updated) {
                 return next({ code: 404, message: "Staff member not found", status: "USER_NOT_FOUND" });
             }
-
             res.json({
                 data: { user: autSvc.publicUserProfile(updated) },
                 message: "Staff account updated successfully",
@@ -186,7 +179,6 @@ class AuthController {
             next(exception);
         }
     }
-
     deleteStaff = async (req, res, next) => {
         try {
             const { id } = req.params;
@@ -210,8 +202,6 @@ class AuthController {
             next(exception);
         }
     }
-    // -------------------------------------------------------------------------
-
     getMyProfile = async (req, res, next) => {
         res.json({
             data: req.authUser,
@@ -220,7 +210,6 @@ class AuthController {
             option: null,
         });
     }
-
     forgotPassword = async (req, res, next) => {
         try {
             const { email } = req.body;
@@ -234,7 +223,6 @@ class AuthController {
                     status: "USER_NOT_FOUND",
                 });
             }
-
             const updateData = {
                 forgotPasswordToken: randomStringGenerator(100),
                 expireToken: new Date(Date.now() + 60 * 60 * 1000),
@@ -247,7 +235,6 @@ class AuthController {
                 email:      user.email,
                 resetToken: updateData.forgotPasswordToken,
             });
-
             res.json({
                 data: null,
                 message: "A link has been sent to your registered email to reset your password.",
@@ -258,7 +245,6 @@ class AuthController {
             next(exception);
         }
     }
-
     verifyForgotPasswordToken = async (req, res, next) => {
         try {
             const token = req.params.token;
@@ -273,19 +259,16 @@ class AuthController {
             if (Date.now() > new Date(user.expireToken).getTime()) {
                 return next({ code: 422, message: "Password reset token expired", status: "PASSWORD_RESET_TOKEN_EXPIRED" });
             }
-
             const verifyToken = randomStringGenerator(100);
             await autSvc.updateSingleUserByFilter({ _id: user._id }, {
                 forgotPasswordToken: verifyToken,
                 expireToken: new Date(Date.now() + 30 * 60 * 1000),
             });
-
             res.redirect(`${AppConfig.frontend_Url}/reset-password?token=${verifyToken}`);
         } catch (exception) {
             next(exception);
         }
     }
-
     resetPassword = async (req, res, next) => {
         try {
             const { token, password } = req.body;
@@ -294,14 +277,12 @@ class AuthController {
             if (!user) {
                 return next({ code: 402, message: "Token does not exist or already used", status: "TOKEN_NOT_FOUND" });
             }
-
             await autSvc.updateSingleUserByFilter({ _id: user._id }, {
                 forgotPasswordToken: null,
                 expireToken: null,
                 password: bcrypt.hashSync(password, 12),
                 status: true,
             });
-
             res.status(201).json({
                 data: null,
                 message: "Your password has been reset successfully. Please log in to continue.",
@@ -313,6 +294,5 @@ class AuthController {
         }
     }
 }
-
 const authCtr = new AuthController();
 export default authCtr;
