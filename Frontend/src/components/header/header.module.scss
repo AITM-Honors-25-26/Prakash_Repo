@@ -114,24 +114,26 @@ $font-nav: 'Amatic SC', cursive;
       letter-spacing: 1px;
       text-decoration: none;
       color: $text-color;
-      font-size: 1.1rem;
+      font-size: 0.95rem;
       transition: color 0.2s ease-in-out;
-      white-space: normal;
-      word-break: break-word;
+      white-space: nowrap;
+      word-break: normal;
+      padding: 4px 8px;
+      border-radius: 999px;
 
       &:hover {
         color: $hover-color;
       }
 
       @media (max-width: 1024px) {
-        font-size: 1rem;
+        font-size: 0.85rem;
       }
     }
 
     .activeLink {
       color: $hover-color;
       font-weight: 700;
-      text-decoration: underline;
+      text-decoration: none;
     }
 
     .mobileAuthSection {
