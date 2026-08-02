@@ -222,6 +222,9 @@ $green: #7ed957;
       gap: 10px;
       padding: 12px 0;
       border-bottom: 1px solid #e0dcd5;
+      flex-wrap: wrap;
+      width: 100%;
+      min-width: 0;
 
       &:first-child {
         padding-top: 0;
