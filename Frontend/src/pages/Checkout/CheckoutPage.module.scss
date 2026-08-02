@@ -222,6 +222,9 @@ $green: #7ed957;
       gap: 10px;
       padding: 12px 0;
       border-bottom: 1px solid #e0dcd5;
+      flex-wrap: wrap;
+      width: 100%;
+      min-width: 0;
 
       &:first-child {
         padding-top: 0;
@@ -231,13 +234,15 @@ $green: #7ed957;
         height: 150px;
         object-fit: cover;
         border-radius: 6px;
+        flex-shrink: 0;
         @media (max-width: 768px) {
-            width: 80px;
-            height: 90px;
-          }
+          width: 80px;
+          height: 90px;
+        }
       }
       .itemInfo {
-        flex-grow: 1;
+        flex: 1 1 180px;
+        min-width: 0;
 
         h3 {
           font-size: 2rem;
@@ -327,6 +332,7 @@ $green: #7ed957;
     align-items: center;
     padding-top: 12px;
     flex-shrink: 0;
+    flex-wrap: wrap;
 
     .discountInput {
       flex: 1;
@@ -426,6 +432,8 @@ $green: #7ed957;
     flex-direction: column;
     align-items: flex-end;
     gap: 10px;
+    min-width: 0;
+    width: 100%;
 
     .subtotal {
       font-weight: bold;

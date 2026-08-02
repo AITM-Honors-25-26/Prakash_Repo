@@ -125,8 +125,15 @@ $light-main-colour: #5e4934;
   }
 
   @media (max-width: 768px) {
-    gap: 0.85rem;
-    padding-bottom: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.9rem;
+    overflow-x: hidden;
+    padding-bottom: 0;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -149,8 +156,10 @@ $light-main-colour: #5e4934;
   }
 
   @media (max-width: 768px) {
-    width: 150px;
+    width: 100%;
+    max-width: 100%;
     border-radius: 14px;
+    min-width: 0;
   }
 }
 

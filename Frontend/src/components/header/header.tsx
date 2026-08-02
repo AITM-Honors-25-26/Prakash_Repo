@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useMatch, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useMatch, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import styles from './header.module.scss';
@@ -87,7 +87,9 @@ const Header: React.FC = () => {
     claimTable();
   }, [urlTableId, navigate]);
 
+  const location = useLocation();
   const hasStaffAccess = user && ['Admin', 'Chef', 'Waiter', 'Employee'].includes(user.role);
+  const isMenuActive = location.pathname.startsWith('/MenuPage');
 
   const handleLogout = () => {
     localStorage.removeItem('qr_accessToken');
@@ -133,47 +135,87 @@ const Header: React.FC = () => {
           </div>
         )}
 
-        <Link to="/" onClick={() => setMenuOpen(false)}>Home</Link>
+        <NavLink
+          to="/"
+          end
+          className={({ isActive }) => isActive ? styles.activeLink : ''}
+          onClick={() => setMenuOpen(false)}
+        >
+          Home
+        </NavLink>
 
-        <Link
+        <NavLink
           to={activeTable ? `/MenuPage/${activeTable}` : "/MenuPage"}
+          className={({ isActive }) => isMenuActive || isActive ? styles.activeLink : ''}
           onClick={() => setMenuOpen(false)}
         >
           Menu
-        </Link>
+        </NavLink>
 
         {hasStaffAccess && (
-          <Link to="/DashboardPage" className={styles.staffLink} onClick={() => setMenuOpen(false)}>
+          <NavLink
+            to="/DashboardPage"
+            className={({ isActive }) => isActive ? styles.activeLink : ''}
+            onClick={() => setMenuOpen(false)}
+          >
             Dashboard
-          </Link>
+          </NavLink>
         )}
 
         {hasStaffAccess && (
-          <Link to="/TableManagement" className={styles.staffLink} onClick={() => setMenuOpen(false)}>
+          <NavLink
+            to="/TableManagement"
+            className={({ isActive }) => isActive ? styles.activeLink : ''}
+            onClick={() => setMenuOpen(false)}
+          >
             Tables
-          </Link>
+          </NavLink>
         )}
 
         {user?.role === 'Admin' && (
-          <Link to="/StaffManagement" className={styles.staffLink} onClick={() => setMenuOpen(false)}>
+          <NavLink
+            to="/StaffManagement"
+            className={({ isActive }) => isActive ? styles.activeLink : ''}
+            onClick={() => setMenuOpen(false)}
+          >
             Staff
-          </Link>
+          </NavLink>
         )}
 
         {user?.role === 'Admin' && (
-          <Link to="/Analytics" className={styles.staffLink} onClick={() => setMenuOpen(false)}>
+          <NavLink
+            to="/Analytics"
+            className={({ isActive }) => isActive ? styles.activeLink : ''}
+            onClick={() => setMenuOpen(false)}
+          >
             Analytics
-          </Link>
+          </NavLink>
         )}
 
         {user?.role === 'Admin' && (
-          <Link to="/BillingSettings" className={styles.staffLink} onClick={() => setMenuOpen(false)}>
+          <NavLink
+            to="/BillingSettings"
+            className={({ isActive }) => isActive ? styles.activeLink : ''}
+            onClick={() => setMenuOpen(false)}
+          >
             Billing Setup
-          </Link>
+          </NavLink>
         )}
 
-        <Link to="/ContactUsPage" onClick={() => setMenuOpen(false)}>Contact Us</Link>
-        <Link to="/AboutUsPage" onClick={() => setMenuOpen(false)}>About Us</Link>
+        <NavLink
+          to="/ContactUsPage"
+          className={({ isActive }) => isActive ? styles.activeLink : ''}
+          onClick={() => setMenuOpen(false)}
+        >
+          Contact Us
+        </NavLink>
+        <NavLink
+          to="/AboutUsPage"
+          className={({ isActive }) => isActive ? styles.activeLink : ''}
+          onClick={() => setMenuOpen(false)}
+        >
+          About Us
+        </NavLink>
 
         <div className={styles.mobileAuthSection}>
           {!user && !activeTable && (
