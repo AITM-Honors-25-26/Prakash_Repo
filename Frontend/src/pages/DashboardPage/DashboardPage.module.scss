@@ -1,5 +1,5 @@
 $mainColour: #48392a;
-$mainfont: 'Amatic SC', cursive;
+$mainfont: 'Rubik', sans-serif;
 $bg-color: #f4f7f6;
 $border-color: #e0e0e0;
 
@@ -177,7 +177,7 @@ $border-color: #e0e0e0;
 }
 
 .orderCountTag {
-  font-family: sans-serif;
+  font-family: 'Rubik', sans-serif;
   font-size: 0.8rem;
   font-weight: bold;
   background-color: #ffe8a3;
@@ -213,7 +213,7 @@ $border-color: #e0e0e0;
   }
 
   .timeTag, .readyBadge {
-    font-family: sans-serif;
+    font-family: 'Rubik', sans-serif;
     font-size: 0.85rem;
     font-weight: bold;
     padding: 3px 8px;
@@ -235,7 +235,7 @@ $border-color: #e0e0e0;
     gap: 0.5rem 0.8rem;
     align-items: start;
     margin-bottom: 0.5rem;
-    font-family: sans-serif;
+    font-family: 'Rubik', sans-serif;
     font-size: 1rem;
 
     .qty {

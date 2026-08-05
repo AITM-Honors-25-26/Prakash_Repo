@@ -1,6 +1,6 @@
 $header_colour: #48392a;
 $accent: #d84315;
-$font-nav: 'Amatic SC', cursive;
+$font-nav: 'Rubik', sans-serif;
 $light-main-colour: rgb(128, 128, 128);
 
 .pageContainer {
@@ -31,7 +31,7 @@ $light-main-colour: rgb(128, 128, 128);
     p {
       color: $light-main-colour;
       margin: 0;
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: 'Rubik', sans-serif;
       font-size: 0.9rem;
     }
   }
@@ -64,7 +64,7 @@ $light-main-colour: rgb(128, 128, 128);
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Rubik', sans-serif;
 }
 
 .statLabel {
@@ -100,7 +100,7 @@ $light-main-colour: rgb(128, 128, 128);
   background: #f3efe9;
   border-radius: 20px;
   padding: 6px 14px;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Rubik', sans-serif;
   font-size: 0.85rem;
   color: $header_colour;
 
@@ -127,7 +127,7 @@ $light-main-colour: rgb(128, 128, 128);
   border-radius: 10px;
   padding: 1.5rem;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Rubik', sans-serif;
 }
 
 .panelHeader {
@@ -303,6 +303,6 @@ $light-main-colour: rgb(128, 128, 128);
   }
   p {
     color: #888;
-    font-family: system-ui, -apple-system, sans-serif;
+    font-family: 'Rubik', sans-serif;
   }
 }

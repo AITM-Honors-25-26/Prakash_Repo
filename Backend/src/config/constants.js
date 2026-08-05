@@ -35,7 +35,8 @@ export const Category = {
 export const OrderStatus = {
     PENDING: 'Pending',
     PREPARING: 'Preparing',
-    COMPLETED: 'Ready',
+    READY: 'Ready',
+    COMPLETED: 'Completed',
     CANCELLED: 'Cancelled'
 };
 

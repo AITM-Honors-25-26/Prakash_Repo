@@ -34,7 +34,7 @@ const Homepage: React.FC = () => {
 
           {isLoggedIn ? (
             <div className={styles.loggedInArea}>
-              <h1>Hello, {userName}!</h1>
+              <h1>Hello, <span className={styles.userName}>{userName}</span>!</h1>
               <p>We are so glad to see you again.</p>
             </div>
           ) : (

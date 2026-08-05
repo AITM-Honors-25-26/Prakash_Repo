@@ -26,7 +26,7 @@ interface OrderItem {
 
 interface TrackedOrder {
   _id: string;
-  status: 'Pending' | 'Preparing' | 'Ready' | 'Cancelled';
+  status: 'Pending' | 'Preparing' | 'Ready' | 'Completed' | 'Cancelled';
   paymentStatus: 'Unpaid' | 'Pending' | 'Paid' | 'Failed';
   paymentMethod: 'Counter' | 'Esewa';
   tableNumber: string;
