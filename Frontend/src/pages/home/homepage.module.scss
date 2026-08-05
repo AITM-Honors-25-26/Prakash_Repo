@@ -1,5 +1,5 @@
-$font-Cursive: 'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', cursive;
-$font-header: 'Amatic SC', cursive;
+$font-Cursive: 'Rubik', sans-serif;
+$font-header: 'Rubik', sans-serif;
 $primary: #48392a;
 $accent: #ff6b35;
 
@@ -59,7 +59,7 @@ $accent: #ff6b35;
   h1 {
     font-family: $font-Cursive;
     font-size: clamp(2rem, 5vw, 3.5rem);
-    text-shadow: 2px 2px 12px rgba(0, 0, 0, 0.6);
+    text-shadow: 2px 2px 12px rgba(255, 255, 255, 0.8);
     margin-top: 1.5rem;
     animation: fadeInUp 0.8s 0.2s ease-out both;
   }
@@ -69,7 +69,7 @@ $accent: #ff6b35;
     font-size: clamp(1rem, 2.2vw, 1.4rem);
     margin-bottom: 2rem;
     opacity: 0.95;
-    text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 8px rgba(255, 255, 255, 0.8);
     animation: fadeInUp 0.8s 0.3s ease-out both;
   }
 
@@ -189,6 +189,12 @@ $accent: #ff6b35;
   p {
     font-size: 1.2rem;
     opacity: 0.9;
+  }
+
+  .userName {
+    font-family: 'Gorditas', sans-serif;
+    font-weight: 700;
+    color: $accent;
   }
 }
 

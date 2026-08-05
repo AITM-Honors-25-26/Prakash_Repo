@@ -25,8 +25,8 @@
   --color-warning: #ffc107;
 
   /* Typography */
-  --font-display: 'Amatic SC', cursive;
-  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Rubik', sans-serif;
+  --font-body: 'Rubik', sans-serif;
 
   /* Spacing */
   --space-xs: 0.25rem;
@@ -66,19 +66,9 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  /* Keep the base size stable on all screens so text never becomes
+     too small to read on phones. */
   font-size: 16px;
-}
-
-@media (max-width: 768px) {
-  html {
-    font-size: 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  html {
-    font-size: 14px;
-  }
 }
 
 body {
@@ -91,6 +81,30 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+/* ---------- Readable Mobile Text ----------
+   The Rubik display font renders cleanly at small sizes. Ensure
+   the base body copy is large enough to be comfortable on phones. */
+@media (max-width: 768px) {
+  body {
+    font-size: 16px;
+  }
+
+  p,
+  li,
+  span,
+  input,
+  textarea,
+  select {
+    -webkit-text-size-adjust: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 16px;
+  }
 }
 
 img,
@@ -178,7 +192,7 @@ h1, h2, h3, h4, h5, h6 {
 .swal2-styled,
 .swal2-input,
 .swal2-select {
-  font-family: 'Amatic SC', cursive !important;
+  font-family: 'Rubik', sans-serif !important;
 }
 
 .swal2-input,
@@ -188,7 +202,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .swal2-input::placeholder,
 .swal2-select::placeholder {
-  font-family: 'Amatic SC', cursive !important;
+  font-family: 'Rubik', sans-serif !important;
 }
 
 .swal2-actions .swal2-confirm,

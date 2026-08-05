@@ -5,8 +5,8 @@ $bg-soft: #faf7f2;
 $text-dark: #2d1b18;
 $border: rgba(0, 0, 0, 0.1);
 $error: #dc3545;
-$font-Cursive:  'Amatic SC', cursive;
-$font-header: 'Amatic SC', cursive;
+$font-Cursive:  'Rubik', sans-serif;
+$font-header: 'Rubik', sans-serif;
 
 .overlay {
   position: fixed;
@@ -50,7 +50,7 @@ $font-header: 'Amatic SC', cursive;
     margin: 0;
     color: $header-colour;
     font-family: $font-header;
-    font-size: 2rem; /* Increased for Amatic SC readability */
+    font-size: 1.75rem;
     line-height: 1.2;
 
     @media (max-width: 480px) {
@@ -106,7 +106,7 @@ $font-header: 'Amatic SC', cursive;
   input,
   select {
     box-sizing: border-box; /* Keeps inputs strictly within their grid columns */
-    font-family: system-ui, -apple-system, sans-serif; /* Keep standard font for inputs for clarity */
+    font-family: 'Rubik', sans-serif; /* Keep standard font for inputs for clarity */
     font-size: 1rem;
     padding: 10px 12px;
     border: 1px solid $border;
