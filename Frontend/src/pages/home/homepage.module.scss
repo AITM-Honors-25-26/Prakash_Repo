@@ -1,131 +1,288 @@
 $font-Cursive: 'Brush Script MT', 'Lucida Handwriting', 'Segoe Script', cursive;
 $font-header: 'Amatic SC', cursive;
+$primary: #48392a;
+$accent: #ff6b35;
 
 .topsection {
-    width: 100%;
-    position: relative;
+  width: 100%;
+  position: relative;
+  min-height: calc(100dvh - var(--header-height, 100px));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .photoholder {
-    position: relative;
-    overflow: hidden;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(72, 57, 42, 0.55) 0%,
+      rgba(45, 27, 24, 0.65) 100%
+    );
+  }
 }
 
 .photo {
-    width: 100%;
-    height: 85vh;
-    object-fit: cover;
-    filter: brightness(0.6);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(1.05);
 }
 
 .welcomecontent {
-    position: absolute;
-    top: 45%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    color: #ffffff;
-    width: 100%;
-    max-width: 600px;
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: #ffffff;
+  width: 100%;
+  max-width: 720px;
+  padding: calc(var(--header-height-mobile, 70px) + 2rem) 1.5rem 3rem;
 
-    .logo {
-        padding-top: 80px;
-        height: 250px;
-        max-width: 100%;
-        object-fit: contain;
-    }
-    h1 {
-        font-family: $font-Cursive;
-        font-size: 50px;
-        text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-    }
+  .logo {
+    height: 220px;
+    max-width: 100%;
+    object-fit: contain;
+    margin: 0 auto;
+    filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.4));
+    animation: fadeInDown 0.8s ease-out both;
+  }
+
+  h1 {
+    font-family: $font-Cursive;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    text-shadow: 2px 2px 12px rgba(0, 0, 0, 0.6);
+    margin-top: 1.5rem;
+    animation: fadeInUp 0.8s 0.2s ease-out both;
+  }
+
+  .slogan {
+    font-family: $font-header;
+    font-size: clamp(1rem, 2.2vw, 1.4rem);
+    margin-bottom: 2rem;
+    opacity: 0.95;
+    text-shadow: 1px 1px 8px rgba(0, 0, 0, 0.5);
+    animation: fadeInUp 0.8s 0.3s ease-out both;
+  }
+
+  .paragraph {
+    margin: 15px 0;
+
     p {
-        font-family: $font-header;
-        font-size: 18px;
-        margin-bottom: 15px;
+      font-size: 14px;
+      margin: 2px 0;
+      opacity: 0.9;
     }
-
-    .paragraph {
-        margin: 15px 0;
-
-        p {
-            font-size: 14px;
-            margin: 2px 0;
-            opacity: 0.9;
-        }
-    }
+  }
 }
 
-.logbutton, .registerbutton{
-    padding: 10px 30px;
-    border-radius: 20px;
-    border: none;
-    cursor: pointer;
-    transition: transform 0.2s;
-    font-family: $font-header;
-    text-decoration: none;
-    font-weight: bold;
+.logbutton,
+.registerbutton {
+  padding: 12px 32px;
+  border-radius: var(--radius-full, 50px);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: $font-header;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .logbutton {
-    background-color: #2d6a4f;
-    color: #ffffff;
-    width: 200px;
-    &:hover {
-        transform: scale(1.05);
-        background-color: #1b4332;
-    }
+  background-color: $primary;
+  color: #ffffff;
+  min-width: 200px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+
+  &:hover {
+    transform: translateY(-2px);
+    background-color: #2d1b18;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 }
+
 .registerbutton {
-    background-color: transparent;
-    border: 2px solid #ffffff;
-    color: #ffffff;
-    width: 200px;
-    &:hover {
-        background-color: #ffffff;
-        color: #000000;
-    }
+  background-color: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  color: #ffffff;
+  min-width: 200px;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: #ffffff;
+    transform: translateY(-2px);
+  }
 }
+
+.actionArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  animation: fadeInUp 0.8s 0.4s ease-out both;
+}
+
+.registerPrompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+
+  p {
+    font-family: $font-header;
+    font-size: 1rem;
+    margin: 0;
+    opacity: 0.9;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 180px;
+
+    &::before,
+    &::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.9rem;
+      opacity: 0.8;
+      white-space: nowrap;
+    }
+  }
+
+  .registerbutton {
+    margin-top: 0.25rem;
+  }
+}
+
+.loggedInArea {
+  font-family: $font-header;
+  animation: fadeInUp 0.8s 0.2s ease-out both;
+
+  h1 {
+    font-family: $font-Cursive;
+  }
+
+  p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Responsive Breakpoints ---------- */
 
 @media (max-width: 768px) {
-    .welcomecontent {
-        width: 100%;
-        .logo {
-            height: 120px;
-        }
+  .topsection {
+    min-height: calc(100dvh - var(--header-height-mobile, 70px));
+  }
 
-        h1 {
-            font-size: 25px;
-            margin-bottom: 0px;
+  .welcomecontent {
+    padding: calc(var(--header-height-mobile, 70px) + 1rem) 1rem 2.5rem;
 
-        }
-        p {
-            font-size: 10px;
-            margin-bottom: 10px;
-        }
-
-        .logbutton, .registerbutton {
-            width: 60%;
-            margin: 1px 0;
-            box-sizing: border-box;
-            padding: 5px 10px;
-
-        }
+    .logo {
+      height: 130px;
     }
 
-    .photo {
-        .photo {
-        height: auto;
-        max-height: 70vh;
-        object-fit: contain;
-        background-color: #3b2a1a; // wood tone, fills any letterbox gap
+    h1 {
+      font-size: clamp(1.75rem, 6vw, 2.25rem);
+      margin-top: 1rem;
     }
 
-    .photoholder {
-        background-color: #3b2a1a; // same tone, so edges blend if the image is narrower than the screen
+    .slogan {
+      font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+      margin-bottom: 1.5rem;
     }
-    }
+  }
+
+  .logbutton,
+  .registerbutton {
+    min-width: 180px;
+    padding: 10px 24px;
+    font-size: 1rem;
+  }
 }
-.loggedInArea{
-    font-family: $font-header;
+
+@media (max-width: 480px) {
+  .welcomecontent {
+    .logo {
+      height: 100px;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+    }
+
+    .slogan {
+      font-size: 0.9rem;
+    }
+  }
+
+  .logbutton,
+  .registerbutton {
+    width: min(220px, 85vw);
+    min-width: 0;
+    padding: 12px 20px;
+  }
+
+  .registerPrompt {
+    .divider {
+      width: 150px;
+    }
+  }
+}
+
+/* Tablet-specific optimal layout */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .welcomecontent {
+    max-width: 600px;
+
+    .logo {
+      height: 180px;
+    }
+  }
 }

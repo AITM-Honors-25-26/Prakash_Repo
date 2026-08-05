@@ -1,176 +1,280 @@
 $font-header: 'Amatic SC', cursive;
+$footer-bg: #48392a;
+$footer-text: #f0e9e9;
+$footer-muted: #b0a89e;
+$accent: #ff6b35;
 
 .footer {
-    min-height: 400px;
-    padding-bottom: 30px;
-    background-color: #48392a;
-    margin-top: 10px;
-    border-radius: 10px 10px 0px 0px;
-    display: flex;
-    flex-direction: row;
+  min-height: auto;
+  padding-bottom: 30px;
+  background-color: $footer-bg;
+  margin-top: 10px;
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+  color: $footer-text;
+
+  @media (max-width: 1024px) {
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    display: block;
+    height: auto;
+    padding: 0 0 20px 0;
+  }
+
+  div {
+    flex: 1;
+    font-family: $font-header;
 
     @media (max-width: 768px) {
-        display: block;
-        height: auto;
-        padding: 0px 0px 20px 0px;
+      padding: 0 16px;
+    }
+  }
+
+  .leftdiv {
+    color: $footer-text;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2.5rem 1.5rem;
+    border-radius: 16px 0 0 0;
+
+    @media (max-width: 768px) {
+      padding: 1.5rem 1rem;
     }
 
-    div {
-        flex: 1;
-        font-family: $font-header;
+    img {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+
+      @media (max-width: 768px) {
+        height: 70px;
+        width: 70px;
+      }
+    }
+
+    h5 {
+      text-align: justify;
+      padding: 1rem 1.5rem;
+      font-weight: 400;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.1rem;
+
+      @media (max-width: 768px) {
+        font-size: 0.95rem;
+        padding: 0.75rem 0.5rem;
+      }
+    }
+
+    .logs {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      gap: 20px;
+      width: 100%;
+      padding: 12px 0;
+    }
+
+    .imglogo {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      padding: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        cursor: pointer;
+        transform: scale(1.15);
+        background: rgba(255, 107, 53, 0.3);
+      }
+
+      @media (max-width: 768px) {
+        height: 22px;
+        width: 22px;
+      }
+    }
+  }
+
+  .middlleftediv {
+    // Spacer column
+    @media (max-width: 1024px) {
+      display: none;
+    }
+  }
+
+  .middlrightediv {
+    padding: 2.5rem 1rem 2.5rem 2rem;
+
+    @media (max-width: 1024px) {
+      padding: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      padding: 0.5rem 1rem;
+    }
+
+    .navLinks {
+      display: flex;
+      flex-direction: column;
+
+      p {
+        color: $footer-muted;
+        font-size: 1.6rem;
+        font-weight: 900;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+
         @media (max-width: 768px) {
-            padding: 0px 10px;
+          font-size: 1.3rem;
         }
-    }
+      }
 
-    .leftdiv {
-        color: white;
+      a {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
         align-items: center;
-        border-radius: 10px 10px 0px 0px;
+        color: $footer-text;
+        padding: 8px 10px;
+        text-decoration: none;
+        font-weight: 600;
+        margin-bottom: 6px;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        font-size: 1.1rem;
 
-        img {
-            width: 30%;
-            @media (max-width: 768px) {
-                height: 50px;
-                width: 50px;
-            }
+        &::before {
+          content: '→';
+          margin-right: 8px;
+          color: $accent;
+          opacity: 0;
+          transform: translateX(-4px);
+          transition: all 0.2s ease;
         }
 
-        h5 {
-            text-align: justify;
-            padding: 10px 30px;
-            @media (max-width: 768px) {
-                font-size: 12px;
-            }
+        &:hover {
+          cursor: pointer;
+          background: rgba(255, 255, 255, 0.08);
+          padding-left: 14px;
+
+          &::before {
+            opacity: 1;
+            transform: translateX(0);
+          }
         }
 
-        .logs {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-evenly;
-            width: 100%;
-            padding: 10px 0;
+        @media (max-width: 768px) {
+          font-size: 1rem;
         }
+      }
+    }
+  }
 
-        .imglogo {
-            width: 25px;
-            height: 25px;
-            transition: transform 0.2s ease-in-out;
+  .rightdiv {
+    border-radius: 0 16px 0 0;
+    padding: 2.5rem 2rem;
 
-            &:hover {
-                cursor: pointer;
-                transform: scale(1.2);
-            }
-
-            @media (max-width: 768px) {
-                height: 20px;
-                width: 20px;
-            }
-        }
+    @media (max-width: 1024px) {
+      width: 100%;
+      flex-basis: 100%;
+      padding: 2rem;
     }
 
-    .middlleftediv {
+    @media (max-width: 768px) {
+      padding: 1rem;
     }
 
-    .middlrightediv {
-        padding-left: 20px;
-        padding-top: 5px;
+    h2 {
+      color: $footer-text;
+      font-size: 2rem;
+      margin-bottom: 1rem;
 
-        .navLinks {
-            p {
-                color: rgb(196, 196, 196);
-                font-size: 30px;
-                font-weight: 900;
-
-                @media (max-width: 768px) {
-                    font-size: 20px;
-                }
-            }
-            a {
-                display: flex;
-                flex-direction: row;
-                color: white;
-                padding-left: 10px;
-                text-decoration: none;
-                font-weight: 600;
-                margin-bottom: 10px;
-
-                &:hover {
-                    cursor: pointer;
-                    text-decoration: underline;
-                    color: aqua;
-                }
-                @media (max-width: 768px) {
-                    font-size: 10px;
-                }
-            }
-        }
+      @media (max-width: 768px) {
+        font-size: 1.5rem;
+      }
     }
 
-    .rightdiv {
-        border-radius: 0px 10px 0px 0px;
+    input {
+      font-family: $font-header;
+      margin-bottom: 15px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: none;
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 1rem;
+      background: rgba(255, 255, 255, 0.95);
 
-        h2 {
-            color: white;
-            @media (max-width: 768px) {
-                font-size: 20px;
-                padding-left: 10px;
-            }
-        }
-
-        input {
-            font-family: $font-header;
-            margin-bottom: 15px;
-            padding: 5px 10px;
-            border-radius: 5px;
-            border: none;
-        }
-
-        textarea {
-            margin-bottom: 15px;
-            border: none;
-            border-radius: 10px;
-        }
-
-        .messageinput {
-            height: 150px;
-            width: 100%;
-            padding: 10px;
-            display: block;
-            resize: none;
-            overflow: auto;
-            font-family: inherit;
-            box-sizing: border-box;
-        }
-
-        .messagepart {
-            display: flex;
-            flex-direction: column;
-            padding-right: 10px;
-
-            button {
-                font-family: $font-header;
-                padding: 10px 20px;
-                border-radius: 10px;
-                background-color: rgb(17, 0, 130);
-                border-color: transparent;
-                color: white;
-                transition: all 0.3s ease;
-
-                &:hover:not(:disabled) {
-                    background-color: rgb(10, 0, 78);
-                    cursor: pointer;
-                }
-
-                &:disabled {
-                    background-color: rgba(17, 0, 130, 0.6);
-                    color: rgba(255, 255, 255, 0.8);
-                    cursor: not-allowed;
-                }
-            }
-        }
+      &:focus {
+        outline: 2px solid $accent;
+      }
     }
+
+    textarea {
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+
+    .messageinput {
+      height: 130px;
+      width: 100%;
+      padding: 12px;
+      display: block;
+      resize: vertical;
+      overflow: auto;
+      font-family: inherit;
+      box-sizing: border-box;
+      background: rgba(255, 255, 255, 0.95);
+
+      &:focus {
+        outline: 2px solid $accent;
+      }
+    }
+
+    .messagepart {
+      display: flex;
+      flex-direction: column;
+
+      button {
+        font-family: $font-header;
+        padding: 12px 24px;
+        border-radius: 10px;
+        background-color: $accent;
+        border-color: transparent;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+
+        &:hover:not(:disabled) {
+          background-color: #e85a2a;
+          cursor: pointer;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 14px rgba(255, 107, 53, 0.4);
+        }
+
+        &:disabled {
+          background-color: rgba(255, 107, 53, 0.5);
+          color: rgba(255, 255, 255, 0.8);
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .footer {
+    border-radius: 12px 12px 0 0;
+  }
 }

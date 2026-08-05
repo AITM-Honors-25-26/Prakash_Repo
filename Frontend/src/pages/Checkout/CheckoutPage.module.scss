@@ -77,11 +77,12 @@ $green: #7ed957;
     justify-content: space-between;
 
     @media (max-width: 768px) {
-      display:flex ;
+      display: flex;
       flex-direction: column;
       overflow-y: auto;
       height: auto;
       padding: 0px;
+      gap: 12px;
     }
   }
 
@@ -229,6 +230,11 @@ $green: #7ed957;
       &:first-child {
         padding-top: 0;
       }
+
+      @media (max-width: 480px) {
+        gap: 8px;
+        padding: 10px 0;
+      }
       .itemImage {
         width: 150px;
         height: 150px;
@@ -238,6 +244,10 @@ $green: #7ed957;
         @media (max-width: 768px) {
           width: 80px;
           height: 90px;
+        }
+        @media (max-width: 480px) {
+          width: 64px;
+          height: 72px;
         }
       }
       .itemInfo {
@@ -334,6 +344,17 @@ $green: #7ed957;
     flex-shrink: 0;
     flex-wrap: wrap;
 
+    @media (max-width: 480px) {
+      flex-direction: column;
+      align-items: stretch;
+
+      .discountApplyBtn,
+      .discountRemoveBtn {
+        width: 100%;
+        text-align: center;
+      }
+    }
+
     .discountInput {
       flex: 1;
       padding: 10px 12px;
@@ -342,6 +363,7 @@ $green: #7ed957;
       font-family: system-ui, -apple-system, sans-serif;
       font-size: 0.95rem;
       text-transform: uppercase;
+      min-width: 0;
     }
 
     .discountApplyBtn {
@@ -434,6 +456,15 @@ $green: #7ed957;
     gap: 10px;
     min-width: 0;
     width: 100%;
+
+    @media (max-width: 480px) {
+      width: 100%;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding-left: 72px;
+      box-sizing: border-box;
+    }
 
     .subtotal {
       font-weight: bold;
