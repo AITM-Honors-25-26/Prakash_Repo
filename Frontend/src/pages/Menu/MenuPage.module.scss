@@ -127,20 +127,11 @@ $light-main-colour: #5e4934;
   }
 
   @media (max-width: 768px) {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 0.9rem;
-    overflow-x: hidden;
-    padding-bottom: 0;
   }
 
   @media (max-width: 480px) {
-    grid-template-columns: repeat(2, 1fr);
     gap: 0.6rem;
-  }
-
-  @media (max-width: 340px) {
-    grid-template-columns: 1fr;
   }
 }
 
@@ -163,10 +154,10 @@ $light-main-colour: #5e4934;
   }
 
   @media (max-width: 768px) {
-    width: 100%;
-    max-width: 100%;
+    width: 160px;
+    max-width: 160px;
+    flex: 0 0 160px;
     border-radius: 14px;
-    min-width: 0;
   }
 }
 
