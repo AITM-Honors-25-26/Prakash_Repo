@@ -23,6 +23,7 @@ interface Order {
   status: 'Pending' | 'Preparing' | 'Ready' | 'Completed' | 'Cancelled';
   createdAt: string;
   totalPrice: number;
+  paymentStatus?: 'Unpaid' | 'Pending' | 'Paid' | 'Failed';
 }
 
 const Dashboard: React.FC = () => {
@@ -199,6 +200,20 @@ const Dashboard: React.FC = () => {
   const kitchenTableGroups = groupOrdersByTable(kitchenOrders);
   const serviceTableGroups = groupOrdersByTable(serviceOrders);
 
+  // Billing visibility - a table is only "Paid" once every active order at
+  // it is Paid. Waiters see this right where orders are being served.
+  const getTablePaymentSummary = (tableOrders: Order[]) => {
+    const total = tableOrders.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
+    const anyFailed = tableOrders.some(o => o.paymentStatus === 'Failed');
+    const anyPending = tableOrders.some(o => o.paymentStatus === 'Pending');
+    const allPaid = tableOrders.length > 0 && tableOrders.every(o => o.paymentStatus === 'Paid');
+
+    if (allPaid) return { status: 'Paid' as const, outstanding: 0 };
+    if (anyFailed) return { status: 'Failed' as const, outstanding: total };
+    if (anyPending) return { status: 'Pending' as const, outstanding: total };
+    return { status: 'Unpaid' as const, outstanding: total };
+  };
+
   if (loading && orders.length === 0) {
     return (
       <Layout>
@@ -321,45 +336,57 @@ const Dashboard: React.FC = () => {
                 {serviceTableGroups.length === 0 ? (
                   <p className={styles.emptyMsg}>No orders waiting to go out.</p>
                 ) : (
-                  serviceTableGroups.map(([tableNumber, tableOrders]) => (
-                    <div key={tableNumber} className={styles.tableGroup}>
-                      <div className={styles.tableGroupHeader}>
-                        <h3>Table {tableNumber}</h3>
-                        {tableOrders.length > 1 && (
-                          <span className={styles.orderCountTag}>{tableOrders.length} ready orders</span>
-                        )}
-                      </div>
-
-                      {tableOrders.map(order => (
-                        <div
-                          key={order._id}
-                          className={`${styles.orderCard} ${styles.readyCard}`}
-                        >
-                          <div className={styles.cardTop}>
-                            <span className={styles.readyBadge}>Ready to Serve</span>
-                          </div>
-
-                          <ul className={styles.itemList}>
-                            {order.items.map((item, index) => (
-                              <li key={item._id || index} className={styles.itemRow}>
-                                <span className={styles.qty}>{item.quantity}x</span>
-                                <span className={styles.itemName}>{item.name}</span>
-                              </li>
-                            ))}
-                          </ul>
-
-                          <div className={styles.cardActions}>
-                            <button
-                              onClick={() => deleteCompletedOrder(order._id)}
-                              className={styles.actionBtnComplete}
-                            >
-                              Served & Completed ✓
-                            </button>
-                          </div>
+                  serviceTableGroups.map(([tableNumber, tableOrders]) => {
+                    const payment = getTablePaymentSummary(tableOrders);
+                    return (
+                      <div key={tableNumber} className={styles.tableGroup}>
+                        <div className={styles.tableGroupHeader}>
+                          <h3>Table {tableNumber}</h3>
+                          {tableOrders.length > 1 && (
+                            <span className={styles.orderCountTag}>{tableOrders.length} ready orders</span>
+                          )}
+                          <span
+                            className={`${styles.paymentBadge} ${
+                              styles[`payment${payment.status}`] || ''
+                            }`}
+                          >
+                            {payment.status === 'Paid'
+                              ? '✓ Bill Paid'
+                              : `${payment.status} · Rs. ${payment.outstanding.toLocaleString()}`}
+                          </span>
                         </div>
-                      ))}
-                    </div>
-                  ))
+
+                        {tableOrders.map(order => (
+                          <div
+                            key={order._id}
+                            className={`${styles.orderCard} ${styles.readyCard}`}
+                          >
+                            <div className={styles.cardTop}>
+                              <span className={styles.readyBadge}>Ready to Serve</span>
+                            </div>
+
+                            <ul className={styles.itemList}>
+                              {order.items.map((item, index) => (
+                                <li key={item._id || index} className={styles.itemRow}>
+                                  <span className={styles.qty}>{item.quantity}x</span>
+                                  <span className={styles.itemName}>{item.name}</span>
+                                </li>
+                              ))}
+                            </ul>
+
+                            <div className={styles.cardActions}>
+                              <button
+                                onClick={() => deleteCompletedOrder(order._id)}
+                                className={styles.actionBtnComplete}
+                              >
+                                Served & Completed ✓
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })
                 )}
               </div>
             </section>

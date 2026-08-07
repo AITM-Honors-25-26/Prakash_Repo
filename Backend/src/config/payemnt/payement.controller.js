@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import { generateQR } from '../../QrGenerator/qrGenerator.js';
 import { AppConfig, PaymentStatus } from '../constants.js';
 import * as OrderService from '../../modules/order/order.service.js';
+import tableSvc from '../../modules/table/table.service.js';
 
 // Falls back to eSewa's public sandbox code when MERCHANT_ID isn't set, so
 // the app still works out of the box in dev - set MERCHANT_ID in .env to
@@ -121,6 +122,16 @@ export const esewaSuccess = async (req, res) => {
         await OrderService.setPaymentStatus(transaction_uuid, PaymentStatus.PAID, {
             esewaTransactionCode: transaction_code,
         });
+
+        // Notify staff boards in real time that this table's bill is paid.
+        const paidOrder = await OrderService.getOrderById(transaction_uuid);
+        if (paidOrder?.tableNumber) {
+            const io = req.app.get('io');
+            if (io) {
+                const updatedTable = await tableSvc.refreshTableBilling(paidOrder.tableNumber);
+                io.emit('table_billing_updated', updatedTable);
+            }
+        }
 
         return res.redirect(`${frontendUrl}/payment/success?orderId=${transaction_uuid}&amount=${total_amount}`);
     } catch (error) {

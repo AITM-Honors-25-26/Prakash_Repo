@@ -10,7 +10,8 @@ class AuthService{
                 const upload = await cloudianarySvc.fileUpload(req.file.path, 'user/');
                 data.image = {
                     url: upload.url,
-                    optmizedUrl: upload.secure_url || upload.url
+                    optimizeUrl: upload.secure_url || upload.url,
+                    public_id: upload.public_id
                 };
                 data.image_id = upload.public_id;
             }
@@ -55,10 +56,11 @@ class AuthService{
     createStaffAccount = async (data) => {
         try {
             data.password = bcrypt.hashSync(data.password, 12);
-            // Admin-created accounts skip the email-activation step entirely
-            // since the Admin has already verified the person is staff.
-            data.status = true;
-            data.activationToken = null;
+            // Admin-created accounts still require email activation: the staff
+            // member clicks the activation link sent to their registered email
+            // before they can log in.
+            data.status = false;
+            data.activationToken = randomStringGenerator(100, 'string');
             const userObj = new UserModel(data);
             return await userObj.save();
         } catch (exception) {
@@ -68,6 +70,17 @@ class AuthService{
     updateUserById = async (id, updateData) => {
         try {
             return await UserModel.findByIdAndUpdate(id, { $set: updateData }, { new: true, runValidators: true });
+        } catch (exception) {
+            throw exception;
+        }
+    }
+    updateProfilePhoto = async (userId, imageData) => {
+        try {
+            return await UserModel.findByIdAndUpdate(
+                userId,
+                { $set: { image: imageData } },
+                { new: true, runValidators: true }
+            );
         } catch (exception) {
             throw exception;
         }

@@ -11,6 +11,7 @@ authRouter.post('/auth/register',uploader().single('image'),bodyValidator(Regist
 
 authRouter.get('/auth/activate/:token', authCtr.activateUser);
 authRouter.post('/auth/me',allowUser(),authCtr.getMyProfile);
+authRouter.patch('/auth/profile/photo', allowUser(), uploader().single('image'), authCtr.updateProfilePhoto);
 authRouter.post('/auth/login',bodyValidator(LoginDTO),authCtr.loginUser);
 authRouter.post('/auth/forgot_password',bodyValidator(ForgetPasswordRequestDTO),authCtr.forgotPassword);
 authRouter.get('/auth/verify-token/:token', authCtr.verifyForgotPasswordToken)

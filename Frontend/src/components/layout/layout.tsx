@@ -16,7 +16,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <main>
         {children}
       </main>
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-right" theme="colored" autoClose={3000} />
       <FloatingCart />
       <FloatingOrderTracker />
       <Footer />

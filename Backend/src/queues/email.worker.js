@@ -12,25 +12,37 @@ export const EMAIL_JOBS = {
 
 const buildEmail = (jobName, data) => {
     switch (jobName) {
-        case EMAIL_JOBS.ACTIVATION:
-            console.log("i am here")
+        case EMAIL_JOBS.ACTIVATION: {
+            const staffIntro = data.isStaff
+                ? `An administrator has created a staff account for you at <strong>Melina's Bakery</strong> with the role of <strong>${data.role}</strong>.`
+                : `Thank you for registering with <strong>Melina's Bakery</strong>!`;
+            const credentialsBlock = data.isStaff
+                ? `
+                    <p>You can log in with the following credentials after activating your account:</p>
+                    <p><strong>Email:</strong> ${data.email}<br/>
+                       <strong>Temporary Password:</strong> ${data.tempPassword}</p>
+                    <p>Please change your password from your profile settings after your first login.</p>
+                `
+                : ``;
             return {
                 to:      data.email,
-                sub:     "Activate Your Account",
+                sub:     data.isStaff ? "Your Staff Account Activation" : "Activate Your Account",
                 message: `
                     <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto">
                         <h2>Hi ${data.fullName},</h2>
-                        <p>Thank you for registering with <strong>Melina's Bakery</strong>!</p>
+                        <p>${staffIntro}</p>
                         <p>Please click the button below to activate your account:</p>
                         <a href="${AppConfig.backend_Url}/auth/activate/${data.activationToken}"
                            style="display:inline-block;background:#000;color:#fff;padding:12px 24px;
                                   text-decoration:none;border-radius:4px;margin:16px 0">
                             Activate Account
                         </a>
+                        ${credentialsBlock}
                         <p>If you did not create an account, please ignore this email.</p>
                     </div>
                 `,
             };
+        }
 
         case EMAIL_JOBS.FORGOT_PASSWORD:
             return {

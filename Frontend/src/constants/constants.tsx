@@ -141,6 +141,7 @@ export const API_ENDPOINTS = {
   REGISTER: `${API_BASE_URL}/auth/register`,
   FORGETPASSWORD: `${API_BASE_URL}/auth/forgot_password`,
   RESETPASSWORD: `${API_BASE_URL}/auth/reset-password`,
+  PROFILE_PHOTO: `${API_BASE_URL}/auth/profile/photo`,
 
   LISTALLITEMS: `${API_BASE_URL}/menu/list`,
   MENU_ACTION: `${API_BASE_URL}/menu`,

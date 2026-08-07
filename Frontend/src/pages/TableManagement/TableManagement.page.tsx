@@ -24,12 +24,16 @@ export interface RestaurantTable {
   capacity: number;
   status: 'Available' | 'Occupied' | 'Reserved' | 'NotAvailable';
   location: 'Indoor' | 'Outdoor' | 'Window' | 'Balcony';
+  paymentStatus: 'Unpaid' | 'Pending' | 'Paid' | 'Failed';
+  outstandingAmount: number;
+  activeOrdersCount: number;
 }
 
 const TableManagement: React.FC = () => {
   const [tables, setTables] = useState<RestaurantTable[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [isStaff, setIsStaff] = useState<boolean>(false);
   const [userEmail, setUserEmail] = useState<string>('');
   const navigate = useNavigate();
 
@@ -89,6 +93,7 @@ const TableManagement: React.FC = () => {
       try {
         const userData = JSON.parse(storedUser);
         setIsAdmin(userData.role === 'Admin');
+        setIsStaff(userData.role === 'Admin' || userData.role === 'Waiter');
         setUserEmail(userData.email || '');
       } catch (e) {
         console.error('User Parse Error', e);
@@ -210,6 +215,81 @@ const TableManagement: React.FC = () => {
     }
   };
 
+  // ----- Billing / Release -----
+  // Lets staff see and control the payment state of each table: settle the
+  // bill (counter payment) and only then release the table for new guests.
+
+  const handleSettleTable = async (table: RestaurantTable) => {
+    const config = getAuthHeader();
+    if (!config) return;
+
+    const result = await MySwal.fire({
+      title: `Settle Table ${table.tableNumber}?`,
+      text: 'Mark every unpaid order at this table as paid (counter payment).',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, Mark Paid',
+      confirmButtonColor: '#218838',
+      cancelButtonText: 'Cancel',
+    });
+    if (!result.isConfirmed) return;
+
+    try {
+      const response = await axios.put(
+        `${API_ENDPOINTS.TABLE_BASE}/${table.tableNumber}/settle`,
+        {},
+        config
+      );
+      toast.success(response.data?.message || `Table ${table.tableNumber} bill settled.`);
+      fetchTables(false);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || 'Failed to settle the bill.');
+      } else {
+        toast.error('Failed to settle the bill.');
+      }
+    }
+  };
+
+  const handleMarkAvailable = async (table: RestaurantTable) => {
+    const config = getAuthHeader();
+    if (!config) return;
+
+    const result = await MySwal.fire({
+      title: `Make Table ${table.tableNumber} Available?`,
+      text: 'The table will be released for the next customer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Release Table',
+      confirmButtonColor: '#d84315',
+      cancelButtonText: 'Cancel',
+    });
+    if (!result.isConfirmed) return;
+
+    try {
+      const response = await axios.put(
+        `${API_ENDPOINTS.TABLE_BASE}/${table.tableNumber}/mark-available`,
+        {},
+        config
+      );
+      toast.success(response.data?.message || `Table ${table.tableNumber} is now available.`);
+      fetchTables(false);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response?.status === 409) {
+        await MySwal.fire({
+          title: 'Bill Not Settled',
+          text: error.response?.data?.message || 'This table still has an outstanding bill. Please settle it first.',
+          icon: 'error',
+          confirmButtonColor: '#d84315',
+        });
+      } else if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || 'Failed to release the table.');
+      } else {
+        toast.error('Failed to release the table.');
+      }
+    }
+  };
+
   if (isLoading) {
     return (
       <Layout>
@@ -248,6 +328,27 @@ const TableManagement: React.FC = () => {
                   </div>
                   <h2 className={styles.userName}>Table {table.tableNumber}</h2>
                   <p className={styles.statusText}>{table.status}</p>
+                  {table.status === 'Occupied' && (
+                    <div
+                      className={`${styles.paymentBadge} ${
+                        table.paymentStatus === 'Paid'
+                          ? styles.paymentPaid
+                          : table.paymentStatus === 'Pending'
+                            ? styles.paymentPending
+                            : table.paymentStatus === 'Failed'
+                              ? styles.paymentFailed
+                              : styles.paymentUnpaid
+                      }`}
+                    >
+                      {table.paymentStatus === 'Paid'
+                        ? '✓ Bill Paid'
+                        : table.paymentStatus === 'Pending'
+                          ? '⏳ Awaiting Payment'
+                          : table.paymentStatus === 'Failed'
+                            ? `Payment Failed · Rs. ${(table.outstandingAmount || 0).toLocaleString()}`
+                            : `Unpaid · Rs. ${(table.outstandingAmount || 0).toLocaleString()}`}
+                    </div>
+                  )}
                 </div>
                 <div className={styles.infoSection}>
                   <h3>Configuration</h3>
@@ -267,6 +368,18 @@ const TableManagement: React.FC = () => {
                     <button className={styles.qrButton} onClick={() => handleViewQR(table)}>
                       QR Code
                     </button>
+
+                    {isStaff && table.status === 'Occupied' && table.paymentStatus !== 'Paid' && (
+                      <button className={styles.settleButton} onClick={() => handleSettleTable(table)}>
+                        Settle Bill
+                      </button>
+                    )}
+
+                    {isStaff && table.status === 'Occupied' && (
+                      <button className={styles.releaseButton} onClick={() => handleMarkAvailable(table)}>
+                        Make Available
+                      </button>
+                    )}
 
                     {isAdmin && (
                       <button className={styles.deleteButton} onClick={() => requestDelete(table._id)}>

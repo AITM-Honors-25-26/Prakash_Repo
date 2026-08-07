@@ -18,7 +18,9 @@ class TableController {
 
     getAllTables = async (req, res, next) => {
         try {
-            const list = await tableSvc.getAllTables({});
+            // Enriched with live billing (paymentStatus / outstandingAmount)
+            // so staff can see which tables have paid.
+            const list = await tableSvc.getAllTablesWithBilling({});
 
             res.json({
                 result: list,
@@ -115,6 +117,57 @@ class TableController {
             return res.status(200).json({
                 result: releasedTable,
                 message: "Table released.",
+                meta: null
+            });
+        } catch (exception) {
+            next(exception);
+        }
+    }
+
+    // Staff flow - marks every unpaid active order at the table as Paid
+    // (counter payment). The table's billing snapshot is refreshed so it then
+    // shows "Paid" and can be released.
+    settleTable = async (req, res, next) => {
+        try {
+            const tableNumber = req.params.id;
+
+            const settledTable = await tableSvc.settleTableByNumber(tableNumber);
+
+            const io = req.app.get('io');
+            if (io) io.emit('table_billing_updated', settledTable);
+
+            return res.status(200).json({
+                result: settledTable,
+                message: "Bill settled. The table can now be released.",
+                meta: null
+            });
+        } catch (exception) {
+            next(exception);
+        }
+    }
+
+    // Staff flow - makes the table Available again, but only once the bill is
+    // fully paid. Returns 409 with the outstanding amount otherwise.
+    markTableAvailable = async (req, res, next) => {
+        try {
+            const tableNumber = req.params.id;
+
+            const result = await tableSvc.staffReleaseTableByNumber(tableNumber);
+
+            if (!result.released) {
+                return res.status(409).json({
+                    result: null,
+                    message: `This table still has Rs. ${result.billing.outstandingAmount} outstanding. Please settle the bill first.`,
+                    meta: { outstandingAmount: result.billing.outstandingAmount }
+                });
+            }
+
+            const io = req.app.get('io');
+            if (io) io.emit('table_billing_updated', result.table);
+
+            return res.status(200).json({
+                result: result.table,
+                message: "Table is now available.",
                 meta: null
             });
         } catch (exception) {

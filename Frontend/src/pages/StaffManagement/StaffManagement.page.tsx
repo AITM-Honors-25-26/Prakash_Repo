@@ -313,16 +313,16 @@ const StaffManagement: React.FC = () => {
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody>
+               <tbody>
                 {staff.map((member) => (
                   <tr key={member._id}>
-                    <td>{member.name}</td>
-                    <td>{member.email}</td>
-                    <td>
+                    <td data-label="Name">{member.name}</td>
+                    <td data-label="Email">{member.email}</td>
+                    <td data-label="Role">
                       <span className={styles.roleBadge}>{member.role}</span>
                     </td>
-                    <td>{member.phone}</td>
-                    <td>
+                    <td data-label="Phone">{member.phone}</td>
+                    <td data-label="Status">
                       <button
                         className={`${styles.statusToggle} ${member.status ? styles.active : styles.inactive}`}
                         onClick={() => toggleStatus(member)}
@@ -345,7 +345,7 @@ const StaffManagement: React.FC = () => {
                     </td>
                   </tr>
                 ))}
-              </tbody>
+               </tbody>
             </table>
           </div>
         )}

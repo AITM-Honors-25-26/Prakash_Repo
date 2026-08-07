@@ -45,7 +45,8 @@ const UserSchema = new mongoose.Schema({
     },
     image: {
         url: String,
-        optimizeUrl:String
+        optimizeUrl:String,
+        public_id: String
     },
     status: {
         type: Boolean,

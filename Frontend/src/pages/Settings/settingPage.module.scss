@@ -95,6 +95,10 @@ $breakpoint-md: 768px;
           }
         }
 
+        .hiddenFileInput {
+          display: none;
+        }
+
         button {
           padding: 8px 16px;
           border-radius: 20px;
@@ -107,9 +111,14 @@ $breakpoint-md: 768px;
           cursor: pointer;
           transition: all 0.2s ease;
 
-          &:hover {
+          &:hover:not(:disabled) {
             background-color: $main-Colour;
             color: white;
+          }
+
+          &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
           }
         }
       }
