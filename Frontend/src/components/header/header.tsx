@@ -46,6 +46,23 @@ const Header: React.FC = () => {
   });
 
   useEffect(() => {
+    const handleUserUpdate = () => {
+      const savedUser = localStorage.getItem('qr_user');
+      if (savedUser) {
+        try {
+          setUser(JSON.parse(savedUser));
+        } catch (e) {
+          console.error("Error parsing user data", e);
+        }
+      }
+    };
+
+    // Keep the header avatar in sync when the profile photo is changed
+    window.addEventListener('qr_user_updated', handleUserUpdate);
+    return () => window.removeEventListener('qr_user_updated', handleUserUpdate);
+  }, []);
+
+  useEffect(() => {
     const claimTable = async () => {
       if (!urlTableId) return;
       const sessionId = getSessionId();
@@ -227,6 +244,7 @@ const Header: React.FC = () => {
 
           {user && (
             <div className={styles.actions}>
+              <Link to="/ProfilePage" onClick={() => setMenuOpen(false)}>My Profile</Link>
               <Link to="/SettingsPage" onClick={() => setMenuOpen(false)}>Settings</Link>
               <button className={styles.logoutBtn} onClick={handleLogout}>Logout</button>
             </div>
@@ -264,6 +282,7 @@ const Header: React.FC = () => {
               </div>
               <hr />
               <div className={styles.actions}>
+                <Link to="/ProfilePage">My Profile</Link>
                 <Link to="/SettingsPage">Settings</Link>
                 <button className={styles.logoutBtn} onClick={handleLogout}>
                   Logout

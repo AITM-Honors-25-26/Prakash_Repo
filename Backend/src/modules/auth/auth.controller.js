@@ -129,23 +129,26 @@ class AuthController {
                 const upload = await cloudianarySvc.fileUpload(req.file.path, 'user/');
                 userData.image = {
                     url: upload.url,
-                    optmizedUrl: upload.secure_url || upload.url
+                    optimizeUrl: upload.secure_url || upload.url,
+                    public_id: upload.public_id
                 };
                 userData.image_id = upload.public_id;
             }
 
             const userObj = await autSvc.createStaffAccount(userData);
 
-            await emailQueue.add(EMAIL_JOBS.STAFF_WELCOME, {
-                fullName:     userObj.fullName,
-                email:        userObj.email,
-                role:         userObj.role,
-                tempPassword: req.body.password,
+            await emailQueue.add(EMAIL_JOBS.ACTIVATION, {
+                fullName:        userObj.fullName,
+                email:           userObj.email,
+                activationToken: userObj.activationToken,
+                role:            userObj.role,
+                tempPassword:    req.body.password,
+                isStaff:         true,
             });
 
             res.status(201).json({
                 data: { user: autSvc.publicUserProfile(userObj) },
-                message: "Staff account created successfully",
+                message: "Staff account created. An activation email has been sent to the registered email address.",
                 status: "STAFF_CREATE_SUCCESS",
                 option: null,
             });
@@ -209,6 +212,52 @@ class AuthController {
             message: "Your Profile",
             option: null,
         });
+    }
+    updateProfilePhoto = async (req, res, next) => {
+        let uploaded;
+        try {
+            const userId = req.authUser?._id;
+            if (!userId) {
+                throw { code: 401, message: "Unauthenticated", status: "UNAUTHENTICATED" };
+            }
+            if (!req.file) {
+                throw { code: 422, message: "Profile image is required", status: "PROFILE_IMAGE_MISSING" };
+            }
+
+            // 1. Upload the new image to Cloudinary
+            uploaded = await cloudianarySvc.fileUpload(req.file.path, 'user/');
+
+            // 2. Delete the old photo from Cloudinary so it doesn't pile up
+            const currentUser = await autSvc.getSingleUserByFilter({ _id: userId });
+            const oldPublicId = currentUser?.image?.public_id;
+            if (oldPublicId) {
+                await cloudianarySvc.deleteFile(oldPublicId);
+            }
+
+            // 3. Persist the new link in the database so the new image is shown
+            const updatedUser = await autSvc.updateProfilePhoto(userId, {
+                url: uploaded.url,
+                optimizeUrl: uploaded.secure_url || uploaded.url,
+                public_id: uploaded.public_id,
+            });
+            if (!updatedUser) {
+                throw { code: 404, message: "User not found", status: "USER_NOT_FOUND" };
+            }
+
+            res.json({
+                data: { user: autSvc.publicUserProfile(updatedUser) },
+                message: "Profile photo updated successfully",
+                status: "PROFILE_PHOTO_UPDATE_SUCCESS",
+                option: null,
+            });
+        } catch (exception) {
+            // If anything went wrong after uploading, remove the newly uploaded
+            // image from Cloudinary so we don't leave an orphaned file behind.
+            if (uploaded && uploaded.public_id) {
+                await cloudianarySvc.deleteFile(uploaded.public_id).catch(() => {});
+            }
+            next(exception);
+        }
     }
     forgotPassword = async (req, res, next) => {
         try {

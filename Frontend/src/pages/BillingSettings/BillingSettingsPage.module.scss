@@ -328,6 +328,15 @@ $light-main-colour: rgb(128, 128, 128);
 .saveBtn {
   background: $header_colour;
   color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  align-self: center;
+
   &:hover { background: #2d1b18; }
   &:disabled {
     background: #ccc;

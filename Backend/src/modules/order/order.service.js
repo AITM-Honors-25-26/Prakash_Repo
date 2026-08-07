@@ -1,6 +1,7 @@
 import Order from '../ordermodel/order.model.js';
 import { OrderStatus } from '../../config/constants.js';
 import settingsSvc from '../settings/settings.service.js';
+import tableSvc from '../table/table.service.js';
 
 export const createOrder = async (orderData) => {
   const { tableNumber, items, discountCode } = orderData;
@@ -25,7 +26,13 @@ export const createOrder = async (orderData) => {
     status: OrderStatus.PENDING
   });
 
-  return await newOrder.save();
+  const savedOrder = await newOrder.save();
+
+  // Keep the table's billing snapshot in sync so staff immediately see the
+  // table as Occupied + Unpaid with the correct outstanding amount.
+  await tableSvc.refreshTableBilling(tableNumber);
+
+  return savedOrder;
 };
 
 export const getOrdersForKitchen = async () => {
@@ -78,7 +85,12 @@ export const updateOrderItems = async (orderId, { items, discountCode }) => {
   order.serviceChargeAmount = totals.serviceChargeAmount;
   order.totalPrice = totals.totalPrice;
 
-  return await order.save();
+  const savedOrder = await order.save();
+
+  // Total can change after an edit, so refresh the table's billing snapshot.
+  await tableSvc.refreshTableBilling(savedOrder.tableNumber);
+
+  return savedOrder;
 };
 
 // Order Customization - lets the customer cancel their own order, but only
@@ -101,7 +113,12 @@ export const cancelOrder = async (orderId) => {
   }
 
   order.status = OrderStatus.CANCELLED;
-  return await order.save();
+  const savedOrder = await order.save();
+
+  // A cancelled order no longer counts toward the table's bill.
+  await tableSvc.refreshTableBilling(savedOrder.tableNumber);
+
+  return savedOrder;
 };
 
 export const updateStatus = async (orderId, newStatus) => {
@@ -113,7 +130,16 @@ export const updateStatus = async (orderId, newStatus) => {
 };
 
 export const deleteOrder = async (orderId) => {
-  return await Order.findByIdAndDelete(orderId);
+  const order = await Order.findById(orderId);
+
+  await Order.findByIdAndDelete(orderId);
+
+  // Removing an order changes the outstanding total for its table.
+  if (order?.tableNumber) {
+    await tableSvc.refreshTableBilling(order.tableNumber);
+  }
+
+  return order;
 };
 
 export const getOrderById = async (orderId) => {
@@ -123,9 +149,17 @@ export const getOrderById = async (orderId) => {
 // Used by the eSewa QR flow: init sets it to Pending while the customer is
 // scanning/paying, the success/failure callback flips it to Paid/Failed.
 export const setPaymentStatus = async (orderId, paymentStatus, extra = {}) => {
-  return await Order.findByIdAndUpdate(
+  const updated = await Order.findByIdAndUpdate(
     orderId,
     { paymentStatus, ...extra },
     { new: true, runValidators: true }
   );
+
+  // A payment status change (e.g. eSewa success) directly affects whether
+  // the table is paid, so refresh its billing snapshot.
+  if (updated?.tableNumber) {
+    await tableSvc.refreshTableBilling(updated.tableNumber);
+  }
+
+  return updated;
 };

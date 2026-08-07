@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import Layout from '../../components/layout/layout';
 import styles from './settingPage.module.scss';
-import defaultProfile from '../../../img/gif/profile.gif'
+import defaultProfile from '../../../img/gif/profile.gif';
+import { API_ENDPOINTS } from '../../constants/constants.js';
 
 const Settings: React.FC = () => {
   const [userData, setUserData] = useState(() => {
@@ -21,6 +24,55 @@ const Settings: React.FC = () => {
       : '',
   });
 
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const token = localStorage.getItem('qr_accessToken');
+    if (!token) {
+      toast.error('Session expired. Please log in again.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    setIsUploading(true);
+    try {
+      const response = await axios.patch(API_ENDPOINTS.PROFILE_PHOTO, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const updatedUser = response.data?.data?.user;
+      if (updatedUser) {
+        const updatedData = { ...userData, image: updatedUser.image };
+        setUserData(updatedData);
+        localStorage.setItem('qr_user', JSON.stringify(updatedData));
+        window.dispatchEvent(new Event('qr_user_updated'));
+        toast.success('Profile photo updated successfully!');
+      }
+    } catch (error: unknown) {
+      console.error('Profile photo update error:', error);
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        toast.error('Session expired. Please log in again.');
+      } else if (axios.isAxiosError(error) && error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('Failed to update profile photo.');
+      }
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -37,13 +89,14 @@ const Settings: React.FC = () => {
     const updatedUser = {
       ...userData,
       ...formData,
-      name: formData.fullName
+      name: formData.fullName,
+      fullName: formData.fullName,
     };
 
     localStorage.setItem('qr_user', JSON.stringify(updatedUser));
     setUserData(updatedUser);
-    alert('Profile Updated Successfully');
-
+    window.dispatchEvent(new Event('qr_user_updated'));
+    toast.success('Profile Updated Successfully');
   };
 
   const handleLogout = () => {
@@ -84,8 +137,19 @@ const Settings: React.FC = () => {
                 }
                 alt="profile"
               />
-              <button>
-                Change Photo
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoChange}
+                className={styles.hiddenFileInput}
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+              >
+                {isUploading ? 'Uploading...' : 'Change Photo'}
               </button>
             </div>
             <div className={styles.userInfo}>
