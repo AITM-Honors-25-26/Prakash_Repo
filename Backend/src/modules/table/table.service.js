@@ -1,6 +1,7 @@
 import { Table } from "../tablemodel/table.model.js";
 import Order from "../ordermodel/order.model.js";
 import { OrderStatus, PaymentStatus, TableStatus } from "../../config/constants.js";
+import membershipSvc from "../membership/membership.service.js";
 
 class TableService {
     transformTableData = async (req) => {
@@ -54,7 +55,14 @@ class TableService {
 
             return tables.map((table) => {
                 const tableOrders = ordersByTable.get(String(table.tableNumber)) || [];
-                const billing = this.computeBillingFromOrders(tableOrders);
+                const isOccupied = table.status === TableStatus.OCCUPIED || table.status === TableStatus.RESERVED;
+
+                // A released / unavailable table should never show stale active
+                // orders or an outstanding bill - historical (already paid)
+                // orders belong to the previous sitting.
+                const billing = isOccupied
+                    ? this.computeBillingFromOrders(tableOrders)
+                    : { paymentStatus: PaymentStatus.PAID, outstandingAmount: 0, activeOrdersCount: 0 };
 
                 return {
                     ...table.toObject(),
@@ -68,18 +76,108 @@ class TableService {
         }
     }
 
+    // Reception / Payments Console - full billing picture for every table:
+    // each table with its orders (itemized), the per-order bill breakdown, and
+    // a room-wide summary so reception can settle bills and spot trouble.
+    getPaymentsOverview = async () => {
+        try {
+            const tables = await Table.find({}).sort({ tableNumber: 1 });
+            const orders = await Order.find({
+                status: { $nin: [OrderStatus.CANCELLED] }
+            }).sort({ createdAt: 1 });
+
+            const ordersByTable = new Map();
+            orders.forEach((order) => {
+                const key = String(order.tableNumber);
+                if (!ordersByTable.has(key)) ordersByTable.set(key, []);
+                ordersByTable.get(key).push(order);
+            });
+
+            const todayStart = new Date();
+            todayStart.setHours(0, 0, 0, 0);
+
+            let totalOutstanding = 0;
+            let totalPaidToday = 0;
+            let occupiedTables = 0;
+            let paidTables = 0;
+
+            const tableRows = tables.map((table) => {
+                const tableOrders = ordersByTable.get(String(table.tableNumber)) || [];
+                const isOccupied = table.status === TableStatus.OCCUPIED || table.status === TableStatus.RESERVED;
+                const billing = isOccupied
+                    ? this.computeBillingFromOrders(tableOrders)
+                    : { paymentStatus: PaymentStatus.PAID, outstandingAmount: 0, activeOrdersCount: 0 };
+
+                if (isOccupied) {
+                    occupiedTables += 1;
+                    totalOutstanding += billing.outstandingAmount;
+                    if (billing.paymentStatus === PaymentStatus.PAID) paidTables += 1;
+                }
+                tableOrders.forEach((o) => {
+                    if (o.paymentStatus === PaymentStatus.PAID && o.paidAt && new Date(o.paidAt) >= todayStart) {
+                        totalPaidToday += o.totalPrice || 0;
+                    }
+                });
+
+                return {
+                    tableNumber: table.tableNumber,
+                    status: table.status,
+                    location: table.location,
+                    occupiedBy: table.occupiedBy,
+                    billing,
+                    orders: tableOrders.map((order) => ({
+                        _id: order._id,
+                        status: order.status,
+                        paymentStatus: order.paymentStatus,
+                        paymentMethod: order.paymentMethod,
+                        items: order.items,
+                        subtotal: order.subtotal,
+                        discountCode: order.discountCode,
+                        discountAmount: order.discountAmount,
+                        membershipTier: order.membershipTier,
+                        membershipDiscountPercent: order.membershipDiscountPercent,
+                        membershipDiscountAmount: order.membershipDiscountAmount,
+                        taxRate: order.taxRate,
+                        taxAmount: order.taxAmount,
+                        serviceChargeRate: order.serviceChargeRate,
+                        serviceChargeAmount: order.serviceChargeAmount,
+                        totalPrice: order.totalPrice,
+                        paidAt: order.paidAt,
+                        createdAt: order.createdAt
+                    }))
+                };
+            });
+
+            return {
+                summary: {
+                    totalOutstanding,
+                    totalPaidToday,
+                    occupiedTables,
+                    paidTables,
+                    unpaidTables: occupiedTables - paidTables
+                },
+                tables: tableRows
+            };
+        } catch (exception) {
+            throw exception;
+        }
+    }
+
     // Reduces a list of a table's orders down to a single billing snapshot.
     // outstandingAmount = sum of every order that hasn't been paid yet, so the
-    // table is only "Paid" once zero amount is outstanding.
+    // table is only "Paid" once zero amount is outstanding. A failed eSewa
+    // attempt surfaces as "Failed" so staff can see a payment went wrong.
     computeBillingFromOrders = (orders) => {
         const unpaidOrders = orders.filter((o) => o.paymentStatus !== PaymentStatus.PAID);
         const outstandingAmount = unpaidOrders.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
 
         let paymentStatus = PaymentStatus.PAID;
-        if (outstandingAmount > 0) {
-            paymentStatus = unpaidOrders.some((o) => o.paymentStatus === PaymentStatus.PENDING)
-                ? PaymentStatus.PENDING
-                : PaymentStatus.UNPAID;
+        if (orders.length === 0) {
+            paymentStatus = PaymentStatus.UNPAID; // freshly occupied, no bill yet
+        } else if (outstandingAmount > 0) {
+            const hasFailed = unpaidOrders.some((o) => o.paymentStatus === PaymentStatus.FAILED);
+            const hasPending = unpaidOrders.some((o) => o.paymentStatus === PaymentStatus.PENDING);
+            paymentStatus = hasFailed ? PaymentStatus.FAILED : (hasPending ? PaymentStatus.PENDING : PaymentStatus.UNPAID);
         }
 
         return {
@@ -248,8 +346,8 @@ class TableService {
         }
     }
 
-    // Staff (Waiter/Admin) flow - marks every unpaid active order at this
-    // table as Paid (counter payment) and refreshes the table's billing
+    // Staff (Waiter/Admin/Reception) flow - marks every unpaid active order at
+    // this table as Paid (counter payment) and refreshes the table's billing
     // snapshot so it can then be released.
     settleTableByNumber = async (tableNumber) => {
         try {
@@ -266,8 +364,16 @@ class TableService {
             await Promise.all(orders.map(async (order) => {
                 if (order.paymentStatus !== PaymentStatus.PAID) {
                     order.paymentStatus = PaymentStatus.PAID;
-                    if (order.paymentMethod !== 'Esewa') order.paymentMethod = 'Counter';
+                    // Settled at the counter, so the recorded method is Counter
+                    // regardless of how the customer first tried to pay.
+                    order.paymentMethod = 'Counter';
+                    order.paidAt = new Date();
                     await order.save();
+
+                    // Credit the member's lifetime spend on first payment.
+                    if (order.membershipId) {
+                        await membershipSvc.recordPayment(order.membershipId, order.totalPrice);
+                    }
                 }
             }));
 

@@ -8,6 +8,7 @@ export const EMAIL_JOBS = {
     ACTIVATION:      "activation-email",
     FORGOT_PASSWORD: "forgot-password-email",
     STAFF_WELCOME:   "staff-welcome-email",
+    MEMBERSHIP_OTP:  "membership-otp-email",
 };
 
 const buildEmail = (jobName, data) => {
@@ -75,6 +76,23 @@ const buildEmail = (jobName, data) => {
                         <p><strong>Email:</strong> ${data.email}<br/>
                            <strong>Temporary Password:</strong> ${data.tempPassword}</p>
                         <p>Please log in and change your password from your profile settings as soon as possible.</p>
+                    </div>
+                `,
+            };
+
+        case EMAIL_JOBS.MEMBERSHIP_OTP:
+            return {
+                to:      data.email,
+                sub:     "Your Melina's Bakery Membership Code",
+                message: `
+                    <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto">
+                        <h2>Hi ${data.fullName},</h2>
+                        <p>Use the one-time code below to verify your membership. It expires in <strong>5 minutes</strong>.</p>
+                        <div style="font-size:32px;font-weight:bold;letter-spacing:8px;background:#f4f1ea;
+                                    padding:16px;text-align:center;border-radius:6px;margin:16px 0">
+                            ${data.otp}
+                        </div>
+                        <p>If you didn't request this code, you can safely ignore this email.</p>
                     </div>
                 `,
             };

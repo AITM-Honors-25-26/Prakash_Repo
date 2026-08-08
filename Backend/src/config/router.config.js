@@ -7,6 +7,7 @@ import contactAdminRouter from "../modules/contactAdmin/contactAdmin.router.js";
 import paymentRouter from "./payemnt/payment.router.js";
 import settingsRouter from "../modules/settings/settings.router.js";
 import analyticsRouter from "../modules/analytics/analytics.router.js";
+import membershipRouter from "../modules/membership/membership.router.js";
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use(contactAdminRouter)
 router.use(paymentRouter)
 router.use(settingsRouter)
 router.use(analyticsRouter)
+router.use(membershipRouter)
 
 export default router;

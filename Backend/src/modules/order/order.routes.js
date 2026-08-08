@@ -7,7 +7,7 @@ import { UserRole } from '../../config/constants.js';
 const orderRouter = express.Router();
 
 orderRouter.post('/order/', validateCreateOrder, createOrder);
-orderRouter.get('/order/kitchen', allowUser([UserRole.ADMIN, UserRole.CHEF, UserRole.WAITER]), getKitchenOrders);
+orderRouter.get('/order/kitchen', allowUser([UserRole.ADMIN, UserRole.CHEF, UserRole.WAITER, UserRole.RECEPTION]), getKitchenOrders);
 
 // Table Overview - all of a table's active orders together (see
 // getOrdersByTable). Registered before '/order/:id/status' just for
@@ -15,7 +15,7 @@ orderRouter.get('/order/kitchen', allowUser([UserRole.ADMIN, UserRole.CHEF, User
 orderRouter.get('/order/table/:tableNumber/active', getOrdersByTable);
 
 orderRouter.get('/order/:id/status', getOrderStatus);
-orderRouter.patch('/order/:id/status', allowUser([UserRole.ADMIN, UserRole.CHEF, UserRole.WAITER]), validateUpdateStatus, updateOrderStatus);
+orderRouter.patch('/order/:id/status', allowUser([UserRole.ADMIN, UserRole.CHEF, UserRole.WAITER, UserRole.RECEPTION]), validateUpdateStatus, updateOrderStatus);
 
 // Order Customization - public/unauthenticated on purpose, same as
 // getOrderStatus above: the customer's own device (no login) edits or
@@ -24,6 +24,6 @@ orderRouter.patch('/order/:id/status', allowUser([UserRole.ADMIN, UserRole.CHEF,
 orderRouter.patch('/order/:id/items', validateUpdateItems, updateOrderItems);
 orderRouter.patch('/order/:id/cancel', cancelOrder);
 
-orderRouter.delete('/order/:id', allowUser([UserRole.ADMIN, UserRole.CHEF, UserRole.WAITER]), deleteOrder);
+orderRouter.delete('/order/:id', allowUser([UserRole.ADMIN, UserRole.CHEF, UserRole.WAITER, UserRole.RECEPTION]), deleteOrder);
 
 export default orderRouter;

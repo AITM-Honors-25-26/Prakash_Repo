@@ -9,6 +9,7 @@ const tableRouter = Router();
 
 tableRouter.post('/table/add',allowUser([UserRole.ADMIN]),bodyValidator(tableCreateSchema),tableCtrl.createTable);
 tableRouter.get('/table/list',tableCtrl.getAllTables);
+tableRouter.get('/table/payments', allowUser([UserRole.ADMIN, UserRole.WAITER, UserRole.RECEPTION]), tableCtrl.getPaymentsOverview);
 tableRouter.delete('/table/:id',allowUser([UserRole.ADMIN]),tableCtrl.deleteTable);
 tableRouter.put('/table/:id', allowUser([UserRole.ADMIN]), tableCtrl.updateTable);
 
@@ -17,7 +18,7 @@ tableRouter.put('/table/:id/release', tableCtrl.releaseTable);
 
 // Staff billing flow - settle the table's bill (counter payment) and then
 // make the table Available again once it has fully paid.
-tableRouter.put('/table/:id/settle', allowUser([UserRole.ADMIN, UserRole.WAITER]), tableCtrl.settleTable);
-tableRouter.put('/table/:id/mark-available', allowUser([UserRole.ADMIN, UserRole.WAITER]), tableCtrl.markTableAvailable);
+tableRouter.put('/table/:id/settle', allowUser([UserRole.ADMIN, UserRole.WAITER, UserRole.RECEPTION]), tableCtrl.settleTable);
+tableRouter.put('/table/:id/mark-available', allowUser([UserRole.ADMIN, UserRole.WAITER, UserRole.RECEPTION]), tableCtrl.markTableAvailable);
 
 export default tableRouter;

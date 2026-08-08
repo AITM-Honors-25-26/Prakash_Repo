@@ -90,6 +90,43 @@ const OrderSchema = new mongoose.Schema({
     required: true,
     default: 0
   },
+
+  // When the bill was actually settled (Counter mark-paid or verified eSewa
+  // callback). Lets the Reception console sort/summarise payments.
+  paidAt: {
+    type: Date,
+    default: null
+  },
+
+  // Loyalty / Membership applied at checkout (optional). The customer verifies
+  // their phone or email via OTP once when enrolling; afterwards simply typing
+  // the same phone/email at checkout applies their tier discount automatically.
+  membershipId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Membership",
+    default: null
+  },
+  membershipPhone: {
+    type: String,
+    default: null
+  },
+  membershipEmail: {
+    type: String,
+    default: null
+  },
+  membershipTier: {
+    type: String,
+    default: null
+  },
+  membershipDiscountPercent: {
+    type: Number,
+    default: 0
+  },
+  membershipDiscountAmount: {
+    type: Number,
+    default: 0
+  },
+
   createdAt: {
     type: Date,
     default: Date.now

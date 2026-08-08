@@ -186,7 +186,17 @@ export const API_ENDPOINTS = {
 
   // Tax & Discount Configuration
   BILLING_SETTINGS: `${API_BASE_URL}/settings/billing`,
-  BILLING_PREVIEW: `${API_BASE_URL}/settings/billing/preview`
+  BILLING_PREVIEW: `${API_BASE_URL}/settings/billing/preview`,
+
+  // Payments / Reception console - full billing picture for all tables
+  PAYMENTS_OVERVIEW: `${API_BASE_URL}/table/payments`,
+
+  // Loyalty / Membership (OTP verification + tier discounts)
+  MEMBERSHIP_OTP_REQUEST: `${API_BASE_URL}/members/otp/request`,
+  MEMBERSHIP_OTP_VERIFY: `${API_BASE_URL}/members/otp/verify`,
+  MEMBERSHIP_LOOKUP: `${API_BASE_URL}/members/lookup`,
+  MEMBERSHIP_LIST: `${API_BASE_URL}/members`,
+  MEMBERSHIP_ACTION: `${API_BASE_URL}/members`,
 };
 
 export const CATEGORY = {

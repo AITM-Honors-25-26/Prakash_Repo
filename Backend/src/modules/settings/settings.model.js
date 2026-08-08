@@ -37,6 +37,33 @@ const DiscountRuleSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
+// Loyalty tier - a member who has visited at least minVisits times gets a
+// discountPercent discount on their bill, capped at maxDiscountAmount per
+// order (the "limit" from the requirement). Tiers are ordered by minVisits.
+const MembershipTierSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: [true, "Tier name is required"],
+        trim: true
+    },
+    minVisits: {
+        type: Number,
+        required: [true, "Minimum visits is required"],
+        min: 0
+    },
+    discountPercent: {
+        type: Number,
+        required: [true, "Discount percentage is required"],
+        min: 0,
+        max: 100
+    },
+    maxDiscountAmount: {
+        type: Number,
+        required: [true, "Maximum discount amount is required"],
+        min: 0
+    }
+}, { timestamps: true });
+
 // Single source of truth for restaurant-wide tax, service charge, and promo
 // codes. We intentionally keep this as a singleton document (findOne / lazily
 // created) rather than a per-item setting, since the requirement is a global
@@ -55,6 +82,15 @@ const BillingSettingsSchema = new mongoose.Schema({
         max: 100
     },
     discounts: [DiscountRuleSchema],
+
+    // Loyalty / Membership program switch + tier table. When enabled, a
+    // verified member who types their phone/email at checkout gets their
+    // tier discount applied automatically.
+    membershipEnabled: {
+        type: Boolean,
+        default: true
+    },
+    membershipTiers: [MembershipTierSchema],
     updatedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
