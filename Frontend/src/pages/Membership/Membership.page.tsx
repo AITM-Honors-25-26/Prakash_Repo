@@ -6,7 +6,8 @@ import Layout from '../../components/layout/layout';
 import styles from './MembershipPage.module.scss';
 import LoaderGif from './../../../img/gif/loading.gif';
 import { API_ENDPOINTS } from '../../constants/constants';
-import MembershipApply, { MemberProfile } from '../../components/Membership/MembershipApply';
+import MembershipApply from '../../components/Membership/MembershipApply';
+import type { MemberProfile } from '../../components/Membership/MembershipApply';
 
 interface MembershipTierConfig {
   _id?: string;

@@ -98,6 +98,15 @@ const OrderSchema = new mongoose.Schema({
     default: null
   },
 
+  // Set to true when the sitting ends (the table is released) so the order no
+  // longer shows up in live billing / kitchen / order-tracking views. The
+  // order stays in the database for historical revenue analytics, which do not
+  // filter on this field.
+  isCleared: {
+    type: Boolean,
+    default: false
+  },
+
   // Loyalty / Membership applied at checkout (optional). The customer verifies
   // their phone or email via OTP once when enrolling; afterwards simply typing
   // the same phone/email at checkout applies their tier discount automatically.

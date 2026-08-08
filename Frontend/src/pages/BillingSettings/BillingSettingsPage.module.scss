@@ -134,6 +134,76 @@ $light-main-colour: rgb(128, 128, 128);
   padding: 2rem 0;
 }
 
+.tierList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tierRowHead,
+.tierRow {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 0.8fr 1fr 0.7fr;
+  gap: 8px;
+  align-items: center;
+}
+
+.tierRowHead {
+  font-weight: 700;
+  color: $header_colour;
+  font-family: 'Rubik', sans-serif;
+  font-size: 0.85rem;
+
+  span:last-child {
+    min-width: 70px;
+  }
+}
+
+.tierRow {
+  input {
+    padding: 8px 10px;
+    border: 1px solid #ddd2bf;
+    border-radius: 6px;
+    font-family: 'Rubik', sans-serif;
+    width: 100%;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: 2px solid rgba($accent, 0.3);
+      border-color: $accent;
+    }
+  }
+
+  button {
+    border: none;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-weight: 600;
+    font-size: 0.82rem;
+    cursor: pointer;
+    color: #fff;
+    background: #dc3545;
+
+    &:hover {
+      opacity: 0.85;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .tierRowHead {
+    display: none;
+  }
+
+  .tierRow {
+    grid-template-columns: 1fr;
+    border: 1px solid #eadfcd;
+    border-radius: 8px;
+    padding: 10px;
+  }
+}
+
 .statusToggle {
   border: none;
   border-radius: 20px;

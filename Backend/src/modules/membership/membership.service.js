@@ -199,6 +199,11 @@ class MembershipService {
             member.otpAttempts = 0;
             await member.save();
 
+            // Attach the configured tier table so the returned profile reflects
+            // the admin's actual tier settings.
+            const settings = await settingsSvc.getBillingSettings();
+            member._tierSettings = settings.membershipTiers;
+
             return this.getMemberProfile(member);
         } catch (exception) {
             throw exception;
