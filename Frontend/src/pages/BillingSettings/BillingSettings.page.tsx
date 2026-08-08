@@ -23,10 +23,20 @@ interface DiscountRule {
   expiresAt: string | null;
 }
 
+interface MembershipTierConfig {
+  _id?: string;
+  name: string;
+  minVisits: number;
+  discountPercent: number;
+  maxDiscountAmount: number;
+}
+
 interface BillingSettingsData {
   taxRate: number;
   serviceChargeRate: number;
   discounts: DiscountRule[];
+  membershipEnabled: boolean;
+  membershipTiers: MembershipTierConfig[];
 }
 
 const EMPTY_DISCOUNT: DiscountRule = {
@@ -48,6 +58,10 @@ const BillingSettings: React.FC = () => {
   const [taxRate, setTaxRate] = useState<number>(0);
   const [serviceChargeRate, setServiceChargeRate] = useState<number>(0);
   const [discounts, setDiscounts] = useState<DiscountRule[]>([]);
+
+  // Loyalty / Membership tier configuration
+  const [membershipEnabled, setMembershipEnabled] = useState<boolean>(true);
+  const [membershipTiers, setMembershipTiers] = useState<MembershipTierConfig[]>([]);
 
   const [isDiscountFormOpen, setIsDiscountFormOpen] = useState(false);
   const [discountForm, setDiscountForm] = useState<DiscountRule>(EMPTY_DISCOUNT);
@@ -79,6 +93,8 @@ const BillingSettings: React.FC = () => {
         setTaxRate(data.taxRate ?? 0);
         setServiceChargeRate(data.serviceChargeRate ?? 0);
         setDiscounts(Array.isArray(data.discounts) ? data.discounts : []);
+        setMembershipEnabled(data.membershipEnabled !== undefined ? data.membershipEnabled : true);
+        setMembershipTiers(Array.isArray(data.membershipTiers) ? data.membershipTiers : []);
       }
     } catch (error) {
       console.error('Fetch billing settings error:', error);
@@ -101,7 +117,13 @@ const BillingSettings: React.FC = () => {
     fetchSettings();
   }, [fetchSettings]);
 
-  const persistSettings = async (nextDiscounts: DiscountRule[], nextTaxRate = taxRate, nextServiceChargeRate = serviceChargeRate) => {
+  const persistSettings = async (
+    nextDiscounts: DiscountRule[],
+    nextTaxRate = taxRate,
+    nextServiceChargeRate = serviceChargeRate,
+    nextMembershipEnabled = membershipEnabled,
+    nextMembershipTiers = membershipTiers
+  ) => {
     const authHeader = getAuthHeader();
     if (!authHeader) return false;
 
@@ -113,6 +135,8 @@ const BillingSettings: React.FC = () => {
           taxRate: nextTaxRate,
           serviceChargeRate: nextServiceChargeRate,
           discounts: nextDiscounts,
+          membershipEnabled: nextMembershipEnabled,
+          membershipTiers: nextMembershipTiers,
         },
         authHeader
       );
@@ -135,7 +159,7 @@ const BillingSettings: React.FC = () => {
 
   const handleSaveRates = async (e: React.FormEvent) => {
     e.preventDefault();
-    const ok = await persistSettings(discounts, taxRate, serviceChargeRate);
+    const ok = await persistSettings(discounts, taxRate, serviceChargeRate, membershipEnabled, membershipTiers);
     if (ok) toast.success('Tax and service charge rates updated.');
   };
 
@@ -232,6 +256,53 @@ const BillingSettings: React.FC = () => {
     if (ok) {
       setDiscounts(nextDiscounts);
       toast.success('Discount removed.');
+    }
+  };
+
+  // ----- Loyalty / Membership tiers -----
+
+  const updateTierField = (index: number, field: keyof MembershipTierConfig, value: string | number) => {
+    setMembershipTiers((prev) =>
+      prev.map((tier, i) =>
+        i === index
+          ? { ...tier, [field]: field === 'name' ? String(value) : Number(value) }
+          : tier
+      )
+    );
+  };
+
+  const addTier = () => {
+    setMembershipTiers((prev) => [
+      ...prev,
+      { name: '', minVisits: 0, discountPercent: 0, maxDiscountAmount: 0 },
+    ]);
+  };
+
+  const removeTier = (index: number) => {
+    setMembershipTiers((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSaveMembership = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanTiers = membershipTiers
+      .filter((t) => t.name.trim() !== '')
+      .map((t) => ({
+        name: t.name.trim(),
+        minVisits: t.minVisits,
+        discountPercent: t.discountPercent,
+        maxDiscountAmount: t.maxDiscountAmount,
+      }));
+
+    if (cleanTiers.length === 0) {
+      toast.error('Add at least one tier or leave the list empty to disable tiers.');
+      return;
+    }
+
+    const ok = await persistSettings(discounts, taxRate, serviceChargeRate, membershipEnabled, cleanTiers);
+    if (ok) {
+      setMembershipTiers(cleanTiers);
+      toast.success('Membership settings updated.');
+      fetchSettings();
     }
   };
 
@@ -358,6 +429,76 @@ const BillingSettings: React.FC = () => {
               </table>
             </div>
           )}
+        </section>
+
+        <section className={styles.discountsCard}>
+          <div className={styles.discountsHeader}>
+            <h2>Loyalty / Membership Tiers</h2>
+            <button type="button" className={styles.addButton} onClick={addTier}>
+              + Add Tier
+            </button>
+          </div>
+
+          <form onSubmit={handleSaveMembership} className={styles.ratesForm}>
+            <label className={styles.checkboxRow}>
+              <input
+                type="checkbox"
+                checked={membershipEnabled}
+                onChange={(e) => setMembershipEnabled(e.target.checked)}
+              />
+              Membership program enabled (verified members get tier discounts at checkout)
+            </label>
+
+            {membershipTiers.length === 0 ? (
+              <p className={styles.emptyMsg}>No tiers configured. Add tiers to reward repeat customers.</p>
+            ) : (
+              <div className={styles.tierList}>
+                <div className={styles.tierRowHead}>
+                  <span>Tier</span>
+                  <span>Min. Visits</span>
+                  <span>Discount %</span>
+                  <span>Max per Bill (Rs.)</span>
+                  <span></span>
+                </div>
+                {membershipTiers.map((tier, index) => (
+                  <div key={index} className={styles.tierRow}>
+                    <input
+                      type="text"
+                      value={tier.name}
+                      placeholder="e.g. Bronze"
+                      onChange={(e) => updateTierField(index, 'name', e.target.value)}
+                    />
+                    <input
+                      type="number"
+                      min={0}
+                      value={tier.minVisits}
+                      onChange={(e) => updateTierField(index, 'minVisits', e.target.value)}
+                    />
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      value={tier.discountPercent}
+                      onChange={(e) => updateTierField(index, 'discountPercent', e.target.value)}
+                    />
+                    <input
+                      type="number"
+                      min={0}
+                      value={tier.maxDiscountAmount}
+                      onChange={(e) => updateTierField(index, 'maxDiscountAmount', e.target.value)}
+                    />
+                    <button type="button" className={styles.deleteButton} onClick={() => removeTier(index)}>
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <button type="submit" className={styles.saveBtn} disabled={isSaving}>
+              {isSaving ? 'Saving...' : 'Save Membership Settings'}
+            </button>
+          </form>
         </section>
 
         {isDiscountFormOpen && (

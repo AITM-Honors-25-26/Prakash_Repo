@@ -8,7 +8,8 @@ import styles from './CheckoutPage.module.scss';
 import Layout from '../../components/layout/layout';
 import emptyCart from '../../../img/gif/emptycart.gif';
 import { API_ENDPOINTS } from '../../constants/constants';
-import MembershipApply, { MemberProfile, MembershipContact } from '../../components/Membership/MembershipApply';
+import MembershipApply from '../../components/Membership/MembershipApply';
+import type { MemberProfile, MembershipContact } from '../../components/Membership/MembershipApply';
 
 const MySwal = withReactContent(Swal);
 

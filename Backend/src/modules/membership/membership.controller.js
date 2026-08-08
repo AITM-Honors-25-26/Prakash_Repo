@@ -1,4 +1,5 @@
 import membershipSvc from "./membership.service.js";
+import settingsSvc from "../settings/settings.service.js";
 
 class MembershipController {
 
@@ -54,8 +55,13 @@ class MembershipController {
     list = async (req, res, next) => {
         try {
             const members = await membershipSvc.listMembers();
+            const settings = await settingsSvc.getBillingSettings();
+
             res.json({
-                data: members.map((member) => membershipSvc.getMemberProfile(member)),
+                data: members.map((member) => {
+                    member._tierSettings = settings.membershipTiers;
+                    return membershipSvc.getMemberProfile(member);
+                }),
                 message: "Memberships fetched successfully",
                 meta: { count: members.length }
             });

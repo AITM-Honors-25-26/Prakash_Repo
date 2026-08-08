@@ -34,6 +34,9 @@ interface TrackedOrder {
   subtotal: number;
   discountCode: string | null;
   discountAmount: number;
+  membershipTier: string | null;
+  membershipDiscountPercent: number;
+  membershipDiscountAmount: number;
   taxRate: number;
   taxAmount: number;
   serviceChargeRate: number;
@@ -483,6 +486,12 @@ const OrderTrackingPage: React.FC = () => {
               <div className={styles.billRow}>
                 <span>Discount {order.discountCode ? `(${order.discountCode})` : ''}</span>
                 <span>- Rs. {order.discountAmount.toLocaleString()}</span>
+              </div>
+            )}
+            {order.membershipDiscountAmount > 0 && (
+              <div className={styles.billRow}>
+                <span>Loyalty {order.membershipTier ? `(${order.membershipTier})` : ''}</span>
+                <span>- Rs. {order.membershipDiscountAmount.toLocaleString()}</span>
               </div>
             )}
             {order.taxAmount > 0 && (
