@@ -22,6 +22,8 @@ import StaffManagement from "./pages/StaffManagement/StaffManagement.page";
 import Analytics from "./pages/Analytics/Analytics.page";
 import BillingSettings from "./pages/BillingSettings/BillingSettings.page";
 import OrderTrackingPage from "./pages/OrderTracking/OrderTracking.page";
+import MembershipPage from "./pages/Membership/Membership.page";
+import ReceptionBillingPage from "./pages/ReceptionBilling/ReceptionBilling.page";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -47,6 +49,8 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/Analytics" element={<Analytics />} />
         <Route path="/BillingSettings" element={<BillingSettings />} />
         <Route path="/OrderTracking/:orderId" element={<OrderTrackingPage />} />
+        <Route path="/MembershipPage" element={<MembershipPage />} />
+        <Route path="/ReceptionBilling" element={<ReceptionBillingPage />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

@@ -413,6 +413,20 @@ $green: #7ed957;
     flex-shrink: 0;
   }
 
+  .membershipSection {
+    padding-top: 14px;
+    border-top: 1px dashed #ddd2bf;
+    margin-top: 14px;
+    flex-shrink: 0;
+
+    h3 {
+      margin: 0 0 8px;
+      font-family: 'Rubik', sans-serif;
+      color: $header_colour;
+      font-size: 1rem;
+    }
+  }
+
   .billBreakdown {
     padding-top: 12px;
     flex-shrink: 0;

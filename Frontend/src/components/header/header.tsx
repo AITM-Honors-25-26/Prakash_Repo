@@ -105,7 +105,7 @@ const Header: React.FC = () => {
   }, [urlTableId, navigate]);
 
   const location = useLocation();
-  const hasStaffAccess = user && ['Admin', 'Chef', 'Waiter', 'Employee'].includes(user.role);
+  const hasStaffAccess = user && ['Admin', 'Chef', 'Waiter', 'Reception', 'Employee'].includes(user.role);
   const isMenuActive = location.pathname.startsWith('/MenuPage');
 
   const handleLogout = () => {
@@ -189,6 +189,16 @@ const Header: React.FC = () => {
           </NavLink>
         )}
 
+        {user && ['Admin', 'Waiter', 'Reception'].includes(user.role) && (
+          <NavLink
+            to="/ReceptionBilling"
+            className={({ isActive }) => isActive ? styles.activeLink : ''}
+            onClick={() => setMenuOpen(false)}
+          >
+            Billing
+          </NavLink>
+        )}
+
         {user?.role === 'Admin' && (
           <NavLink
             to="/StaffManagement"
@@ -218,6 +228,14 @@ const Header: React.FC = () => {
             Billing Setup
           </NavLink>
         )}
+
+        <NavLink
+          to="/MembershipPage"
+          className={({ isActive }) => isActive ? styles.activeLink : ''}
+          onClick={() => setMenuOpen(false)}
+        >
+          Membership
+        </NavLink>
 
         <NavLink
           to="/ContactUsPage"

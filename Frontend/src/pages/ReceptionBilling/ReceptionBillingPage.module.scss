@@ -1,0 +1,302 @@
+$header_colour: #48392a;
+$accent: #d84315;
+$green: #218838;
+$font-nav: 'Rubik', sans-serif;
+
+.pageContainer {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  font-family: $font-nav;
+}
+
+.pageHeader {
+  text-align: center;
+  margin-bottom: 1.5rem;
+
+  h1 {
+    color: $header_colour;
+    margin-bottom: 0.25rem;
+  }
+
+  p {
+    color: #8a7a66;
+  }
+}
+
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1rem;
+
+  h1 {
+    color: $header_colour;
+    font-family: $font-nav;
+  }
+}
+
+.summaryRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.summaryCard {
+  background: $header_colour;
+  color: #fff;
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .summaryLabel {
+    font-size: 0.8rem;
+    opacity: 0.85;
+  }
+
+  .summaryValue {
+    font-size: 1.3rem;
+    font-weight: bold;
+  }
+}
+
+.filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 1.25rem;
+
+  .filterBtn {
+    padding: 8px 14px;
+    border: 1px solid #eadfcd;
+    background: #fdfaf5;
+    color: $header_colour;
+    border-radius: 999px;
+    font-family: $font-nav;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.85rem;
+
+    &:hover {
+      border-color: $accent;
+      color: $accent;
+    }
+  }
+
+  .filterActive {
+    background: $header_colour;
+    color: #fff;
+    border-color: $header_colour;
+  }
+}
+
+.tableGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 1.25rem;
+}
+
+.tableCard {
+  background: #fdfaf5;
+  border: 1px solid #eadfcd;
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.tableHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+
+  h2 {
+    margin: 0;
+    color: $header_colour;
+    font-size: 1.15rem;
+  }
+
+  .tableMeta {
+    margin: 2px 0 0;
+    color: #9c8d7a;
+    font-size: 0.8rem;
+  }
+}
+
+.paymentBadge {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.paymentPaid {
+  background: #e3f2e8;
+  color: $green;
+}
+
+.paymentPending {
+  background: #fdf3dd;
+  color: #b45309;
+}
+
+.paymentFailed {
+  background: #fdecec;
+  color: #c0392b;
+}
+
+.paymentUnpaid {
+  background: #fdeee2;
+  color: $accent;
+}
+
+.noOrders {
+  color: #9c8d7a;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.orderBlock {
+  border: 1px solid #f0e8db;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #fff;
+}
+
+.orderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+
+  .orderStatus {
+    font-size: 0.85rem;
+    color: #6f6150;
+    font-weight: bold;
+  }
+
+  .orderPaid {
+    color: $green;
+    font-weight: bold;
+    font-size: 0.85rem;
+  }
+
+  .orderUnpaid {
+    color: $accent;
+    font-weight: bold;
+    font-size: 0.85rem;
+  }
+}
+
+.itemList {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+
+  .itemRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 0;
+    font-size: 0.88rem;
+
+    .qty {
+      color: $accent;
+      font-weight: bold;
+      min-width: 32px;
+    }
+
+    .itemName {
+      flex: 1;
+      color: #4a4034;
+    }
+
+    .itemPrice {
+      color: #6f6150;
+    }
+  }
+}
+
+.billBreakdown {
+  border-top: 1px dashed #eadfcd;
+  padding-top: 8px;
+
+  .billRow {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #6f6150;
+    padding: 2px 0;
+  }
+
+  .billTotal {
+    font-weight: bold;
+    color: $header_colour;
+    font-size: 0.95rem;
+    border-top: 1px solid #eadfcd;
+    margin-top: 4px;
+    padding-top: 6px;
+  }
+}
+
+.actionRow {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+
+  .settleBtn,
+  .releaseBtn {
+    flex: 1;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 6px;
+    font-family: $font-nav;
+    font-weight: bold;
+    cursor: pointer;
+    color: #fff;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  .settleBtn {
+    background: $green;
+  }
+
+  .releaseBtn {
+    background: $accent;
+  }
+}
+
+.emptyState {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 3rem 1rem;
+
+  h2 {
+    color: $header_colour;
+  }
+}
+
+@media (max-width: 480px) {
+  .pageContainer {
+    padding: 1rem;
+  }
+}
