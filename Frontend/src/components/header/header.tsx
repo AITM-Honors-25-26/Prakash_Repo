@@ -211,16 +211,6 @@ const Header: React.FC = () => {
 
         {user?.role === 'Admin' && (
           <NavLink
-            to="/Analytics"
-            className={({ isActive }) => isActive ? styles.activeLink : ''}
-            onClick={() => setMenuOpen(false)}
-          >
-            Analytics
-          </NavLink>
-        )}
-
-        {user?.role === 'Admin' && (
-          <NavLink
             to="/BillingSettings"
             className={({ isActive }) => isActive ? styles.activeLink : ''}
             onClick={() => setMenuOpen(false)}
@@ -264,6 +254,9 @@ const Header: React.FC = () => {
             <div className={styles.actions}>
               <Link to="/ProfilePage" onClick={() => setMenuOpen(false)}>My Profile</Link>
               <Link to="/SettingsPage" onClick={() => setMenuOpen(false)}>Settings</Link>
+              {user?.role === 'Admin' && (
+                <Link to="/Analytics" onClick={() => setMenuOpen(false)}>Analytics</Link>
+              )}
               <button className={styles.logoutBtn} onClick={handleLogout}>Logout</button>
             </div>
           )}
@@ -302,6 +295,9 @@ const Header: React.FC = () => {
               <div className={styles.actions}>
                 <Link to="/ProfilePage">My Profile</Link>
                 <Link to="/SettingsPage">Settings</Link>
+                {user?.role === 'Admin' && (
+                  <Link to="/Analytics">Analytics</Link>
+                )}
                 <button className={styles.logoutBtn} onClick={handleLogout}>
                   Logout
                 </button>

@@ -43,7 +43,8 @@ class TableService {
             const tables = await Table.find(filter).sort({ tableNumber: 1 });
 
             const orders = await Order.find({
-                status: { $nin: [OrderStatus.CANCELLED] }
+                status: { $nin: [OrderStatus.CANCELLED] },
+                isCleared: false
             });
 
             const ordersByTable = new Map();
@@ -83,7 +84,8 @@ class TableService {
         try {
             const tables = await Table.find({}).sort({ tableNumber: 1 });
             const orders = await Order.find({
-                status: { $nin: [OrderStatus.CANCELLED] }
+                status: { $nin: [OrderStatus.CANCELLED] },
+                isCleared: false
             }).sort({ createdAt: 1 });
 
             const ordersByTable = new Map();
@@ -96,28 +98,33 @@ class TableService {
             const todayStart = new Date();
             todayStart.setHours(0, 0, 0, 0);
 
+            // Today's settled revenue. Counted across ALL paid orders (including
+            // ones archived from already-released tables), so the console total
+            // never shrinks just because a sitting finished.
+            const paidTodayRows = await Order.aggregate([
+                { $match: { paymentStatus: PaymentStatus.PAID, paidAt: { $gte: todayStart } } },
+                { $group: { _id: null, total: { $sum: '$totalPrice' } } }
+            ]);
+            const totalPaidToday = paidTodayRows.length > 0 ? paidTodayRows[0].total : 0;
+
             let totalOutstanding = 0;
-            let totalPaidToday = 0;
             let occupiedTables = 0;
             let paidTables = 0;
 
-            const tableRows = tables.map((table) => {
-                const tableOrders = ordersByTable.get(String(table.tableNumber)) || [];
-                const isOccupied = table.status === TableStatus.OCCUPIED || table.status === TableStatus.RESERVED;
-                const billing = isOccupied
-                    ? this.computeBillingFromOrders(tableOrders)
-                    : { paymentStatus: PaymentStatus.PAID, outstandingAmount: 0, activeOrdersCount: 0 };
+            // The console is only about active sittings - a released table drops
+            // out entirely (its orders were archived when it was released), so it
+            // can no longer linger in the billing tab for the next customer.
+            const activeTables = tables.filter(
+                (table) => table.status === TableStatus.OCCUPIED || table.status === TableStatus.RESERVED
+            );
 
-                if (isOccupied) {
-                    occupiedTables += 1;
-                    totalOutstanding += billing.outstandingAmount;
-                    if (billing.paymentStatus === PaymentStatus.PAID) paidTables += 1;
-                }
-                tableOrders.forEach((o) => {
-                    if (o.paymentStatus === PaymentStatus.PAID && o.paidAt && new Date(o.paidAt) >= todayStart) {
-                        totalPaidToday += o.totalPrice || 0;
-                    }
-                });
+            const tableRows = activeTables.map((table) => {
+                const tableOrders = ordersByTable.get(String(table.tableNumber)) || [];
+                const billing = this.computeBillingFromOrders(tableOrders);
+
+                occupiedTables += 1;
+                totalOutstanding += billing.outstandingAmount;
+                if (billing.paymentStatus === PaymentStatus.PAID) paidTables += 1;
 
                 return {
                     tableNumber: table.tableNumber,
@@ -193,7 +200,8 @@ class TableService {
         try {
             const orders = await Order.find({
                 tableNumber: String(tableNumber),
-                status: { $nin: [OrderStatus.CANCELLED] }
+                status: { $nin: [OrderStatus.CANCELLED] },
+                isCleared: false
             });
 
             return {
@@ -210,9 +218,26 @@ class TableService {
     // staff floor plan always matches reality.
     refreshTableBilling = async (tableNumber) => {
         try {
+            const current = await Table.findOne({ tableNumber: Number(tableNumber) });
+            if (!current) return null;
+
+            // A free table never carries a bill - the sitting has ended, so any
+            // stray refresh must not resurrect stale amounts from past sittings.
+            if (current.status !== TableStatus.OCCUPIED && current.status !== TableStatus.RESERVED) {
+                return await Table.findOneAndUpdate(
+                    { tableNumber: Number(tableNumber) },
+                    {
+                        paymentStatus: PaymentStatus.PAID,
+                        outstandingAmount: 0,
+                        activeOrdersCount: 0
+                    },
+                    { new: true }
+                );
+            }
+
             const billing = await this.getTableBilling(tableNumber);
 
-            const table = await Table.findOneAndUpdate(
+            return await Table.findOneAndUpdate(
                 { tableNumber: Number(tableNumber) },
                 {
                     paymentStatus: billing.paymentStatus,
@@ -221,8 +246,6 @@ class TableService {
                 },
                 { new: true }
             );
-
-            return table;
         } catch (exception) {
             throw exception;
         }
@@ -330,7 +353,7 @@ class TableService {
                 };
             }
 
-            return await Table.findOneAndUpdate(
+            const released = await Table.findOneAndUpdate(
                 { tableNumber: Number(tableNumber), status: 'Occupied', occupiedBy: sessionId },
                 {
                     status: 'Available',
@@ -341,6 +364,21 @@ class TableService {
                 },
                 { new: true }
             );
+
+            if (released) {
+                // The sitting is over - archive this table's orders so the next
+                // customer starts with a completely clean bill and the paid ones
+                // stop lingering in the Reception payments console.
+                await Order.updateMany(
+                    {
+                        tableNumber: String(tableNumber),
+                        status: { $nin: [OrderStatus.CANCELLED] }
+                    },
+                    { $set: { isCleared: true } }
+                );
+            }
+
+            return released;
         } catch (exception) {
             throw exception;
         }
@@ -358,7 +396,8 @@ class TableService {
 
             const orders = await Order.find({
                 tableNumber: String(tableNumber),
-                status: { $nin: [OrderStatus.CANCELLED] }
+                status: { $nin: [OrderStatus.CANCELLED] },
+                isCleared: false
             });
 
             await Promise.all(orders.map(async (order) => {
@@ -408,6 +447,18 @@ class TableService {
                 },
                 { new: true }
             );
+
+            if (released) {
+                // Sitting over - archive the table's orders so they vanish from
+                // live billing and the next customer's bill starts clean.
+                await Order.updateMany(
+                    {
+                        tableNumber: String(tableNumber),
+                        status: { $nin: [OrderStatus.CANCELLED] }
+                    },
+                    { $set: { isCleared: true } }
+                );
+            }
 
             return {
                 released: true,

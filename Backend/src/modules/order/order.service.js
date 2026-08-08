@@ -55,7 +55,8 @@ export const createOrder = async (orderData) => {
 
 export const getOrdersForKitchen = async () => {
   return await Order.find({
-    status: { $nin: [OrderStatus.CANCELLED] }
+    status: { $nin: [OrderStatus.CANCELLED] },
+    isCleared: false
   }).sort({ createdAt: 1 });
 };
 
@@ -67,7 +68,8 @@ export const getOrdersForKitchen = async () => {
 export const getActiveOrdersForTable = async (tableNumber) => {
   return await Order.find({
     tableNumber,
-    status: { $nin: [OrderStatus.CANCELLED] }
+    status: { $nin: [OrderStatus.CANCELLED] },
+    isCleared: false
   }).sort({ createdAt: 1 });
 };
 
