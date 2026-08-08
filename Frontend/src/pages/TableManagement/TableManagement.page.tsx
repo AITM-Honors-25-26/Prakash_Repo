@@ -93,7 +93,7 @@ const TableManagement: React.FC = () => {
       try {
         const userData = JSON.parse(storedUser);
         setIsAdmin(userData.role === 'Admin');
-        setIsStaff(userData.role === 'Admin' || userData.role === 'Waiter');
+        setIsStaff(['Admin', 'Waiter', 'Reception'].includes(userData.role));
         setUserEmail(userData.email || '');
       } catch (e) {
         console.error('User Parse Error', e);

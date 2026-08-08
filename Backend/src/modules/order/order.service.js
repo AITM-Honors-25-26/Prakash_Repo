@@ -1,16 +1,23 @@
 import Order from '../ordermodel/order.model.js';
-import { OrderStatus } from '../../config/constants.js';
+import { OrderStatus, PaymentStatus } from '../../config/constants.js';
 import settingsSvc from '../settings/settings.service.js';
 import tableSvc from '../table/table.service.js';
+import membershipSvc from '../membership/membership.service.js';
 
 export const createOrder = async (orderData) => {
-  const { tableNumber, items, discountCode } = orderData;
+  const { tableNumber, items, discountCode, membershipPhone, membershipEmail } = orderData;
 
   const subtotal = items.reduce((total, item) => {
     return total + (item.price * item.quantity);
   }, 0);
 
-  const totals = await settingsSvc.calculateOrderTotals(subtotal, discountCode);
+  // Loyalty membership - a verified member's tier discount is applied here so
+  // the bill is locked in correctly from the very first second.
+  const member = (membershipPhone || membershipEmail)
+    ? await membershipSvc.lookupVerifiedMember({ phone: membershipPhone, email: membershipEmail })
+    : null;
+
+  const totals = await settingsSvc.calculateOrderTotals(subtotal, discountCode, member);
 
   const newOrder = new Order({
     tableNumber,
@@ -18,6 +25,12 @@ export const createOrder = async (orderData) => {
     subtotal: totals.subtotal,
     discountCode: totals.discountCode,
     discountAmount: totals.discountAmount,
+    membershipId: member ? member._id : null,
+    membershipPhone: member?.phone || null,
+    membershipEmail: member?.email || null,
+    membershipTier: totals.membershipTier,
+    membershipDiscountPercent: totals.membershipDiscountPercent,
+    membershipDiscountAmount: totals.membershipDiscountAmount,
     taxRate: totals.taxRate,
     taxAmount: totals.taxAmount,
     serviceChargeRate: totals.serviceChargeRate,
@@ -27,6 +40,11 @@ export const createOrder = async (orderData) => {
   });
 
   const savedOrder = await newOrder.save();
+
+  // Count this sitting as another visit for the member (drives tier upgrades).
+  if (member) {
+    await membershipSvc.incrementVisit(member._id);
+  }
 
   // Keep the table's billing snapshot in sync so staff immediately see the
   // table as Occupied + Unpaid with the correct outstanding amount.
@@ -56,7 +74,7 @@ export const getActiveOrdersForTable = async (tableNumber) => {
 // Order Customization after placement - the customer (or staff) may only
 // change items while the kitchen hasn't started on the order yet. Once it's
 // Preparing/Ready/Cancelled, this throws so the controller can return 409.
-export const updateOrderItems = async (orderId, { items, discountCode }) => {
+export const updateOrderItems = async (orderId, { items, discountCode, membershipPhone, membershipEmail }) => {
   const order = await Order.findById(orderId);
 
   if (!order) {
@@ -73,12 +91,28 @@ export const updateOrderItems = async (orderId, { items, discountCode }) => {
 
   const subtotal = items.reduce((total, item) => total + (item.price * item.quantity), 0);
   const effectiveDiscountCode = discountCode !== undefined ? discountCode : order.discountCode;
-  const totals = await settingsSvc.calculateOrderTotals(subtotal, effectiveDiscountCode);
+
+  // Re-resolve membership (the member may have verified between creation and
+  // this edit, or a different member may have been entered).
+  const member = (membershipPhone || membershipEmail)
+    ? await membershipSvc.lookupVerifiedMember({ phone: membershipPhone, email: membershipEmail })
+    : order.membershipId ? await membershipSvc.lookupVerifiedMember({
+        phone: order.membershipPhone,
+        email: order.membershipEmail
+      }) : null;
+
+  const totals = await settingsSvc.calculateOrderTotals(subtotal, effectiveDiscountCode, member);
 
   order.items = items;
   order.subtotal = totals.subtotal;
   order.discountCode = totals.discountCode;
   order.discountAmount = totals.discountAmount;
+  order.membershipId = member ? member._id : null;
+  order.membershipPhone = member?.phone || null;
+  order.membershipEmail = member?.email || null;
+  order.membershipTier = totals.membershipTier;
+  order.membershipDiscountPercent = totals.membershipDiscountPercent;
+  order.membershipDiscountAmount = totals.membershipDiscountAmount;
   order.taxRate = totals.taxRate;
   order.taxAmount = totals.taxAmount;
   order.serviceChargeRate = totals.serviceChargeRate;
@@ -149,11 +183,27 @@ export const getOrderById = async (orderId) => {
 // Used by the eSewa QR flow: init sets it to Pending while the customer is
 // scanning/paying, the success/failure callback flips it to Paid/Failed.
 export const setPaymentStatus = async (orderId, paymentStatus, extra = {}) => {
+  const order = await Order.findById(orderId);
+
+  if (!order) return null;
+
+  const wasPaid = order.paymentStatus === PaymentStatus.PAID;
+  const updates = { paymentStatus, ...extra };
+
+  if (paymentStatus === PaymentStatus.PAID) {
+    updates.paidAt = new Date();
+  }
+
   const updated = await Order.findByIdAndUpdate(
     orderId,
-    { paymentStatus, ...extra },
+    updates,
     { new: true, runValidators: true }
   );
+
+  // First time the order becomes Paid: credit the member's total spend.
+  if (!wasPaid && paymentStatus === PaymentStatus.PAID && updated?.membershipId) {
+    await membershipSvc.recordPayment(updated.membershipId, updated.totalPrice);
+  }
 
   // A payment status change (e.g. eSewa success) directly affects whether
   // the table is paid, so refresh its billing snapshot.

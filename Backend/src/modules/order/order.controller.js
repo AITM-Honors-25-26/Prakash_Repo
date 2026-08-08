@@ -12,11 +12,15 @@ const toPublicOrder = (order) => ({
   subtotal: order.subtotal,
   discountCode: order.discountCode,
   discountAmount: order.discountAmount,
+  membershipTier: order.membershipTier,
+  membershipDiscountPercent: order.membershipDiscountPercent,
+  membershipDiscountAmount: order.membershipDiscountAmount,
   taxRate: order.taxRate,
   taxAmount: order.taxAmount,
   serviceChargeRate: order.serviceChargeRate,
   serviceChargeAmount: order.serviceChargeAmount,
   totalPrice: order.totalPrice,
+  paidAt: order.paidAt,
   createdAt: order.createdAt,
 });
 

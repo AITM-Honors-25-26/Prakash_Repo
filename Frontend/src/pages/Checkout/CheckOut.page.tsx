@@ -8,6 +8,7 @@ import styles from './CheckoutPage.module.scss';
 import Layout from '../../components/layout/layout';
 import emptyCart from '../../../img/gif/emptycart.gif';
 import { API_ENDPOINTS } from '../../constants/constants';
+import MembershipApply, { MemberProfile, MembershipContact } from '../../components/Membership/MembershipApply';
 
 const MySwal = withReactContent(Swal);
 
@@ -37,6 +38,10 @@ interface BillTotals {
   discountAmount: number;
   discountApplied: boolean;
   discountRejectedReason: string | null;
+  membershipTier: string | null;
+  membershipDiscountPercent: number;
+  membershipDiscountAmount: number;
+  membershipApplied: boolean;
   taxRate: number;
   taxAmount: number;
   serviceChargeRate: number;
@@ -60,6 +65,16 @@ const CheckoutPage: React.FC = () => {
   const [appliedDiscountCode, setAppliedDiscountCode] = useState<string>('');
   const [billTotals, setBillTotals] = useState<BillTotals | null>(null);
   const [totalsLoading, setTotalsLoading] = useState<boolean>(false);
+
+  // Loyalty / Membership - a verified member's phone/email gets their tier
+  // discount included in the live preview and in the placed order.
+  const [memberInfo, setMemberInfo] = useState<MemberProfile | null>(null);
+  const [memberContact, setMemberContact] = useState<MembershipContact | null>(null);
+
+  const handleMemberChange = (member: MemberProfile | null, contact: MembershipContact | null) => {
+    setMemberInfo(member);
+    setMemberContact(contact);
+  };
 
   // eSewa QR modal state
   const [qrModalOpen, setQrModalOpen] = useState<boolean>(false);
@@ -152,6 +167,8 @@ const CheckoutPage: React.FC = () => {
       .post(API_ENDPOINTS.BILLING_PREVIEW, {
         subtotal,
         discountCode: appliedDiscountCode || undefined,
+        membershipPhone: memberContact?.phone || undefined,
+        membershipEmail: memberContact?.email || undefined,
       })
       .then(({ data }) => {
         if (!cancelled) setBillTotals(data.data);
@@ -165,6 +182,10 @@ const CheckoutPage: React.FC = () => {
             discountAmount: 0,
             discountApplied: false,
             discountRejectedReason: null,
+            membershipTier: null,
+            membershipDiscountPercent: 0,
+            membershipDiscountAmount: 0,
+            membershipApplied: false,
             taxRate: 0,
             taxAmount: 0,
             serviceChargeRate: 0,
@@ -181,7 +202,7 @@ const CheckoutPage: React.FC = () => {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cartItems, appliedDiscountCode]);
+  }, [cartItems, appliedDiscountCode, memberContact]);
 
   const handleApplyDiscount = () => {
     const code = discountCodeInput.trim().toUpperCase();
@@ -296,6 +317,8 @@ const CheckoutPage: React.FC = () => {
           specialNotes: item.specialNotes || '',
         })),
         discountCode: appliedDiscountCode || undefined,
+        membershipPhone: memberContact?.phone || undefined,
+        membershipEmail: memberContact?.email || undefined,
       };
 
       // Backend wraps the created order as { success, data: order }
@@ -431,6 +454,11 @@ const CheckoutPage: React.FC = () => {
                 <p className={styles.discountHint}>{billTotals.discountRejectedReason}</p>
               )}
 
+              <div className={styles.membershipSection}>
+                <h3>Loyalty Rewards</h3>
+                <MembershipApply onMemberChange={handleMemberChange} />
+              </div>
+
               <div className={styles.billBreakdown}>
                 <div className={styles.billRow}>
                   <span>Subtotal</span>
@@ -440,6 +468,12 @@ const CheckoutPage: React.FC = () => {
                   <div className={styles.billRow}>
                     <span>Discount</span>
                     <span>- Rs. {billTotals.discountAmount.toLocaleString()}</span>
+                  </div>
+                )}
+                {billTotals && billTotals.membershipDiscountAmount > 0 && (
+                  <div className={styles.billRow}>
+                    <span>Loyalty Discount {memberInfo?.tier ? `(${memberInfo.tier.name})` : ''}</span>
+                    <span>- Rs. {billTotals.membershipDiscountAmount.toLocaleString()}</span>
                   </div>
                 )}
                 {billTotals && billTotals.taxAmount > 0 && (

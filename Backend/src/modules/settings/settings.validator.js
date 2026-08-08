@@ -29,10 +29,24 @@ export const updateBillingSettingsSchema = Joi.object({
         "number.min": "Service charge rate cannot be negative",
         "number.max": "Service charge rate cannot exceed 100%"
     }),
-    discounts: Joi.array().items(discountRuleSchema)
+    discounts: Joi.array().items(discountRuleSchema),
+    membershipEnabled: Joi.boolean(),
+    membershipTiers: Joi.array().items(Joi.object({
+        _id: Joi.string().optional(),
+        name: Joi.string().trim().min(1).max(50).required().messages({
+            "string.empty": "Tier name is required"
+        }),
+        minVisits: Joi.number().min(0).required(),
+        discountPercent: Joi.number().min(0).max(100).required(),
+        maxDiscountAmount: Joi.number().min(0).required(),
+        createdAt: Joi.any().strip(),
+        updatedAt: Joi.any().strip()
+    }))
 }).min(1);
 
 export const previewTotalsSchema = Joi.object({
     subtotal: Joi.number().min(0).required(),
-    discountCode: Joi.string().allow('', null)
+    discountCode: Joi.string().allow('', null),
+    membershipPhone: Joi.string().allow('', null),
+    membershipEmail: Joi.string().email().allow('', null)
 });

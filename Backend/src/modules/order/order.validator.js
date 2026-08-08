@@ -46,6 +46,14 @@ export const validateCreateOrder = (req, res, next) => {
     return res.status(400).json({ success: false, message: 'Discount code must be a valid text value.' });
   }
 
+  if (req.body.membershipPhone !== undefined && req.body.membershipPhone !== null && typeof req.body.membershipPhone !== 'string') {
+    return res.status(400).json({ success: false, message: 'Membership phone must be a valid text value.' });
+  }
+
+  if (req.body.membershipEmail !== undefined && req.body.membershipEmail !== null && typeof req.body.membershipEmail !== 'string') {
+    return res.status(400).json({ success: false, message: 'Membership email must be a valid text value.' });
+  }
+
   const itemsError = validateItemsShape(items);
   if (itemsError) {
     return res.status(400).json({ success: false, message: itemsError });
@@ -62,6 +70,14 @@ export const validateUpdateItems = (req, res, next) => {
 
   if (discountCode !== undefined && discountCode !== null && typeof discountCode !== 'string') {
     return res.status(400).json({ success: false, message: 'Discount code must be a valid text value.' });
+  }
+
+  if (req.body.membershipPhone !== undefined && req.body.membershipPhone !== null && typeof req.body.membershipPhone !== 'string') {
+    return res.status(400).json({ success: false, message: 'Membership phone must be a valid text value.' });
+  }
+
+  if (req.body.membershipEmail !== undefined && req.body.membershipEmail !== null && typeof req.body.membershipEmail !== 'string') {
+    return res.status(400).json({ success: false, message: 'Membership email must be a valid text value.' });
   }
 
   const itemsError = validateItemsShape(items);

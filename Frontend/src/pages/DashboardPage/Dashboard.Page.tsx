@@ -48,7 +48,7 @@ const Dashboard: React.FC = () => {
   }, []);
 
   const showKitchen = userRole === 'admin' || userRole === 'chef';
-  const showService = userRole === 'admin' || userRole === 'waiter';
+  const showService = ['admin', 'waiter', 'reception'].includes(userRole);
 
   const fetchOrders = async () => {
     try {

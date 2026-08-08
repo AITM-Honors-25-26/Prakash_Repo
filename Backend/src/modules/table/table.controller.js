@@ -32,6 +32,22 @@ class TableController {
         }
     }
 
+    // Reception / Payments Console - full itemized billing for every table
+    // plus a room-wide payment summary. Staff-guarded (Admin/Waiter/Reception).
+    getPaymentsOverview = async (req, res, next) => {
+        try {
+            const overview = await tableSvc.getPaymentsOverview();
+
+            res.json({
+                data: overview,
+                message: "Payments overview fetched successfully",
+                meta: null
+            });
+        } catch (exception) {
+            next(exception);
+        }
+    }
+
     deleteTable = async (req, res, next) => {
         try {
             const id = req.params.id;
