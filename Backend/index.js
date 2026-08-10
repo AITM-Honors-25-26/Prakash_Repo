@@ -2,6 +2,8 @@ import app from "./src/config/express.config.js";
 import http from "http";
 import { Server } from "socket.io";
 import "./src/queues/email.worker.js"
+import "./src/queues/sms.worker.js"
+import "./src/queues/whatsapp.worker.js"
 
 const httpServer = http.createServer(app);
 

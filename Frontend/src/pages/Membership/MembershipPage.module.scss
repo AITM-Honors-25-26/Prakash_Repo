@@ -130,6 +130,27 @@ $font-nav: 'Rubik', sans-serif;
   margin: 0;
 }
 
+.deleteButton {
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  font-family: $font-nav;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #c82333;
+  }
+
+  &:disabled {
+    background: #e6a6ad;
+    cursor: not-allowed;
+  }
+}
+
 .directoryCard {
   background: #fdfaf5;
   border: 1px solid #eadfcd;
@@ -145,6 +166,13 @@ $font-nav: 'Rubik', sans-serif;
 .directoryHead,
 .directoryRow {
   grid-template-columns: 2fr 1fr 1fr 1fr;
+}
+
+.withActions {
+  .directoryHead,
+  .directoryRow {
+    grid-template-columns: 2fr 1fr 1fr 1fr 0.8fr;
+  }
 }
 
 .directoryRow {

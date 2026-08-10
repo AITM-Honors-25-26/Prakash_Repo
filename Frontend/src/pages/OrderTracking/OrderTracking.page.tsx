@@ -197,7 +197,6 @@ const OrderTrackingPage: React.FC = () => {
       socket.disconnect();
       if (pollRef.current) clearInterval(pollRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderId, fetchOrder, fetchTableOrders]);
 
   // Order Customization - enter/exit edit mode, seeding the draft from the

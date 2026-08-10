@@ -2,7 +2,14 @@ import crypto from "crypto";
 import MembershipModel from "./membership.model.js";
 import settingsSvc from "../settings/settings.service.js";
 import emailQueue from "../../queues/email.queue.js";
-import { EMAIL_JOBS } from "../../queues/email.worker.js";
+import { EMAIL_JOBS, buildEmail } from "../../queues/email.worker.js";
+import whatsappQueue from "../../queues/whatsapp.queue.js";
+import { WHATSAPP_JOBS } from "../../queues/whatsapp.worker.js";
+import { SMS_JOBS, buildSms } from "../../queues/sms.worker.js";
+import emailSvc from "../../services/email.service.js";
+import whatsappSvc from "../../services/whatsapp.service.js";
+import smsSvc from "../../services/sms.service.js";
+import { isRedisReachable } from "../../config/queue.config.js";
 
 const OTP_LENGTH = 6;
 const OTP_TTL_MS = 5 * 60 * 1000;           // 5 minutes
@@ -70,6 +77,9 @@ class MembershipService {
         return {
             _id: member._id,
             fullName: member.fullName || "",
+            dob: member.dob || null,
+            gender: member.gender || null,
+            address: member.address || null,
             phone: member.phone ? maskPhone(member.phone) : null,
             email: member.email ? maskEmail(member.email) : null,
             isVerified: Boolean(member.isVerified),
@@ -145,17 +155,38 @@ class MembershipService {
             member.lastOtpSentAt = new Date();
             await member.save();
 
-            // Deliver the code: email goes through the existing BullMQ email
-            // queue; SMS goes through a clearly-marked dev logger where a real
-            // SMS gateway (Twilio etc.) can be plugged in later.
+            // Deliver the code: email goes through the BullMQ email queue;
+            // phone numbers go through the WhatsApp queue (Meta Cloud API).
+            // Both are async + retried, so this endpoint stays fast. When Redis
+            // is unreachable we skip the queue entirely and send the code
+            // DIRECTLY (Nodemailer / WhatsApp → SMS) so the customer always
+            // receives it. The WhatsApp worker likewise falls back to Sparrow
+            // SMS when WhatsApp is not configured or not on WhatsApp.
             if (normalizedEmail) {
-                await emailQueue.add(EMAIL_JOBS.MEMBERSHIP_OTP, {
+                const otpData = {
                     email: normalizedEmail,
                     otp,
                     fullName: member.fullName || "Valued Guest"
-                });
+                };
+                if (await isRedisReachable()) {
+                    await emailQueue.add(EMAIL_JOBS.MEMBERSHIP_OTP, otpData);
+                } else {
+                    console.warn("[Membership] Redis unavailable — sending OTP email directly (no queue).");
+                    await emailSvc.sendEmail(buildEmail(EMAIL_JOBS.MEMBERSHIP_OTP, otpData));
+                }
             } else {
-                console.log(`[SMS-OTP] Membership OTP for ${maskPhone(normalizedPhone)}: ${otp} (expires in 5 minutes)`);
+                if (await isRedisReachable()) {
+                    await whatsappQueue.add(WHATSAPP_JOBS.MEMBERSHIP_OTP, {
+                        to: normalizedPhone,
+                        otp
+                    });
+                } else {
+                    console.warn("[Membership] Redis unavailable — sending OTP directly (WhatsApp → SMS).");
+                    const waResult = await whatsappSvc.sendOtp({ to: normalizedPhone, otp });
+                    if (!waResult.delivered) {
+                        await smsSvc.sendSms(buildSms(SMS_JOBS.MEMBERSHIP_OTP, { to: normalizedPhone, otp }));
+                    }
+                }
             }
 
             return {
@@ -169,8 +200,11 @@ class MembershipService {
     }
 
     // Confirms the OTP, marking the contact as a verified member. A verified
-    // member's discounts become available automatically at checkout.
-    verifyOtp = async ({ phone, email, otp }) => {
+    // member's discounts become available automatically at checkout. Optional
+    // profile details (fullName / dob / gender / address) submitted alongside
+    // the code are saved here - the OTP is the proof of ownership, so this is
+    // the one place a customer can set up or update their own details securely.
+    verifyOtp = async ({ phone, email, otp, fullName, dob, gender, address }) => {
         try {
             const member = await this.findMemberByContact({ phone, email });
             if (!member) {
@@ -197,6 +231,14 @@ class MembershipService {
             member.otpHash = null;
             member.otpExpiresAt = null;
             member.otpAttempts = 0;
+
+            // Save optional profile details the customer provided with their
+            // code (undefined = leave unchanged; "" / null = clear the field).
+            if (fullName !== undefined) member.fullName = String(fullName || "").trim();
+            if (dob !== undefined) member.dob = dob || null;
+            if (gender !== undefined) member.gender = gender || null;
+            if (address !== undefined) member.address = String(address || "").trim();
+
             await member.save();
 
             // Attach the configured tier table so the returned profile reflects
@@ -235,7 +277,7 @@ class MembershipService {
 
     updateMember = async (id, updateData) => {
         try {
-            const allowed = ["fullName", "phone", "email", "status"];
+            const allowed = ["fullName", "phone", "email", "status", "dob", "gender", "address"];
             const patch = {};
             allowed.forEach((field) => {
                 if (updateData[field] !== undefined) patch[field] = updateData[field];

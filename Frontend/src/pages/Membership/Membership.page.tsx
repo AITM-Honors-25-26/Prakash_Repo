@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../../components/layout/layout';
 import styles from './MembershipPage.module.scss';
@@ -8,6 +10,8 @@ import LoaderGif from './../../../img/gif/loading.gif';
 import { API_ENDPOINTS } from '../../constants/constants';
 import MembershipApply from '../../components/Membership/MembershipApply';
 import type { MemberProfile } from '../../components/Membership/MembershipApply';
+
+const MySwal = withReactContent(Swal);
 
 interface MembershipTierConfig {
   _id?: string;
@@ -34,6 +38,7 @@ const MembershipPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   const [isStaff, setIsStaff] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [members, setMembers] = useState<StaffMemberRow[]>([]);
   const [membersLoading, setMembersLoading] = useState(false);
 
@@ -60,6 +65,7 @@ const MembershipPage: React.FC = () => {
       try {
         const parsed = JSON.parse(storedUser);
         setIsStaff(['Admin', 'Reception'].includes(parsed.role));
+        setIsAdmin(parsed.role === 'Admin');
       } catch (e) {
         console.error('User parse error', e);
       }
@@ -98,6 +104,34 @@ const MembershipPage: React.FC = () => {
       if (exists) return prev.map((m) => (m._id === member._id ? { ...m, ...member } : m));
       return [{ ...member, fullName: member.fullName || '' }, ...prev];
     });
+  };
+
+  const handleDelete = async (member: StaffMemberRow) => {
+    const authHeader = getAuthHeader();
+    if (!authHeader) return;
+
+    const label = member.fullName || member.phone || member.email || 'this member';
+    const result = await MySwal.fire({
+      title: `Remove ${label}?`,
+      text: 'This permanently deletes the membership and its discount record.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      confirmButtonColor: '#dc3545',
+      cancelButtonText: 'Cancel',
+      background: '#faf7f2',
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await axios.delete(`${API_ENDPOINTS.MEMBERSHIP_ACTION}/${member._id}`, authHeader);
+      setMembers((prev) => prev.filter((m) => m._id !== member._id));
+      toast.success('Membership removed.');
+    } catch (error) {
+      console.error('Delete member error:', error);
+      toast.error('Failed to remove membership. Only admins can delete members.');
+    }
   };
 
   if (loading) {
@@ -171,12 +205,13 @@ const MembershipPage: React.FC = () => {
             ) : members.length === 0 ? (
               <p className={styles.noTiers}>No members yet. Customers enroll by verifying their phone/email.</p>
             ) : (
-              <div className={styles.directoryTable}>
+              <div className={`${styles.directoryTable}${isAdmin ? ` ${styles.withActions}` : ''}`}>
                 <div className={styles.directoryHead}>
                   <span>Contact</span>
                   <span>Visits</span>
                   <span>Total Spent</span>
                   <span>Tier</span>
+                  {isAdmin && <span>Actions</span>}
                 </div>
                 {members.map((member) => (
                   <div key={member._id} className={styles.directoryRow}>
@@ -184,6 +219,16 @@ const MembershipPage: React.FC = () => {
                     <span>{member.visitCount}</span>
                     <span>Rs. {(member.totalSpent || 0).toLocaleString()}</span>
                     <span className={styles.tierName}>{member.tier ? member.tier.name : '—'}</span>
+                    {isAdmin && (
+                      <span>
+                        <button
+                          className={styles.deleteButton}
+                          onClick={() => handleDelete(member)}
+                        >
+                          Delete
+                        </button>
+                      </span>
+                    )}
                   </div>
                 ))}
               </div>
