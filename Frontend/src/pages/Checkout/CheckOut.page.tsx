@@ -101,7 +101,6 @@ const CheckoutPage: React.FC = () => {
     return () => {
       stopPolling();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const stopPolling = () => {

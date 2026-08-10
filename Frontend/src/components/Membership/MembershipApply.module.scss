@@ -116,6 +116,98 @@ $font-nav: 'Rubik', sans-serif;
   }
 }
 
+.memberName {
+  margin: 0;
+  font-weight: bold;
+  font-size: 1.05rem;
+  color: $header_colour;
+  font-family: $font-nav;
+}
+
+.editBtn {
+  margin-top: 8px;
+  background: transparent;
+  border: 1px solid $accent;
+  color: $accent;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: $font-nav;
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba($accent, 0.1);
+  }
+}
+
+.nameInput {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  padding: 10px 12px;
+  border: 1px solid #ddd2bf;
+  border-radius: 6px;
+  font-family: $font-nav;
+  font-size: 0.95rem;
+
+  &:focus {
+    outline: 2px solid rgba($accent, 0.35);
+    border-color: $accent;
+  }
+}
+
+.detailsForm {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fieldRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.fieldGrid {
+  display: flex;
+  gap: 10px;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+  }
+}
+
+.fieldLabel {
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #6f6150;
+  font-family: $font-nav;
+}
+
+.fieldInput {
+  padding: 8px 10px;
+  border: 1px solid #ddd2bf;
+  border-radius: 6px;
+  font-family: $font-nav;
+  font-size: 0.9rem;
+  background: #fff;
+
+  &:focus {
+    outline: 2px solid rgba($accent, 0.35);
+    border-color: $accent;
+  }
+}
+
+.editHint {
+  margin: 0;
+  font-size: 0.82rem;
+  color: $header_colour;
+  font-family: $font-nav;
+}
+
 .enrollPanel {
   background: #fdf6ec;
   border: 1px dashed $accent;

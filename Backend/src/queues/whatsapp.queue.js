@@ -1,7 +1,9 @@
 import { Queue } from "bullmq";
 import { producerConnection } from "../config/queue.config.js";
 
-const emailQueue = new Queue("email-queue", {
+// Same pattern as the email/sms queues: delivery is async and retried by
+// BullMQ so the OTP request response never waits on the WhatsApp gateway.
+const whatsappQueue = new Queue("whatsapp-queue", {
     connection: producerConnection,
     defaultJobOptions: {
         attempts: 3,
@@ -14,4 +16,4 @@ const emailQueue = new Queue("email-queue", {
     },
 });
 
-export default emailQueue;
+export default whatsappQueue;

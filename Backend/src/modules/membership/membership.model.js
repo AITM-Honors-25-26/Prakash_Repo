@@ -10,6 +10,25 @@ const MembershipSchema = new mongoose.Schema({
         trim: true,
         default: ""
     },
+
+    // Optional profile details the customer sets up after joining. They are
+    // written only via verifyOtp (i.e. after the customer proves ownership of
+    // their contact with a fresh one-time code) - see membership.service.js.
+    dob: {
+        type: String,
+        trim: true,
+        default: null
+    },
+    gender: {
+        type: String,
+        enum: ["Male", "Female", "Other"],
+        default: null
+    },
+    address: {
+        type: String,
+        trim: true,
+        default: null
+    },
     phone: {
         type: String,
         trim: true,

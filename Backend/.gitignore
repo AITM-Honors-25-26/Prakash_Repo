@@ -19,3 +19,6 @@ Thumbs.db
 dist/
 build/
 coverage/
+
+# Runtime uploads (created by multer at request time)
+public/uploads/

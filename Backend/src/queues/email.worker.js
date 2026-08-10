@@ -11,7 +11,7 @@ export const EMAIL_JOBS = {
     MEMBERSHIP_OTP:  "membership-otp-email",
 };
 
-const buildEmail = (jobName, data) => {
+export const buildEmail = (jobName, data) => {
     switch (jobName) {
         case EMAIL_JOBS.ACTIVATION: {
             const staffIntro = data.isStaff

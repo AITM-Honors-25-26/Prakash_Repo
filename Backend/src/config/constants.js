@@ -67,3 +67,21 @@ export const SMTPConfig = {
     password: process.env.SMTP_PASSWORD,
     port: process.env.SMTP_PORT
 };
+// Sparrow SMS gateway (Nepal) for transactional OTP/text delivery. The sender
+// ID (SPARROW_FROM) must be registered with Sparrow and is max 6 characters.
+export const SMSConfig = {
+    sparrow: {
+        apiUrl: process.env.SPARROW_API_URL || "https://api.sparrowsms.com/v2/sms/",
+        token: process.env.SPARROW_TOKEN,
+        from: process.env.SPARROW_FROM
+    }
+};
+// Meta WhatsApp Business Platform - Cloud API. Primary OTP channel for phone
+// numbers; Sparrow SMS is kept as an automatic fallback in the worker.
+export const WhatsAppConfig = {
+    apiUrl: process.env.WHATSAPP_API_URL || "https://graph.facebook.com/v21.0/",
+    token: process.env.WHATSAPP_TOKEN,
+    phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID,
+    templateName: process.env.WHATSAPP_TEMPLATE_NAME || "membership_otp",
+    templateLanguage: process.env.WHATSAPP_TEMPLATE_LANGUAGE || "en"
+};

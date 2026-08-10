@@ -35,9 +35,15 @@ const ItemDetailModal: React.FC<ItemDetailModalProps> = ({ item, onClose, onAddT
   const [selectedAddOnNames, setSelectedAddOnNames] = useState<Set<string>>(new Set());
   const [specialNotes, setSpecialNotes] = useState('');
 
-  if (!item) return null;
+  // All hooks run before any early return so render order stays consistent.
+  const addOns = useMemo(() => item?.addOns ?? [], [item]);
 
-  const addOns = item.addOns || [];
+  const selectedAddOns = useMemo(
+    () => addOns.filter((addOn) => selectedAddOnNames.has(addOn.name)),
+    [addOns, selectedAddOnNames]
+  );
+
+  if (!item) return null;
 
   const toggleAddOn = (name: string) => {
     setSelectedAddOnNames((prev) => {
@@ -47,12 +53,6 @@ const ItemDetailModal: React.FC<ItemDetailModalProps> = ({ item, onClose, onAddT
       return next;
     });
   };
-
-  const selectedAddOns = useMemo(
-    () => addOns.filter((addOn) => selectedAddOnNames.has(addOn.name)),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [addOns, selectedAddOnNames]
-  );
 
   const addOnsTotal = selectedAddOns.reduce((sum, addOn) => sum + addOn.price, 0);
   const unitPrice = item.price + addOnsTotal;
