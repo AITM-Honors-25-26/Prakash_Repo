@@ -20,9 +20,6 @@ export const menuCreateSchema = Joi.object({
     stock: Joi.number().min(0).optional().empty(''),
     isAvailable: Joi.boolean().optional().empty(''),
 
-    // Sent as a JSON string over multipart/form-data, e.g.
-    // '[{"name":"Extra Cheese","price":50}]'. Parsed into an array in
-    // menu.service.js#transformMenuData, same pattern used for images.
     addOns: Joi.string().optional().allow(''),
 
     email: Joi.string().email().required().messages({

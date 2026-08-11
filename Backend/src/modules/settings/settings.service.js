@@ -2,8 +2,6 @@ import BillingSettingsModel from "./settings.model.js";
 
 const round2 = (value) => Math.round((value + Number.EPSILON) * 100) / 100;
 
-// Used when a fresh DB hasn't been configured yet, so the membership feature
-// works out of the box. Admin can edit these from the Billing Settings screen.
 const DEFAULT_MEMBERSHIP_TIERS = [
   { name: "Bronze", minVisits: 1, discountPercent: 5, maxDiscountAmount: 200 },
   { name: "Silver", minVisits: 5, discountPercent: 8, maxDiscountAmount: 400 },
@@ -12,8 +10,6 @@ const DEFAULT_MEMBERSHIP_TIERS = [
 
 class SettingsService {
 
-    // Lazily creates the singleton settings document the first time it's
-    // requested, so a fresh DB doesn't need a manual seed step.
     getBillingSettings = async () => {
         try {
             let settings = await BillingSettingsModel.findOne({});
@@ -22,7 +18,6 @@ class SettingsService {
                     membershipTiers: DEFAULT_MEMBERSHIP_TIERS
                 }).save();
             } else if (!Array.isArray(settings.membershipTiers) || settings.membershipTiers.length === 0) {
-                // Upgrade path: existing DBs created before membership existed.
                 settings.membershipTiers = DEFAULT_MEMBERSHIP_TIERS;
                 await settings.save();
             }
@@ -49,9 +44,6 @@ class SettingsService {
         }
     }
 
-    // Resolves the loyalty tier a member qualifies for based on how many times
-    // they have ordered. Highest qualifying tier wins (tiers are sorted by
-    // minVisits ascending). Returns null when they haven't reached any tier yet.
     getMembershipTier = (visitCount, settings) => {
         const tiers = (settings?.membershipTiers && settings.membershipTiers.length
             ? settings.membershipTiers
@@ -65,11 +57,6 @@ class SettingsService {
         return qualifying[0] || null;
     }
 
-    // Central place where the bill is actually calculated so the same logic
-    // runs for both the checkout "live preview" call and the real order
-    // creation - the customer never computes their own tax/discount.
-    // `member` is an optional resolved membership document ({ isVerified,
-    // visitCount }) whose tier discount is layered on top of any promo code.
     calculateOrderTotals = async (subtotal, discountCode, member = null) => {
         try {
             const settings = await this.getBillingSettings();
@@ -96,8 +83,6 @@ class SettingsService {
                 }
             }
 
-            // Loyalty / Membership discount - layered on top of the promo code,
-            // but never lets the combined discount exceed the subtotal.
             let membershipDiscountAmount = 0;
             let membershipTier = null;
 

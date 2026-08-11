@@ -223,7 +223,6 @@ const ReceptionBillingPage: React.FC = () => {
 
   const summary = overview?.summary;
 
-
   const FILTERS: FilterTab[] = ['All', 'Unpaid', 'Pending', 'Paid', 'Failed'];
 
   return (
@@ -304,7 +303,6 @@ const ReceptionBillingPage: React.FC = () => {
                   {table.orders.length === 0 && (
                     <p className={styles.noOrders}>No orders on this table yet.</p>
                   )}
-
 
                   {table.orders.map((order) => (
                     <div key={order._id} className={styles.orderBlock}>
@@ -399,4 +397,3 @@ const ReceptionBillingPage: React.FC = () => {
 };
 
 export default ReceptionBillingPage;
-

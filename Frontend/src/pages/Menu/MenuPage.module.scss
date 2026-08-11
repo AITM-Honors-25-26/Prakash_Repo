@@ -135,8 +135,6 @@ $light-main-colour: #5e4934;
   }
 }
 
-// Card size reduced from 300px/250px image to a more compact 230px/170px.
-// Mobile made smaller still: 150px card / 110px image.
 .card {
   flex: 0 0 auto;
   width: 230px;
@@ -425,7 +423,6 @@ $light-main-colour: #5e4934;
   }
 }
 
-// Shared shimmer background used by every skeleton block/line.
 %skeletonShimmer {
   background-color: #ece7e0;
   background-image: linear-gradient(
@@ -453,7 +450,6 @@ $light-main-colour: #5e4934;
   }
 }
 
-// Skeleton card reuses .card's box/shadow/radius; only content is swapped for placeholders.
 .skeletonCard {
   cursor: default;
   pointer-events: none;

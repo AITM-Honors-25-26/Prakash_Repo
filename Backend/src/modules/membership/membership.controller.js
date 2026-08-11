@@ -29,8 +29,6 @@ class MembershipController {
         }
     }
 
-    // Public lookup - lets checkout apply an already-verified member's discount
-    // without forcing them to re-enter a code every single visit.
     lookup = async (req, res, next) => {
         try {
             const member = await membershipSvc.lookupVerifiedMember(req.query);
@@ -51,7 +49,6 @@ class MembershipController {
         }
     }
 
-    // Staff (Admin / Reception) - full membership directory.
     list = async (req, res, next) => {
         try {
             const members = await membershipSvc.listMembers();

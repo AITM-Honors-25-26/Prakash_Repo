@@ -16,8 +16,6 @@ tableRouter.put('/table/:id', allowUser([UserRole.ADMIN]), tableCtrl.updateTable
 tableRouter.put('/table/:id/occupy', tableCtrl.occupyTable);
 tableRouter.put('/table/:id/release', tableCtrl.releaseTable);
 
-// Staff billing flow - settle the table's bill (counter payment) and then
-// make the table Available again once it has fully paid.
 tableRouter.put('/table/:id/settle', allowUser([UserRole.ADMIN, UserRole.WAITER, UserRole.RECEPTION]), tableCtrl.settleTable);
 tableRouter.put('/table/:id/mark-available', allowUser([UserRole.ADMIN, UserRole.WAITER, UserRole.RECEPTION]), tableCtrl.markTableAvailable);
 

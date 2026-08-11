@@ -57,7 +57,6 @@ const Header: React.FC = () => {
       }
     };
 
-    // Keep the header avatar in sync when the profile photo is changed
     window.addEventListener('qr_user_updated', handleUserUpdate);
     return () => window.removeEventListener('qr_user_updated', handleUserUpdate);
   }, []);

@@ -55,9 +55,6 @@ export const RegisterUserDTO = Joi.object({
       "any.required": "Cloudflare token is required to verify you are human"
   })
 });
-// Used by the Admin's Staff Account Management screen - creates a staff
-// account directly (no captcha/self-registration flow, account is active
-// immediately since an admin has already vetted the person).
 export const CreateStaffDTO = Joi.object({
   fullName: Joi.string().min(2).max(50).required().messages({
       "string.empty": "Full name is required"

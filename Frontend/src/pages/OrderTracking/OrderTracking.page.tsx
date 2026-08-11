@@ -53,9 +53,6 @@ const STEPS: { key: TrackedOrder['status']; label: string; hint: string }[] = [
 
 const POLL_FALLBACK_MS = 8000;
 
-// Order Tracking - clears the "active order" the floating pill (see
-// FloatingOrderTracker) reads from, once this order is done (served or
-// cancelled) so the pill stops pointing at a finished order.
 const clearActiveOrder = (orderId: string) => {
   const stored = localStorage.getItem('bakery_active_order');
   if (!stored) return;
@@ -79,18 +76,12 @@ const OrderTrackingPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [liveConnected, setLiveConnected] = useState(false);
 
-  // Order Customization - the customer can only edit items while the order
-  // is still Pending. draftItems holds the in-progress edit; it's discarded
-  // (or re-seeded) whenever we leave edit mode or a fresh order comes in.
   const [isEditing, setIsEditing] = useState(false);
   const [draftItems, setDraftItems] = useState<OrderItem[]>([]);
   const [savingEdit, setSavingEdit] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
   const [cancelling, setCancelling] = useState(false);
 
-  // Table Overview - other still-active orders placed for this same table
-  // (e.g. via "Order More Items" earlier), shown read-only alongside the
-  // order this page was opened for.
   const [tableOrders, setTableOrders] = useState<TrackedOrder[]>([]);
   const tableNumberRef = useRef<string | null>(null);
 
@@ -118,8 +109,6 @@ const OrderTrackingPage: React.FC = () => {
       tableNumberRef.current = data.data.tableNumber;
       fetchTableOrders(data.data.tableNumber);
 
-      // Order Customization - if the kitchen started preparing while the
-      // customer was mid-edit, kick them out of edit mode immediately.
       if (data.data.status !== 'Pending') {
         setIsEditing(false);
       }
@@ -143,8 +132,6 @@ const OrderTrackingPage: React.FC = () => {
   useEffect(() => {
     fetchOrder(true);
 
-    // Live updates via Socket.IO - falls back to polling if the socket
-    // can't connect (e.g. behind a restrictive network).
     const socket = io(SOCKET_URL, {
       transports: ['websocket'],
       reconnectionAttempts: 5,
@@ -163,13 +150,10 @@ const OrderTrackingPage: React.FC = () => {
           clearActiveOrder(orderId as string);
         }
         if (updatedOrder.status !== 'Pending') {
-          // Order Customization - lock out editing the instant the kitchen
-          // starts, rather than waiting for the next poll.
           setIsEditing(false);
         }
         fetchOrder(false);
       } else if (tableNumberRef.current && updatedOrder.tableNumber === tableNumberRef.current) {
-        // Table Overview - a sibling order at the same table changed status.
         fetchTableOrders(tableNumberRef.current);
       }
     });
@@ -182,9 +166,6 @@ const OrderTrackingPage: React.FC = () => {
       }
     });
 
-    // Table Overview - another order just got placed for this table (e.g.
-    // "Order More Items" from this same device, or another device at the
-    // table), so refresh the sibling list.
     socket.on('kitchen_new_order', (newOrder: TrackedOrder) => {
       if (newOrder._id !== orderId && tableNumberRef.current && newOrder.tableNumber === tableNumberRef.current) {
         fetchTableOrders(tableNumberRef.current);
@@ -199,8 +180,6 @@ const OrderTrackingPage: React.FC = () => {
     };
   }, [orderId, fetchOrder, fetchTableOrders]);
 
-  // Order Customization - enter/exit edit mode, seeding the draft from the
-  // last-known-good order each time editing starts.
   const startEditing = () => {
     if (!order) return;
     setDraftItems(order.items.map((item) => ({ ...item })));
@@ -260,9 +239,6 @@ const OrderTrackingPage: React.FC = () => {
     }
   };
 
-  // Order Customization - full cancellation, same Pending-only rule as
-  // editing. A confirm() dialog is enough here since it's a destructive,
-  // one-shot action rather than something needing a form.
   const cancelOrder = async () => {
     if (!orderId) return;
     if (!window.confirm('Cancel this entire order? This cannot be undone.')) return;

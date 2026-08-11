@@ -9,9 +9,6 @@ class MenuService {
 
             if (req.files && req.files.length > 0) {
                 for (const file of req.files) {
-                    // If a previous iteration already blew past the timeout,
-                    // stop uploading further files instead of piling on more
-                    // work that will just get deleted anyway.
                     if (req.hasTimedOut && req.hasTimedOut()) break;
 
                     const upload = await cloudianarySvc.fileUpload(file.path, 'bakery/');
@@ -30,8 +27,6 @@ class MenuService {
             if (data.stock) data.stock = Number(data.stock);
             data.isAvailable = String(data.isAvailable) === 'true';
 
-            // Order Customization: parse the admin-configured add-ons list
-            // (arrives as a JSON string over multipart/form-data).
             if (typeof data.addOns === 'string') {
                 try {
                     const parsed = JSON.parse(data.addOns);
@@ -56,8 +51,6 @@ class MenuService {
     storeMenuItem = async (data, req) => {
         try {
             if (req && req.hasTimedOut && req.hasTimedOut()) {
-                // The request already timed out while uploads were running;
-                // don't bother writing a DB row nobody will get a response for.
                 return null;
             }
 

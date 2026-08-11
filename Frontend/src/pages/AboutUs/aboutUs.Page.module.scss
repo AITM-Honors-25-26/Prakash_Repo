@@ -1,10 +1,9 @@
-// Modern, sleek variables mapped to match the uploaded reference image
 $font-heading: 'Rubik', sans-serif;
 $font-body: 'Rubik', sans-serif;
 $dark-text: #111111;
 $light-text: #666666;
 $bg-color: #ffffff;
-$card-bg: #e6e2db; // The soft warm grey/tan for the team section
+$card-bg: #e6e2db;
 
 .aboutContainer {
   font-family: $font-body;
@@ -18,7 +17,6 @@ $card-bg: #e6e2db; // The soft warm grey/tan for the team section
   }
 }
 
-// --- TOP SECTION ---
 .topGrid {
   display: grid;
   grid-template-columns: 1fr 1.3fr;
@@ -59,9 +57,6 @@ $card-bg: #e6e2db; // The soft warm grey/tan for the team section
     letter-spacing: -3px;
     color: $dark-text;
 
-    // clamp()'s min bound (5rem) is bigger than 10vw on any phone screen,
-    // so the heading was stuck at its max, never actually shrinking.
-    // Override with a much lower min/preferred/max trio for mobile.
     @media (max-width: 480px) {
       font-size: clamp(2.75rem, 14vw, 4rem);
       letter-spacing: -1px;
@@ -100,9 +95,6 @@ $card-bg: #e6e2db; // The soft warm grey/tan for the team section
   grid-template-columns: 1.4fr 1fr;
   gap: 24px;
 
-  // Was only switching to 1 column at 600px, leaving an awkward squeezed
-  // 2-column layout for phones between 600-900px once topGrid had already
-  // stacked. Match topGrid's own breakpoint so it stacks at the same time.
   @media (max-width: 700px) {
     grid-template-columns: 1fr;
   }
@@ -175,7 +167,6 @@ $card-bg: #e6e2db; // The soft warm grey/tan for the team section
   }
 }
 
-// --- TEAM SECTION ---
 .teamSection {
   max-width: 1200px;
   margin: 100px auto 0;
@@ -185,7 +176,7 @@ $card-bg: #e6e2db; // The soft warm grey/tan for the team section
   position: relative;
   display: flex;
   justify-content: space-between;
-  align-items: flex-end; // Keeps portraits anchored to the bottom
+  align-items: flex-end;
 
   @media (max-width: 900px) {
     flex-direction: column;
@@ -196,9 +187,6 @@ $card-bg: #e6e2db; // The soft warm grey/tan for the team section
     border-radius: 30px;
   }
 
-  // Desktop's 160px top padding (to clear the absolutely-positioned title
-  // pills) plus 100px margin was mostly wasted whitespace on a phone.
-  // Shrink both, and give the pills their own smaller footprint below.
   @media (max-width: 480px) {
     padding: 110px 18px 30px;
     margin: 60px 12px 0;
@@ -231,7 +219,7 @@ $card-bg: #e6e2db; // The soft warm grey/tan for the team section
   font-size: 1.8rem;
   letter-spacing: 2px;
   text-transform: uppercase;
-  margin-bottom: -10px; // Pulls it down slightly to overlap the bigger box cleanly
+  margin-bottom: -10px;
   z-index: 2;
 
   @media (max-width: 480px) {
@@ -254,9 +242,6 @@ $card-bg: #e6e2db; // The soft warm grey/tan for the team section
   z-index: 3;
   white-space: nowrap;
 
-  // 70px of horizontal padding per side (140px total) plus the text was
-  // wider than most phone screens, causing this pill to overflow/clip.
-  // Cut padding and the font-size floor so it always fits.
   @media (max-width: 480px) {
     padding: 10px 24px;
     font-size: clamp(1.5rem, 9vw, 2.2rem);
@@ -301,7 +286,7 @@ $card-bg: #e6e2db; // The soft warm grey/tan for the team section
       width: 80px;
       height: 50px;
       object-fit: cover;
-      border-radius: 30px; // Pill shape to match the image exactly
+      border-radius: 30px;
       opacity: 0.9;
     }
 
@@ -349,8 +334,6 @@ $card-bg: #e6e2db; // The soft warm grey/tan for the team section
     width: 100%;
     height: auto;
     object-fit: contain;
-    // We add a drop shadow so even regular rectangular images pop, 
-    // but transparent background images (like in the photo) will look flawless here.
     filter: drop-shadow(0 20px 40px rgba(0,0,0,0.15));
     border-radius: 20px 20px 0 0; 
   }

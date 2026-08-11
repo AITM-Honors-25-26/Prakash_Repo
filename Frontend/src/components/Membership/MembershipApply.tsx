@@ -44,15 +44,11 @@ const detectContact = (value: string): MembershipContact | null => {
   return { phone: trimmed.replace(/\D/g, '') };
 };
 
-// Enrolls a customer into the loyalty program (phone/email + one-time OTP) and
-// remembers their verified membership so checkout can apply their tier
-// discount automatically. Reused on the Checkout page and Membership page.
 const MembershipApply: React.FC<MembershipApplyProps> = ({ onMemberChange }) => {
   const [identifier, setIdentifier] = useState('');
   const [member, setMember] = useState<MemberProfile | null>(null);
   const [contact, setContact] = useState<MembershipContact | null>(null);
 
-  // Enrollment OTP flow
   const [showOtp, setShowOtp] = useState(false);
   const [otp, setOtp] = useState('');
   const [devOtp, setDevOtp] = useState<string | null>(null);
@@ -60,13 +56,8 @@ const MembershipApply: React.FC<MembershipApplyProps> = ({ onMemberChange }) => 
   const [verifying, setVerifying] = useState(false);
   const [otpSentTo, setOtpSentTo] = useState('');
 
-  // Optional name typed on the enrollment panel - submitted together with the
-  // OTP so the member's profile is complete from the very first visit.
   const [name, setName] = useState('');
 
-  // Post-registration "set up my details" editing. Every change is confirmed
-  // with a fresh one-time code sent to the member's own contact, so it works
-  // without a customer login (the OTP is the proof of ownership).
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState({ fullName: '', dob: '', gender: '', address: '' });
   const [editCodeSent, setEditCodeSent] = useState(false);
@@ -88,7 +79,6 @@ const MembershipApply: React.FC<MembershipApplyProps> = ({ onMemberChange }) => 
 
     setLoading(true);
     try {
-      // Existing verified member? No OTP needed - discount applies directly.
       const response = await axios.get(API_ENDPOINTS.MEMBERSHIP_LOOKUP, { params: nextContact });
       const found: MemberProfile | null = response.data?.data || null;
 
@@ -107,7 +97,6 @@ const MembershipApply: React.FC<MembershipApplyProps> = ({ onMemberChange }) => 
       const status = axios.isAxiosError(error) ? error.response?.status : null;
 
       if (status === 404) {
-        // Not a member yet - offer OTP enrollment.
         setContact(nextContact);
         setShowOtp(true);
         setOtp('');
@@ -126,7 +115,6 @@ const MembershipApply: React.FC<MembershipApplyProps> = ({ onMemberChange }) => 
     try {
       const { data } = await axios.post(API_ENDPOINTS.MEMBERSHIP_OTP_REQUEST, target);
       setOtpSentTo(data.data?.sentTo || 'your contact');
-      // In dev, the backend returns the code so testing works without email/WhatsApp.
       if (data.data?.devOtp) {
         setDevOtp(data.data.devOtp);
         toast.info(`Dev code: ${data.data.devOtp}`);
@@ -150,7 +138,6 @@ const MembershipApply: React.FC<MembershipApplyProps> = ({ onMemberChange }) => 
       const { data } = await axios.post(API_ENDPOINTS.MEMBERSHIP_OTP_VERIFY, {
         ...contact,
         otp: otp.trim(),
-        // Optional name captured on the enrollment panel.
         ...(name.trim() ? { fullName: name.trim() } : {}),
       });
       const verifiedMember: MemberProfile = data.data;
@@ -185,8 +172,6 @@ const MembershipApply: React.FC<MembershipApplyProps> = ({ onMemberChange }) => 
 
   const contactLabel = (c: MembershipContact): string => c.phone || c.email || 'your contact';
 
-  // "Edit details" - pre-fill the form from the verified profile. Changes are
-  // not saved until the member confirms with a fresh OTP (see saveDetails).
   const startEdit = () => {
     setDraft({
       fullName: member?.fullName || '',
@@ -447,4 +432,3 @@ const MembershipApply: React.FC<MembershipApplyProps> = ({ onMemberChange }) => 
 };
 
 export default MembershipApply;
-

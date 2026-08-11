@@ -8,11 +8,8 @@ interface ActiveOrder {
   createdAt?: number;
 }
 
-const ACTIVE_ORDER_MAX_AGE_MS = 6 * 60 * 60 * 1000; // 6 hours
+const ACTIVE_ORDER_MAX_AGE_MS = 6 * 60 * 60 * 1000;
 
-// Order Tracking - once a customer places an order, this stays visible on
-// every page (home, menu, etc.) as a quick way back to the tracking view
-// without them needing to remember the order URL.
 const FloatingOrderTracker: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();

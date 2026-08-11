@@ -4,9 +4,6 @@ import { AppConfig, PaymentStatus } from '../constants.js';
 import * as OrderService from '../../modules/order/order.service.js';
 import tableSvc from '../../modules/table/table.service.js';
 
-// Falls back to eSewa's public sandbox code when MERCHANT_ID isn't set, so
-// the app still works out of the box in dev - set MERCHANT_ID in .env to
-// switch to your real eSewa merchant code for production.
 const DEFAULT_PRODUCT_CODE = 'EPAYTEST';
 
 const buildSignature = (secretKey, { total_amount, transaction_uuid, product_code }) => {
@@ -14,12 +11,10 @@ const buildSignature = (secretKey, { total_amount, transaction_uuid, product_cod
   return crypto.createHmac('sha256', secretKey).update(data).digest('base64');
 };
 
-// Existing endpoint - used when the same device that placed the order pays
-// directly (desktop "Pay Now" without the QR step).
 export const initiateEsewa = async (req, res) => {
     try {
         const { amount, transaction_uuid } = req.body;
-        const secretKey = process.env.ESEWA_SECRET_KEY; // Keep this in .env!
+        const secretKey = process.env.ESEWA_SECRET_KEY;
         const productCode = process.env.MERCHANT_ID || DEFAULT_PRODUCT_CODE;
 
         if (!secretKey) {
@@ -41,11 +36,6 @@ export const initiateEsewa = async (req, res) => {
     }
 };
 
-// New: called from CheckoutPage when the customer picks "Pay Now" and wants
-// a QR to scan with their phone instead of paying on the current device.
-// The QR encodes a link to our own frontend "pay" page for this order -
-// scanning it opens that page on the phone, which then auto-submits the
-// eSewa form itself (see /payment/pay/:orderId on the frontend).
 export const generateEsewaQr = async (req, res) => {
     try {
         const { amount, transaction_uuid } = req.body;
@@ -77,10 +67,6 @@ export const generateEsewaQr = async (req, res) => {
     }
 };
 
-// eSewa v2 redirects the browser here after a payment attempt, with a
-// base64-encoded JSON payload in ?data=. We decode it, re-derive the
-// signature the same way we generated it, and only mark the order Paid if
-// it matches (otherwise someone could just hit this URL directly).
 export const esewaSuccess = async (req, res) => {
     const frontendUrl = AppConfig.frontend_Url || '';
 
@@ -102,8 +88,6 @@ export const esewaSuccess = async (req, res) => {
             signature,
         } = decoded;
 
-        // Rebuild the signed string using whatever field order eSewa signed,
-        // pulling each value out of the decoded payload.
         const signedString = signed_field_names
             .split(',')
             .map((field) => `${field}=${decoded[field]}`)
@@ -123,7 +107,6 @@ export const esewaSuccess = async (req, res) => {
             esewaTransactionCode: transaction_code,
         });
 
-        // Notify staff boards in real time that this table's bill is paid.
         const paidOrder = await OrderService.getOrderById(transaction_uuid);
         if (paidOrder?.tableNumber) {
             const io = req.app.get('io');

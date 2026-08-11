@@ -27,9 +27,6 @@ const TableSchema = new mongoose.Schema({
         default: null
     },
 
-    // Billing snapshot - kept in sync with the table's active orders (see
-    // table.service.js getTableBilling) so staff can see at a glance whether
-    // the table has paid and is ready to be released.
     paymentStatus: {
         type: String,
         enum: ['Unpaid', 'Pending', 'Paid', 'Failed'],

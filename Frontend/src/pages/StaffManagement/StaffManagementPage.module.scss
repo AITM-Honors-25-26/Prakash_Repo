@@ -92,7 +92,6 @@ $light-main-colour: rgb(128, 128, 128);
   }
 }
 
-/* Mobile: turn the table into stacked card rows so no horizontal scrolling is needed. */
 @media (max-width: 768px) {
   .tableWrapper {
     background: transparent;

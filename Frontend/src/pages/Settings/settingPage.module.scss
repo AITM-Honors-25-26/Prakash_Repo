@@ -1,4 +1,3 @@
-//
 $font-header: 'Rubik', sans-serif;
 $font-body: 'Rubik', sans-serif;
 $main-Colour: #48392a;
@@ -228,7 +227,7 @@ $breakpoint-md: 768px;
         }
 
         @media (max-width: $breakpoint-md) {
-          width: 100%; // Spans full width on mobile
+          width: 100%;
         }
       }
     }

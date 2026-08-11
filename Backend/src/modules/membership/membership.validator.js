@@ -25,8 +25,6 @@ export const verifyOtpSchema = Joi.object({
         "any.required": "The code is required"
     }),
 
-    // Optional profile details saved only after the OTP is confirmed, so a
-    // customer can set up their name / details without staff involvement.
     fullName: Joi.string().allow("", null).max(100).messages({
         "string.max": "Name must be 100 characters or fewer"
     }),

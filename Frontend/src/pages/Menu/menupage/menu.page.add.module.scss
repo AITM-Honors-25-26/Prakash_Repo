@@ -17,7 +17,6 @@ $danger: #e53e3e;
 
 }
 
-// ── Header ─────────────────────────────────────────────
 .header {
   display: flex;
   align-items: flex-start;
@@ -58,7 +57,6 @@ $danger: #e53e3e;
   }
 }
 
-// ── Layout ──────────────────────────────────────────────
 .form {
   display: grid;
   grid-template-columns: 320px 1fr;
@@ -77,7 +75,6 @@ $danger: #e53e3e;
   gap: 1.5rem;
 }
 
-// ── Card ────────────────────────────────────────────────
 .card {
   background: $card-bg;
   border: 1.5px solid $border;
@@ -98,7 +95,6 @@ $danger: #e53e3e;
   color: $muted;
 }
 
-// ── Image Upload ─────────────────────────────────────────
 .imageGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -170,7 +166,6 @@ $danger: #e53e3e;
   color: inherit;
 }
 
-// ── Toggle ───────────────────────────────────────────────
 .toggleRow {
   display: flex;
   align-items: center;
@@ -238,7 +233,6 @@ $danger: #e53e3e;
   }
 }
 
-// ── Form Fields ──────────────────────────────────────────
 .field {
   display: flex;
   flex-direction: column;
@@ -306,7 +300,6 @@ $danger: #e53e3e;
   gap: 1rem;
 }
 
-// ── Submit Button ────────────────────────────────────────
 .submitBtn {
   width: 100%;
   padding: 0.9rem;

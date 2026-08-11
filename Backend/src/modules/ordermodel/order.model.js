@@ -32,15 +32,10 @@ const OrderSchema = new mongoose.Schema({
 
   items: [
     {
-      // Reference back to the Bakery item, when available, so kitchen/staff
-      // views and reporting can look up the original item if needed.
       itemId: { type: mongoose.Schema.Types.ObjectId, ref: "Bakery", default: null },
       name: { type: String, required: true },
       quantity: { type: Number, required: true, min: 1 },
 
-      // Order Customization: unit price already includes any selected
-      // add-ons (basePrice + sum of selectedAddOns), so existing totals math
-      // (price * quantity) keeps working unchanged.
       basePrice: { type: Number, default: null },
       selectedAddOns: [{
         name: { type: String },
@@ -52,9 +47,6 @@ const OrderSchema = new mongoose.Schema({
     }
   ],
 
-  // Bill breakdown - computed server-side (see settings.service.js) from the
-  // restaurant's Tax & Discount Configuration at the time the order was
-  // placed, so historical orders keep the rate that actually applied to them.
   subtotal: {
     type: Number,
     default: 0
@@ -84,32 +76,22 @@ const OrderSchema = new mongoose.Schema({
     default: 0
   },
 
-  // Grand total actually charged (subtotal - discount + tax + service charge).
   totalPrice: {
     type: Number,
     required: true,
     default: 0
   },
 
-  // When the bill was actually settled (Counter mark-paid or verified eSewa
-  // callback). Lets the Reception console sort/summarise payments.
   paidAt: {
     type: Date,
     default: null
   },
 
-  // Set to true when the sitting ends (the table is released) so the order no
-  // longer shows up in live billing / kitchen / order-tracking views. The
-  // order stays in the database for historical revenue analytics, which do not
-  // filter on this field.
   isCleared: {
     type: Boolean,
     default: false
   },
 
-  // Loyalty / Membership applied at checkout (optional). The customer verifies
-  // their phone or email via OTP once when enrolling; afterwards simply typing
-  // the same phone/email at checkout applies their tier discount automatically.
   membershipId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Membership",

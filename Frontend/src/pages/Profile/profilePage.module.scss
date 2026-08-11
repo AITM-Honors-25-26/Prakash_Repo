@@ -85,7 +85,6 @@ $background: #f9f5f0;
         }
       }
 
-      // Touch devices: hover is unavailable, so keep the change-photo action visible
       @media (hover: none) {
         .avatarOverlay {
           opacity: 1;

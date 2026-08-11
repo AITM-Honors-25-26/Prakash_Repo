@@ -38,7 +38,6 @@ const getCurrentOrigin = () => {
   return 'http://localhost:5173';
 };
 
-// UPDATED: Dynamically grab the hostname from the browser so network IPs don't fail CORS
 const getCurrentApiOrigin = () => {
   if (typeof window !== 'undefined') {
     return `${window.location.protocol}//${window.location.hostname}:9005`;
@@ -160,7 +159,6 @@ export const API_ENDPOINTS = {
   UPDATEORDERSTATUS: `${API_BASE_URL}/order/status`,
   ORDER_ACTION: `${API_BASE_URL}/order`,
 
-  // Table Overview - all active orders for one table (GET .../:tableNumber/active)
   ORDER_BY_TABLE: `${API_BASE_URL}/order/table`,
 
   TABLENUMBER: `${API_FRONTEND}/MenuPage/:id`,
@@ -168,30 +166,23 @@ export const API_ENDPOINTS = {
 
   CONTACTADMIN: `${API_BASE_URL}/conatctAdmin`,
 
-  // Payment Routes
   ESEWA_INIT: `${API_BASE_URL}/payment/esewa/init`,
   ESEWA_QR: `${API_BASE_URL}/payment/esewa/qr`,
 
-  // Public polling endpoint - GET `${ORDER_STATUS}/${orderId}`
   ORDER_STATUS: `${API_BASE_URL}/order`,
 
-  // Staff Account Management (Admin only)
   STAFF_LIST: `${API_BASE_URL}/auth/staff`,
   STAFF_ACTION: `${API_BASE_URL}/auth/staff`,
 
-  // Analytics & Reporting (Admin only)
   ANALYTICS_OVERVIEW: `${API_BASE_URL}/analytics/overview`,
   ANALYTICS_SALES_TREND: `${API_BASE_URL}/analytics/sales-trend`,
   ANALYTICS_TOP_ITEMS: `${API_BASE_URL}/analytics/top-items`,
 
-  // Tax & Discount Configuration
   BILLING_SETTINGS: `${API_BASE_URL}/settings/billing`,
   BILLING_PREVIEW: `${API_BASE_URL}/settings/billing/preview`,
 
-  // Payments / Reception console - full billing picture for all tables
   PAYMENTS_OVERVIEW: `${API_BASE_URL}/table/payments`,
 
-  // Loyalty / Membership (OTP verification + tier discounts)
   MEMBERSHIP_OTP_REQUEST: `${API_BASE_URL}/members/otp/request`,
   MEMBERSHIP_OTP_VERIFY: `${API_BASE_URL}/members/otp/verify`,
   MEMBERSHIP_LOOKUP: `${API_BASE_URL}/members/lookup`,

@@ -18,16 +18,11 @@ const whatsappWorker = new Worker(
             const { to, otp } = job.data;
             const result = await whatsappSvc.sendOtp({ to, otp });
 
-            // Phone-OTP fallback chain: WhatsApp → Sparrow SMS → dev preview.
-            // Covers both "WhatsApp not configured yet" and recipients who are
-            // not on WhatsApp, so a customer always gets their code.
             if (!result.delivered) {
                 console.log(`[WhatsAppWorker] WhatsApp unavailable (${result.reason}) → falling back to SMS.`);
                 try {
                     await smsQueue.add(SMS_JOBS.MEMBERSHIP_OTP, { to, otp });
                 } catch (exception) {
-                    // Never fail the WhatsApp job because the fallback queue
-                    // was down - that would re-send the WhatsApp message.
                     console.error(`[WhatsAppWorker] SMS fallback enqueue failed: ${exception.message}`);
                 }
             }

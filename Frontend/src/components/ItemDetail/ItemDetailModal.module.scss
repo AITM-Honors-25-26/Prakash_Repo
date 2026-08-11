@@ -69,7 +69,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    overflow-y: auto; // Allows scrolling if text is long
+    overflow-y: auto;
     gap: 1rem;
   }
 
@@ -255,7 +255,6 @@
   }
 }
 
-// Desktop entry animation
 @keyframes modalFadeIn {
   from {
     opacity: 0;
@@ -267,7 +266,6 @@
   }
 }
 
-// Mobile Slide-Up Animation
 @keyframes slideUp {
   from {
     transform: translateY(100%);
@@ -277,21 +275,19 @@
   }
 }
 
-// --- MOBILE RESPONSIVENESS: The Bottom Sheet Pattern ---
 @media (max-width: 768px) {
   .modalOverlay {
-    align-items: flex-end; // Docks the modal to the bottom of the screen
-    padding: 0; // Removes side padding so it spans the full width
+    align-items: flex-end;
+    padding: 0;
   }
 
   .modalContent {
     flex-direction: column;
     width: 100%;
     max-width: 100%;
-    border-radius: 24px 24px 0 0; // Only round the top corners
-    animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; // Smooth native slide up
+    border-radius: 24px 24px 0 0;
+    animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 
-    // Add a native-looking drag indicator pill at the top
     &::before {
       content: '';
       position: absolute;
@@ -320,7 +316,6 @@
       flex: none;
       position: relative;
 
-      // Adds a subtle fade from the image into the white content background
       &::after {
         content: '';
         position: absolute;
@@ -334,7 +329,6 @@
 
     .infoSection {
       padding: 1.5rem 1.25rem 1rem 1.25rem;
-      // Ensures the modal content scrolls independently on small devices
       overflow-y: auto;
     }
 
@@ -351,18 +345,18 @@
       }
       .desc {
         font-size: 0.95rem;
-        margin-bottom: 1.5rem; // Space before the sticky button
+        margin-bottom: 1.5rem;
       }
     }
 
     .addBtn {
-      margin-top: auto; // Pushes button to bottom
-      padding: 16px; // Taller for easier thumb tapping
-      position: sticky; // Keeps it anchored at the bottom
+      margin-top: auto;
+      padding: 16px;
+      position: sticky;
       bottom: 0;
       z-index: 10;
       border-radius: 12px;
-      box-shadow: 0 -4px 16px rgba(255, 255, 255, 0.9); // White glow above button for contrast
+      box-shadow: 0 -4px 16px rgba(255, 255, 255, 0.9);
     }
   }
 }

@@ -12,7 +12,6 @@ export const buildSms = (jobName, data) => {
         case SMS_JOBS.MEMBERSHIP_OTP:
             return {
                 to: data.to,
-                // Keep under 160 characters so one OTP costs a single SMS credit.
                 message: `Melina's Bakery: Your membership verification code is ${data.otp}. Valid for 5 minutes. Do not share it.`,
             };
 

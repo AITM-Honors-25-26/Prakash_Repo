@@ -11,8 +11,6 @@ const toDateKey = (date) => date.toISOString().slice(0, 10);
 
 class AnalyticsService {
 
-    // Revenue is only counted from orders that have actually been Paid, so the
-    // dashboard reflects real money taken rather than pending/abandoned carts.
     getOverview = async () => {
         try {
             const now = new Date();
@@ -64,8 +62,6 @@ class AnalyticsService {
         }
     }
 
-    // Daily revenue/order-count series for the last N days, zero-filled so the
-    // frontend chart doesn't have to guess about missing days.
     getSalesTrend = async (days = 7) => {
         try {
             const from = startOfDay(new Date());
@@ -103,7 +99,6 @@ class AnalyticsService {
         }
     }
 
-    // Best sellers by quantity, unwinding the embedded items array on paid orders.
     getTopItems = async (limit = 5) => {
         try {
             const rows = await Order.aggregate([

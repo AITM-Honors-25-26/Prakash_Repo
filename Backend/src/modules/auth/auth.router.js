@@ -17,7 +17,6 @@ authRouter.post('/auth/forgot_password',bodyValidator(ForgetPasswordRequestDTO),
 authRouter.get('/auth/verify-token/:token', authCtr.verifyForgotPasswordToken)
 authRouter.patch('/auth/reset-password',authCtr.resetPassword);
 
-// --- Staff Account Management (Admin only) ---------------------------------
 authRouter.get('/auth/staff', allowUser([UserRole.ADMIN]), authCtr.listStaff);
 authRouter.post('/auth/staff', allowUser([UserRole.ADMIN]), uploader().single('image'), bodyValidator(CreateStaffDTO), authCtr.createStaff);
 authRouter.patch('/auth/staff/:id', allowUser([UserRole.ADMIN]), bodyValidator(UpdateStaffDTO), authCtr.updateStaff);

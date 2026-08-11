@@ -18,9 +18,7 @@ const EMPTY_VALUES: TableFormValues = {
 interface TableFormModalProps {
   mode: 'add' | 'edit';
   initialValues?: TableFormValues;
-  /** Shown next to the password field so the user knows which account they're confirming. */
   userEmail?: string;
-  /** Add-table flow requires a password confirmation; edit does not. */
   requirePassword?: boolean;
   isSubmitting?: boolean;
   onClose: () => void;
@@ -38,9 +36,6 @@ const TableFormModal: React.FC<TableFormModalProps> = ({
   onClose,
   onSubmit,
 }) => {
-  // The parent only mounts this component while the modal is open (and remounts it
-  // with a fresh `key` whenever it's opened for a different table), so these
-  // initial values only need to be read once, right here — no reset-on-open effect needed.
   const [values, setValues] = useState<TableFormValues>(initialValues || EMPTY_VALUES);
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});

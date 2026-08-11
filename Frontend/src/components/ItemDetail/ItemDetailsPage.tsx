@@ -35,7 +35,6 @@ const ItemDetailModal: React.FC<ItemDetailModalProps> = ({ item, onClose, onAddT
   const [selectedAddOnNames, setSelectedAddOnNames] = useState<Set<string>>(new Set());
   const [specialNotes, setSpecialNotes] = useState('');
 
-  // All hooks run before any early return so render order stays consistent.
   const addOns = useMemo(() => item?.addOns ?? [], [item]);
 
   const selectedAddOns = useMemo(

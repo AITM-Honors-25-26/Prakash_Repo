@@ -5,10 +5,6 @@ export const redisConnection = {
     port: process.env.REDIS_PORT || 6379,
 };
 
-// Bounded connection for queue producers (emailQueue.add / whatsappQueue.add /
-// smsQueue.add). When Redis is unavailable these fail fast instead of retrying
-// forever. Workers keep using `redisConnection` (BullMQ manages their
-// reconnection).
 export const producerConnection = {
     host: process.env.REDIS_HOST || "127.0.0.1",
     port: process.env.REDIS_PORT || 6379,
@@ -16,11 +12,6 @@ export const producerConnection = {
     retryStrategy: (times) => (times <= 2 ? Math.min(times * 200, 1000) : null),
 };
 
-// Fast TCP ping to the Redis port. BullMQ's ioredis client keeps an offline
-// command queue that can buffer `queue.add()` for a long time while Redis is
-// down, so callers check this BEFORE enqueueing and fall back to a direct
-// delivery when Redis is unreachable. Returns true within `timeoutMs` (default
-// 800ms) if Redis accepts connections.
 export const isRedisReachable = (timeoutMs = 800) =>
     new Promise((resolve) => {
         const socket = new net.Socket();

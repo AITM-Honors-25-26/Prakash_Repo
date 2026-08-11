@@ -1,25 +1,11 @@
 import { SMSConfig } from "../config/constants.js";
 import { toInternational } from "../utils/phone.util.js";
 
-// Sparrow SMS v2 gateway (https://sparrowsms.com) - the most widely used bulk
-// SMS / OTP gateway in Nepal. Sends an application/x-www-form-urlencoded POST
-// to api.sparrowsms.com/v2/sms/ with: token, from (registered sender ID, max 6
-// characters), to (recipient in international format, e.g. 97798XXXXXXXX) and
-// text (max 160 chars per credit).
-//
-// The endpoint and credentials are read from env (SPARROW_API_URL / SPARROW_TOKEN
-// / SPARROW_FROM). When no token/from are configured the service falls back to a
-// console preview so development keeps working before an account is set up.
-
 const SPARROW_OK_CODE = 200;
 
 const isConfigured = () => Boolean(SMSConfig.sparrow.token && SMSConfig.sparrow.from);
 
 class SmsService {
-    // Sends a transactional SMS. Resolves to { delivered: true, provider } when
-    // the gateway accepted it, or { delivered: false, provider: "none" } when no
-    // credentials are configured (dev preview). Throws a tagged error object on
-    // gateway/validation failures so the BullMQ worker logs and retries it.
     sendSms = async ({ to, message }) => {
         if (!to || !message) {
             throw { message: "SMS requires a recipient number and a message.", status: "SMS_INVALID_REQUEST" };
@@ -30,7 +16,6 @@ class SmsService {
             throw { message: "SMS recipient number is invalid.", status: "SMS_INVALID_NUMBER" };
         }
 
-        // No gateway credentials yet - log a preview instead of failing the job.
         if (!isConfigured()) {
             console.log(`[SMS-PREVIEW] To ${recipient}: ${message}`);
             return { delivered: false, provider: "none" };

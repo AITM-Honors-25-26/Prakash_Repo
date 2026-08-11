@@ -241,4 +241,3 @@ const MembershipPage: React.FC = () => {
 };
 
 export default MembershipPage;
-

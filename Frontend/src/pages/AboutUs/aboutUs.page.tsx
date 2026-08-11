@@ -8,7 +8,6 @@ const AboutUsPage: React.FC = () => {
     <Layout>
       <div className={styles.aboutContainer}>
         
-        {/* Top Section mimicking the modern editorial layout */}
         <section className={styles.topGrid}>
           
           <div className={styles.leftColumn}>
@@ -36,10 +35,8 @@ const AboutUsPage: React.FC = () => {
           
         </section>
 
-        {/* Meet the Team section mimicking the curved 'Meet the Principals' box */}
         <section className={styles.teamSection}>
           
-          {/* Overlapping White Title Area */}
           <div className={styles.teamTitleBox}>
             <div className={styles.meetThe}>MEET THE</div>
             <div className={styles.principals}>BAKERS</div>
@@ -47,7 +44,6 @@ const AboutUsPage: React.FC = () => {
 
           <div className={styles.teamCenterText}>
             <div className={styles.smallGallery}>
-              {/* Small decorative images in the center */}
               <img src={bakeryHero} alt="Pastry detail 1" />
               <img src={bakeryHero} alt="Pastry detail 2" />
               <img src={bakeryHero} alt="Pastry detail 3" />
@@ -57,14 +53,12 @@ const AboutUsPage: React.FC = () => {
             </p>
           </div>
 
-          {/* Person 1 */}
           <div className={styles.teamMember}>
             <img src={bakeryHero} alt="Melina" />
             <h4>Melina</h4>
             <span>FOUNDER AND HEAD BAKER</span>
           </div>
 
-          {/* Person 2 */}
           <div className={styles.teamMember}>
             <img src={bakeryHero} alt="David" />
             <h4>David</h4>

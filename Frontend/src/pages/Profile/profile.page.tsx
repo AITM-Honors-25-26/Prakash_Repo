@@ -62,7 +62,6 @@ const Profile: React.FC = () => {
         const updatedData = { ...userData, image: updatedUser.image };
         setUserData(updatedData);
         localStorage.setItem('qr_user', JSON.stringify(updatedData));
-        // Notify other components (e.g. the header avatar) to refresh
         window.dispatchEvent(new Event('qr_user_updated'));
         toast.success('Profile photo updated successfully!');
       }

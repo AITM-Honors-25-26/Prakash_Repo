@@ -1,9 +1,5 @@
 import mongoose from "mongoose";
 
-// Loyalty / Membership - a diner who has verified their phone or email via a
-// one-time OTP. The more orders they place (visitCount), the higher the tier
-// they qualify for and the bigger the automatic discount they get at checkout
-// (see settings.service.js membershipTiers for the tier table).
 const MembershipSchema = new mongoose.Schema({
     fullName: {
         type: String,
@@ -11,9 +7,6 @@ const MembershipSchema = new mongoose.Schema({
         default: ""
     },
 
-    // Optional profile details the customer sets up after joining. They are
-    // written only via verifyOtp (i.e. after the customer proves ownership of
-    // their contact with a fresh one-time code) - see membership.service.js.
     dob: {
         type: String,
         trim: true,
@@ -54,8 +47,6 @@ const MembershipSchema = new mongoose.Schema({
         default: "Active"
     },
 
-    // OTP verification - hashed 6-digit code with a short expiry. Cleared as
-    // soon as verification succeeds.
     otpHash: {
         type: String,
         default: null
@@ -73,8 +64,6 @@ const MembershipSchema = new mongoose.Schema({
         default: null
     },
 
-    // Loyalty bookkeeping - visitCount increments when a member places an
-    // order; totalSpent accumulates only when an order is actually paid.
     visitCount: {
         type: Number,
         default: 0

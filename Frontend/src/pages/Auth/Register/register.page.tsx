@@ -58,7 +58,6 @@ const RegisterPage: React.FC = () => {
     setLoading(true);
     const data = new FormData();
     
-    // Fixed: Appending all fields including confirmPassword so backend validation passes
     Object.entries(formData).forEach(([key, value]) => {
       data.append(key, value);
     });

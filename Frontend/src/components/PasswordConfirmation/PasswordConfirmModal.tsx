@@ -16,8 +16,6 @@ const PasswordConfirmModal: React.FC<PasswordConfirmModalProps> = ({
   onCancel,
   onConfirm,
 }) => {
-  // Parent only mounts this component while the dialog is open (and remounts it with
-  // a fresh `key` per delete target), so state starts clean without a reset effect.
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
