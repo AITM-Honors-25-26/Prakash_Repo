@@ -105,7 +105,6 @@ export const buildEmail = (jobName, data) => {
 const emailWorker = new Worker(
     "email-queue",
     async (job) => {
-        // Changed job.fullName to job.name here
         console.log(`[EmailWorker] Processing: ${job.name}`, job.data);
         const payload = buildEmail(job.name, job.data);
         await emailSvc.sendEmail(payload);

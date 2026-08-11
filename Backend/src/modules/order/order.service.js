@@ -11,8 +11,6 @@ export const createOrder = async (orderData) => {
     return total + (item.price * item.quantity);
   }, 0);
 
-  // Loyalty membership - a verified member's tier discount is applied here so
-  // the bill is locked in correctly from the very first second.
   const member = (membershipPhone || membershipEmail)
     ? await membershipSvc.lookupVerifiedMember({ phone: membershipPhone, email: membershipEmail })
     : null;
@@ -41,13 +39,10 @@ export const createOrder = async (orderData) => {
 
   const savedOrder = await newOrder.save();
 
-  // Count this sitting as another visit for the member (drives tier upgrades).
   if (member) {
     await membershipSvc.incrementVisit(member._id);
   }
 
-  // Keep the table's billing snapshot in sync so staff immediately see the
-  // table as Occupied + Unpaid with the correct outstanding amount.
   await tableSvc.refreshTableBilling(tableNumber);
 
   return savedOrder;
@@ -60,11 +55,6 @@ export const getOrdersForKitchen = async () => {
   }).sort({ createdAt: 1 });
 };
 
-// Table Overview - every still-active order for one table (a table often
-// places more than one order in a sitting, e.g. via "Order More Items").
-// Used by: the customer's Order Tracking page (to show their whole tab, not
-// just the last order placed) and available for the kitchen/waiter board to
-// group by table too.
 export const getActiveOrdersForTable = async (tableNumber) => {
   return await Order.find({
     tableNumber,
@@ -73,9 +63,6 @@ export const getActiveOrdersForTable = async (tableNumber) => {
   }).sort({ createdAt: 1 });
 };
 
-// Order Customization after placement - the customer (or staff) may only
-// change items while the kitchen hasn't started on the order yet. Once it's
-// Preparing/Ready/Cancelled, this throws so the controller can return 409.
 export const updateOrderItems = async (orderId, { items, discountCode, membershipPhone, membershipEmail }) => {
   const order = await Order.findById(orderId);
 
@@ -94,8 +81,6 @@ export const updateOrderItems = async (orderId, { items, discountCode, membershi
   const subtotal = items.reduce((total, item) => total + (item.price * item.quantity), 0);
   const effectiveDiscountCode = discountCode !== undefined ? discountCode : order.discountCode;
 
-  // Re-resolve membership (the member may have verified between creation and
-  // this edit, or a different member may have been entered).
   const member = (membershipPhone || membershipEmail)
     ? await membershipSvc.lookupVerifiedMember({ phone: membershipPhone, email: membershipEmail })
     : order.membershipId ? await membershipSvc.lookupVerifiedMember({
@@ -123,16 +108,11 @@ export const updateOrderItems = async (orderId, { items, discountCode, membershi
 
   const savedOrder = await order.save();
 
-  // Total can change after an edit, so refresh the table's billing snapshot.
   await tableSvc.refreshTableBilling(savedOrder.tableNumber);
 
   return savedOrder;
 };
 
-// Order Customization - lets the customer cancel their own order, but only
-// while the kitchen hasn't started (mirrors the same rule as
-// updateOrderItems above). Staff still has the unrestricted status-update
-// and delete endpoints for cases after prep has begun.
 export const cancelOrder = async (orderId) => {
   const order = await Order.findById(orderId);
 
@@ -151,7 +131,6 @@ export const cancelOrder = async (orderId) => {
   order.status = OrderStatus.CANCELLED;
   const savedOrder = await order.save();
 
-  // A cancelled order no longer counts toward the table's bill.
   await tableSvc.refreshTableBilling(savedOrder.tableNumber);
 
   return savedOrder;
@@ -170,7 +149,6 @@ export const deleteOrder = async (orderId) => {
 
   await Order.findByIdAndDelete(orderId);
 
-  // Removing an order changes the outstanding total for its table.
   if (order?.tableNumber) {
     await tableSvc.refreshTableBilling(order.tableNumber);
   }
@@ -182,8 +160,6 @@ export const getOrderById = async (orderId) => {
   return await Order.findById(orderId);
 };
 
-// Used by the eSewa QR flow: init sets it to Pending while the customer is
-// scanning/paying, the success/failure callback flips it to Paid/Failed.
 export const setPaymentStatus = async (orderId, paymentStatus, extra = {}) => {
   const order = await Order.findById(orderId);
 
@@ -202,13 +178,10 @@ export const setPaymentStatus = async (orderId, paymentStatus, extra = {}) => {
     { new: true, runValidators: true }
   );
 
-  // First time the order becomes Paid: credit the member's total spend.
   if (!wasPaid && paymentStatus === PaymentStatus.PAID && updated?.membershipId) {
     await membershipSvc.recordPayment(updated.membershipId, updated.totalPrice);
   }
 
-  // A payment status change (e.g. eSewa success) directly affects whether
-  // the table is paid, so refresh its billing snapshot.
   if (updated?.tableNumber) {
     await tableSvc.refreshTableBilling(updated.tableNumber);
   }

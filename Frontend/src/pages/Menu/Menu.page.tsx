@@ -227,9 +227,6 @@ const MenuPage: React.FC = () => {
     }));
   }, [menuItems]);
 
-  // Order Customization: two items count as "the same cart line" only if
-  // they share the item id AND the exact same selected add-ons AND the same
-  // special instructions - otherwise a customized item gets its own line.
   const buildCartLineId = (
     itemId: string,
     selectedAddOns: AddOnOption[],
@@ -278,12 +275,10 @@ const MenuPage: React.FC = () => {
     }
   };
 
-  // Quick "Add" button on the card - default quantity of 1, no customization.
   const handleAddToCart = (item: BakeryItem) => {
     addToCart(item);
   };
 
-  // Full customization flow from the item detail modal.
   const handleAddToCartWithCustomization = (item: BakeryItem, customization: CartCustomization) => {
     addToCart(item, customization);
   };

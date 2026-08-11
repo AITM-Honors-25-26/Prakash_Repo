@@ -224,17 +224,14 @@ class AuthController {
                 throw { code: 422, message: "Profile image is required", status: "PROFILE_IMAGE_MISSING" };
             }
 
-            // 1. Upload the new image to Cloudinary
             uploaded = await cloudianarySvc.fileUpload(req.file.path, 'user/');
 
-            // 2. Delete the old photo from Cloudinary so it doesn't pile up
             const currentUser = await autSvc.getSingleUserByFilter({ _id: userId });
             const oldPublicId = currentUser?.image?.public_id;
             if (oldPublicId) {
                 await cloudianarySvc.deleteFile(oldPublicId);
             }
 
-            // 3. Persist the new link in the database so the new image is shown
             const updatedUser = await autSvc.updateProfilePhoto(userId, {
                 url: uploaded.url,
                 optimizeUrl: uploaded.secure_url || uploaded.url,
@@ -251,8 +248,6 @@ class AuthController {
                 option: null,
             });
         } catch (exception) {
-            // If anything went wrong after uploading, remove the newly uploaded
-            // image from Cloudinary so we don't leave an orphaned file behind.
             if (uploaded && uploaded.public_id) {
                 await cloudianarySvc.deleteFile(uploaded.public_id).catch(() => {});
             }
@@ -280,7 +275,7 @@ class AuthController {
             await autSvc.updateSingleUserByFilter({ email }, updateData);
 
             await emailQueue.add(EMAIL_JOBS.FORGOT_PASSWORD, {
-                fullName:   user.fullName || "User", // Changed from name to fullName
+                fullName:   user.fullName || "User",
                 email:      user.email,
                 resetToken: updateData.forgotPasswordToken,
             });

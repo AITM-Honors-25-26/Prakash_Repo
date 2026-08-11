@@ -3,8 +3,6 @@ import membershipSvc from "../membership/membership.service.js";
 
 class SettingsController {
 
-    // Public - the checkout page (unauthenticated customer) needs the current
-    // tax/service-charge rate to render a live bill preview.
     getBillingSettings = async (req, res, next) => {
         try {
             const settings = await settingsSvc.getBillingSettings();
@@ -31,10 +29,6 @@ class SettingsController {
         }
     }
 
-    // Public - lets the checkout page show subtotal/tax/discount/total before
-    // the order is actually created, using the same math the server will use.
-    // A verified member's phone/email can be supplied so their tier discount
-    // is included in the live preview.
     previewTotals = async (req, res, next) => {
         try {
             const { subtotal, discountCode, membershipPhone, membershipEmail } = req.body;

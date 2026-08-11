@@ -10,7 +10,6 @@ $border-color: #e0e0e0;
   padding-bottom: 2rem;
 }
 
-// Loading State
 .loading {
   display: flex;
   justify-content: center;
@@ -23,7 +22,6 @@ $border-color: #e0e0e0;
   }
 }
 
-// Header
 .dashHeader {
   display: flex;
   justify-content: space-between;
@@ -89,13 +87,12 @@ $border-color: #e0e0e0;
   border-bottom: 1px solid #cc0000;
 }
 
-// Layout Grid
 .boardGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr; // Two equal columns side-by-side
+  grid-template-columns: 1fr 1fr;
   gap: 2rem;
   padding: 2rem;
-  align-items: start; // Prevents columns from stretching to match each other's height
+  align-items: start;
 }
 
 .stationSection {
@@ -139,7 +136,6 @@ $border-color: #e0e0e0;
   }
 }
 
-// Cards
 .cardContainer {
   padding: 1.5rem;
   display: flex;

@@ -4,9 +4,6 @@ import { useParams } from 'react-router-dom';
 import { API_ENDPOINTS, API_BASE_URL } from '../../../constants/constants';
 import styles from './PaymentPay.module.scss';
 
-// Opened when the customer scans the QR shown on the checkout page's "Pay
-// Now" modal. Looks up the order, gets a fresh eSewa signature, and
-// auto-submits the hidden form so eSewa's own payment screen takes over.
 const PaymentPay: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
   const [error, setError] = useState<string>('');

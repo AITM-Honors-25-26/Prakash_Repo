@@ -18,8 +18,6 @@ class TableController {
 
     getAllTables = async (req, res, next) => {
         try {
-            // Enriched with live billing (paymentStatus / outstandingAmount)
-            // so staff can see which tables have paid.
             const list = await tableSvc.getAllTablesWithBilling({});
 
             res.json({
@@ -32,8 +30,6 @@ class TableController {
         }
     }
 
-    // Reception / Payments Console - full itemized billing for every table
-    // plus a room-wide payment summary. Staff-guarded (Admin/Waiter/Reception).
     getPaymentsOverview = async (req, res, next) => {
         try {
             const overview = await tableSvc.getPaymentsOverview();
@@ -140,9 +136,6 @@ class TableController {
         }
     }
 
-    // Staff flow - marks every unpaid active order at the table as Paid
-    // (counter payment). The table's billing snapshot is refreshed so it then
-    // shows "Paid" and can be released.
     settleTable = async (req, res, next) => {
         try {
             const tableNumber = req.params.id;
@@ -162,8 +155,6 @@ class TableController {
         }
     }
 
-    // Staff flow - makes the table Available again, but only once the bill is
-    // fully paid. Returns 409 with the outstanding amount otherwise.
     markTableAvailable = async (req, res, next) => {
         try {
             const tableNumber = req.params.id;

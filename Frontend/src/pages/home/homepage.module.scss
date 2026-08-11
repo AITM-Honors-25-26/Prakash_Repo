@@ -221,8 +221,6 @@ $accent: #ff6b35;
   }
 }
 
-/* ---------- Responsive Breakpoints ---------- */
-
 @media (max-width: 768px) {
   .topsection {
     min-height: calc(100dvh - var(--header-height-mobile, 70px));
@@ -283,7 +281,6 @@ $accent: #ff6b35;
   }
 }
 
-/* Tablet-specific optimal layout */
 @media (min-width: 769px) and (max-width: 1024px) {
   .welcomecontent {
     max-width: 600px;

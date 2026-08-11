@@ -120,8 +120,6 @@ const Dashboard: React.FC = () => {
       });
     });
 
-    // Order Customization - the customer can edit items while an order is
-    // still Pending; keep the kitchen board's item list/total in sync.
     socket.on('order_items_updated', (updatedOrder: Order) => {
       console.log('Order items updated:', updatedOrder);
       setOrders(prev =>
@@ -177,9 +175,6 @@ const Dashboard: React.FC = () => {
   );
   const serviceOrders = orders.filter(o => o.status === 'Ready');
 
-  // Table Overview - a table often has more than one active order at once
-  // (e.g. "Order More Items" while the first is still Pending), so group by
-  // table instead of showing them as scattered, unrelated cards.
   const groupOrdersByTable = (list: Order[]): [string, Order[]][] => {
     const groups = new Map<string, Order[]>();
     list.forEach(order => {
@@ -200,8 +195,6 @@ const Dashboard: React.FC = () => {
   const kitchenTableGroups = groupOrdersByTable(kitchenOrders);
   const serviceTableGroups = groupOrdersByTable(serviceOrders);
 
-  // Billing visibility - a table is only "Paid" once every active order at
-  // it is Paid. Waiters see this right where orders are being served.
   const getTablePaymentSummary = (tableOrders: Order[]) => {
     const total = tableOrders.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
     const anyFailed = tableOrders.some(o => o.paymentStatus === 'Failed');

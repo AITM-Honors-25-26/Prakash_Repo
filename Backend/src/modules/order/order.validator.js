@@ -1,7 +1,5 @@
 import { OrderStatus } from '../../config/constants.js';
 
-// Shared by create-order and update-items: returns an error message string,
-// or null if the items array is well-formed.
 const validateItemsShape = (items) => {
   if (!items || !Array.isArray(items) || items.length === 0) {
     return 'Order must contain at least one item.';
@@ -62,9 +60,6 @@ export const validateCreateOrder = (req, res, next) => {
   next();
 };
 
-// Order Customization - validates the body for PATCH /order/:id/items.
-// The Pending-only enforcement itself lives in order.service.updateOrderItems,
-// since it needs to check the order's current status in the DB.
 export const validateUpdateItems = (req, res, next) => {
   const { items, discountCode } = req.body;
 

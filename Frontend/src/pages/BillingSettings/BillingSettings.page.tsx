@@ -59,7 +59,6 @@ const BillingSettings: React.FC = () => {
   const [serviceChargeRate, setServiceChargeRate] = useState<number>(0);
   const [discounts, setDiscounts] = useState<DiscountRule[]>([]);
 
-  // Loyalty / Membership tier configuration
   const [membershipEnabled, setMembershipEnabled] = useState<boolean>(true);
   const [membershipTiers, setMembershipTiers] = useState<MembershipTierConfig[]>([]);
 
@@ -86,7 +85,6 @@ const BillingSettings: React.FC = () => {
   const fetchSettings = useCallback(async () => {
     setIsLoading(true);
     try {
-      // Public endpoint - no auth header needed to read current rates.
       const response = await axios.get(API_ENDPOINTS.BILLING_SETTINGS);
       const data: BillingSettingsData = response.data?.data;
       if (data) {
@@ -258,8 +256,6 @@ const BillingSettings: React.FC = () => {
       toast.success('Discount removed.');
     }
   };
-
-  // ----- Loyalty / Membership tiers -----
 
   const updateTierField = (index: number, field: keyof MembershipTierConfig, value: string | number) => {
     setMembershipTiers((prev) =>

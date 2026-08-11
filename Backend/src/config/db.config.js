@@ -3,10 +3,6 @@ import { DBConfig, TableStatus } from "./constants.js";
 import { Table } from "../modules/tablemodel/table.model.js";
 import Order from "../modules/ordermodel/order.model.js";
 
-// One-time cleanup for data created before orders carried the isCleared flag:
-// an order whose table is currently free belongs to a previous sitting, so it
-// is archived and disappears from the live billing/kitchen views. Revenue
-// analytics still see it because they never filter on isCleared.
 const archiveOrdersForReleasedTables = async () => {
     try {
         const releasedTables = await Table.find({

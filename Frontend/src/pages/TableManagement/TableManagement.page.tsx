@@ -37,13 +37,11 @@ const TableManagement: React.FC = () => {
   const [userEmail, setUserEmail] = useState<string>('');
   const navigate = useNavigate();
 
-  // Add/Edit table modal state
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [formMode, setFormMode] = useState<'add' | 'edit'>('add');
   const [editingTable, setEditingTable] = useState<RestaurantTable | null>(null);
   const [isFormSubmitting, setIsFormSubmitting] = useState(false);
 
-  // Delete confirmation modal state
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [isDeleteSubmitting, setIsDeleteSubmitting] = useState(false);
 
@@ -131,8 +129,6 @@ const TableManagement: React.FC = () => {
     }
   };
 
-  // ----- Add / Edit table -----
-
   const openAddModal = () => {
     setFormMode('add');
     setEditingTable(null);
@@ -179,8 +175,6 @@ const TableManagement: React.FC = () => {
     }
   };
 
-  // ----- Delete table -----
-
   const requestDelete = (id: string) => {
     setPendingDeleteId(id);
   };
@@ -214,10 +208,6 @@ const TableManagement: React.FC = () => {
       setIsDeleteSubmitting(false);
     }
   };
-
-  // ----- Billing / Release -----
-  // Lets staff see and control the payment state of each table: settle the
-  // bill (counter payment) and only then release the table for new guests.
 
   const handleSettleTable = async (table: RestaurantTable) => {
     const config = getAuthHeader();

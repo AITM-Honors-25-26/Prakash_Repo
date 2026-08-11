@@ -1,7 +1,5 @@
 import * as OrderService from './order.service.js';
 
-// Shared by getOrderStatus and getOrdersByTable - trims an order down to the
-// fields safe to expose on an unauthenticated customer-facing endpoint.
 const toPublicOrder = (order) => ({
   _id: order._id,
   status: order.status,
@@ -39,9 +37,6 @@ export const createOrder = async (req, res) => {
   }
 };
 
-// Public/unauthenticated on purpose - the checkout page polls this from the
-// customer's own device (no login) while the eSewa QR modal is open, and the
-// Order Tracking page uses it to render the live status + itemized bill.
 export const getOrderStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -57,10 +52,6 @@ export const getOrderStatus = async (req, res) => {
   }
 };
 
-// Table Overview - Order Customization's "Order More Items" flow can leave a
-// table with several active orders at once; this lets the Order Tracking
-// page show the customer their whole tab, not just the order they just
-// placed. Public/unauthenticated, same reasoning as getOrderStatus above.
 export const getOrdersByTable = async (req, res) => {
   try {
     const { tableNumber } = req.params;
@@ -107,8 +98,6 @@ export const updateOrderStatus = async (req, res) => {
   }
 };
 
-// Order Customization - lets the customer (or staff) edit an order's items,
-// but only while it's still Pending (see OrderService.updateOrderItems).
 export const updateOrderItems = async (req, res) => {
   try {
     const { id } = req.params;
@@ -128,8 +117,6 @@ export const updateOrderItems = async (req, res) => {
   }
 };
 
-// Order Customization - lets the customer cancel their own order while it's
-// still Pending (see OrderService.cancelOrder for the status guard).
 export const cancelOrder = async (req, res) => {
   try {
     const { id } = req.params;

@@ -12,14 +12,12 @@ import smsSvc from "../../services/sms.service.js";
 import { isRedisReachable } from "../../config/queue.config.js";
 
 const OTP_LENGTH = 6;
-const OTP_TTL_MS = 5 * 60 * 1000;           // 5 minutes
-const OTP_RESEND_COOLDOWN_MS = 60 * 1000;   // 1 minute
+const OTP_TTL_MS = 5 * 60 * 1000;
+const OTP_RESEND_COOLDOWN_MS = 60 * 1000;
 const OTP_MAX_ATTEMPTS = 5;
 
 const isProduction = () => process.env.NODE_ENV === "production";
 
-// Keeps a phone number as digits only so the same member can't accidentally be
-// created twice as "9800000000" vs "+977-98-0000-0000".
 const normalizePhone = (value) => String(value || "").replace(/\D/g, "").slice(-15);
 
 const maskPhone = (phone) => {
@@ -43,8 +41,6 @@ const generateOtp = () =>
 
 class MembershipService {
 
-    // Finds an existing member by phone or email. Exactly one of the two must
-    // be provided. Returns null when no member is registered with it yet.
     findMemberByContact = async ({ phone, email }) => {
         try {
             const normalizedPhone = phone ? normalizePhone(phone) : null;
@@ -56,7 +52,6 @@ class MembershipService {
                 ? await MembershipModel.findOne({ phone: normalizedPhone })
                 : await MembershipModel.findOne({ email: normalizedEmail });
 
-            // Fallback for members registered with a raw (un-normalized) phone.
             if (!member && normalizedPhone) {
                 member = await MembershipModel.findOne({ phone: String(phone).trim() });
             }
@@ -66,8 +61,6 @@ class MembershipService {
         }
     }
 
-    // Public profile returned to the frontend, with the tier the member
-    // currently qualifies for.
     getMemberProfile = (member) => {
         if (!member) return null;
         const tier = settingsSvc.getMembershipTier(member.visitCount, {
@@ -95,16 +88,12 @@ class MembershipService {
         };
     }
 
-    // Looks up a verified, active member by phone or email. Used by checkout
-    // (preview + order creation) to decide whether to apply a tier discount.
     lookupVerifiedMember = async ({ phone, email }) => {
         try {
             if (!phone && !email) return null;
             const member = await this.findMemberByContact({ phone, email });
             if (!member || !member.isVerified || member.status !== "Active") return null;
 
-            // Attach the tier table so getMemberProfile can compute the tier
-            // without an extra DB read.
             const settings = await settingsSvc.getBillingSettings();
             member._tierSettings = settings.membershipTiers;
             return member;
@@ -113,9 +102,6 @@ class MembershipService {
         }
     }
 
-    // Sends a one-time OTP to the supplied email or phone so the customer can
-    // prove they own that contact. New contacts get a member row created
-    // (unverified until the OTP is confirmed).
     requestOtp = async ({ phone, email }) => {
         try {
             const normalizedPhone = phone ? normalizePhone(phone) : null;
@@ -143,7 +129,6 @@ class MembershipService {
                 throw { code: 403, message: "This membership has been deactivated.", status: "MEMBERSHIP_INACTIVE" };
             }
 
-            // Resend cooldown so a spammer can't burn our email/SMS credits.
             if (member.lastOtpSentAt && (Date.now() - new Date(member.lastOtpSentAt).getTime()) < OTP_RESEND_COOLDOWN_MS) {
                 throw { code: 429, message: "Please wait a minute before requesting another code.", status: "OTP_COOLDOWN" };
             }
@@ -155,13 +140,6 @@ class MembershipService {
             member.lastOtpSentAt = new Date();
             await member.save();
 
-            // Deliver the code: email goes through the BullMQ email queue;
-            // phone numbers go through the WhatsApp queue (Meta Cloud API).
-            // Both are async + retried, so this endpoint stays fast. When Redis
-            // is unreachable we skip the queue entirely and send the code
-            // DIRECTLY (Nodemailer / WhatsApp → SMS) so the customer always
-            // receives it. The WhatsApp worker likewise falls back to Sparrow
-            // SMS when WhatsApp is not configured or not on WhatsApp.
             if (normalizedEmail) {
                 const otpData = {
                     email: normalizedEmail,
@@ -199,11 +177,6 @@ class MembershipService {
         }
     }
 
-    // Confirms the OTP, marking the contact as a verified member. A verified
-    // member's discounts become available automatically at checkout. Optional
-    // profile details (fullName / dob / gender / address) submitted alongside
-    // the code are saved here - the OTP is the proof of ownership, so this is
-    // the one place a customer can set up or update their own details securely.
     verifyOtp = async ({ phone, email, otp, fullName, dob, gender, address }) => {
         try {
             const member = await this.findMemberByContact({ phone, email });
@@ -232,8 +205,6 @@ class MembershipService {
             member.otpExpiresAt = null;
             member.otpAttempts = 0;
 
-            // Save optional profile details the customer provided with their
-            // code (undefined = leave unchanged; "" / null = clear the field).
             if (fullName !== undefined) member.fullName = String(fullName || "").trim();
             if (dob !== undefined) member.dob = dob || null;
             if (gender !== undefined) member.gender = gender || null;
@@ -241,8 +212,6 @@ class MembershipService {
 
             await member.save();
 
-            // Attach the configured tier table so the returned profile reflects
-            // the admin's actual tier settings.
             const settings = await settingsSvc.getBillingSettings();
             member._tierSettings = settings.membershipTiers;
 
@@ -252,21 +221,16 @@ class MembershipService {
         }
     }
 
-    // Called when a member places an order - the sitting counts as one more
-    // visit, which drives their tier progression.
     incrementVisit = async (memberId) => {
         if (!memberId) return;
         await MembershipModel.updateOne({ _id: memberId }, { $inc: { visitCount: 1 } });
     }
 
-    // Called when a member's order is actually paid (counter or eSewa) so
-    // totalSpent only reflects real money taken.
     recordPayment = async (memberId, amount) => {
         if (!memberId || !amount) return;
         await MembershipModel.updateOne({ _id: memberId }, { $inc: { totalSpent: Number(amount) || 0 } });
     }
 
-    // --- Staff / Reception administration -----------------------------------
     listMembers = async (filter = {}) => {
         try {
             return await MembershipModel.find(filter).sort({ createdAt: -1 });
@@ -303,4 +267,3 @@ class MembershipService {
 
 const membershipSvc = new MembershipService();
 export default membershipSvc;
-

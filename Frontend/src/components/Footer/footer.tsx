@@ -67,7 +67,6 @@ const Footer: React.FC = () => {
   return (
     <footer className={styles.footer}>
       <div className={styles.footerTop}>
-        {/* Brand */}
         <div className={styles.brandColumn}>
           <img src={logWhite} alt="Melina's Bakery Logo" className={styles.logo} />
           <p className={styles.tagline}>
@@ -91,7 +90,6 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        {/* Quick Links */}
         <div className={styles.linksColumn}>
           <h3 className={styles.columnTitle}>Quick Links</h3>
           <nav className={styles.navLinks} aria-label="Footer quick links">
@@ -102,7 +100,6 @@ const Footer: React.FC = () => {
           </nav>
         </div>
 
-        {/* Contact */}
         <div className={styles.contactColumn}>
           <h3 className={styles.columnTitle}>Contact Us</h3>
           <ul className={styles.contactList}>
@@ -123,7 +120,6 @@ const Footer: React.FC = () => {
           </ul>
         </div>
 
-        {/* Send Message */}
         <div className={styles.messageColumn}>
           <h3 className={styles.columnTitle}>Send Message</h3>
           <form className={styles.messageForm} onSubmit={handleSubmit}>
@@ -172,4 +168,3 @@ const Footer: React.FC = () => {
 };
 
 export default Footer;
-

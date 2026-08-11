@@ -45,7 +45,6 @@ class AuthService{
             dob:userObj.dob,
         };
     }
-    // --- Staff Account Management (Admin only) -----------------------------
     listAllUsers = async (filter = {}) => {
         try {
             return await UserModel.find(filter).sort({ createdAt: -1 });
@@ -56,9 +55,6 @@ class AuthService{
     createStaffAccount = async (data) => {
         try {
             data.password = bcrypt.hashSync(data.password, 12);
-            // Admin-created accounts still require email activation: the staff
-            // member clicks the activation link sent to their registered email
-            // before they can log in.
             data.status = false;
             data.activationToken = randomStringGenerator(100, 'string');
             const userObj = new UserModel(data);
@@ -92,7 +88,6 @@ class AuthService{
             throw exception;
         }
     }
-    // -------------------------------------------------------------------------
 
     getSingleUserByFilter= async (filter, selectFields)=>{
         try{

@@ -51,7 +51,7 @@ interface BillTotals {
 }
 
 const POLL_INTERVAL_MS = 4000;
-const POLL_TIMEOUT_MS = 5 * 60 * 1000; // 5 minutes
+const POLL_TIMEOUT_MS = 5 * 60 * 1000;
 
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -60,15 +60,11 @@ const CheckoutPage: React.FC = () => {
   const [tableNumber, setTableNumber] = useState<string>('');
   const [paymentOption, setPaymentOption] = useState<string>('Pay Later');
 
-  // Tax & Discount Configuration - live preview from the backend so the
-  // customer sees the exact same bill the server will charge.
   const [discountCodeInput, setDiscountCodeInput] = useState<string>('');
   const [appliedDiscountCode, setAppliedDiscountCode] = useState<string>('');
   const [billTotals, setBillTotals] = useState<BillTotals | null>(null);
   const [totalsLoading, setTotalsLoading] = useState<boolean>(false);
 
-  // Loyalty / Membership - a verified member's phone/email gets their tier
-  // discount included in the live preview and in the placed order.
   const [memberInfo, setMemberInfo] = useState<MemberProfile | null>(null);
   const [memberContact, setMemberContact] = useState<MembershipContact | null>(null);
 
@@ -77,7 +73,6 @@ const CheckoutPage: React.FC = () => {
     setMemberContact(contact);
   };
 
-  // eSewa QR modal state
   const [qrModalOpen, setQrModalOpen] = useState<boolean>(false);
   const [qrImage, setQrImage] = useState<string>('');
   const [checkingPayment, setCheckingPayment] = useState<boolean>(false);
@@ -136,8 +131,6 @@ const CheckoutPage: React.FC = () => {
     toast.info('Item removed from cart.');
   };
 
-  // Order Customization - lets the customer tweak special instructions for
-  // an item that's already in the cart, right up until they place the order.
   const updateSpecialNotes = (lineId: string, notes: string) => {
     const updatedCart = cartItems.map(item =>
       item.cartLineId === lineId ? { ...item, specialNotes: notes } : item
@@ -150,8 +143,6 @@ const CheckoutPage: React.FC = () => {
     return cartItems.reduce((total, item) => total + item.unitPrice * item.quantity, 0);
   };
 
-  // Live bill preview - recalculated by the server (Tax & Discount
-  // Configuration) whenever the cart or the applied discount code changes.
   useEffect(() => {
     const subtotal = calculateTotal();
 
@@ -220,9 +211,6 @@ const CheckoutPage: React.FC = () => {
 
   const grandTotal = billTotals ? billTotals.totalPrice : calculateTotal();
 
-  // Order Tracking - remembered across navigation (and even a page refresh)
-  // so the floating "Track Order" pill can bring the customer straight back,
-  // e.g. after they browse the menu for more items or return to the home page.
   const rememberActiveOrder = (orderId: string) => {
     localStorage.setItem(
       'bakery_active_order',
@@ -274,7 +262,6 @@ const CheckoutPage: React.FC = () => {
           setQrModalOpen(false);
           toast.error('Payment failed or was cancelled. Please try again.');
         }
-        // 'Pending' / 'Unpaid' -> keep polling
       } catch (error) {
         console.error('Payment status check failed:', error);
       }
@@ -321,7 +308,6 @@ const CheckoutPage: React.FC = () => {
         membershipEmail: memberContact?.email || undefined,
       };
 
-      // Backend wraps the created order as { success, data: order }
       const response = await axios.post(API_ENDPOINTS.ORDER_ACTION + '/', orderPayload);
       const orderId = response.data.data._id;
       const orderTotal = response.data.data.totalPrice ?? grandTotal;
@@ -330,7 +316,6 @@ const CheckoutPage: React.FC = () => {
         const totalAmount = orderTotal.toString();
         await startQrPayment(orderId, totalAmount);
       } else {
-        // 'Pay Later'
         localStorage.removeItem('bakery_cart');
         window.dispatchEvent(new Event('cartUpdated'));
         rememberActiveOrder(orderId);
