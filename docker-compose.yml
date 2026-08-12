@@ -28,8 +28,12 @@ services:
     ports:
       - "5173:5173"
     environment:
-      VITE_PUBLIC_URL: ${VITE_PUBLIC_URL:-http://localhost:5173}
-      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:9005/api}
+      # IMPORTANT: do NOT default these to http://localhost. When another device on
+      # the LAN opens the site, the browser on THAT device treats "localhost" as itself,
+      # so every API call would hit a dead-end. Leaving them empty makes the frontend
+      # auto-detect the host's LAN IP (see Frontend/src/constants/constants.tsx).
+      VITE_PUBLIC_URL: ${VITE_PUBLIC_URL:-}
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-}
     depends_on:
       - backend
     volumes:
