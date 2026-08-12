@@ -6,7 +6,7 @@ services:
     build:
       context: ./Backend
       dockerfile: Dockerfile
-    container_name: nebuds-backend
+    container_name: melinasbakery-backend
     ports:
       - "9005:9005"
     env_file:
@@ -17,14 +17,14 @@ services:
       - ./Backend:/app
       - /app/node_modules
     networks:
-      - nebuds-network
+      - melinasbakery-network
     restart: unless-stopped
 
   frontend:
     build:
       context: ./Frontend
       dockerfile: Dockerfile
-    container_name: nebuds-frontend
+    container_name: melinasbakery-frontend
     ports:
       - "5173:5173"
     environment:
@@ -40,18 +40,18 @@ services:
       - ./Frontend:/app
       - /app/node_modules
     networks:
-      - nebuds-network
+      - melinasbakery-network
     restart: unless-stopped
 
   redis:
     image: redis:7-alpine
-    container_name: nebuds-redis
+    container_name: melinasbakery-redis
     ports:
       - "6379:6379"
     networks:
-      - nebuds-network
+      - melinasbakery-network
     restart: unless-stopped
 
 networks:
-  nebuds-network:
+  melinasbakery-network:
     driver: bridge
