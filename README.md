@@ -71,7 +71,7 @@ frontend, both containerized with Docker.
 - **Cloudflare Turnstile** CAPTCHA on auth forms.
 - **Health check** endpoint (`GET /health`).
 - **Dockerized** with a single `docker-compose.yml` covering backend, frontend,
-  and Redis.
+    and Redis.
 
 ---
 
@@ -128,7 +128,6 @@ melinas-bakery/
         └── assets/img/        # Images & logos
 ```
 
-
 ---
 
 ## Prerequisites
@@ -184,7 +183,6 @@ current browser location, and can even discover the local network IP via WebRTC
 STUN — so the QR-code table-ordering experience works seamlessly on LAN devices
 without any env configuration.
 
-
 ---
 
 ## Setup & Installation
@@ -211,56 +209,6 @@ docker-compose up --build
 > Alpine container (`RUN npm install` without copying the lock file) to avoid
 > missing native optional dependencies (e.g. `@rolldown/binding-linux-x64-musl`).
 > The bind-mount of `node_modules` is excluded from the host so the container's
-
----
-
-## API Overview
-
-All API routes are mounted under `/api`. A health check is available at
-`/health`.
-
-| Resource        | Base path                | Methods                              |
-| --------------- | ------------------------ | ------------------------------------ |
-| Auth            | `/auth/...`              | Register, Login, Forgot/Reset pass, Profile photo, Staff CRUD |
-| Menu            | `/menu/...`              | List, add-item, get, update, delete  |
-| Tables          | `/table/...`             | List, add, get, occupy, update, delete |
-| Orders          | `/order/...`             | List, by-table, status, action       |
-| Contact Admin   | `/conatctAdmin`          | Submit contact form                  |
-| Payments        | `/payment/esewa/...`     | eSewa init, QR generation, verification |
-| Settings        | `/settings/billing/...`  | Get/set billing config, preview      |
-| Analytics       | `/analytics/...`         | Overview, sales-trend, top-items     |
-| Membership      | `/members/...`           | OTP request/verify, lookup, list, CRUD |
-
-See [`Frontend/src/constants/constants.tsx`](Frontend/src/constants/constants.tsx)
-for the full list of `API_ENDPOINTS`.
-
-**Authentication:** JWT tokens are issued on login and sent in the
-`Authorization: Bearer <token>` header for protected routes.
-
-**Real-time:** The Socket.IO server (same as the HTTP server on port 9005)
-supports a `join-room` event so clients can subscribe to table/order rooms and
-receive live status updates.
-
----
-
-## App Ports
-
-| Service  | Port |
-| -------- | ---- |
-| Frontend | 5173 |
-| Backend  | 9005 |
-| Redis    | 6379 |
-
----
-
-## Author
-
-**Prakash Budha Magar** — Built with ❤️ in Nepal.
-
----
-
-*Made for Melina's Bakery.*
-
 > install is preserved at runtime.
 
 ### Option 2 — Run Locally
@@ -323,3 +271,51 @@ npm run preview
 | `npm run lint`   | Run ESLint                       |
 | `npm run preview`| Serve the production build       |
 
+---
+
+## API Overview
+
+All API routes are mounted under `/api`. A health check is available at
+`/health`.
+
+| Resource        | Base path                | Methods                              |
+| --------------- | ------------------------ | ------------------------------------ |
+| Auth            | `/auth/...`              | Register, Login, Forgot/Reset pass, Profile photo, Staff CRUD |
+| Menu            | `/menu/...`              | List, add-item, get, update, delete  |
+| Tables          | `/table/...`             | List, add, get, occupy, update, delete |
+| Orders          | `/order/...`             | List, by-table, status, action       |
+| Contact Admin   | `/conatctAdmin`          | Submit contact form                  |
+| Payments        | `/payment/esewa/...`     | eSewa init, QR generation, verification |
+| Settings        | `/settings/billing/...`  | Get/set billing config, preview      |
+| Analytics       | `/analytics/...`         | Overview, sales-trend, top-items     |
+| Membership      | `/members/...`           | OTP request/verify, lookup, list, CRUD |
+
+See [`Frontend/src/constants/constants.tsx`](Frontend/src/constants/constants.tsx)
+for the full list of `API_ENDPOINTS`.
+
+**Authentication:** JWT tokens are issued on login and sent in the
+`Authorization: Bearer <token>` header for protected routes.
+
+**Real-time:** The Socket.IO server (same as the HTTP server on port 9005)
+supports a `join-room` event so clients can subscribe to table/order rooms and
+receive live status updates.
+
+---
+
+## App Ports
+
+| Service  | Port |
+| -------- | ---- |
+| Frontend | 5173 |
+| Backend  | 9005 |
+| Redis    | 6379 |
+
+---
+
+## Author
+
+**Prakash Budha Magar** — Built with ❤️ in Nepal.
+
+---
+
+*Made for Melina's Bakery.*
