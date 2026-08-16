@@ -192,7 +192,6 @@ const CheckoutPage: React.FC = () => {
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cartItems, appliedDiscountCode, memberContact]);
 
   const handleApplyDiscount = () => {
