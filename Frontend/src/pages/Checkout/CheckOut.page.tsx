@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
@@ -139,13 +139,12 @@ const CheckoutPage: React.FC = () => {
     localStorage.setItem('bakery_cart', JSON.stringify(updatedCart));
   };
 
-  const calculateTotal = () => {
-    return cartItems.reduce((total, item) => total + item.unitPrice * item.quantity, 0);
-  };
+  const subtotal = useMemo(
+    () => cartItems.reduce((total, item) => total + item.unitPrice * item.quantity, 0),
+    [cartItems]
+  );
 
   useEffect(() => {
-    const subtotal = calculateTotal();
-
     if (cartItems.length === 0) {
       setBillTotals(null);
       return;
@@ -192,7 +191,7 @@ const CheckoutPage: React.FC = () => {
     return () => {
       cancelled = true;
     };
-  }, [cartItems, appliedDiscountCode, memberContact]);
+  }, [cartItems, appliedDiscountCode, memberContact, subtotal]);
 
   const handleApplyDiscount = () => {
     const code = discountCodeInput.trim().toUpperCase();
@@ -208,7 +207,7 @@ const CheckoutPage: React.FC = () => {
     setDiscountCodeInput('');
   };
 
-  const grandTotal = billTotals ? billTotals.totalPrice : calculateTotal();
+  const grandTotal = billTotals ? billTotals.totalPrice : subtotal;
 
   const rememberActiveOrder = (orderId: string) => {
     localStorage.setItem(
@@ -446,7 +445,7 @@ const CheckoutPage: React.FC = () => {
               <div className={styles.billBreakdown}>
                 <div className={styles.billRow}>
                   <span>Subtotal</span>
-                  <span>Rs. {calculateTotal().toLocaleString()}</span>
+                  <span>Rs. {subtotal.toLocaleString()}</span>
                 </div>
                 {billTotals && billTotals.discountAmount > 0 && (
                   <div className={styles.billRow}>
