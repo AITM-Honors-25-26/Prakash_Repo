@@ -74,10 +74,6 @@ export const getKitchenOrders = async (req, res) => {
 
 export const updateOrderStatus = async (req, res) => {
   try {
-    console.log('>>> HIT updateOrderStatus');
-    console.log('>>> id:', req.params.id);
-    console.log('>>> status:', req.body.status);
-
     const { id } = req.params;
     const { status } = req.body;
 

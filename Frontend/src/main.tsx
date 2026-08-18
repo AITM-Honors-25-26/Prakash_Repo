@@ -2,7 +2,7 @@ import React from "react";
 import "sweetalert2/dist/sweetalert2.min.css";
 import "./pages/main.css";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import HomePage from "./pages/home/home.page";
 import LoginPage from "./pages/Auth/Login/login.page";
 import RegisterPage from "./pages/Auth/Register/register.page";
@@ -54,9 +54,11 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/OrderTracking/:orderId" element={<OrderTrackingPage />} />
         <Route path="/MembershipPage" element={<MembershipPage />} />
         <Route path="/ReceptionBilling" element={<ReceptionBillingPage />} />
-        <Route path="/payment/pay:orderId" element={<PaymentPay />} />
-        <Route path="/payment/sucess" element={<PaymentSuccess />} />  
-        <Route path="/payment/failed" element={<PaymentFailure />} />      
+        <Route path="/payment/pay/:orderId" element={<PaymentPay />} />
+        <Route path="/payment/success" element={<PaymentSuccess />} />
+        <Route path="/payment/failure" element={<PaymentFailure />} />
+        <Route path="/payment/sucess" element={<Navigate to="/payment/success" replace />} />
+        <Route path="/payment/failed" element={<Navigate to="/payment/failure" replace />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

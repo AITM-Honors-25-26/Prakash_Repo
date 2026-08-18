@@ -35,6 +35,9 @@ const isPrivateIp = (ip?: string) => {
 };
 
 const getCurrentOrigin = () => {
+  if (typeof window !== 'undefined') {
+    return `${window.location.protocol}//${window.location.host}`;
+  }
   return 'http://localhost:5173';
 };
 
@@ -149,14 +152,11 @@ export const API_ENDPOINTS = {
 
   GET_MENU_ITEM: `${API_BASE_URL}/menu`,
 
-  TABLEMANAGEMENT: `${API_BASE_URL}/TableManagement`,
   LISTALLTABLE: `${API_BASE_URL}/table/list`,
   ADDTABLE: `${API_BASE_URL}/table/add`,
   DELETETABLE: `${API_BASE_URL}/table`,
   UPDATETABLE: `${API_BASE_URL}/table`,
 
-  LISTALLORDERS: `${API_BASE_URL}/order/list`,
-  UPDATEORDERSTATUS: `${API_BASE_URL}/order/status`,
   ORDER_ACTION: `${API_BASE_URL}/order`,
 
   ORDER_BY_TABLE: `${API_BASE_URL}/order/table`,
