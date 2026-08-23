@@ -104,7 +104,7 @@ const Header: React.FC = () => {
   }, [urlTableId, navigate]);
 
   const location = useLocation();
-  const hasStaffAccess = user && ['Admin', 'Chef', 'Waiter', 'Reception', 'Employee'].includes(user.role);
+  const hasStaffAccess = user && ['Admin', 'Chef', 'Waiter', 'Reception'].includes(user.role);
   const isMenuActive = location.pathname.startsWith('/MenuPage');
 
   const handleLogout = () => {

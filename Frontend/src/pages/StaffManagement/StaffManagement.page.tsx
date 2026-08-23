@@ -12,7 +12,7 @@ import { API_ENDPOINTS } from '../../constants/constants.js';
 
 const MySwal = withReactContent(Swal);
 
-const ROLE_OPTIONS = ['Admin', 'Chef', 'Waiter', 'Reception', 'Employee'];
+const ROLE_OPTIONS = ['Admin', 'Chef', 'Waiter', 'Reception'];
 const GENDER_OPTIONS = ['Male', 'Female', 'Other'];
 
 interface StaffMember {

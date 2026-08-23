@@ -14,8 +14,7 @@ export const UserRole = {
     ADMIN: "Admin",
     CHEF: "Chef",
     WAITER: "Waiter",
-    RECEPTION: "Reception",
-    Employee: "Employee"
+    RECEPTION: "Reception"
 };
 export const Gender = {
     MALE: "Male",
