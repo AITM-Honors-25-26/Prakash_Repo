@@ -83,14 +83,14 @@ export const CreateStaffDTO = Joi.object({
   gender: Joi.string().valid("Male", "Female", "Other").insensitive().required().messages({
       "any.only": "Gender must be male, female, or other"
     }),
-  role: Joi.string().valid("Admin", "Chef", "Waiter", "Reception", "Employee").insensitive().required().messages({
-      "any.only": "Role must be one of Admin, Chef, Waiter, Reception, or Employee"
+  role: Joi.string().valid("Admin", "Chef", "Waiter", "Reception").insensitive().required().messages({
+      "any.only": "Role must be one of Admin, Chef, Waiter or Reception"
     }),
 });
 
 export const UpdateStaffDTO = Joi.object({
   fullName: Joi.string().min(2).max(50),
-  role: Joi.string().valid("Admin", "Chef", "Waiter", "Reception", "Employee").insensitive(),
+  role: Joi.string().valid("Admin", "Chef", "Waiter", "Reception").insensitive(),
   phone: Joi.string().min(10).max(20).pattern(/^[0-9]+$/),
   address: Joi.string(),
   gender: Joi.string().valid("Male", "Female", "Other").insensitive(),
