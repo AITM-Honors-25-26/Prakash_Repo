@@ -36,10 +36,12 @@ const allowUser = (roles = null) => {
                 });
             } else {
                 req.authUser = autSvc.publicUserProfile(user);
-                if(!roles || user.role === UserRole.ADMIN){
+                const userRole = String(user.role || "").trim().toLowerCase();
+                const normalizedRoles = roles?.map((role) => String(role).trim().toLowerCase());
+                if(!roles || userRole === UserRole.ADMIN.toLowerCase()){
                     return next();
                 } else{
-                    if(roles.includes(user.role)){
+                    if(normalizedRoles.includes(userRole)){
                         return next();
                     } else{
                         return next({

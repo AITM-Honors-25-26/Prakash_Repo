@@ -20,7 +20,13 @@ const getStoredUser = () => {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, roles }) => {
   const user = getStoredUser();
   const token = localStorage.getItem("qr_accessToken");
-  const hasRequiredRole = !roles || Boolean(user?.role && roles.includes(user.role));
+  const normalizedRole = user?.role?.trim().toLowerCase();
+  const hasRequiredRole =
+    !roles ||
+    Boolean(
+      normalizedRole &&
+        roles.some((role) => role.toLowerCase() === normalizedRole)
+    );
 
   if (!token || !user || !hasRequiredRole) {
     return <ErrorPage />;
