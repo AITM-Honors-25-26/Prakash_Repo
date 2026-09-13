@@ -5,56 +5,63 @@ import autSvc from "../modules/auth/auth.service.js";
 const allowUser = (roles = null) => {
     return async(req, res, next)=>{
         try{
-            let token = req.headers['authorization'] || null;
-        if(!token){
-            next({
-                code:401,
-                message:"Unauthenticated",
-                staues:"UNAUTHENTICATED"
-            })
-        }else{
-            token = token.split(" ").pop();
+            const authorization = req.headers.authorization;
+            if (!authorization || !authorization.startsWith("Bearer ")) {
+                return next({
+                    code: 401,
+                    message: "Unauthenticated",
+                    status: "UNAUTHENTICATED"
+                });
+            }
 
-            let payload = jwt.verify(token, AppConfig.jwtSecret)
+            const token = authorization.slice("Bearer ".length).trim();
+            if (!token) {
+                return next({
+                    code: 401,
+                    message: "Unauthenticated",
+                    status: "UNAUTHENTICATED"
+                });
+            }
+
+            const payload = jwt.verify(token, AppConfig.jwtSecret);
             if(payload.type === "access"){
                 const user = await autSvc.getSingleUserByFilter({
-                _id:payload.sub
-            })
+                    _id: payload.sub
+                });
             if(!user){
-                next ({
-                code:401,
-                message:"User not found",
-                status:"UNAUTHENTICATED"
-            });
+                return next({
+                    code: 401,
+                    message: "User not found",
+                    status: "UNAUTHENTICATED"
+                });
             } else {
                 req.authUser = autSvc.publicUserProfile(user);
                 if(!roles || user.role === UserRole.ADMIN){
-                    next()
+                    return next();
                 } else{
                     if(roles.includes(user.role)){
-                        next()
+                        return next();
                     } else{
-                        next({
+                        return next({
                             code: 403,
-                            message:"You dont have access to these resource",
-                            status:"UNAUTHORIZES"
-                        })
+                            message: "You do not have access to this resource",
+                            status: "UNAUTHORIZED"
+                        });
                     }
                 }
             }
             }else{
-                next({
-                    code:401,
-                    message:"Invaalid Token type",
-                    status:"UNAUTHENTACATED"
-                })
+                return next({
+                    code: 401,
+                    message: "Invalid token type",
+                    status: "UNAUTHENTICATED"
+                });
             }
-        }
         } catch(exception){
-            next ({
-                code:401,
-                message:exception.message,
-                status:"UNAUTHENTICATED"
+            return next({
+                code: 401,
+                message: exception.message,
+                status: "UNAUTHENTICATED"
             });
         }
     }

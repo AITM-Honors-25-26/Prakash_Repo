@@ -21,7 +21,7 @@ const archiveOrdersForReleasedTables = async () => {
     }
 };
 
-const dhInit = async()=>{
+export const dbReady = (async () => {
     try{
         await mongoose.connect(DBConfig.mongodbUrl, {
             dbName:DBConfig.dbName,
@@ -34,6 +34,4 @@ const dhInit = async()=>{
         console.error("Error while connecting to MongoDB database:", exception);
         throw exception;
     }
-}
-
-dhInit()
+})();

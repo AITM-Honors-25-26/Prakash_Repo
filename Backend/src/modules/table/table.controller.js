@@ -80,6 +80,13 @@ class TableController {
         try {
             const tableNumber = req.params.id;
             const sessionId = req.body?.sessionId;
+            if (!sessionId) {
+                return next({
+                    code: 422,
+                    message: "A table session is required.",
+                    status: "TABLE_SESSION_REQUIRED"
+                });
+            }
 
             const occupiedTable = await tableSvc.occupyTableByNumber(tableNumber, sessionId);
 
@@ -115,6 +122,13 @@ class TableController {
         try {
             const tableNumber = req.params.id;
             const sessionId = req.body?.sessionId;
+            if (!sessionId) {
+                return next({
+                    code: 422,
+                    message: "A table session is required.",
+                    status: "TABLE_SESSION_REQUIRED"
+                });
+            }
 
             const releasedTable = await tableSvc.releaseTableByNumber(tableNumber, sessionId);
 

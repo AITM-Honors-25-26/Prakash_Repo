@@ -70,7 +70,10 @@ const TableManagement: React.FC = () => {
   const fetchTables = useCallback(async (showLoading = true) => {
     if (showLoading) setIsLoading(true);
     try {
-      const response = await axios.get(API_ENDPOINTS.LISTALLTABLE);
+      const config = getAuthHeader();
+      if (!config) return;
+
+      const response = await axios.get(API_ENDPOINTS.LISTALLTABLE, config);
       const data = response.data?.data || response.data?.result || response.data;
       if (Array.isArray(data)) setTables(data);
     } catch (error: unknown) {
@@ -83,7 +86,7 @@ const TableManagement: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [handleSessionExpired]);
+  }, [getAuthHeader, handleSessionExpired]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('qr_user');

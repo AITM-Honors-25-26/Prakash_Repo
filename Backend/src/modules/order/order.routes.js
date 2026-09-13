@@ -14,8 +14,8 @@ orderRouter.get('/order/table/:tableNumber/active', getOrdersByTable);
 orderRouter.get('/order/:id/status', getOrderStatus);
 orderRouter.patch('/order/:id/status', allowUser([UserRole.ADMIN, UserRole.CHEF, UserRole.WAITER, UserRole.RECEPTION]), validateUpdateStatus, updateOrderStatus);
 
-orderRouter.patch('/order/:id/items', validateUpdateItems, updateOrderItems);
-orderRouter.patch('/order/:id/cancel', cancelOrder);
+orderRouter.patch('/order/:id/items', allowUser([UserRole.ADMIN, UserRole.CHEF, UserRole.WAITER, UserRole.RECEPTION]), validateUpdateItems, updateOrderItems);
+orderRouter.patch('/order/:id/cancel', allowUser([UserRole.ADMIN, UserRole.CHEF, UserRole.WAITER, UserRole.RECEPTION]), cancelOrder);
 
 orderRouter.delete('/order/:id', allowUser([UserRole.ADMIN, UserRole.CHEF, UserRole.WAITER, UserRole.RECEPTION]), deleteOrder);
 
