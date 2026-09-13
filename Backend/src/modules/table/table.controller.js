@@ -30,6 +30,20 @@ class TableController {
         }
     }
 
+    getAvailableTables = async (req, res, next) => {
+        try {
+            const tableNumbers = await tableSvc.getAvailableTableNumbers();
+
+            res.json({
+                data: tableNumbers,
+                message: "Available tables fetched successfully",
+                meta: null
+            });
+        } catch (exception) {
+            next(exception);
+        }
+    }
+
     getPaymentsOverview = async (req, res, next) => {
         try {
             const overview = await tableSvc.getPaymentsOverview();

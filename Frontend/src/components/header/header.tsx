@@ -83,7 +83,8 @@ const Header: React.FC = () => {
           navigate('/ErrorPage', {
             state: {
               title: "Table Unavailable",
-              message: `Table ${urlTableId} is currently in use by another customer. Please ask staff for help.`
+              message: `Table ${urlTableId} is currently occupied. Please choose a different available table.`,
+              showTableChoices: true
             },
             replace: true
           });

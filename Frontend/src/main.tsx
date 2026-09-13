@@ -113,7 +113,7 @@ createRoot(document.getElementById("root")!).render(
         <Route
           path="/ReceptionBilling"
           element={
-            <ProtectedRoute roles={["Admin", "Reception"]}>
+            <ProtectedRoute roles={["Admin", "Waiter", "Reception"]}>
               <ReceptionBillingPage />
             </ProtectedRoute>
           }

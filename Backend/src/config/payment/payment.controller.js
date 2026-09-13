@@ -5,6 +5,13 @@ import * as OrderService from '../../modules/order/order.service.js';
 import tableSvc from '../../modules/table/table.service.js';
 
 const DEFAULT_PRODUCT_CODE = 'EPAYTEST';
+const DEFAULT_PAYMENT_URL = 'https://rc-epay.esewa.com.np/api/epay/main/v2/form';
+
+const getEsewaConfig = () => ({
+    secretKey: process.env.ESEWA_SECRET_KEY?.trim(),
+    productCode: process.env.MERCHANT_ID?.trim() || DEFAULT_PRODUCT_CODE,
+    paymentUrl: process.env.ESEWA_PAYMENT_URL?.trim() || DEFAULT_PAYMENT_URL,
+});
 
 const buildSignature = (secretKey, { total_amount, transaction_uuid, product_code }) => {
   const data = `total_amount=${total_amount},transaction_uuid=${transaction_uuid},product_code=${product_code}`;
@@ -14,8 +21,7 @@ const buildSignature = (secretKey, { total_amount, transaction_uuid, product_cod
 export const initiateEsewa = async (req, res) => {
     try {
         const { amount, transaction_uuid } = req.body;
-        const secretKey = process.env.ESEWA_SECRET_KEY;
-        const productCode = process.env.MERCHANT_ID || DEFAULT_PRODUCT_CODE;
+        const { secretKey, productCode, paymentUrl } = getEsewaConfig();
 
         if (!secretKey) {
             return res.status(500).json({ error: "ESEWA_SECRET_KEY is not set in the backend .env file" });
@@ -30,7 +36,7 @@ export const initiateEsewa = async (req, res) => {
             product_code: productCode,
         });
 
-        res.json({ signature, product_code: productCode });
+        res.json({ signature, product_code: productCode, payment_url: paymentUrl });
     } catch (error) {
         res.status(500).json({ error: "Signature generation failed" });
     }
@@ -39,9 +45,16 @@ export const initiateEsewa = async (req, res) => {
 export const generateEsewaQr = async (req, res) => {
     try {
         const { amount, transaction_uuid } = req.body;
+        const { secretKey } = getEsewaConfig();
 
         if (!amount || !transaction_uuid) {
             return res.status(400).json({ success: false, message: "amount and transaction_uuid are required" });
+        }
+        if (!secretKey) {
+            return res.status(500).json({
+                success: false,
+                message: "eSewa payment is not configured. Set ESEWA_SECRET_KEY in Backend/.env."
+            });
         }
 
         const order = await OrderService.getOrderById(transaction_uuid);

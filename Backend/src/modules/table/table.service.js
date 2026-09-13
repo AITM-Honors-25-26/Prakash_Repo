@@ -34,6 +34,19 @@ class TableService {
         }
     }
 
+    getAvailableTableNumbers = async () => {
+        try {
+            const tables = await Table.find(
+                { status: TableStatus.AVAILABLE },
+                { _id: 0, tableNumber: 1 }
+            ).sort({ tableNumber: 1 });
+
+            return tables.map((table) => table.tableNumber);
+        } catch (exception) {
+            throw exception;
+        }
+    }
+
     getAllTablesWithBilling = async (filter = {}) => {
         try {
             const tables = await Table.find(filter).sort({ tableNumber: 1 });
