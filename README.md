@@ -197,8 +197,10 @@ in one command.
 cp Backend/.env.sample Backend/.env
 
 # 2. (Optional) Set frontend env vars if auto-detection is not enough
-export VITE_PUBLIC_URL="http://localhost:5173"
-export VITE_API_BASE_URL="http://localhost:9005/api"
+# Use your laptop's LAN IP so a phone on the same Wi‑Fi can reach the app
+# Example: http://192.168.1.20:5173
+export VITE_PUBLIC_URL="http://192.168.1.20:5173"
+export VITE_API_BASE_URL="http://192.168.1.20:9005/api"
 
 # 3. Build & start
 docker-compose up --build
@@ -241,14 +243,16 @@ cd Frontend
 # Install dependencies
 npm install
 
-# Start Vite dev server (host 0.0.0.0:5173)
+# Start Vite dev server on all interfaces so phones on the same LAN can access it
 npm run dev
+# Then open: http://<your-laptop-ip>:5173
 
 # Build for production (runs tsc type-check first)
 npm run build
 
-# Preview the production build locally
+# Preview the production build on LAN
 npm run preview
+# Then open: http://<your-laptop-ip>:4173
 ```
 
 ---
