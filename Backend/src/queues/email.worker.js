@@ -105,16 +105,13 @@ export const buildEmail = (jobName, data) => {
 const emailWorker = new Worker(
     "email-queue",
     async (job) => {
-        console.log(`[EmailWorker] Processing: ${job.name}`, job.data);
         const payload = buildEmail(job.name, job.data);
         await emailSvc.sendEmail(payload);
-        console.log(`[EmailWorker] ✅ Sent: ${job.name} → ${job.data.email}`);
     },
     { connection: redisConnection }
 );
 
-emailWorker.on("completed", (job) => {
-    console.log(`[EmailWorker] ✅ Done: ${job.name} (id: ${job.id})`);
+emailWorker.on("completed", () => {
 });
 
 emailWorker.on("failed", (job, err) => {

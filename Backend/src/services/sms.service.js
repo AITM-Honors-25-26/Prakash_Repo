@@ -17,7 +17,6 @@ class SmsService {
         }
 
         if (!isConfigured()) {
-            console.log(`[SMS-PREVIEW] To ${recipient}: ${message}`);
             return { delivered: false, provider: "none" };
         }
 
@@ -50,7 +49,6 @@ class SmsService {
             };
         }
 
-        console.log(`[SMS] ✅ Sent OTP to ${recipient} (${data?.count ?? 1} credit(s)).`);
         return { delivered: true, provider: "sparrow" };
     }
 }

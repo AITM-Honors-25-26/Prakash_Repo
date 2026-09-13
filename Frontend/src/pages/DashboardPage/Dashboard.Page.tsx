@@ -81,14 +81,12 @@ const Dashboard: React.FC = () => {
     socketRef.current = socket;
 
     socket.on('connect', () => {
-      console.log('Dashboard connected to socket. ID:', socket.id);
       setConnected(true);
       setError(null);
       socket.emit('join-room', 'kitchen');
     });
 
     socket.on('disconnect', () => {
-      console.log('Dashboard disconnected from socket.');
       setConnected(false);
     });
 
@@ -98,7 +96,6 @@ const Dashboard: React.FC = () => {
     });
 
     socket.on('kitchen_new_order', (newOrder: Order) => {
-      console.log('New order received:', newOrder);
       setOrders(prev => {
         const exists = prev.find(o => o._id === newOrder._id);
         if (exists) return prev;
@@ -108,7 +105,6 @@ const Dashboard: React.FC = () => {
     });
 
     socket.on('order_status_updated', (updatedOrder: Order) => {
-      console.log('Order status updated:', updatedOrder);
       setOrders(prev => {
         if (
           updatedOrder.status === 'Completed' ||
@@ -121,7 +117,6 @@ const Dashboard: React.FC = () => {
     });
 
     socket.on('order_items_updated', (updatedOrder: Order) => {
-      console.log('Order items updated:', updatedOrder);
       setOrders(prev =>
         prev.map(o => (o._id === updatedOrder._id ? updatedOrder : o))
       );
