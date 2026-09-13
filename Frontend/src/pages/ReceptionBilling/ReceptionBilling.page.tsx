@@ -111,7 +111,6 @@ const ReceptionBillingPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -133,7 +132,6 @@ const ReceptionBillingPage: React.FC = () => {
       clearInterval(interval);
       socket.disconnect();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const settleTable = async (tableNumber: number) => {

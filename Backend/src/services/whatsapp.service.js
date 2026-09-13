@@ -13,7 +13,6 @@ class WhatsAppService {
         }
 
         if (!isConfigured()) {
-            console.log(`[WHATSAPP-PREVIEW] To ${recipient}: OTP ${otp} (expires in 5 minutes)`);
             return { delivered: false, reason: "not-configured" };
         }
 
@@ -54,7 +53,6 @@ class WhatsAppService {
             return { delivered: false, reason: "gateway-error", error: error ?? null };
         }
 
-        console.log(`[WhatsApp] ✅ Sent OTP to ${recipient} (message id ${data?.messages?.[0]?.id ?? "n/a"}).`);
         return { delivered: true, provider: "whatsapp" };
     }
 }

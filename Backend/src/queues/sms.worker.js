@@ -23,16 +23,13 @@ export const buildSms = (jobName, data) => {
 const smsWorker = new Worker(
     "sms-queue",
     async (job) => {
-        console.log(`[SmsWorker] Processing: ${job.name}`, job.data);
         const payload = buildSms(job.name, job.data);
-        const result = await smsSvc.sendSms(payload);
-        console.log(`[SmsWorker] ✅ Sent: ${job.name} → ${payload.to} (delivered: ${result.delivered})`);
+        await smsSvc.sendSms(payload);
     },
     { connection: redisConnection }
 );
 
-smsWorker.on("completed", (job) => {
-    console.log(`[SmsWorker] ✅ Done: ${job.name} (id: ${job.id})`);
+smsWorker.on("completed", () => {
 });
 
 smsWorker.on("failed", (job, err) => {

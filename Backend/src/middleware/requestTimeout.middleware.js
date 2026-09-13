@@ -9,14 +9,10 @@ export const requestTimeout = (ms = 30000) => {
         const timer = setTimeout(async () => {
             timedOut = true;
 
-            console.log(
-                `[Timeout] ${req.method} ${req.originalUrl} exceeded ${ms}ms — running ${cleanupFns.length} cleanup task(s)`
-            );
-
             const results = await Promise.allSettled(cleanupFns.map((fn) => fn()));
             results.forEach((result, i) => {
                 if (result.status === "rejected") {
-                    console.log(`[Timeout] cleanup task #${i} failed:`, result.reason);
+                    console.error(`[Timeout] cleanup task #${i} failed:`, result.reason);
                 }
             });
 

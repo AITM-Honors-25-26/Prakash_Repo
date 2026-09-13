@@ -36,8 +36,6 @@ const LoginPage: React.FC = () => {
       const result = await response.json();
 
       if (response.ok) {
-        console.log("Full Result Data:", result.data);
-
         const userStatus = result.data?.user?.status;
         if (userStatus === false) {
           toast.error("Your account is not activated. Please check your email.");

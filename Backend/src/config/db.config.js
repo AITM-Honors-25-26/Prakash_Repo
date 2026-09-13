@@ -28,12 +28,11 @@ const dhInit = async()=>{
             autoCreate: true,
             autoIndex:true
         })
-        console.log("Sucessafully connected to mongose database...........................")
 
         await archiveOrdersForReleasedTables();
     }catch(exception){
-        console.log("***************Error while connecting to mangoos database**********************");
-        throw exception
+        console.error("Error while connecting to MongoDB database:", exception);
+        throw exception;
     }
 }
 

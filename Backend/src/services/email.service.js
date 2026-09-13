@@ -17,8 +17,8 @@ class EmailService{
             }
             this.#transport = nodemailer.createTransport(mailConfig)
         }catch(exception){
-            console.log("ERROR WHILE CONNECTING TO THE SMTP SERVER !!!!!!!!!!!!!!!!!!!!!!!!!!")
-            throw exception
+            console.error("Error while connecting to the SMTP server:", exception);
+            throw exception;
         }
     }
 
@@ -34,7 +34,6 @@ class EmailService{
             })
 
         }catch(exception){
-            console.log("!!!!!!!!!!!error while sending email!!!!!!!!!!!!!!");
             throw{
                 message:"sending email failed",
                 status:"EMAIL_SEND_FAILED"

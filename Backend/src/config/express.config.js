@@ -41,7 +41,7 @@ app.use((req, res, next)=>{
 })
 
 app.use((error, req, res, next) => {
-  console.log(error)
+  console.error(error);
 
   let statusCode = 500;
   let message = error.message || "Internal Server Error";

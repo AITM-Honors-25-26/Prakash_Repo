@@ -13,7 +13,6 @@ class AuthController {
         try {
             userData = await autSvc.userRegisterDataTrans(req);
             const userObj = await autSvc.userStore(userData);
-            console.log("i am here in autcontroller")
 
             await emailQueue.add(EMAIL_JOBS.ACTIVATION, {
                 fullName:        userObj.fullName, 

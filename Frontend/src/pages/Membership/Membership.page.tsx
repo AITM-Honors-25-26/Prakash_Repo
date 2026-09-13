@@ -94,7 +94,6 @@ const MembershipPage: React.FC = () => {
       })
       .catch(() => toast.error('Could not load membership directory.'))
       .finally(() => setMembersLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isStaff]);
 
   const handleMemberChange = (member: MemberProfile | null) => {
