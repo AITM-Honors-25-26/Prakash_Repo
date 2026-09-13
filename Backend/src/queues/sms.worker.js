@@ -30,7 +30,6 @@ const smsWorker = new Worker(
 );
 
 smsWorker.on("completed", () => {
-    // queue processing completed successfully
 });
 
 smsWorker.on("failed", (job, err) => {

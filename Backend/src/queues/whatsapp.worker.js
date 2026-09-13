@@ -30,7 +30,6 @@ const whatsappWorker = new Worker(
 );
 
 whatsappWorker.on("completed", () => {
-    // queue processing completed successfully
 });
 
 whatsappWorker.on("failed", (job, err) => {
