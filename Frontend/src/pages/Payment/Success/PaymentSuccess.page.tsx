@@ -11,7 +11,15 @@ const PaymentSuccess: React.FC = () => {
   useEffect(() => {
     localStorage.removeItem('bakery_cart');
     window.dispatchEvent(new Event('cartUpdated'));
-  }, []);
+
+    if (orderId) {
+      localStorage.setItem(
+        'bakery_active_order',
+        JSON.stringify({ orderId, createdAt: Date.now() })
+      );
+      window.dispatchEvent(new Event('activeOrderUpdated'));
+    }
+  }, [orderId]);
 
   return (
     <div className={styles.resultContainer}>
@@ -20,7 +28,12 @@ const PaymentSuccess: React.FC = () => {
         <h1>Payment Successful</h1>
         {amount && <p className={styles.amount}>Rs. {Number(amount).toLocaleString()}</p>}
         {orderId && <p className={styles.orderRef}>Order #{orderId.slice(-6).toUpperCase()}</p>}
-        <p className={styles.subText}>You can close this tab, or head back to the menu.</p>
+        <p className={styles.subText}>Your order has been sent to the kitchen.</p>
+        {orderId && (
+          <button className={styles.btn} onClick={() => navigate(`/OrderTracking/${orderId}`)}>
+            Track Order
+          </button>
+        )}
         <button className={styles.btn} onClick={() => navigate('/MenuPage')}>
           Back to Menu
         </button>

@@ -44,6 +44,8 @@ const detectContact = (value: string): MembershipContact | null => {
   return { phone: trimmed.replace(/\D/g, '') };
 };
 
+const formatAmount = (value: unknown) => Number(value) || 0;
+
 const MembershipApply: React.FC<MembershipApplyProps> = ({ onMemberChange }) => {
   const [identifier, setIdentifier] = useState('');
   const [member, setMember] = useState<MemberProfile | null>(null);
@@ -361,7 +363,7 @@ const MembershipApply: React.FC<MembershipApplyProps> = ({ onMemberChange }) => 
               </p>
               {member.tier && (
                 <p className={styles.memberDiscount}>
-                  {member.tier.discountPercent}% off up to Rs. {member.tier.maxDiscountAmount.toLocaleString()} per bill
+                  {formatAmount(member.tier.discountPercent)}% off up to Rs. {formatAmount(member.tier.maxDiscountAmount).toLocaleString()} per bill
                 </p>
               )}
               <button type="button" className={styles.editBtn} onClick={startEdit}>

@@ -13,7 +13,6 @@ const myStorage = multer.diskStorage({
         const fileName = Date.now()+file.originalname;
         callback(null, fileName)
     }
-
 })
 
 export const uploader = (type = 'image')=>{

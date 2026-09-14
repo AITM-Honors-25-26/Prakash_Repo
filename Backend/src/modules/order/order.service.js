@@ -5,7 +5,13 @@ import tableSvc from '../table/table.service.js';
 import membershipSvc from '../membership/membership.service.js';
 
 export const createOrder = async (orderData) => {
-  const { tableNumber, items, discountCode, membershipPhone, membershipEmail } = orderData;
+  const { clientOrderId, tableNumber, items, discountCode, membershipPhone, membershipEmail, paymentOption } = orderData;
+  const isOnlinePayment = paymentOption === 'Pay Now';
+
+  const existingOrder = await Order.findOne({ clientOrderId });
+  if (existingOrder) {
+    return existingOrder;
+  }
 
   const subtotal = items.reduce((total, item) => {
     return total + (item.price * item.quantity);
@@ -18,6 +24,7 @@ export const createOrder = async (orderData) => {
   const totals = await settingsSvc.calculateOrderTotals(subtotal, discountCode, member);
 
   const newOrder = new Order({
+    clientOrderId,
     tableNumber,
     items,
     subtotal: totals.subtotal,
@@ -34,12 +41,22 @@ export const createOrder = async (orderData) => {
     serviceChargeRate: totals.serviceChargeRate,
     serviceChargeAmount: totals.serviceChargeAmount,
     totalPrice: totals.totalPrice,
-    status: OrderStatus.PENDING
+    status: OrderStatus.PENDING,
+    paymentStatus: isOnlinePayment ? PaymentStatus.PENDING : PaymentStatus.UNPAID,
+    paymentMethod: isOnlinePayment ? 'Esewa' : 'Counter'
   });
 
-  const savedOrder = await newOrder.save();
+  let savedOrder;
+  try {
+    savedOrder = await newOrder.save();
+  } catch (error) {
+    if (error.code === 11000 && error.keyPattern?.clientOrderId) {
+      return Order.findOne({ clientOrderId });
+    }
+    throw error;
+  }
 
-  if (member) {
+  if (member && !isOnlinePayment) {
     await membershipSvc.incrementVisit(member._id);
   }
 
@@ -51,7 +68,11 @@ export const createOrder = async (orderData) => {
 export const getOrdersForKitchen = async () => {
   return await Order.find({
     status: { $nin: [OrderStatus.CANCELLED] },
-    isCleared: false
+    isCleared: false,
+    $or: [
+      { paymentMethod: 'Counter' },
+      { paymentStatus: PaymentStatus.PAID }
+    ]
   }).sort({ createdAt: 1 });
 };
 
@@ -180,6 +201,7 @@ export const setPaymentStatus = async (orderId, paymentStatus, extra = {}) => {
 
   if (!wasPaid && paymentStatus === PaymentStatus.PAID && updated?.membershipId) {
     await membershipSvc.recordPayment(updated.membershipId, updated.totalPrice);
+    await membershipSvc.incrementVisit(updated.membershipId);
   }
 
   if (updated?.tableNumber) {

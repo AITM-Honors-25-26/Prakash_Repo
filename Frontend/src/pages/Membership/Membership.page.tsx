@@ -32,13 +32,28 @@ interface StaffMemberRow extends MemberProfile {
   fullName: string;
 }
 
+const formatAmount = (value: unknown) => Number(value) || 0;
+
+const getStoredRole = () => {
+  const storedUser = localStorage.getItem('qr_user');
+  if (!storedUser) return null;
+
+  try {
+    return JSON.parse(storedUser).role || null;
+  } catch (error) {
+    console.error('User parse error', error);
+    return null;
+  }
+};
+
 const MembershipPage: React.FC = () => {
   const navigate = useNavigate();
   const [settings, setSettings] = useState<BillingSettingsData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const [isStaff, setIsStaff] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [role] = useState(getStoredRole);
+  const isStaff = role === 'Admin' || role === 'Reception';
+  const isAdmin = role === 'Admin';
   const [members, setMembers] = useState<StaffMemberRow[]>([]);
   const [membersLoading, setMembersLoading] = useState(false);
 
@@ -60,17 +75,6 @@ const MembershipPage: React.FC = () => {
   }, [handleSessionExpired]);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('qr_user');
-    if (storedUser) {
-      try {
-        const parsed = JSON.parse(storedUser);
-        setIsStaff(['Admin', 'Reception'].includes(parsed.role));
-        setIsAdmin(parsed.role === 'Admin');
-      } catch (e) {
-        console.error('User parse error', e);
-      }
-    }
-
     axios
       .get(API_ENDPOINTS.BILLING_SETTINGS)
       .then(({ data }) => {
@@ -82,19 +86,24 @@ const MembershipPage: React.FC = () => {
 
   useEffect(() => {
     if (!isStaff) return;
-    const config = getAuthHeader();
-    if (!config) return;
+    const loadMembers = async () => {
+      const config = getAuthHeader();
+      if (!config) return;
 
-    setMembersLoading(true);
-    axios
-      .get(API_ENDPOINTS.MEMBERSHIP_LIST, config)
-      .then(({ data }) => {
+      setMembersLoading(true);
+      try {
+        const { data } = await axios.get(API_ENDPOINTS.MEMBERSHIP_LIST, config);
         const list = Array.isArray(data?.data) ? data.data : [];
         setMembers(list.map((m: MemberProfile) => ({ ...m, fullName: m.fullName || '' })));
-      })
-      .catch(() => toast.error('Could not load membership directory.'))
-      .finally(() => setMembersLoading(false));
-  }, [isStaff]);
+      } catch {
+        toast.error('Could not load membership directory.');
+      } finally {
+        setMembersLoading(false);
+      }
+    };
+
+    void loadMembers();
+  }, [getAuthHeader, isStaff]);
 
   const handleMemberChange = (member: MemberProfile | null) => {
     if (!member || !isStaff) return;
@@ -184,7 +193,7 @@ const MembershipPage: React.FC = () => {
                   <span className={styles.tierName}>{tier.name}</span>
                   <span>{tier.minVisits}+</span>
                   <span>{tier.discountPercent}%</span>
-                  <span>Rs. {tier.maxDiscountAmount.toLocaleString()}</span>
+                  <span>Rs. {formatAmount(tier.maxDiscountAmount).toLocaleString()}</span>
                 </div>
               ))}
             </div>
@@ -216,7 +225,7 @@ const MembershipPage: React.FC = () => {
                   <div key={member._id} className={styles.directoryRow}>
                     <span>{member.phone || member.email || member.fullName || '—'}</span>
                     <span>{member.visitCount}</span>
-                    <span>Rs. {(member.totalSpent || 0).toLocaleString()}</span>
+                    <span>Rs. {formatAmount(member.totalSpent).toLocaleString()}</span>
                     <span className={styles.tierName}>{member.tier ? member.tier.name : '—'}</span>
                     {isAdmin && (
                       <span>

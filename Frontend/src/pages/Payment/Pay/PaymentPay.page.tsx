@@ -16,6 +16,10 @@ const PaymentPay: React.FC = () => {
         const { data: orderRes } = await axios.get(`${API_ENDPOINTS.ORDER_STATUS}/${orderId}/status`);
         const order = orderRes.data;
 
+        if (!order) {
+          throw new Error('Order details were not returned by the backend.');
+        }
+
         if (order.paymentStatus === 'Paid') {
           window.location.href = `/payment/success?orderId=${orderId}`;
           return;
@@ -28,8 +32,12 @@ const PaymentPay: React.FC = () => {
           transaction_uuid: orderId,
         });
 
+        if (!data.payment_url) {
+          throw new Error('eSewa payment URL is not configured by the backend.');
+        }
+
         const form = document.createElement('form');
-        form.action = data.payment_url || 'https://rc-epay.esewa.com.np/api/epay/main/v2/form';
+        form.action = data.payment_url;
         form.method = 'POST';
 
         const fields: Record<string, string> = {

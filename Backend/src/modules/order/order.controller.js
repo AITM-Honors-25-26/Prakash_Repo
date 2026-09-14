@@ -27,7 +27,7 @@ export const createOrder = async (req, res) => {
     const newOrder = await OrderService.createOrder(req.body);
 
     const io = req.app.get('io');
-    if (io) {
+    if (io && newOrder.paymentStatus !== 'Pending') {
       io.emit('kitchen_new_order', newOrder);
     }
 
