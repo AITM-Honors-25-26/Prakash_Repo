@@ -27,6 +27,7 @@ import ReceptionBillingPage from "./pages/ReceptionBilling/ReceptionBilling.page
 import PaymentPay from "./pages/Payment/Pay/PaymentPay.page";
 import PaymentSuccess from "./pages/Payment/Success/PaymentSuccess.page";
 import PaymentFailure from "./pages/Payment/Failure/PaymentFailure.page";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -39,26 +40,90 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/ContactUsPage" element={<ContactUs />} />
         <Route path="/AboutUsPage" element={<AboutUsPage />} />
         <Route path="/MenuPage" element={<MenuPage />} />
-        <Route path="/Menu/Add" element={<CreateMenuItemPage />}></Route>
+        <Route
+          path="/Menu/Add"
+          element={
+            <ProtectedRoute roles={["Admin"]}>
+              <CreateMenuItemPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/MenuPage/:id" element={<MenuPage />} />
         <Route path="/Reset-password" element={<ResetPasswordPage /> }/>
-        <Route path="/ProfilePage" element={<Profile />} />
-        <Route path="/SettingsPage" element={<Settings />} />
-        <Route path="/TableManagement" element={<TableManagement />} />
+        <Route
+          path="/ProfilePage"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/SettingsPage"
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/TableManagement"
+          element={
+            <ProtectedRoute roles={["Admin", "Waiter", "Reception"]}>
+              <TableManagement />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/CheckoutPage" element={<CheckoutPage />}  />
         <Route path="/ErrorPage" element={<ErrorPage />} />
-        <Route  path="/DashboardPage" element={<Dashboard />}/>
-        <Route path="/StaffManagement" element={<StaffManagement />} />
-        <Route path="/Analytics" element={<Analytics />} />
-        <Route path="/BillingSettings" element={<BillingSettings />} />
+        <Route
+          path="/DashboardPage"
+          element={
+            <ProtectedRoute roles={["Admin", "Chef", "Waiter", "Reception"]}>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/StaffManagement"
+          element={
+            <ProtectedRoute roles={["Admin"]}>
+              <StaffManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/Analytics"
+          element={
+            <ProtectedRoute roles={["Admin"]}>
+              <Analytics />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/BillingSettings"
+          element={
+            <ProtectedRoute roles={["Admin"]}>
+              <BillingSettings />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/OrderTracking/:orderId" element={<OrderTrackingPage />} />
         <Route path="/MembershipPage" element={<MembershipPage />} />
-        <Route path="/ReceptionBilling" element={<ReceptionBillingPage />} />
+        <Route
+          path="/ReceptionBilling"
+          element={
+            <ProtectedRoute roles={["Admin", "Waiter", "Reception"]}>
+              <ReceptionBillingPage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/payment/pay/:orderId" element={<PaymentPay />} />
         <Route path="/payment/success" element={<PaymentSuccess />} />
         <Route path="/payment/failure" element={<PaymentFailure />} />
         <Route path="/payment/sucess" element={<Navigate to="/payment/success" replace />} />
         <Route path="/payment/failed" element={<Navigate to="/payment/failure" replace />} />
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

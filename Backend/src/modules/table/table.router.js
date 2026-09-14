@@ -8,7 +8,8 @@ import { UserRole } from "../../config/constants.js";
 const tableRouter = Router();
 
 tableRouter.post('/table/add',allowUser([UserRole.ADMIN]),bodyValidator(tableCreateSchema),tableCtrl.createTable);
-tableRouter.get('/table/list',tableCtrl.getAllTables);
+tableRouter.get('/table/available', tableCtrl.getAvailableTables);
+tableRouter.get('/table/list', allowUser([UserRole.ADMIN, UserRole.WAITER, UserRole.RECEPTION]), tableCtrl.getAllTables);
 tableRouter.get('/table/payments', allowUser([UserRole.ADMIN, UserRole.WAITER, UserRole.RECEPTION]), tableCtrl.getPaymentsOverview);
 tableRouter.delete('/table/:id',allowUser([UserRole.ADMIN]),tableCtrl.deleteTable);
 tableRouter.put('/table/:id', allowUser([UserRole.ADMIN]), tableCtrl.updateTable);

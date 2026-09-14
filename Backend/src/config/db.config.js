@@ -6,34 +6,32 @@ import Order from "../modules/ordermodel/order.model.js";
 const archiveOrdersForReleasedTables = async () => {
     try {
         const releasedTables = await Table.find({
-            status: { $nin: [TableStatus.OCCUPIED, TableStatus.RESERVED] }
+             status: { $nin: [TableStatus.OCCUPIED, TableStatus.RESERVED] }
         }).select("tableNumber");
-        const numbers = releasedTables.map((t) => String(t.tableNumber));
+         const numbers = releasedTables.map((t) => String(t.tableNumber));
         if (numbers.length === 0) return;
-
-        const result = await Order.updateMany(
+ 
+         const result = await Order.updateMany(    
             { tableNumber: { $in: numbers } },
             { $set: { isCleared: true } }
-        );
+         );
         console.log(`Archived ${result.modifiedCount ?? 0} order(s) from released tables.`);
     } catch (exception) {
-        console.error("Error while archiving orders from released tables:", exception.message);
-    }
+         console.error("Error while archiving orders from released tables:", exception.message);
+    } 
 };
 
-const dhInit = async()=>{
+export const dbReady = (async () => {
     try{
-        await mongoose.connect(DBConfig.mongodbUrl, {
-            dbName:DBConfig.dbName,
+         await mongoose.connect(DBConfig.mongodbUrl, {
+             dbName:DBConfig.dbName,
             autoCreate: true,
             autoIndex:true
-        })
+         })
 
-        await archiveOrdersForReleasedTables();
-    }catch(exception){
+         await archiveOrdersForReleasedTables();
+     }catch(exception){
         console.error("Error while connecting to MongoDB database:", exception);
-        throw exception;
-    }
-}
-
-dhInit()
+         throw exception;
+     }
+})();

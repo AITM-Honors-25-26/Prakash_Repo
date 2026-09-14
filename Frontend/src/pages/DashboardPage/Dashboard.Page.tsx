@@ -35,6 +35,14 @@ const Dashboard: React.FC = () => {
 
   const socketRef = useRef<Socket | null>(null);
 
+  const deduplicateOrders = (orderList: Order[]) => {
+    const uniqueOrders = new Map<string, Order>();
+    orderList.forEach(order => {
+      uniqueOrders.set(String(order._id), order);
+    });
+    return Array.from(uniqueOrders.values());
+  };
+
   useEffect(() => {
     const storedUser = localStorage.getItem('qr_user');
     if (storedUser) {
@@ -58,7 +66,7 @@ const Dashboard: React.FC = () => {
       const data = response.data?.data || response.data?.result || response.data;
 
       if (Array.isArray(data)) {
-        setOrders(data);
+        setOrders(deduplicateOrders(data));
       }
       setError(null);
     } catch (err) {
@@ -97,9 +105,9 @@ const Dashboard: React.FC = () => {
 
     socket.on('kitchen_new_order', (newOrder: Order) => {
       setOrders(prev => {
-        const exists = prev.find(o => o._id === newOrder._id);
+        const exists = prev.find(o => String(o._id) === String(newOrder._id));
         if (exists) return prev;
-        return [newOrder, ...prev];
+        return deduplicateOrders([newOrder, ...prev]);
       });
       setError(null);
     });

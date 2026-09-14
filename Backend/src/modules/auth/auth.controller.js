@@ -15,18 +15,18 @@ class AuthController {
             const userObj = await autSvc.userStore(userData);
 
             await emailQueue.add(EMAIL_JOBS.ACTIVATION, {
-                fullName:        userObj.fullName, 
-                email:           userObj.email,
-                activationToken: userObj.activationToken,
+                fullName : userObj.fullName, 
+                email : userObj.email,
+                activationToken : userObj.activationToken,
             });
 
             res.json({
                 data: {
-                    user: autSvc.publicUserProfile(userObj),
+                    user : autSvc.publicUserProfile(userObj),
                 },
-                message: "User registered successfully",
-                status: "REGISTER_SUCCESS",
-                option: null,
+                message : "User registered successfully",
+                status : "REGISTER_SUCCESS",
+                option : null,
             });
         } catch (exception) {
             if (userData && userData.image_id) {

@@ -34,7 +34,7 @@ const validateItemsShape = (items) => {
 };
 
 export const validateCreateOrder = (req, res, next) => {
-  const { tableNumber, items } = req.body;
+  const { tableNumber, items, clientOrderId } = req.body;
 
   if (!tableNumber || typeof tableNumber !== 'string' || tableNumber.trim() === '') {
     return res.status(400).json({ success: false, message: 'A valid table number is required.' });
@@ -50,6 +50,10 @@ export const validateCreateOrder = (req, res, next) => {
 
   if (req.body.membershipEmail !== undefined && req.body.membershipEmail !== null && typeof req.body.membershipEmail !== 'string') {
     return res.status(400).json({ success: false, message: 'Membership email must be a valid text value.' });
+  }
+
+  if (!clientOrderId || typeof clientOrderId !== 'string' || clientOrderId.trim() === '') {
+    return res.status(400).json({ success: false, message: 'A valid client order ID is required.' });
   }
 
   const itemsError = validateItemsShape(items);

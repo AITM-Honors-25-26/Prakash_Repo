@@ -153,6 +153,7 @@ export const API_ENDPOINTS = {
   GET_MENU_ITEM: `${API_BASE_URL}/menu`,
 
   LISTALLTABLE: `${API_BASE_URL}/table/list`,
+  AVAILABLE_TABLES: `${API_BASE_URL}/table/available`,
   ADDTABLE: `${API_BASE_URL}/table/add`,
   DELETETABLE: `${API_BASE_URL}/table`,
   UPDATETABLE: `${API_BASE_URL}/table`,

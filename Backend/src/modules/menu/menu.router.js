@@ -12,7 +12,7 @@ const menuRouter = Router();
 menuRouter.post(
     '/menu/add-item',
     allowUser([UserRole.ADMIN]),
-    requestTimeout(30000), // abort + rollback if this takes longer than 30s
+    requestTimeout(30000),
     uploader().array('images', 4),
     bodyValidator(menuCreateSchema),
     menuCtrl.createBakeryItem

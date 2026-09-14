@@ -2,6 +2,13 @@ import mongoose from "mongoose";
 import { OrderStatus, PaymentStatus } from '../../config/constants.js';
 
 const OrderSchema = new mongoose.Schema({
+  clientOrderId: {
+    type: String,
+    unique: true,
+    sparse: true,
+    index: true
+  },
+
   tableNumber: {
     type: String,
     required: true

@@ -16,6 +16,10 @@ const PaymentPay: React.FC = () => {
         const { data: orderRes } = await axios.get(`${API_ENDPOINTS.ORDER_STATUS}/${orderId}/status`);
         const order = orderRes.data;
 
+        if (!order) {
+          throw new Error('Order details were not returned by the backend.');
+        }
+
         if (order.paymentStatus === 'Paid') {
           window.location.href = `/payment/success?orderId=${orderId}`;
           return;
@@ -28,13 +32,19 @@ const PaymentPay: React.FC = () => {
           transaction_uuid: orderId,
         });
 
+        if (!data.payment_url) {
+          throw new Error('eSewa payment URL is not configured by the backend.');
+        }
+
         const form = document.createElement('form');
-        form.action = 'https://rc-epay.esewa.com.np/api/epay/main/v2/form';
+        form.action = data.payment_url;
         form.method = 'POST';
 
         const fields: Record<string, string> = {
           amount: totalAmount,
           tax_amount: '0',
+          product_service_charge: '0',
+          product_delivery_charge: '0',
           total_amount: totalAmount,
           transaction_uuid: orderId,
           product_code: data.product_code,
@@ -54,9 +64,14 @@ const PaymentPay: React.FC = () => {
 
         document.body.appendChild(form);
         form.submit();
-      } catch (err) {
+      } catch (err: unknown) {
         console.error('Failed to start eSewa payment:', err);
-        setError('Could not start the payment. Please go back and try again.');
+        if (axios.isAxiosError(err)) {
+          const backendMessage = err.response?.data?.error || err.response?.data?.message;
+          setError(backendMessage || 'Could not start the payment. Please go back and try again.');
+        } else {
+          setError('Could not start the payment. Please go back and try again.');
+        }
       }
     };
 

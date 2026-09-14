@@ -83,7 +83,8 @@ const Header: React.FC = () => {
           navigate('/ErrorPage', {
             state: {
               title: "Table Unavailable",
-              message: `Table ${urlTableId} is currently in use by another customer. Please ask staff for help.`
+              message: `Table ${urlTableId} is currently occupied. Please choose a different available table.`,
+              showTableChoices: true
             },
             replace: true
           });
@@ -104,7 +105,13 @@ const Header: React.FC = () => {
   }, [urlTableId, navigate]);
 
   const location = useLocation();
-  const hasStaffAccess = user && ['Admin', 'Chef', 'Waiter', 'Reception'].includes(user.role);
+  const normalizedRole = user?.role?.trim().toLowerCase();
+  const hasStaffAccess = Boolean(
+    normalizedRole && ['admin', 'chef', 'waiter', 'reception'].includes(normalizedRole)
+  );
+  const hasTableManagementAccess = Boolean(
+    normalizedRole && ['admin', 'waiter', 'reception'].includes(normalizedRole)
+  );
   const isMenuActive = location.pathname.startsWith('/MenuPage');
 
   const handleLogout = () => {
@@ -178,7 +185,7 @@ const Header: React.FC = () => {
           </NavLink>
         )}
 
-        {hasStaffAccess && (
+        {hasTableManagementAccess && (
           <NavLink
             to="/TableManagement"
             className={({ isActive }) => isActive ? styles.activeLink : ''}
@@ -188,7 +195,7 @@ const Header: React.FC = () => {
           </NavLink>
         )}
 
-        {user && ['Admin', 'Waiter', 'Reception'].includes(user.role) && (
+        {user && ['admin', 'waiter', 'reception'].includes(normalizedRole || '') && (
           <NavLink
             to="/ReceptionBilling"
             className={({ isActive }) => isActive ? styles.activeLink : ''}
@@ -198,7 +205,7 @@ const Header: React.FC = () => {
           </NavLink>
         )}
 
-        {user?.role === 'Admin' && (
+        {normalizedRole === 'admin' && (
           <NavLink
             to="/StaffManagement"
             className={({ isActive }) => isActive ? styles.activeLink : ''}
@@ -208,7 +215,7 @@ const Header: React.FC = () => {
           </NavLink>
         )}
 
-        {user?.role === 'Admin' && (
+        {normalizedRole === 'admin' && (
           <NavLink
             to="/BillingSettings"
             className={({ isActive }) => isActive ? styles.activeLink : ''}
@@ -253,7 +260,7 @@ const Header: React.FC = () => {
             <div className={styles.actions}>
               <Link to="/ProfilePage" onClick={() => setMenuOpen(false)}>My Profile</Link>
               <Link to="/SettingsPage" onClick={() => setMenuOpen(false)}>Settings</Link>
-              {user?.role === 'Admin' && (
+              {normalizedRole === 'admin' && (
                 <Link to="/Analytics" onClick={() => setMenuOpen(false)}>Analytics</Link>
               )}
               <button className={styles.logoutBtn} onClick={handleLogout}>Logout</button>

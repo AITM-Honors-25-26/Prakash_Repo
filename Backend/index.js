@@ -1,6 +1,7 @@
 import app from "./src/config/express.config.js";
 import http from "http";
 import { Server } from "socket.io";
+import { dbReady } from "./src/config/db.config.js";
 import "./src/queues/email.worker.js"
 import "./src/queues/sms.worker.js"
 import "./src/queues/whatsapp.worker.js"
@@ -30,9 +31,9 @@ io.on("connection", (socket) => {
   });
 });
 
-httpServer.listen(9005, "0.0.0.0", (err) => {
-  if (!err) {
-    console.log("Server is running on port: 9005");
-    console.log("Press CTRL + C to stop the server.");
-  }
+await dbReady;
+
+httpServer.listen(9005, "0.0.0.0", () => {
+  console.log("Server is running on port: 9005");
+  console.log("Press CTRL + C to stop the server.");
 });

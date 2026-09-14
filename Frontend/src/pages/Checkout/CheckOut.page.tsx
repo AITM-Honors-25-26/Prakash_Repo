@@ -53,8 +53,39 @@ interface BillTotals {
 const POLL_INTERVAL_MS = 4000;
 const POLL_TIMEOUT_MS = 5 * 60 * 1000;
 
+const createClientOrderId = () => {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+
+  return `order-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+};
+
+const normalizeCart = (value: unknown): CartItem[] => {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .filter((item): item is Record<string, unknown> => Boolean(item && typeof item === 'object'))
+    .map((item) => ({
+      ...(item as unknown as CartItem),
+      unitPrice: Number(item.unitPrice ?? item.price) || 0,
+      quantity: Number(item.quantity) || 1,
+      selectedAddOns: Array.isArray(item.selectedAddOns) ? item.selectedAddOns as AddOnOption[] : [],
+      specialNotes: typeof item.specialNotes === 'string' ? item.specialNotes : '',
+    }));
+};
+
+const getApiErrorMessage = (error: unknown, fallback: string) => {
+  if (!axios.isAxiosError(error)) return fallback;
+  return error.response?.data?.message
+    || error.response?.data?.error
+    || fallback;
+};
+
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
+  const orderRequestIdRef = useRef<string>(createClientOrderId());
+  const orderSubmissionRef = useRef(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [tableNumber, setTableNumber] = useState<string>('');
@@ -83,7 +114,13 @@ const CheckoutPage: React.FC = () => {
   useEffect(() => {
     const existingCart = localStorage.getItem('bakery_cart');
     if (existingCart) {
-      setCartItems(JSON.parse(existingCart));
+      try {
+        setCartItems(normalizeCart(JSON.parse(existingCart)));
+      } catch (error) {
+        console.error('Invalid saved cart:', error);
+        localStorage.removeItem('bakery_cart');
+        toast.error('Your saved cart could not be loaded. Please add your items again.');
+      }
     }
 
     const savedTable = localStorage.getItem('bakery_table');
@@ -229,7 +266,7 @@ const CheckoutPage: React.FC = () => {
       beginPolling(orderId);
     } catch (error) {
       console.error('QR generation failed:', error);
-      toast.error('Could not generate payment QR. Please try again.');
+      throw new Error(getApiErrorMessage(error, 'Could not generate payment QR. Please try again.'));
     }
   };
 
@@ -282,15 +319,21 @@ const CheckoutPage: React.FC = () => {
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (orderSubmissionRef.current) {
+      return;
+    }
+
     if (cartItems.length === 0) {
       toast.error('Your cart is empty!');
       return;
     }
 
+    orderSubmissionRef.current = true;
     setLoading(true);
 
     try {
       const orderPayload = {
+        clientOrderId: orderRequestIdRef.current,
         tableNumber,
         items: cartItems.map(item => ({
           itemId: item._id,
@@ -304,11 +347,16 @@ const CheckoutPage: React.FC = () => {
         discountCode: appliedDiscountCode || undefined,
         membershipPhone: memberContact?.phone || undefined,
         membershipEmail: memberContact?.email || undefined,
+        paymentOption,
       };
 
       const response = await axios.post(API_ENDPOINTS.ORDER_ACTION + '/', orderPayload);
-      const orderId = response.data.data._id;
-      const orderTotal = response.data.data.totalPrice ?? grandTotal;
+      const createdOrder = response.data?.data;
+      const orderId = createdOrder?._id;
+      if (!orderId) {
+        throw new Error('The order was created without a valid order reference.');
+      }
+      const orderTotal = createdOrder.totalPrice ?? grandTotal;
 
       if (paymentOption === 'Pay Now') {
         const totalAmount = orderTotal.toString();
@@ -327,8 +375,9 @@ const CheckoutPage: React.FC = () => {
         navigate(`/OrderTracking/${orderId}`);
       }
     } catch (error) {
+      orderSubmissionRef.current = false;
       console.error('Order placement failed:', error);
-      toast.error('Failed to place order. Please try again.');
+      toast.error(getApiErrorMessage(error, error instanceof Error ? error.message : 'Failed to place order. Please try again.'));
     } finally {
       setLoading(false);
     }
